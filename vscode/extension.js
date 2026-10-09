@@ -145,11 +145,35 @@ function runDoctor() {
   });
 }
 
+// A guided demo: builds a small repo where a (simulated) agent made a false claim, shows the red verdict, and offers a prompt that
+// makes Copilot produce a checkable claim in the user's own chat. Needs no agent and touches nothing in the user's workspace.
+function tryDemo(context) {
+  const base = (context.globalStorageUri && context.globalStorageUri.fsPath) || require("os").tmpdir();
+  const dest = path.join(base, "agentmirror-demo");
+  try { fs.mkdirSync(base, { recursive: true }); } catch (e) { /* execFile will report */ }
+  const cmd = resolveCommand(config().command) || config().command;
+  cp.execFile(cmd, ["demo", "--path", dest], { timeout: 120000, maxBuffer: 8 * 1024 * 1024 }, (err, stdout, stderr) => {
+    if (err) { vscode.window.showErrorMessage(`AgentMirror demo failed: ${err.code === "ENOENT" ? `cannot find '${cmd}' (pip install . or set agentmirror.command)` : (stderr || String(err)).split("\n").slice(-2).join(" ")}`); return; }
+    let info; try { info = JSON.parse(stdout); } catch (e) { vscode.window.showErrorMessage("AgentMirror demo: unexpected output."); return; }
+    const r = readResult(path.join(dest, ".agentmirror", "last"), undefined, dest);
+    if (!r || !r.valid) { vscode.window.showErrorMessage("AgentMirror demo: the demo result could not be verified."); return; }
+    const code = statusCodeFromDecision(r.dec);
+    setStatus(code, describeDecision(r.dec)); show(r.page);
+    log(`demo shown (status ${code}) from ${dest}`);
+    vscode.window.showWarningMessage(`AgentMirror demo: an agent said "${info.claim}" and AgentMirror says: ${describeDecision(r.dec)}`, "Copy a prompt to try it in Copilot", "Open the demo folder")
+      .then((pick) => {
+        if (pick === "Open the demo folder") vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(dest), { forceNewWindow: true });
+        else if (pick) { vscode.env.clipboard.writeText(info.copilot_prompt); vscode.window.showInformationMessage("Prompt copied. Open the demo folder in a new window, add the hook (AgentMirror: Add the agent hook), start a new Copilot chat and paste it."); }
+      });
+  });
+}
+
 function activate(context) {
   statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);   // must exist before anything calls setStatus
   context.subscriptions.push(statusItem);
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.installHook", installHook));
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.doctor", runDoctor));
+  context.subscriptions.push(vscode.commands.registerCommand("agentmirror.tryDemo", () => tryDemo(context)));
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.showLog", () => { log("log opened"); logChannel.show(true); }));
   watchHookResults(context);
   // `@agentmirror` in the chat: shows the last sealed verdict as a chat message (deterministic text, not model output).

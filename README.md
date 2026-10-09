@@ -14,6 +14,12 @@ agentmirror check --repo . --transcript msg.txt --ci --html report.html         
 ```
 Exit codes: `0` no contradiction found (scoped), `1` review required, `2` insufficient evidence, `3` tool error. Other options: `--markdown`, `--json`, `--session <Claude Code session.jsonl>`, `--base <ref>`, `--test-cmd`, `--test-timeout`, `--setup auto`, `--new-test-failures review`.
 
+## See it in 10 seconds
+```bash
+agentmirror demo          # builds a small demo repo, checks "no downstream impact" against it and writes a sealed result
+```
+In VS Code run **AgentMirror: Try the demo**: it shows the red verdict panel and copies a prompt you can paste into Copilot (in the demo folder, with the hook added) to see the same on a real agent turn.
+
 ## What it checks
 | Claim in the agent's message | How it is checked |
 |---|---|
@@ -67,4 +73,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 188 Python tests, 30 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 189 Python tests, 31 node tests -->
