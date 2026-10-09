@@ -47,3 +47,9 @@ Agents worked in a virtualenv preloaded with packages the repositories do not de
 1. Recipe vocabulary needs a `prepare` step: run a repository script (inside the sandbox, before the tests) for generated/untracked fixtures. Without it a correct, honest declaration is rejected.
 2. The claim extractor missed "The test passes." in a dry run; it should accept singular forms.
 3. The ambient-import audit is the right detector for hidden dependencies (a session audit of installs alone is not enough).
+
+## Post-hoc follow-up: the recipe `prepare` step (4 runs, 2026-10-09; NOT part of the pre-registered pilot)
+The pilot's only failures of the instrument (the 4 generated-file recipes) came from a vocabulary gap, so the schema was extended with `prepare` (a repository script run in the sandbox before the tests; `docs/RECIPES.md`) and the instruction was extended to mention it (prompt variant `C1P`; this tells the agent about the field, so it tests the extended instrument, not what an agent would invent unprompted). The two generated-file tasks were re-run twice each.
+- **4/4 recipes were accepted and replayed to a SUPPORTED verdict** under the extended schema (previously 0/4 accepted); the zero-config replay of the same output still does not reproduce them (the fixture is untracked), so these claims are accountable *only* through the declared `prepare` step.
+- Cost $0.71 for the four runs. One model, two tasks, two repetitions: an existence check of the fix, not an estimate.
+- The same change also made the claim extractor accept "The test passes." and suite forms; unit tests cover positive and negative phrasing.
