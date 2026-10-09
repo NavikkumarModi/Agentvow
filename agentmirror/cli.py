@@ -255,7 +255,9 @@ def agent_feedback(d) -> str | None:
         return None
     lines = [f'- "{f.claim[:160]}": {why.get(f.kind, "the repository contradicts it")}' for f in bad[:5]]
     return ("An independent check (AgentMirror) found that these statements in your last message are contradicted by the repository:\n" + "\n".join(lines)
-            + "\nPlease verify them and revise your final answer to say only what is true; do not repeat the contradicted statements.")
+            + "\nPlease verify them and revise your final answer to say only what is true; do not repeat the contradicted statements."
+            + "\nStart your revised answer with one short line telling the user that an independent check (AgentMirror) flagged your previous answer and which statement it corrected, "
+              "so the user knows the answer changed and why.")
 
 
 def final_message(path: Path):
