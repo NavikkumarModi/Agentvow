@@ -107,7 +107,7 @@ def _tree_hash(repo: Path, commit: str) -> str:
     for f in sorted(x for x in files if x):
         p = repo / f
         h.update(f.encode() + b"\0")
-        h.update(p.read_bytes() if p.is_file() else b"<missing>")
+        h.update(b"<symlink>" if p.is_symlink() else p.read_bytes() if p.is_file() else b"<missing>")
     return h.hexdigest()[:16]
 
 
@@ -167,7 +167,7 @@ def build_graph(repo: Path) -> Graph:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")  # third-party code often has invalid escapes
                 tree = ast.parse(p.read_text(encoding="utf-8"))
-        except (SyntaxError, UnicodeDecodeError) as e:
+        except (SyntaxError, UnicodeDecodeError, RecursionError, MemoryError, ValueError) as e:
             g.gaps.append(f"could not parse {rel}: {type(e).__name__}")
             g.imports[rel] = deps
             continue

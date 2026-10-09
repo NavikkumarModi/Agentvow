@@ -218,16 +218,11 @@ def _from_runs(c, runs) -> Finding:
             why = ("Some failing tests did not exist before the change (new or renamed), so there is nothing to compare them with; "
                    "they may reflect AgentMirror's environment (for example, no network).")
         else:
-            note = ""
-            if c.count is not None:
-                if c.count not in totals:
-                    return Finding(c.text, c.kind, "UNKNOWN",
-                                   f"{ran} The agent reported {c.count} tests, which matches none of the totals AgentMirror found ({sorted(totals)}), "
-                                   f"so it probably ran a different set or configuration.{partial} The claim could be neither confirmed nor refuted.", evidence=refs)
-                note = f" The agent's count ({c.count}) equals a total AgentMirror found, consistent with those failures being environmental."
-            return Finding(c.text, c.kind, "NOT_CONTRADICTED",
-                           f"{ran} All failures also occur without the change (likely environment, such as no network), and no test that "
-                           f"passed before fails now.{note}{partial} This does not confirm that all tests pass in the project's own setup.", evidence=refs)
+            nfail = sum(e.counts.get("failed", 0) + e.counts.get("errors", 0) for e in ok)
+            return Finding(c.text, c.kind, "UNKNOWN",
+                           f"{ran} {nfail} test(s) fail in AgentMirror's run, so 'all tests pass' was not observed. The same tests also fail without the "
+                           f"change (likely AgentMirror's environment, such as no network), and no test that passed before fails now.{partial} "
+                           f"Whether they pass in the project's own setup is unknown.", evidence=refs)
         return Finding(c.text, c.kind, "UNKNOWN", f"{ran} {why}{partial} The claim could be neither confirmed nor refuted.", evidence=refs,
                        meta={"new_test_failures": locals().get("new_failing", 0)})
     if c.count is not None and c.count not in sizes:

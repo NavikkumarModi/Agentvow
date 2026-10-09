@@ -34,3 +34,8 @@ The seal proves AgentMirror produced a result, not that it is the latest one. A 
 
 ## Transcript bounds
 Hooks read at most the last 8 MB of the transcript, only regular files (fifos/devices refused), and skip lines over 2 MB; the extension reads only regular, size-bounded result files (no symlinks).
+
+## Final review findings (0.1.0, second independent review)
+Fixed: uncommitted-work overlay and tree hash followed symlinks (could copy the signing key into the test worktree) — links are now skipped; a crash on pathological source (RecursionError) left a stale sealed all-clear — parse errors are now gaps and a hook crash writes a sealed INSUFFICIENT result; "all tests pass" with failing tests (also failing at base) was reported as not contradicted — now UNKNOWN; hook results omitted the comparison base — now in the scope text; results are bound to the repository path (extension rejects a copied result); `--base` option injection; stale git worktrees pruned; unused destructive `run_pair` removed.
+Mitigated, not solved: sandbox `(allow default)` lets Mach services act outside it (`defaults write` persisted a value in the review); common helpers are denied, but this is not containment.
+Open: test output is parsed from text the repository's own code prints, so a hostile repo can fake counts (an injected machine-readable reporter would be the fix); the comparison base is a heuristic (HEAD~1 / merge-base / HEAD when dirty) and can hide regressions already committed this session (recording HEAD at session start would fix it); replay of an old genuine result into the same repository; `SKIP_DIRS` (venv, node_modules) are not analysed and not reported as a gap.

@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 from . import ci, reality, runner
-from .decision import check, render
+from .decision import Decision, Finding, check, render
 from . import __version__, adapters, envsetup
 from .report import render_html, render_markdown, to_dict
 
@@ -23,13 +23,16 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
     suites: list of (name, argv, subdir). Uncommitted work is overlaid onto the HEAD worktree so the tests see exactly
     what the agent left behind, and the evidence is bound to that working-tree hash."""
     git = lambda *x: subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), *x], capture_output=True, text=True, check=True).stdout.strip()
-    head, base_sha = git("rev-parse", "HEAD"), git("rev-parse", base)
+    head, base_sha = git("rev-parse", "HEAD"), git("rev-parse", "--verify", "--end-of-options", base + "^{commit}")
+    subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "prune"], capture_output=True)   # leftovers of a killed earlier run
     tmp = Path(tempfile.mkdtemp(prefix="agentmirror_"))
     try:
         for name, sha in (("base", base_sha), ("head", head)):
             git("worktree", "add", "--detach", str(tmp / name), sha)
         for f in reality.changed_files(repo, "HEAD"):  # overlay uncommitted work (modified, new, deleted)
             src, dst = repo / f, tmp / "head" / f
+            if src.is_symlink():
+                continue   # never follow a link out of the repository (it could point at the signing key or credentials)
             if src.is_file():
                 dst.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src, dst)
@@ -44,6 +47,18 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
         for name in ("base", "head"):
             subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _write_sealed(repo: Path, d) -> None:
+    obj = to_dict(d)
+    obj["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # every run gets a unique seal, so each turn's verdict is a new one
+    obj["run_id"] = uuid.uuid4().hex
+    obj["repo"] = os.path.realpath(repo)   # bound to this repository: a result copied from another one is rejected by the extension
+    page, dec = render_html(d).encode("utf-8"), json.dumps(obj).encode("utf-8")
+    last = Path(".agentmirror") / "last"
+    reality.safe_write(repo, last / "report.html", page)
+    reality.safe_write(repo, last / "decision.json", dec)
+    reality.safe_write(repo, last / "decision.sig", reality.seal(page, dec))  # lets the editor extension reject files it did not receive from this tool
 
 
 def run_hook(a) -> int:
@@ -80,24 +95,28 @@ def run_hook(a) -> int:
                     break
                 time.sleep(0.25)
         dirty = reality.snapshot(repo).dirty
-        base = a.base or reality.default_base(repo, dirty)[0]
+        base, base_how = (a.base, "given") if a.base else reality.default_base(repo, dirty)
         if a.run_tests:
             py = a.python or envsetup.default_python(repo)
             collect_test_evidence(repo, base, [("tests", a.test_cmd[0].format(py=py).split(), "")] if a.test_cmd else
                                   [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         extra = ci.ci_evidence(repo, reality.snapshot(repo)) if a.ci else []
         d = check(repo, base, text, extra, a.new_test_failures, message_missing=unreadable)
+        d.scope += f" Compared against {base} ({base_how}); if that is not the state before the agent's work, regressions can be hidden."
         msg = render(d)
         obj = to_dict(d)
         obj["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # every run gets a unique seal, so each turn's verdict is a new one
-        obj["run_id"] = uuid.uuid4().hex
-        page, dec = render_html(d).encode("utf-8"), json.dumps(obj).encode("utf-8")
-        last = Path(".agentmirror") / "last"
-        reality.safe_write(repo, last / "report.html", page)
-        reality.safe_write(repo, last / "decision.json", dec)
-        reality.safe_write(repo, last / "decision.sig", reality.seal(page, dec))  # lets the editor extension reject files it did not receive from this tool
+        _write_sealed(repo, d)
     except Exception as e:
         msg = f"AgentMirror could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
+        try:   # a crash is not a verdict: replace any older sealed result so a stale all-clear is not left on display
+            r = locals().get("repo")
+            if r is not None and (r / ".git").exists():
+                _write_sealed(r, Decision("INSUFFICIENT EVIDENCE", "unknown", False, [], [Finding(
+                    "(the check could not complete)", "error", "UNKNOWN", f"AgentMirror failed on this turn ({type(e).__name__}). Nothing was verified.")],
+                    "No check completed.", []))
+        except Exception:
+            pass
     out = {"systemMessage": msg}
     fb = None if locals().get("d") is None else agent_feedback(d)
     if a.feedback_to_agent and fb:
@@ -244,6 +263,8 @@ def main(argv=None) -> int:
                    help="test command; repeat for several suites, optionally 'name=cmd' or 'name@subdir=cmd' to run from a "
                         "subfolder of the repo. {py} is replaced by --python. Default: {py} -m pytest -q -rA -p no:cacheprovider")
     a = ap.parse_args(argv)
+    if getattr(a, "base", None) and a.base.startswith("-"):
+        ap.error("--base must be a commit or branch name, not an option")
     if a.cmd == "agent-instructions":
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":
