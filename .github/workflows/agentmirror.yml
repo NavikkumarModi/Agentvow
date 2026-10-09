@@ -1,0 +1,20 @@
+# AgentMirror checking its own pull requests (dogfooding; also the live test of action.yml).
+name: AgentMirror
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+permissions:
+  contents: read
+  checks: read
+  pull-requests: write
+jobs:
+  agentmirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: ./
+        with:
+          fail-on: none
