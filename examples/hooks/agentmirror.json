@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "agentmirror check --hook",
+        "timeout": 60
+      }
+    ]
+  }
+}

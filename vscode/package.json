@@ -1,0 +1,138 @@
+{
+  "name": "agentmirror",
+  "displayName": "AgentMirror",
+  "description": "Check what a coding agent says it did against what is actually in your repository, before you approve.",
+  "version": "0.1.0",
+  "publisher": "agentmirror-dev",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other",
+    "Testing"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Running tests executes the workspace's code and the command/python settings choose what is executed; both are ignored in untrusted workspaces.",
+      "restrictedConfigurations": [
+        "agentmirror.command",
+        "agentmirror.python",
+        "agentmirror.testCommand",
+        "agentmirror.runTests",
+        "agentmirror.useCI"
+      ]
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "agentmirror.checkMessage",
+        "title": "AgentMirror: Check an agent's message"
+      },
+      {
+        "command": "agentmirror.checkClipboard",
+        "title": "AgentMirror: Check the message on the clipboard"
+      },
+      {
+        "command": "agentmirror.checkSelection",
+        "title": "AgentMirror: Check the selected text"
+      },
+      {
+        "command": "agentmirror.checkClaudeSession",
+        "title": "AgentMirror: Check the latest Claude Code session in this workspace"
+      },
+      {
+        "command": "agentmirror.installHook",
+        "title": "AgentMirror: Add the agent hook to this workspace (.github/hooks)"
+      },
+      {
+        "command": "agentmirror.showReport",
+        "title": "AgentMirror: Show the last report"
+      },
+      {
+        "command": "agentmirror.doctor",
+        "title": "AgentMirror: Check the setup (doctor)"
+      },
+      {
+        "command": "agentmirror.showLog",
+        "title": "AgentMirror: Show the log"
+      }
+    ],
+    "configuration": {
+      "title": "AgentMirror",
+      "properties": {
+        "agentmirror.command": {
+          "type": "string",
+          "default": "agentmirror",
+          "description": "The agentmirror executable (pip install agentmirror, or the path to it).",
+          "scope": "machine"
+        },
+        "agentmirror.base": {
+          "type": "string",
+          "default": "",
+          "description": "Git ref the agent started from. Empty: merge-base with the default branch, or HEAD for uncommitted work."
+        },
+        "agentmirror.runTests": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also run the project's tests (in a network-denied sandbox on macOS). Executes the workspace's test code.",
+          "scope": "machine-overridable"
+        },
+        "agentmirror.python": {
+          "type": "string",
+          "default": "",
+          "description": "Python used to run tests (e.g. a virtualenv's python). Empty: the one running agentmirror.",
+          "scope": "machine"
+        },
+        "agentmirror.testCommand": {
+          "type": "string",
+          "default": "",
+          "description": "Test command; {py} is replaced by the python above. Empty: pytest.",
+          "scope": "machine"
+        },
+        "agentmirror.autoOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Open the report panel automatically when an agent hook produces a new result (otherwise only the status bar updates)."
+        },
+        "agentmirror.useCI": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also read the project's CI results for HEAD (needs the GitHub CLI, gh).",
+          "scope": "machine-overridable"
+        },
+        "agentmirror.notify": {
+          "type": "string",
+          "enum": [
+            "review",
+            "always",
+            "never"
+          ],
+          "default": "review",
+          "description": "When an agent hook produces a result: show a notification for 'review' (contradicted claims) only, for 'always' (every turn, handy while testing), or 'never'. The status bar is updated either way."
+        }
+      }
+    },
+    "chatParticipants": [
+      {
+        "id": "agentmirror.chat",
+        "name": "agentmirror",
+        "fullName": "AgentMirror",
+        "description": "Show AgentMirror's independent check of the last agent answer",
+        "isSticky": false,
+        "commands": [
+          {
+            "name": "last",
+            "description": "Show the last verdict"
+          }
+        ]
+      }
+    ]
+  }
+}
