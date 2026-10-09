@@ -2,6 +2,7 @@ import argparse
 import dataclasses
 import json
 import os
+import re
 import shutil
 import time
 import uuid
@@ -38,10 +39,16 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
                 shutil.copy2(src, dst)
             elif dst.exists():
                 dst.unlink()
-        for i, (name, argv, sub) in enumerate(suites):
-            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub)
+        for i, spec in enumerate(suites):
+            name, argv, sub = spec[:3]
+            opts = spec[3] if len(spec) > 3 else {}   # {"env_extra": {...}, "meta": {...}} (agent-declared recipe)
+            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"))
             h = runner.run_tests(tmp / "head", argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
-                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base")
+                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"))
+            if opts.get("meta"):
+                h.update(opts["meta"])
+                if str(h.get("summary", "")).startswith("missing dependency"):   # the environment came ONLY from the declaration: say so
+                    h["summary"] = re.sub(r"\(pass --python.*\)$", "(the agent's declared recipe does not provide it, so the declared preconditions were insufficient)", h["summary"])
             reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
     finally:
         for name in ("base", "head"):
@@ -307,6 +314,7 @@ def main(argv=None) -> int:
                    help="git ref the agent started from (default: HEAD if the tree has uncommitted changes, else HEAD~1)")
     c.add_argument("--transcript", default="-", help="file with the agent's final message/transcript, or - for stdin")
     c.add_argument("--session", help="Claude Code session .jsonl; its final assistant message is used as the transcript")
+    c.add_argument("--recipe", metavar="FILE", help="replay the agent's own declared preconditions (agentvow-recipe/1 JSON): a clean environment built ONLY from its declared pip steps, then its declared test command at base and head")
     c.add_argument("--ci-wait", type=int, default=0, metavar="SECONDS", help="with --ci: wait up to this long for test jobs that are still running (default 0)")
     c.add_argument("--ci", action="store_true", help="also read the project's CI check results for HEAD (GitHub, via the gh CLI)")
     c.add_argument("--html", metavar="PATH", help="write a self-contained visual report (use - for stdout)")
@@ -360,6 +368,26 @@ def main(argv=None) -> int:
     repo = Path(a.repo).resolve()
     dirty = reality.snapshot(repo).dirty if (repo / ".git").exists() else False
     base, base_how = (a.base, "given") if a.base else (reality.default_base(repo, dirty) if (repo / ".git").exists() else ("HEAD~1", "assumed"))
+    if a.recipe:
+        from . import recipe as recipe_mod
+        try:
+            rec = recipe_mod.load(a.recipe)
+        except (recipe_mod.RecipeError, OSError) as e:
+            print(f"agentvow: recipe not used ({e}); no test run was made", file=sys.stderr)
+            a.run_tests = False
+            a._recipe_rejected = str(e)[:80]
+            return _run(a, repo, base, base_how, text)
+        a.run_tests = True
+        venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
+        try:
+            py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home")
+            a.python, a._recipe, a._recipe_notes = py, rec, notes
+            if aborted or not py:
+                print(f"agentvow: recipe environment incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
+            d = _run(a, repo, base, base_how, text)
+        finally:
+            shutil.rmtree(venv_root, ignore_errors=True)
+        return d
     if a.run_tests and a.setup == "auto":
         venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
         try:
@@ -378,7 +406,10 @@ def _run(a, repo, base, base_how, text):
     if a.python is None:
         a.python = envsetup.default_python(repo)
     a.python = os.path.abspath(os.path.expanduser(a.python))  # relative paths would break once we run inside a worktree
-    if a.run_tests:
+    if a.run_tests and getattr(a, "_recipe", None):
+        rec = a._recipe
+        collect_test_evidence(repo, base, [("tests", [a.python, *rec.test], "", {"env_extra": rec.env, "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
+    elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []
         for i, spec in enumerate(specs):
@@ -394,6 +425,10 @@ def _run(a, repo, base, base_how, text):
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
     d.scope += f"; base: {base_how}"
+    if getattr(a, "_recipe", None):
+        d.scope += f"; tests were replayed from the agent's own declared recipe (sha {a._recipe.sha256})" + (f"; setup problems: {'; '.join(a._recipe_notes)[:160]}" if a._recipe_notes else "")
+    if getattr(a, "_recipe_rejected", None):
+        d.scope += f"; the agent's recipe was rejected ({a._recipe_rejected}), so nothing was replayed"
     if a.markdown:
         md = render_markdown(d)
         if a.markdown == "-":

@@ -12,3 +12,4 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Per-turn change tracking (changes counted since the previous check, signed state file); `--background-tests` for the hook.
 - Linux test sandbox (bubblewrap), validated in CI on ubuntu and macos; sandbox guarantees tested directly (tests/test_sandbox.py).
 - Renamed from the working name AgentMirror to Agentvow: package/module/command `agentvow`, folder `.agentvow/`, env `AGENTVOW_*`, VS Code ids `agentvow.*`. Results saved under the old `.agentmirror/` folder are not read.
+- `--recipe`: claims with preconditions. The agent declares its setup and test command; Agentvow replays only that in a clean sandbox.
