@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "agentmirror check --hook",
+        "timeout": 60
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "agentmirror prompt-hook",
+        "timeout": 20
+      }
+    ]
+  }
+}
