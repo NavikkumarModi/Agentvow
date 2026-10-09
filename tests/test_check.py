@@ -212,3 +212,15 @@ class WorkingTree(unittest.TestCase):
             repo = build(Path(t) / "r")
             (repo / "new_mod.py").write_text("Y = 1\n")
             self.assertIn("new_mod.py", __import__("agentvow.reality", fromlist=["x"]).changed_files(repo, "HEAD"))
+
+
+class SingularForms(unittest.TestCase):
+    def test_singular_and_suite_forms_are_claims(self):
+        from agentvow import claims
+        for text in ("The test passes.", "Tests pass. I changed foo.", "The test suite passes now.", "pytest passed after the change.", "The tests now pass."):
+            self.assertTrue(any(c.kind == claims.TESTS_PASS for c in claims.extract(text)), text)
+
+    def test_negations_and_unrelated_text_are_not_claims(self):
+        from agentvow import claims
+        for text in ("The test does not pass.", "I could not verify that the tests pass.", "The password passes through the proxy.", "This passes the buck."):
+            self.assertFalse(any(c.kind == claims.TESTS_PASS for c in claims.extract(text)), text)

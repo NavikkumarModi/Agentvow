@@ -81,3 +81,41 @@ class Replay(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Prepare(unittest.TestCase):
+    def test_validation(self):
+        r = recipe.parse({"setup": [], "prepare": ["python scripts/make_fixture.py --small"], "test": "pytest"})
+        self.assertEqual(r.prepare, [["scripts/make_fixture.py", "--small"]])
+        for bad in ("bash scripts/x.sh", "python -c 'import os'", "python ../x.py", "python /tmp/x.py", "python x.py; rm -rf /", "python x.py $(id)", "python -m http.server", "python x.txt"):
+            with self.assertRaises(recipe.RecipeError, msg=bad):
+                recipe.parse({"prepare": [bad], "test": "pytest"})
+        with self.assertRaises(recipe.RecipeError):
+            recipe.parse({"prepare": ["python a.py"] * 4, "test": "pytest"})
+
+    def test_a_declared_prepare_step_makes_a_generated_fixture_replayable(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; (r / "tests").mkdir(parents=True); (r / "scripts").mkdir()
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+            (r / ".gitignore").write_text("tests/data/\n"); (r / "tests" / "__init__.py").write_text("")
+            (r / "scripts" / "mk.py").write_text("import pathlib\np = pathlib.Path('tests/data'); p.mkdir(parents=True, exist_ok=True)\n(p / 'x.txt').write_text('hi')\n")
+            (r / "tests" / "test_a.py").write_text("import unittest, pathlib\nclass T(unittest.TestCase):\n    def test_f(self):\n        self.assertEqual(pathlib.Path('tests/data/x.txt').read_text(), 'hi')\n")
+            g("add", "-A"); g("commit", "-qm", "base")
+            (r / "tests" / "data").mkdir(); (r / "tests" / "data" / "x.txt").write_text("hi")     # the agent's environment: the file exists, untracked/ignored
+            test = "python -m unittest discover -s tests -p 'test_*.py' -t ."
+            res = {}
+            for label, extra in (("without", {}), ("with", {"prepare": ["python scripts/mk.py"]})):
+                p = Path(d) / f"{label}.json"; p.write_text(json.dumps({"setup": [], "test": test, **extra}))
+                import io
+                old = sys.stdin, sys.stdout; sys.stdin = io.StringIO("All tests pass."); sys.stdout = io.StringIO()
+                try:
+                    cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+                finally:
+                    sys.stdin, sys.stdout = old
+                ev = [json.loads(f.read_text()) for f in (r / ".agentvow" / "evidence").glob("testrun_*.json")]
+                res[label] = ev[-1]["result"]
+                import shutil; shutil.rmtree(r / ".agentvow", ignore_errors=True)
+            self.assertNotEqual(res["without"], "pass")   # the ignored fixture does not exist in a clean checkout (an error, so inconclusive)
+            self.assertEqual(res["with"], "pass")      # the declared script generates it, inside the sandbox

@@ -42,9 +42,9 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
         for i, spec in enumerate(suites):
             name, argv, sub = spec[:3]
             opts = spec[3] if len(spec) > 3 else {}   # {"env_extra": {...}, "meta": {...}} (agent-declared recipe)
-            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"))
+            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"), prepare=opts.get("prepare"))
             h = runner.run_tests(tmp / "head", argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
-                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"))
+                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"), prepare=opts.get("prepare"))
             if opts.get("meta"):
                 h.update(opts["meta"])
                 if str(h.get("summary", "")).startswith("missing dependency"):   # the environment came ONLY from the declaration: say so
@@ -425,7 +425,7 @@ def _run(a, repo, base, base_how, text):
     a.python = os.path.abspath(os.path.expanduser(a.python))  # relative paths would break once we run inside a worktree
     if a.run_tests and getattr(a, "_recipe", None):
         rec = a._recipe
-        collect_test_evidence(repo, base, [("tests", [a.python, *rec.test], "", {"env_extra": rec.env, "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *rec.test], "", {"env_extra": rec.env, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []

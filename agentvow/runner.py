@@ -295,7 +295,7 @@ def parse_counts(output: str) -> dict:
 
 def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict | None = None,
               baseline_failed: list | None = None, baseline_passed: list | None = None, write: bool = True, suite: str = "", subdir: str = "",
-              base_repo: Path | None = None) -> dict:
+              base_repo: Path | None = None, prepare: list | None = None) -> dict:
     """Run `argv` in `repo` (already checked out); write evidence JSON; return the record.
 
     Differential rule (avoids false alarms from environment limits such as a missing network):
@@ -315,6 +315,11 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(scratch / "h"), "TMPDIR": str(scratch / "t"),
            "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": f"{repo / 'src'}:{repo}", **(env_extra or {})}  # this worktree's code wins over any installed copy
     try:
+        for step in prepare or []:   # agent-declared preparation (recipe `prepare`): a repository script, sandboxed like the tests, before them
+            out, code = _run_group(wrap(step, repo, scratch, env=env), repo / subdir, env, min(timeout, 300))
+            if code != 0:
+                return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
+                        "summary": f"the declared prepare step failed (exit {code}): {' '.join(step)[:80]}", "failed_ids": [], "passed_ids": [], "hint": (out or "")[-200:]}
         return _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_passed, write, suite, subdir, base_repo, snap, started := time.time())
     finally:
         shutil.rmtree(scratch, ignore_errors=True)

@@ -18,7 +18,7 @@ from pathlib import Path
 from . import envsetup
 
 SCHEMA = "agentvow-recipe/1"
-KEYS = {"schema", "python", "setup", "test", "env", "notes"}
+KEYS = {"schema", "python", "setup", "prepare", "test", "env", "notes"}
 MAX_STEPS, MAX_ARG = 12, 300
 _BAD_CHARS = re.compile(r"[;&|`$\\\n\r\"'(){}?!]")              # no shell syntax (nothing is ever run through a shell; <,>,* stay legal in version specifiers)
 _SECRET_NAME = re.compile(r"KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|AUTH", re.I)
@@ -37,6 +37,7 @@ class RecipeError(ValueError):
 @dataclass
 class Recipe:
     setup: list = field(default_factory=list)      # each: list of pip arguments after `pip install`
+    prepare: list = field(default_factory=list)    # each: argv after the interpreter, e.g. ["scripts/make_fixture.py"]; run in the sandbox before the tests
     test: list = field(default_factory=list)       # argv after the interpreter, e.g. ["-m", "pytest", "-q", "tests/test_x.py"]
     env: dict = field(default_factory=dict)
     python: str = ""
@@ -99,6 +100,20 @@ def _parse_setup(line: str):
     return out
 
 
+def _parse_prepare(line: str):
+    """`python scripts/x.py [plain args]`: a Python script INSIDE the repository, run before the tests (e.g. to generate a fixture). Never a shell line."""
+    if not isinstance(line, str):
+        raise RecipeError("prepare entries must be strings")
+    toks = shlex.split(line)
+    _check_tokens(toks, "prepare")
+    if toks[:1] not in (["python"], ["python3"]) or len(toks) < 2 or toks[1].startswith("-") or not toks[1].endswith(".py") or not _rel_path_ok(toks[1]):
+        raise RecipeError(f"prepare step must be `python <script.py inside the repository> [args]`: {line[:60]!r}")
+    for a in toks[2:]:
+        if not re.fullmatch(r"[A-Za-z0-9_.=:/\-]{1,120}", a) or ".." in Path(a).parts or a.startswith("/"):
+            raise RecipeError(f"prepare: argument not allowed: {a[:40]!r}")
+    return toks[1:]
+
+
 def _parse_test(line: str):
     if not isinstance(line, str) or not line.strip():
         raise RecipeError("test must be a non-empty string")
@@ -147,7 +162,10 @@ def parse(data: dict) -> Recipe:
             raise RecipeError(f"env: value not allowed for {k}")
         clean_env[k] = v
     canon = json.dumps({k: data[k] for k in sorted(data)}, sort_keys=True).encode()
-    return Recipe(setup=[_parse_setup(s) for s in setup], test=_parse_test(data.get("test", "")), env=clean_env,
+    prep = data.get("prepare", [])
+    if not isinstance(prep, list) or len(prep) > 3:
+        raise RecipeError("prepare must be a list of at most 3 steps")
+    return Recipe(setup=[_parse_setup(s) for s in setup], prepare=[_parse_prepare(p) for p in prep], test=_parse_test(data.get("test", "")), env=clean_env,
                   python=str(data.get("python", ""))[:20], notes=str(data.get("notes", ""))[:500], sha256=hashlib.sha256(canon).hexdigest()[:16])
 
 

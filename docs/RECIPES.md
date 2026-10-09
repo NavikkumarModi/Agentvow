@@ -7,6 +7,7 @@ A statement like "all tests pass" is true only under conditions the agent's own 
   "schema": "agentvow-recipe/1",
   "python": "3.12",
   "setup": ["pip install -e .[dev]", "pip install pytest-asyncio"],
+  "prepare": ["python scripts/make_fixture.py"],
   "test": "pytest -q tests/test_parser.py",
   "env": {"APP_MODE": "test"},
   "notes": "free text, not executed"
@@ -31,3 +32,11 @@ agentvow check --repo . --transcript final_message.txt --recipe recipe.json
 - **Supported / not contradicted** under the declared preconditions: the agent's own recipe reproduced the result independently. It does not show the tests are good, or that the recipe is minimal.
 - **Unknown, "the declared preconditions were insufficient"**: the replay could not run (missing dependency, import error). The agent's success depended on something it did not declare.
 - This is a research instrument as well as a feature: the fraction of recipes that replay, and why they fail, is the measurement (`docs/research/forecast_grounding/DIRECTION.md`).
+
+## `prepare`: generated fixtures
+If the tests need files that a repository script generates and that are not committed (the pilot's "generated file" tasks), declare the script:
+
+```json
+{"schema": "agentvow-recipe/1", "setup": ["pip install pytest"], "prepare": ["python scripts/make_fixture.py"], "test": "pytest -q"}
+```
+Each `prepare` entry must be `python <script.py inside the repository> [plain args]` (at most 3). It runs inside the same sandbox as the tests (network denied, writes only inside the worktree), before the tests, at the base and head commits. It is repository code, exactly like the tests themselves; it is not a shell line.
