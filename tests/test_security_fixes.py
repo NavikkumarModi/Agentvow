@@ -57,8 +57,9 @@ class G2_SandboxCannotForgeEvidence(unittest.TestCase):
             repo = build(Path(t) / "r")
             outside = Path(t) / "forged_evidence.json"
             rec = runner.run_tests(repo, passfail(f"echo forged > {outside}"), write=False)
-            self.assertFalse(outside.exists())
-            self.assertEqual(rec["counts"].get("failed"), 1)
+            self.assertFalse(outside.exists())   # never lands on the host (Linux: a write under /tmp goes to a throwaway tmpfs and succeeds there)
+            if sys.platform == "darwin":
+                self.assertEqual(rec["counts"].get("failed"), 1)
 
     def test_credential_directories_are_not_readable(self):
         with tempfile.TemporaryDirectory() as t:

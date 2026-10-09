@@ -23,8 +23,9 @@ class HomeIsWritable(unittest.TestCase):
             repo = build(Path(t) / "r")
             target = Path.home() / "agentvow_should_not_exist.txt"
             rec = runner.run_tests(repo, ["sh", "-c", f"echo x > {target} 2>/dev/null && echo '1 passed in 0.01s' || echo '1 failed in 0.01s'"], write=False)
-            self.assertFalse(target.exists())
-            self.assertEqual(rec["counts"].get("failed"), 1)
+            self.assertFalse(target.exists())   # never lands on the host (macOS: the write fails; Linux: it goes to a throwaway tmpfs)
+            if sys.platform == "darwin":
+                self.assertEqual(rec["counts"].get("failed"), 1)
 
     def test_home_is_excluded_from_the_tree_hash(self):
         from agentvow import reality

@@ -23,9 +23,8 @@ class Guarantees(unittest.TestCase):
         self.assertEqual(ok.stdout.strip(), "ok", ok.stderr)
         outside = Path.home() / "agentvow_sandbox_probe.txt"
         try:
-            bad = sandboxed(f"open(r'{outside}','w').write('x')", self.repo, self.scratch)
-            self.assertNotEqual(bad.returncode, 0)
-            self.assertFalse(outside.exists())
+            sandboxed(f"open(r'{outside}','w').write('x')", self.repo, self.scratch)   # may fail (macOS) or hit a throwaway tmpfs (Linux home)
+            self.assertFalse(outside.exists())   # either way it never reaches the host
         finally:
             outside.unlink(missing_ok=True)
 
