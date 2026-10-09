@@ -24,6 +24,9 @@ DATA = ROOT / "data"
 REPOS = DATA / "repos_v2"
 VENVS = DATA / "venvs_v2"
 OUT = DATA / "detection_v2_results.jsonl"
+PLUS = "--plus" in sys.argv   # arm B (amendment 2): after a missing-dependency stop, install the named modules (sandboxed) and retry, up to 3 rounds
+ALIAS = {"yaml": "PyYAML", "PIL": "Pillow", "cv2": "opencv-python-headless", "sklearn": "scikit-learn", "bs4": "beautifulsoup4", "dotenv": "python-dotenv",
+         "dateutil": "python-dateutil", "jwt": "PyJWT", "git": "GitPython", "attr": "attrs", "magic": "python-magic", "serial": "pyserial"}
 EXTRAS = ("test", "tests", "testing", "dev", "develop")
 REQ_FILES = ("requirements.txt", "requirements-dev.txt", "requirements_dev.txt", "requirements-test.txt", "requirements_test.txt",
              "dev-requirements.txt", "test-requirements.txt", "tests/requirements.txt")
@@ -135,6 +138,21 @@ def _one_repo(repo_name, prs):
                 sh(["git", "worktree", "add", "--detach", "-f", str(tmp / nm), sha], cwd=repo)
             env = {"PYTHONPATH": f"{tmp}/NAME/src:{tmp}/NAME"}
             b = runner.run_tests(tmp / "base", argv, timeout=240, write=False, env_extra={"PYTHONPATH": f"{tmp}/base/src:{tmp}/base"})
+            installed = []
+            for _round in range(3 if PLUS else 0):
+                m = re.match(r"missing dependency in Agentvow's environment: ([^(]+)\(", b.get("summary") or "")
+                if not (b["result"] == "inconclusive" and m):
+                    break
+                mods = [x.strip().split(".")[0] for x in m.group(1).split(",") if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_.]*", x.strip())]
+                pkgs = [ALIAS.get(x, x.replace("_", "-")) for x in mods if x not in installed][:6]
+                if not pkgs or len(installed) >= 12:
+                    break
+                rc, _out = pip(venv, repo, ["install", "-q", *pkgs], timeout=240)
+                installed += mods
+                if rc:
+                    break
+                b = runner.run_tests(tmp / "base", argv, timeout=240, write=False, env_extra={"PYTHONPATH": f"{tmp}/base/src:{tmp}/base"})
+            r["installed_modules"] = installed
             h = runner.run_tests(tmp / "head", argv, timeout=240, write=False, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
                                  env_extra={"PYTHONPATH": f"{tmp}/head/src:{tmp}/head"})
             ev = repo / ".agentvow" / "evidence"
@@ -181,4 +199,5 @@ def main(workers=1, sample="detection_v2_sample.csv", out="detection_v2_results.
 
 if __name__ == "__main__":
     a = sys.argv[1:]
+    a = [x for x in a if x != "--plus"]
     main(int(a[0]) if a else 1, *(a[1:3]))
