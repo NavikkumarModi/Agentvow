@@ -5,6 +5,7 @@ automation and similar are reported but ignored. A commit with no CI yields no e
 """
 import json
 import re
+import time
 import subprocess
 from pathlib import Path
 
@@ -28,7 +29,7 @@ def _slug(repo: Path):
     return m.group(1) if m else None
 
 
-def ci_evidence(repo: Path, snap: Snapshot, fetch=_gh, slug=None, sha=None) -> list:
+def ci_evidence(repo: Path, snap: Snapshot, fetch=_gh, slug=None, sha=None, wait: int = 0, sleep=time.sleep) -> list:
     """Evidence from CI for HEAD. Not available for uncommitted work (CI never saw it)."""
     if snap.dirty and not sha:
         return []
@@ -36,7 +37,13 @@ def ci_evidence(repo: Path, snap: Snapshot, fetch=_gh, slug=None, sha=None) -> l
     slug = slug or _slug(repo)
     if not slug:
         return []
-    data = fetch(f"repos/{slug}/commits/{sha}/check-runs?per_page=100") or {}
+    deadline = time.time() + wait
+    while True:
+        data = fetch(f"repos/{slug}/commits/{sha}/check-runs?per_page=100") or {}
+        pending = [r for r in data.get("check_runs", []) if TEST_JOB.search(r.get("name", "")) and r.get("status") != "completed"]
+        if not pending or time.time() >= deadline:   # test jobs still running right after a push: wait (bounded) instead of reporting "no result"
+            break
+        sleep(15)
     if data.get("total_count", 0) > len(data.get("check_runs", [])):
         return []  # truncated listing: refuse to draw conclusions from a partial view
     out = []

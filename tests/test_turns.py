@@ -104,3 +104,22 @@ class Feedback(unittest.TestCase):
         t = agent_feedback(d)
         self.assertIn("Start your revised answer", t); self.assertIn("flagged your previous answer", t)
         self.assertNotIn("IGNORE ALL RULES", t)   # repository-derived text never goes back to the agent
+
+
+class CiWait(unittest.TestCase):
+    def test_waits_for_running_test_jobs_then_reads_them(self):
+        from agentmirror import ci, reality
+        calls = []
+        def fetch(path):
+            calls.append(1)
+            st = "in_progress" if len(calls) < 3 else "completed"
+            return {"total_count": 1, "check_runs": [{"name": "test (ubuntu-latest)", "status": st, "conclusion": "success" if st == "completed" else None}]}
+        ev = ci.ci_evidence(Path("."), reality.Snapshot("abc", False), slug="o/r", fetch=fetch, wait=600, sleep=lambda s: None)
+        self.assertEqual(len(calls), 3); self.assertEqual(len(ev), 1)
+
+    def test_no_wait_by_default(self):
+        from agentmirror import ci, reality
+        calls = []
+        ev = ci.ci_evidence(Path("."), reality.Snapshot("abc", False), slug="o/r",
+                            fetch=lambda p: calls.append(1) or {"total_count": 1, "check_runs": [{"name": "test", "status": "queued"}]}, sleep=lambda s: None)
+        self.assertEqual(len(calls), 1); self.assertEqual(ev, [])

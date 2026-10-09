@@ -13,6 +13,10 @@ inputs:
     description: "Fail the job when the verdict is: none | review | insufficient"
     required: false
     default: "none"
+  ci-wait:
+    description: "Seconds to wait for the repository's test jobs that are still running when this action starts"
+    required: false
+    default: "600"
   comment:
     description: "Post or update a pull request comment (needs pull-requests: write)"
     required: false
@@ -34,6 +38,7 @@ runs:
         CLAIM_INPUT: ${{ inputs.claim-text }}
         PR_BODY: ${{ github.event.pull_request.body }}
         BASE_INPUT: ${{ inputs.base }}
+        CI_WAIT: ${{ inputs.ci-wait }}
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
@@ -42,7 +47,7 @@ runs:
         if [ -n "$CLAIM_INPUT" ]; then printf '%s' "$CLAIM_INPUT" > "$RUNNER_TEMP/agentmirror/claim.txt"; else printf '%s' "$PR_BODY" > "$RUNNER_TEMP/agentmirror/claim.txt"; fi
         BASE="${BASE_INPUT:-$BASE_SHA}"
         agentmirror check --repo . ${BASE:+--base "$BASE"} --transcript "$RUNNER_TEMP/agentmirror/claim.txt" \
-          --ci ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} \
+          --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} \
           --html "$RUNNER_TEMP/agentmirror/report.html" --markdown "$RUNNER_TEMP/agentmirror/summary.md" > /dev/null
         echo "code=$?" >> "$GITHUB_OUTPUT"
         cat "$RUNNER_TEMP/agentmirror/summary.md" >> "$GITHUB_STEP_SUMMARY"
