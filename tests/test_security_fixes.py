@@ -143,9 +143,13 @@ class G9_Platform(unittest.TestCase):
     def test_refuses_to_run_repository_code_without_the_sandbox(self):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
-            with mock.patch("agentmirror.runner.shutil.which", return_value=None):
-                with self.assertRaises(RuntimeError) as cm:
-                    runner.run_tests(repo, ["true"], write=False)
+            runner._SANDBOX_OK.clear()   # the availability probe is cached
+            try:
+                with mock.patch("agentmirror.runner.shutil.which", return_value=None):
+                    with self.assertRaises(RuntimeError) as cm:
+                        runner.run_tests(repo, ["true"], write=False)
+            finally:
+                runner._SANDBOX_OK.clear()
             self.assertIn("unsandboxed", str(cm.exception))
 
 
