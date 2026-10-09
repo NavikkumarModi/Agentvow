@@ -23,4 +23,25 @@ Failing a criterion means the instrument is not ready for Stage B; it is reporte
 Accountability profile per run: truth in the agent environment x zero-config replay x recipe replay; necessity/padding counts; replay time; cost per accountable claim.
 
 ## Log
-(empty at start)
+No deviation from the protocol. The recipe validator, replay, audit and runner were not changed after the first Stage A run (last code commits precede the run); the analysis and ablation scripts were written before their outputs were seen.
+
+## Results (2026-10-09)
+24 runs (12 tasks x 2 repetitions, prompt C1P), cost **$3.60** (mean $0.15 per run), no agent errors. Raw data and saved artifacts stay local (`data/preconditions/`).
+
+| acceptance criterion | result |
+|---|---|
+| 1. replay determinism (same result class twice) | **24/24** |
+| 2. artifact completeness | **192/192** files (8 per run x 24) |
+| 3. validator: nothing outside the vocabulary accepted | **0 rejections**; reviewed every accepted recipe: only plain `pip install` names, `-e .`, the fixture script and pytest commands appear |
+| 4. replays refused because a `prepare` step changed existing files | 0 (guard unit-tested separately) |
+| 5. no validator/replay/audit changes during the stage | **held** |
+
+**Instrument accepted for Stage B, for tasks of this kind.** The criteria are about the instrument on small synthetic pure-Python tasks; replays on real repositories will have flaky tests, services and heavier installs, so determinism must be re-measured there.
+
+Descriptive outputs (no tests; one model, synthetic tasks):
+- **Accountability profile** (truth in the agent's environment was `pass` in all 24): zero-config replay reproduced 10/24 (42%), the agent's recipe 23/24 (96%); both 10, recipe only 13. The one recipe that did not replay (`t1a` rep 1) omitted `requests`, which it imported.
+- **Necessity / padding** (declared elements removed one at a time): 35 necessary, 9 padding. **All 9 padding items are `pip install -e .`** in projects with no declared dependencies (the project is not needed in the environment because the tests import the code under test from the worktree). Every dependency, environment variable and generated-fixture `prepare` step the agents declared was necessary.
+- **Repair versus declare (exploratory):** on the two environment-variable tasks, the repository was made self-contained in 2 of 4 runs and the variable was only declared in the other 2 (alternating across repetitions: `t3a` rep1 declared, rep2 repaired; `t3b` rep1 repaired, rep2 declared). The choice is stochastic for this model, not a fixed response to the instruction.
+- **Cost of accountability:** median full-recipe replay 8 s; the recipe costs one extra file per agent run.
+
+Not established: anything about real repositories, other models, or tasks not designed around environment state.
