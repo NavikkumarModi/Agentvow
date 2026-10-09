@@ -36,7 +36,7 @@ function show(page) {
 
 function setStatus(code, tip) {
   const s = STATUS[code] || STATUS[3];
-  statusItem.text = s.text; statusItem.tooltip = tip || s.tip; statusItem.command = "agentmirror.showReport"; statusItem.show();
+  statusItem.text = s.text; statusItem.tooltip = tip || s.tip; statusItem.command = "agentmirror.menu"; statusItem.show();
 }
 
 function run(message, extraArgs = []) {
@@ -168,13 +168,28 @@ function tryDemo(context) {
   });
 }
 
+// The status bar item opens this menu, so every feature is reachable with one click (no command palette needed).
+async function showMenu() {
+  const items = [
+    { label: "$(eye) Open the last report", cmd: "agentmirror.showReport" },
+    { label: "$(play) Try the demo (see a verdict in 10 seconds)", cmd: "agentmirror.tryDemo" },
+    { label: "$(checklist) Check the setup (doctor)", cmd: "agentmirror.doctor" },
+    { label: "$(add) Add the agent hook to this workspace", cmd: "agentmirror.installHook" },
+    { label: "$(output) Show the log", cmd: "agentmirror.showLog" },
+  ];
+  const pick = await vscode.window.showQuickPick(items, { placeHolder: "AgentMirror" });
+  if (pick) vscode.commands.executeCommand(pick.cmd);
+}
+
 function activate(context) {
   statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);   // must exist before anything calls setStatus
   context.subscriptions.push(statusItem);
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.installHook", installHook));
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.doctor", runDoctor));
+  context.subscriptions.push(vscode.commands.registerCommand("agentmirror.menu", showMenu));
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.tryDemo", () => tryDemo(context)));
   context.subscriptions.push(vscode.commands.registerCommand("agentmirror.showLog", () => { log("log opened"); logChannel.show(true); }));
+  statusItem.text = "$(shield) AgentMirror"; statusItem.tooltip = "AgentMirror: click for the menu (try the demo, open the last report, check the setup)"; statusItem.command = "agentmirror.menu"; statusItem.show();
   watchHookResults(context);
   // `@agentmirror` in the chat: shows the last sealed verdict as a chat message (deterministic text, not model output).
   if (vscode.chat && vscode.chat.createChatParticipant) {
