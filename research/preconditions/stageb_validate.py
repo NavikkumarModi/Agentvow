@@ -67,7 +67,6 @@ def validate(repo_dir: Path, c: dict) -> dict:
             out["s1"] = {"result": res, "counts": counts, "summary": summ}
             if res == "pass" and counts.get("passed"):
                 env_py, stratum = py, "S1"
-        shutil.rmtree(venv1, ignore_errors=True)
         # --- S2: CI-derived recipe (only when S1 failed for a dependency-like reason)
         if env_py is None:
             wf = {p.name: p.read_text() for p in (hw / ".github" / "workflows").glob("*.y*ml")} if (hw / ".github" / "workflows").is_dir() else {}

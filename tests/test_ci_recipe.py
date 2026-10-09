@@ -53,3 +53,12 @@ class CiRecipe(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Wrappers(unittest.TestCase):
+    def test_runner_prefixes_are_stripped_and_sync_tools_are_reported(self):
+        wf = "jobs:\n  t:\n    steps:\n      - run: uv sync --all-extras\n      - run: pip install -e .\n      - run: uv run pytest -q tests\n"
+        d, notes = ci_recipe.derive({"w.yml": wf})
+        self.assertEqual(d["test"], "pytest -q tests")
+        self.assertEqual(d["setup"], ["pip install -e ."])
+        self.assertTrue(any("skipped" in n for n in notes), notes)

@@ -71,8 +71,12 @@ def derive(workflow_texts: dict, repo_files: set | None = None):
                             continue
                         setup.append("pip install " + " ".join(shlex.quote(a) for a in args))
                         continue
-                    if re.match(r"^(python3? -m )?(pytest|py\.test|unittest)\b", ln) and test is None:
-                        test = ln
+                    cand = re.sub(r"^(?:uv run|poetry run|pipenv run|pdm run|hatch run|python3? -m )\s*(?:--\S+\s+)*", "", ln).strip()
+                    cand = "python -m " + cand if re.match(r"^unittest\b", cand) else cand
+                    if re.match(r"^(python3? -m )?(pytest|py\.test|unittest)\b", cand) and test is None:
+                        test = cand
+                    elif re.match(r"^(uv sync|poetry install|pdm install|pipenv install|hatch env)", ln):
+                        unsupported.append(ln[:60])
             if test is None:
                 continue
             data = {"schema": recipe_mod.SCHEMA, "setup": setup[:12], "test": test, "env": {k: v for k, v in env.items() if k.isupper()}}
