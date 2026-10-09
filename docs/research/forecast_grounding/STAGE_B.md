@@ -1,0 +1,57 @@
+# Stage B — real repositories and a second model: protocol DRAFT (2026-10-09; nothing in this document has been run)
+
+**Status: draft for the owner's review.** It becomes a pre-registration only when the decisions in section 0 are made and the document is committed unchanged before the first Stage B run. Related: `STAGE_A.md` (instrument accepted for synthetic tasks), `PRECONDITIONS_PREREG.md` and `PRECONDITIONS_PILOT_RESULTS.md` (pilot), `DIRECTION.md` (prior art; the closest paper is Vangala & Malik 2610.00425, not yet read in full).
+
+## 0. Decisions needed from the owner before any run
+1. **Budget tier.** Tier B1: ~60 tasks x 1 model x 1 run (~$30, hard cap $50). Tier B2 (only if B1 meets its gate): second model plus a no-recipe arm (+~$60-90, hard cap $120). Costs are estimates from pilot runs ($0.15 per synthetic run); real repositories will cost more per run and the cap is enforced per run (`--max-budget-usd`) and per tier.
+2. **Safety of running agents on real repositories.** In the pilot the tasks were ours. Here an agent will `pip install` third-party packages and run a third-party test suite **on your machine**. Required prerequisite **S0**: run the agent itself under the macOS sandbox (writes only to the task directory, its own virtualenv, scratch and Claude's session folder; secrets directories unreadable; network allowed because pip and the API need it) and show with a smoke test that it still authenticates and works. If S0 cannot be made to work, Stage B does not run on real repositories unless you explicitly accept the exposure.
+3. **Second agent/model.** Only Claude models are reachable here (Claude Sonnet 5 default; a smaller Claude model for B2). Other agent families (Codex, Cursor, Gemini) are not installed. If you can provide another CLI or API access, say so now; otherwise the paper must state "Claude only".
+4. **Release.** What may be published afterwards: code and protocols (already public), aggregate results; raw repository snapshots and agent transcripts stay local unless you decide otherwise (they contain third-party code).
+
+## 1. Questions and hypotheses (primary hypotheses fixed now)
+- **H1 (primary, generalisation):** on real tasks, some claims that are true in the agent's own environment are **not** reproduced by repository-only replay; the paired difference (recipe replay reproduces minus zero-config replay reproduces, same frozen patch) is positive.
+- **H2 (recovery with integrity):** the agent's recipe recovers support without invalid evidence: no replay is accepted whose `prepare` step altered existing files, and the recipe replay reproduces the agent-environment result in a share we estimate with an interval.
+- **H3 (expressivity):** the share of runs whose declared preconditions the recipe vocabulary cannot express is estimated; after Stage A's `prepare` it is expected to be small.
+- **H4 (necessity):** declared steps are necessary (removal breaks the replay) in a share estimated per step type; padding is identified (Stage A: all padding was `pip install -e .`).
+- **H5 (adversarial, separate offline suite, section 6):** every red-team recipe in the fixed list is refused or flagged; benign controls are not.
+Descriptive/exploratory only: effect of the recipe request on behaviour (repair versus declare), cost per accountable claim.
+
+## 2. Tasks
+**Source.** Merged, Python-repository pull requests from the AIDev dataset not used in any earlier study. A task is the PR re-posed: repository at the PR's base commit, the PR's **test changes applied**, the PR title and body as the problem statement, and the instruction "make the failing tests pass without editing the test files you were given". The agent writes the source change.
+**Structural filter (from a 240-PR read-only sample on 2026-10-09: 21 of 240 = 9%, in 12 of the sampled repositories, mostly OpenAI Codex PRs):** touches at least one non-test and one test `.py` file; at most 200 changed lines and 6 files; repository under 300 MB; at most **2 tasks per repository** (clustering control). From the 9,442 merged Python PRs this leaves several hundred candidates in a few dozen repositories; the final count of distinct repositories is reported and is itself a limit.
+**Validity screen B0 (no agent, no cost).** A candidate is *valid* only if a reference environment is known to reproduce the target tests **at the PR's head** in the clean sandbox: (a) *S1*: Agentvow's zero-config ladder passes the target tests at head; or (b) *S2*: the zero-config ladder fails at head with a missing dependency, but a **CI-derived recipe** (the `pip install` and `pytest` lines of the repository's own GitHub Actions workflow, parsed deterministically and validated by the same recipe validator) passes at head. Candidates failing both are dropped and counted by reason. S1 is the zero-config-favourable stratum, S2 the stratum where the setup knowledge lives outside the repository's own declarations; **results are reported per stratum and never pooled without the split**.
+**Selection.** Stratified random draw, seed fixed in the commit that carries this file, until 30 valid S1 and 30 valid S2 tasks (60) or the candidate list is exhausted; the achieved N is reported (an N below 40 turns B1 into a feasibility result, no inference).
+**The agent's starting environment** is a fresh empty virtualenv with network access to PyPI (no preloaded packages: ambient state is now whatever the agent installs), Python of the host.
+
+## 3. Runs and contexts
+Tier B1: one run per task, Claude default model, prompt **C1P** (recipe requested, `prepare` mentioned) — the same instruction as Stage A. The primary comparison needs no second prompt condition because it is **paired within a run**: the same frozen patch and claim are evaluated in four execution contexts.
+- **E_local**: the agent's environment (truth: the target tests pass there, run by us after the agent finishes).
+- **E_repo**: zero-config replay from the repository's own declarations.
+- **E_recipe**: replay of the agent's declared recipe (same validator and integrity guards as Stage A).
+- **E_freeze (control)**: clean environment built from the agent's exact `pip freeze`, to separate "the recipe is insufficient" from "the result does not reproduce even with the identical packages" (flaky or machine-dependent tests).
+Tier B2 adds: a second Claude model on the same tasks; and a **randomised half of tasks under C0 (no recipe requested)** to compare behaviour. The C0 arm cannot be recipe-replayed; it contributes E_local and E_repo only.
+Per run we save the Stage A artifact set plus the agent's `pip freeze`, the test selection (IDs actually executed in every replay), and the tree hashes of the test files before and after.
+
+## 4. Measures (all deterministic; no model judges anything)
+Truth in E_local; claim made and extracted (extractor frozen at the commit of this file); per-context result class (pass / fail / inconclusive) and Agentvow verdict; **accountability profile** per run; sufficiency of the recipe (E_recipe reproduces E_local); **test-selection fidelity** (the tests the patch added or changed are all executed by the recipe's test command; otherwise the run is flagged "narrowed", not counted as support); necessity and padding by ablation (Stage A procedure); replay determinism (full recipe replayed twice); recipe rejected and why; hidden state (ambient imports and session audit); time and cost.
+
+## 5. Analysis (fixed)
+Unit = task (one run each in B1). **Primary:** paired exact McNemar test, recipe-reproduces versus zero-config-reproduces, with the discordant counts reported; per stratum and overall; 95% intervals by exact (Clopper-Pearson) bounds on the discordant proportion and a repository-level bootstrap (resample repositories) for the overall difference. Secondary: Wilson intervals for sufficiency, expressivity, determinism, padding. No multiplicity correction for the descriptive items; H1 is the single confirmatory test.
+**Power (computed, exact binomial on discordant pairs):** with n = 60 paired tasks, 86% power to detect "recipe-only 20% vs zero-config-only 2%", 43% power for 12% vs 2%, 15% for 8% vs 2%; n = 120 gives 83% for 12% vs 2%. **B1 is therefore sized to detect a large effect only; a null B1 result does not show absence of a smaller effect**, and the report must say so. The minimum effect of scientific interest is fixed at a 10-point paired difference; smaller differences are reported as estimates.
+
+## 6. Instrument and adversarial checks (offline, no agent cost; done before B1)
+- **Red-team suite (H5)**: at least 15 hand-written recipes/patches with outcomes fixed in advance, including: `prepare` rewrites a test; recipe narrows the test command to a subset or to zero tests; recipe installs a package that shadows a project module; stale generated artifacts committed to the repository; test files modified after the patch; environment variable that disables test collection; a replay that passes only on the second attempt. Each is labelled expected-refuse/flag or expected-accept (benign control). Detection and false-flag rates are reported.
+- **New guard to add before B1**: test-selection fidelity (above), implemented and unit-tested.
+- **S0 sandboxed-agent smoke test** (section 0.2).
+- **Replay determinism on real repositories** is re-measured on the first 10 valid tasks before the main run; if fewer than 90% of full-recipe replays agree twice, flaky tasks are excluded by a fixed rule (disagreement on the reference replay at head) and counted.
+
+## 7. Gates
+- Go to B1 only if: owner decisions made; S0 passes; guard and red-team suite pass; at least 40 valid tasks (else the study is reported as feasibility).
+- Go to B2 only if B1: no instrument-criterion failure (Stage A criteria 1-5 re-checked), and cost per run within 1.5x of the estimate.
+- Stop and report immediately: any run that touches files outside its task directory or venv, any secret exposure, spend above the cap.
+
+## 8. Threats (stated in advance)
+Tasks are agent-authored PRs reposed as reconstruction tasks (not natural bug reports); S1/S2 selection depends on our own tooling's reachability; real-repository determinism unproven; one agent family; one repetition per task; models may have seen these public repositories; CI-derived recipes are parsed by a simple extractor and may miss steps (then the candidate is dropped, which biases the S2 stratum toward simple CI setups); agent runs are non-deterministic; AIDev is dominated by a few agents and repositories.
+
+## 9. Deviation policy
+Any change after the first Stage B run is logged here with date, reason and the measures it touches; tooling bugs are fixed with recomputation from saved artifacts (as in the pilot); no change to hypotheses, filters, seeds or analysis after seeing outcomes.
