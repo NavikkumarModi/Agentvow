@@ -142,5 +142,26 @@
         ]
       }
     ]
-  }
+  },
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NavikkumarModi/Agentvow.git"
+  },
+  "homepage": "https://github.com/NavikkumarModi/Agentvow#readme",
+  "bugs": {
+    "url": "https://github.com/NavikkumarModi/Agentvow/issues"
+  },
+  "galleryBanner": {
+    "color": "#111827",
+    "theme": "dark"
+  },
+  "keywords": [
+    "ai agent",
+    "copilot",
+    "claude code",
+    "verification",
+    "code review",
+    "hooks"
+  ]
 }

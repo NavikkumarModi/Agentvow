@@ -78,7 +78,7 @@ if [ -n "$WHL" ]; then
 fi
 
 section "7. VS Code extension package"
-( cd vscode && rm -f agentvow-*.vsix && npx --yes @vscode/vsce package --allow-missing-repository --no-dependencies >"$TMP/vsce.out" 2>&1 )
+( cd vscode && rm -f agentvow-*.vsix && npx --yes @vscode/vsce package --no-dependencies >"$TMP/vsce.out" 2>&1 )
 VSIX=$(ls vscode/agentvow-*.vsix 2>/dev/null | head -1)
 if [ -n "$VSIX" ]; then
   mv "$VSIX" "dist/agentvow-$V3.vsix"; VSIX="dist/agentvow-$V3.vsix"

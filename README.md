@@ -16,6 +16,8 @@ agentvow check --repo . --transcript msg.txt --ci --html report.html            
 ```
 Exit codes: `0` no contradiction found (scoped), `1` review required, `2` insufficient evidence, `3` tool error. Other options: `--markdown`, `--json`, `--session <Claude Code session.jsonl>`, `--base <ref>`, `--test-cmd`, `--test-timeout`, `--setup auto`, `--new-test-failures review`.
 
+![What the verdict view shows](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/report.png)
+
 ## See it in 10 seconds
 ```bash
 agentvow demo          # builds a small demo repo, checks "no downstream impact" against it and writes a sealed result

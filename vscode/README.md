@@ -1,5 +1,7 @@
 # Agentvow for VS Code
 
+![The verdict view](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/report.png)
+
 Shows, after any coding agent finishes, whether what it *said* matches what is *in your repository*: a verdict banner, a claim-to-reality map, and exactly what your approval would and would not mean.
 
 Works with **any agent**: paste its final message, use the clipboard or a selection, or point it at the latest Claude Code session. It calls the `agentvow` command (install with `pip install .` from the repository root), so the VS Code part has no logic of its own and the same report works in a terminal, a browser or CI.

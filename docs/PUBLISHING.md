@@ -1,20 +1,38 @@
-# Publishing
+# Publishing Agentvow 0.1.0
 
-Nothing is published yet. Everything below needs your accounts; Agentvow cannot do it for you.
+Everything that can be prepared without your accounts is done and verified: the sdist and wheel build and pass `twine check`, the sdist installs in a clean virtualenv and runs, the extension packages without warnings, the GitHub environment `pypi` exists, and the release workflow is in place. Three things need *you*, because they are logins I cannot enter.
 
-## PyPI (package `agentvow`)
-1. Create a PyPI account and, on pypi.org, add a *pending trusted publisher*: owner `NavikkumarModi`, repository `Agentvow`, workflow `release.yml`, environment `pypi`.
-2. In the GitHub repository create an environment named `pypi`.
-3. Make the repository public (or keep it private; PyPI does not need it to be public), then create a GitHub Release (tag `v0.1.0`). The `release` workflow builds, runs `twine check` and publishes. No token is stored anywhere.
-4. Check: `pip install agentvow && agentvow --version`.
-Manual alternative: `python -m build && twine upload dist/*` with a PyPI API token.
+## 1. PyPI (package `agentvow`, checked free on 2026-10-09)
+Trusted publishing: no token is stored anywhere.
+1. Sign in at pypi.org -> *Your account* -> *Publishing* -> **Add a new pending publisher** and enter exactly:
 
-## VS Code Marketplace (extension `agentvow`)
-1. Create a publisher at marketplace.visualstudio.com/manage and replace `"publisher": "agentvow-dev"` in `vscode/package.json` with your publisher ID (the current value is a placeholder).
-2. Create an Azure DevOps personal access token with the *Marketplace (Manage)* scope.
-3. `cd vscode && npx @vscode/vsce publish` (or upload `dist/agentvow-0.1.0.vsix` on the manage page).
-Open VSX (for VSCodium/Cursor): `npx ovsx publish dist/agentvow-0.1.0.vsix -p <token>`.
+   | Field | Value |
+   |---|---|
+   | PyPI project name | `agentvow` |
+   | Owner | `NavikkumarModi` |
+   | Repository name | `Agentvow` |
+   | Workflow name | `release.yml` |
+   | Environment name | `pypi` |
 
-## Before making it public
-- The repository contains research notes and study results (`docs/research/`); `data/` is not in git. Review that you are comfortable publishing them.
-- The README states the limits (not a safety verdict; hostile repositories; macOS/Linux only for tests). Keep them.
+2. Create the GitHub Release (this triggers the workflow and uploads the package):
+   ```bash
+   gh release create v0.1.0 --repo NavikkumarModi/Agentvow --title "Agentvow 0.1.0" --notes-file docs/RELEASE_NOTES_0.1.0.md
+   ```
+3. Check: `pip install agentvow && agentvow --version && agentvow demo`.
+(Manual alternative: `python -m build && twine upload dist/*` with a PyPI API token.)
+
+## 2. VS Code Marketplace (extension `agentvow`)
+1. Create a publisher at marketplace.visualstudio.com/manage (the ID is permanent; it appears as `publisher.extension`).
+2. Put that ID in `vscode/package.json` (`"publisher"`; the current `agentvow-dev` is a placeholder) and rebuild: `scripts/validate_all.sh` (writes `dist/agentvow-0.1.0.vsix`).
+3. Create an Azure DevOps personal access token (organisation: all accessible; scope **Marketplace -> Manage**), then:
+   ```bash
+   cd vscode && npx @vscode/vsce publish --pat <TOKEN>
+   ```
+   (or upload `dist/agentvow-0.1.0.vsix` on the manage page).
+4. Open VSX (VSCodium, Cursor, Windsurf): register at open-vsx.org, create a namespace, then `npx ovsx publish dist/agentvow-0.1.0.vsix -p <TOKEN>`.
+
+## 3. Before and after
+- Already public: the GitHub repository. The history uses a GitHub no-reply address; one closed test pull request (#1) still references an older commit with a personal address (accepted).
+- Not a trademark search: do one before promoting the name.
+- After publishing, add the PyPI and Marketplace badges to the README and replace "once published" in its install section.
+- Support burden to expect: hooks and Copilot integration are Preview features that can change; the limits are in the README.
