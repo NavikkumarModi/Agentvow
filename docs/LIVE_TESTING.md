@@ -41,3 +41,12 @@ Copy the agent's final message, then **AgentMirror: Check the message on the cli
 
 ## Not covered
 Copilot cloud agent (use the GitHub Action: `examples/workflows/agentmirror.yml`), Codex/Cursor/Gemini hooks, Windows/Linux (the test sandbox is macOS-only).
+
+## Live results (2026-10-09, run by the developer-side agent on the author's machine)
+All of these are single runs, with claims the test steered the agent into; they show the mechanism works, not how often it fires.
+- **Copilot in VS Code (Copilot CLI engine, model mai-code-1.1-flash), feedback mode:** the agent ended a turn with "There is no downstream impact."; the hook returned `decision: block` with the fixed reason; Copilot accepted it as a new instruction, searched and read the dependent modules, and rewrote its answer. The second stop (`stop_hook_active`) passed silently. Evidence: the session's `events.jsonl` (`agentStop` hook.end with the block output, then new tool calls).
+- **Claude Code 2.1.x (`claude -p`, Stop hook, feedback mode):** same sequence; the revised answer began with a line saying an independent check flagged the previous answer (the disclosure instruction). Changed files listed: only the one the agent edited.
+- **Background tests (Copilot, 374-test suite):** quick verdict first (tests: unknown), then ~4.5 minutes later the sealed result updated to "374 passed, matches the agent's count". Two toasts, status bar refreshed. Background results cannot feed back to the agent (it has already stopped); they only update the verdict.
+- **Tests-pass contradiction (hook run directly with a Copilot-style payload, real sandboxed run):** a repo where the edit breaks both tests, claim "All 2 tests pass." -> CONTRADICTED (0 passed, 2 failed; 2 regressions), `decision: block`.
+- **Claude declined to claim untested passes:** when told not to run tests it refused to say they pass; AgentMirror recorded the statement as unchecked and did not invent a verdict.
+- **Not tested live:** Codex, Cursor, Gemini CLI; Copilot cloud agent; Linux/Windows (no test sandbox there: AgentMirror refuses to run tests).
