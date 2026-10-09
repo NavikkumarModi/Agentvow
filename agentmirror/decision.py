@@ -102,6 +102,21 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
     return Decision(status, snap.commit, snap.dirty, changed, findings, scope, evidence, unexamined, touched)
 
 
+def _gap_summary(gaps: list) -> str:
+    """Say WHAT could not be analysed (by folder), not just that something could not."""
+    from collections import Counter
+    unsup = [g.split(": ", 1)[1] for g in gaps if g.startswith("unsupported language")]
+    other = len(gaps) - len(unsup)
+    parts = []
+    if unsup:
+        dirs = Counter(u.split("/")[0] if "/" in u else "(top level)" for u in unsup)
+        parts.append("non-Python code AgentMirror cannot analyse (" + ", ".join(f"{n} file(s) in {d}" for d, n in dirs.most_common(3)) +
+                     "); such code could still depend on the changed files, for example through an HTTP API or a subprocess call")
+    if other:
+        parts.append(f"{other} other item(s) that could not be read or have dynamic imports")
+    return "No Python consumers were found, but " + "; and ".join(parts) + "."
+
+
 def _no_impact(c, changed, changed_py, graph) -> Finding:
     if not changed_py:
         return Finding(c.text, c.kind, "UNKNOWN", "No changed Python files were found, so the claim cannot be checked.")
@@ -129,7 +144,7 @@ def _no_impact(c, changed, changed_py, graph) -> Finding:
                        unknowns=unknowns)
     if graph.gaps:
         return Finding(c.text, c.kind, "UNKNOWN",
-                       "No Python consumers were found, but some code could not be analysed.", unknowns=list(graph.gaps))
+                       _gap_summary(graph.gaps), unknowns=list(graph.gaps))
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",
                    "No other Python module imports the changed code. This does not cover runtime, config or other languages.")
 

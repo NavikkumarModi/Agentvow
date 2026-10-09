@@ -87,3 +87,10 @@ class Background(unittest.TestCase):
             self.assertEqual(done["findings"][0]["kind"], "tests_pass")
             self.assertNotEqual(done["findings"][0]["verdict"], "CONTRADICTED")
             self.assertTrue(reality.read_sealed_result(r / ".agentmirror/last")[0])
+
+
+class GapSummary(unittest.TestCase):
+    def test_names_the_unanalysable_folder(self):
+        from agentmirror.decision import _gap_summary
+        t = _gap_summary(["unsupported language, not analysed: frontend/a.ts", "unsupported language, not analysed: frontend/b.tsx", "could not parse x.py: SyntaxError"])
+        self.assertIn("2 file(s) in frontend", t); self.assertIn("HTTP API", t); self.assertIn("1 other", t)
