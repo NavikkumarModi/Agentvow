@@ -23,3 +23,6 @@ Report counts, Wilson 95% intervals, and repository-level counts (a repository c
 
 ## Known limits (stated in advance)
 CI failure is an imperfect label (flaky or environment-specific jobs); one annotator for failure categories; AIDev's agent mix is dominated by a few repositories; only Python; zero-config setup will leave many PRs unreachable; claims are taken from PR bodies, not agent transcripts.
+
+## Amendment 1 (2026-10-09, before any screening result was inspected)
+The explicit-claim population is nearly exhausted: only 214 claiming PRs not already screened in `ci_study.jsonl` exist, all from Copilot. The question "does the checker flag a false 'tests pass' statement?" does not need the statement to come from the PR body, so the population is widened: fresh Python-repository AIDev PRs of any agent (random, seed 2027, up to 400 per agent, not in `ci_study.jsonl`), and the statement checked is the fixed sentence **"All tests pass."** For PRs whose own body claims tests pass (the 214 Copilot PRs and any others) the PR's real claim is checked instead and they form a separate reported stratum ("real claim" vs "hypothetical claim"). All other rules above are unchanged. This is a design change made before looking at outcomes; it is disclosed in the results.
