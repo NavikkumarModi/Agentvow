@@ -36,3 +36,6 @@ Trusted publishing: no token is stored anywhere.
 - Not a trademark search: do one before promoting the name.
 - PyPI: published 2026-10-09 (v0.1.0, trusted publishing). The README now shows the PyPI and CI badges; add a Marketplace badge after the extension is published. The PyPI page keeps the README as of the release; it refreshes with the next version.
 - Support burden to expect: hooks and Copilot integration are Preview features that can change; the limits are in the README.
+
+## Status (2026-10-09)
+PyPI `agentvow` 0.1.0 and Marketplace `NavikkumarModi.agentvow` 0.1.0 are published and verified by installing each from its registry into a clean environment.

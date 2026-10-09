@@ -1,6 +1,6 @@
 # Agentvow
 
-[![PyPI](https://img.shields.io/pypi/v/agentvow)](https://pypi.org/project/agentvow/) [![CI](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml/badge.svg)](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/NavikkumarModi.agentvow)](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow) [![PyPI](https://img.shields.io/pypi/v/agentvow)](https://pypi.org/project/agentvow/) [![CI](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml/badge.svg)](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 When a coding agent says "all tests pass" or "nothing else depends on this", Agentvow checks that against the repository and tells you what it could confirm, what it contradicted, and what it could not check. It runs **outside** the agent (an agent must not grade itself), uses no LLM, and never approves, rejects or merges anything.
 
@@ -56,10 +56,8 @@ Copilot keeps only `decision`/`reason` from a hook's output, so **a hook cannot 
 Details and a step-by-step live test: `docs/LIVE_TESTING.md`.
 
 ## Install the VS Code extension
-```bash
-"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension dist/agentvow-0.1.0.vsix --force
-```
-Then **Developer: Reload Window**. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
+From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.1.0.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
+Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
 ## Safety in one paragraph
 Running tests executes the project's code. It runs in a sandbox: macOS `sandbox-exec` or Linux `bubblewrap` (`apt install bubblewrap`; on Ubuntu 24.04+ unprivileged user namespaces must be allowed, e.g. `sysctl kernel.apparmor_restrict_unprivileged_userns=0`; `agentvow doctor` tells you). Network denied, file writes only inside a throwaway worktree plus a private scratch directory, signing key and credential folders unreadable, whole process group killed on timeout; on Windows, or where no working sandbox exists, Agentvow refuses to run tests (static checks and CI reading still work; `agentvow doctor` says which). The Linux sandbox makes the whole filesystem read-only; the macOS one allows OS services by default (a review showed a Mach service could still write outside it; common helpers like `open`/`defaults`/`osascript` are blocked, which is not complete containment). Results are HMAC-sealed with a key outside the repository, which stops casual forgery and files copied from elsewhere, **but test results are only as trustworthy as the repository's own test code**: a hostile `conftest.py` can print fake pass counts. Treat a "no contradiction" on an untrusted repository accordingly. Text from agents and repositories is length-bounded, stripped of control characters and escaped in reports and in plain-text output. Full model, reviews and open weaknesses: `docs/SECURITY_MODEL.md`, `docs/research/RISKS.md`.
