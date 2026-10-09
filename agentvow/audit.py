@@ -195,6 +195,63 @@ def _env(assign, recipe_env, res, part):
     res.findings.append(Finding("env_var", name + (" (looks like a secret)" if secret else ""), where, part.split("=", 1)[0][:40]))   # the VALUE is never recorded
 
 
+_IMPORT_SNIPPET = (
+    "import ast,json,sys,pathlib,importlib.metadata as m\n"
+    "root=pathlib.Path(sys.argv[1]); local={p.name.split('.')[0] for p in root.iterdir() if not p.name.startswith('.')}\n"
+    "mods=set()\n"
+    "for f in root.rglob('*.py'):\n"
+    "    if any(x in f.parts for x in ('.git','node_modules','.venv','venv','build','dist','.agentvow')): continue\n"
+    "    try: t=ast.parse(f.read_text(encoding='utf-8'))\n"
+    "    except Exception: continue\n"
+    "    for n in ast.walk(t):\n"
+    "        if isinstance(n,ast.Import): mods|={a.name.split('.')[0] for a in n.names}\n"
+    "        elif isinstance(n,ast.ImportFrom) and n.level==0 and n.module: mods.add(n.module.split('.')[0])\n"
+    "d=m.packages_distributions(); out={}\n"
+    "for x in sorted(mods):\n"
+    "    if x in sys.stdlib_module_names or x in local: continue\n"
+    "    out[x]=sorted(set(d.get(x,[])))\n"
+    "print(json.dumps(out))\n")
+
+
+def ambient_imports(repo: Path, python: str, recipe=None, timeout: int = 60) -> list:
+    """Third-party modules the code under `repo` imports that resolve to distributions installed in `python`'s environment but are declared
+    NOWHERE (repository manifests, recipe): ambient state. Runs a fixed snippet with the given interpreter (it reads files, never executes the
+    project). -> list of (module, distribution) pairs."""
+    import subprocess
+    p = subprocess.run([python, "-I", "-c", _IMPORT_SNIPPET, str(repo)], capture_output=True, text=True, timeout=timeout)
+    if p.returncode:
+        return []
+    declared = repo_declared(repo)
+    if recipe is not None:
+        for step in recipe.setup:
+            declared |= {norm(a) for a in step if not a.startswith("-") and a != "." and "/" not in a and not a.startswith(".")}
+    out = []
+    for mod, dists in json.loads(p.stdout or "{}").items():
+        names = [norm(x) for x in dists] or [norm(mod)]
+        if not any(n in declared for n in names):
+            out.append((mod, names[0]))
+    return out
+
+
+def env_values(commands: list) -> dict:
+    """LOCAL use only (the pilot harness re-runs a test with the variables the agent exported). Values are never printed or stored in audit output."""
+    out = {}
+    for cmd in commands:
+        for part in _SPLIT.split(cmd):
+            try:
+                toks = shlex.split(part.strip(), comments=True)
+            except ValueError:
+                continue
+            i = 0
+            if toks[:1] == ["export"]:
+                toks = toks[1:]
+            while i < len(toks) and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", toks[i]):
+                k, v = toks[i].split("=", 1)
+                out[k] = v
+                i += 1
+    return out
+
+
 def render(a: Audit) -> str:
     lines = [f"Hidden-state audit: {a.commands_seen} shell command(s) read" + (" (session truncated)" if a.truncated else "") + "."]
     if not a.findings:

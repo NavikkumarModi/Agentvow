@@ -67,3 +67,25 @@ class Audit(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Ambient(unittest.TestCase):
+    def test_imports_resolving_to_installed_but_undeclared_distributions(self):
+        import sys
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t)
+            (r / "pyproject.toml").write_text('[project]\nname="x"\ndependencies=["attrs"]\n')
+            (r / "pilot").mkdir(); (r / "pilot" / "__init__.py").write_text("")
+            (r / "pilot" / "m.py").write_text("import os, attrs\nimport pytest\nfrom pilot import x\nimport definitely_not_installed_zz\n")
+            out = dict(audit.ambient_imports(r, sys.executable))
+            self.assertIn("pytest", out)                      # installed here, declared nowhere
+            self.assertNotIn("attrs", out)                    # declared
+            self.assertNotIn("os", out); self.assertNotIn("pilot", out)   # stdlib / repo-local
+            self.assertIn("definitely_not_installed_zz", out)  # not installed anywhere (kept: still undeclared)
+
+    def test_the_recipe_counts_as_a_declaration(self):
+        import sys
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t); (r / "a.py").write_text("import pytest\n")
+            rec = recipe.parse({"setup": ["pip install pytest"], "test": "pytest"})
+            self.assertEqual(audit.ambient_imports(r, sys.executable, rec), [])
