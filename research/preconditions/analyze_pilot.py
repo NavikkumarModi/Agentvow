@@ -50,8 +50,27 @@ def taxonomy(r):
     return "other/unclassified: " + s[:60]
 
 
+def recompute_audit(rows):
+    """The harness stored audit values from a parser with a plumbing bug (see the deviation log); recompute from the saved session files."""
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root))
+    from agentvow import audit, recipe as recipe_mod
+    for r in rows:
+        f = next(iter((Path.home() / ".claude" / "projects").glob(f"*/{r['session_id']}.jsonl")), None)
+        cmds, trunc = audit.session_commands(f) if f else ([], False)
+        rcp = None
+        try:
+            if r.get("recipe_text"):
+                rcp = recipe_mod.parse(json.loads(r["recipe_text"]))
+        except Exception:
+            pass
+        a = audit.audit(cmds, root / "data" / "preconditions" / "tasks" / r["task"] / "repo", rcp, trunc)
+        r["audit"] = {"commands": a.commands_seen, "undeclared": [(x.kind, x.detail) for x in a.undeclared], "all": [(x.kind, x.detail, x.declared) for x in a.findings]}
+
+
 def main():
     rows = [json.loads(l) for l in RES.read_text().splitlines() if l.strip()]
+    recompute_audit(rows)
     print(f"{len(rows)} runs; tasks {len({r['task'] for r in rows})}; cost ${sum(r.get('cost_usd') or 0 for r in rows):.2f}; "
           f"errors {sum(bool(r.get('is_error')) for r in rows)}; agent exit!=0 {sum(r.get('agent_exit') != 0 for r in rows)}")
     by = defaultdict(list)
