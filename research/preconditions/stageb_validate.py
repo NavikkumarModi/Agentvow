@@ -23,6 +23,7 @@ D = ROOT / "data" / "preconditions"
 CANDS, OUT = D / "stageb_cands.jsonl", D / "stageb_validated.jsonl"
 WORK = D / "stageb_work"
 SEED, QUOTA, PER_REPO = 2028, 30, 2
+MAX_TRIES = 4   # a repository with this many failed attempts and no valid task is skipped (its failure is repo-level: no reference environment); logged in STAGE_B.md section 11
 MIN_FREE = 2.5 * 1024**3
 
 
@@ -129,7 +130,8 @@ def main():
                 print("disk low; stopping", flush=True)
             break
         todo = [c for c in items if (c["repo"], c["pr"]) not in done]
-        if not todo or per_repo.get(repo, 0) >= PER_REPO:
+        tries = sum(1 for k in done if k[0] == repo)
+        if not todo or per_repo.get(repo, 0) >= PER_REPO or (tries >= MAX_TRIES and per_repo.get(repo, 0) == 0):
             continue
         rd = WORK / repo.replace("/", "_")
         shutil.rmtree(rd, ignore_errors=True)
@@ -141,8 +143,9 @@ def main():
             continue
         try:
             for c in todo:
-                if per_repo.get(repo, 0) >= PER_REPO:
+                if per_repo.get(repo, 0) >= PER_REPO or (tries >= MAX_TRIES and per_repo.get(repo, 0) == 0):
                     break
+                tries += 1
                 t0 = time.time()
                 try:
                     res = validate(rd, c)

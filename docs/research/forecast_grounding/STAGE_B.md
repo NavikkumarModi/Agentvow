@@ -66,3 +66,4 @@ Any change after the first Stage B run is logged here with date, reason and the 
 ## 11. Log (2026-10-09)
 - Owner accepted the S0 residual risks.
 - Phase-1 candidate screen added (`research/preconditions/stageb_candidates.py`): **seed 2028**, sample of up to 2,600 merged Python AIDev PRs not used in any earlier study, structural filter as in section 2. Fixed in the commit that carries this entry, before the screen was run.
+- **2026-10-09, before any valid task had been selected:** the validity screen showed one repository (133 of the 325 candidates) failing every attempt at the repository level (no reference environment, about 47 s per attempt). Screening-efficiency rule added: a repository is abandoned after 4 failed attempts with no valid task (`MAX_TRIES = 4`). Skipped candidates are counted in the report; this can only reduce the number of tasks from repositories without a reference environment, which the validity rule already excludes.
