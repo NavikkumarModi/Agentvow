@@ -111,6 +111,52 @@ def _tree_hash(repo: Path, commit: str) -> str:
     return h.hexdigest()[:16]
 
 
+def _file_hash(p: Path) -> str:
+    try:
+        if p.is_symlink():
+            return "symlink"
+        if not p.is_file():
+            return "missing"
+        if p.stat().st_size > 5_000_000:
+            return f"big:{p.stat().st_size}:{int(p.stat().st_mtime)}"
+        return hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+    except OSError:
+        return "unreadable"
+
+
+def turn_state(repo: Path) -> dict:
+    """HEAD plus a hash of every file that differs from HEAD (modified, new, deleted): the repository as it stood at the end of a turn."""
+    files = sorted(set(_git(repo, "diff", "--name-only", "HEAD").splitlines()) |
+                   set(_git(repo, "ls-files", "-o", "--exclude-standard").splitlines()))
+    return {"head": _git(repo, "rev-parse", "HEAD"),
+            "files": {f: _file_hash(repo / f) for f in files if not f.startswith(".agentmirror/")}}
+
+
+def save_turn_state(repo: Path) -> None:
+    safe_write(repo, Path(".agentmirror") / "turn_state.json", json.dumps(sign_record(turn_state(repo))))
+
+
+def load_turn_state(repo: Path):
+    """The state saved at the end of the previous check in this repository, if it is intact and ours; else None."""
+    try:
+        rec = json.loads((repo / ".agentmirror" / "turn_state.json").read_text())
+        return rec if verify_record(rec) and isinstance(rec.get("files"), dict) and rec.get("head") else None
+    except (OSError, ValueError):
+        return None
+
+
+def changed_this_turn(repo: Path, prev: dict) -> list:
+    """Files that changed since `prev` was saved: new commits, and files whose content differs from (or is absent in) the earlier state."""
+    cur = turn_state(repo)
+    out = {f for f in set(cur["files"]) | set(prev["files"]) if cur["files"].get(f) != prev["files"].get(f)}
+    if prev["head"] != cur["head"]:
+        try:
+            out |= set(_git(repo, "diff", "--name-only", f"{prev['head']}..{cur['head']}").splitlines())
+        except CollectorError:
+            pass
+    return sorted(f for f in out if not f.startswith(".agentmirror/"))
+
+
 def snapshot(repo: Path) -> Snapshot:
     commit = _git(repo, "rev-parse", "HEAD")
     dirty = bool(_git(repo, "status", "--porcelain", "--", ".", ":(exclude).agentmirror"))
