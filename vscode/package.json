@@ -3,7 +3,7 @@
   "displayName": "Agentvow",
   "description": "Check what a coding agent says it did against what is actually in your repository, before you approve.",
   "version": "0.1.0",
-  "publisher": "agentvow-dev",
+  "publisher": "NavikkumarModi",
   "license": "MIT",
   "engines": {
     "vscode": "^1.95.0"

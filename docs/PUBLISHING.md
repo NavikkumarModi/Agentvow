@@ -23,7 +23,7 @@ Trusted publishing: no token is stored anywhere.
 
 ## 2. VS Code Marketplace (extension `agentvow`)
 1. Create a publisher at marketplace.visualstudio.com/manage (the ID is permanent; it appears as `publisher.extension`).
-2. Put that ID in `vscode/package.json` (`"publisher"`; the current `agentvow-dev` is a placeholder) and rebuild: `scripts/validate_all.sh` (writes `dist/agentvow-0.1.0.vsix`).
+2. Put that ID in `vscode/package.json` (`"publisher"`; now set to `NavikkumarModi`) and rebuild: `scripts/validate_all.sh` (writes `dist/agentvow-0.1.0.vsix`).
 3. Create an Azure DevOps personal access token (organisation: all accessible; scope **Marketplace -> Manage**), then:
    ```bash
    cd vscode && npx @vscode/vsce publish --pat <TOKEN>
