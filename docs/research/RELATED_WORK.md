@@ -1,7 +1,7 @@
 # Related Work (first pass; all `[snippet]`)
 
 ## 1. Claim-vs-reality verification for coding agents
-backcheck, Aga Verify Agent, AgentCheck and Receipts share one principle: no model in the verdict path; bind verification to the actual repository state. They are the nearest products to AgentMirror's reconciliation layer. Differences: they verify *completion claims* ("tests pass", "fixed") against the agent's own transcript or re-run commands. None (from snippets) models system reality beyond the diff (consumers, architecture, policy) or asks whether an unverified state could flip the decision.
+backcheck, Aga Verify Agent, AgentCheck and Receipts share one principle: no model in the verdict path; bind verification to the actual repository state. They are the nearest products to Agentvow's reconciliation layer. Differences: they verify *completion claims* ("tests pass", "fixed") against the agent's own transcript or re-run commands. None (from snippets) models system reality beyond the diff (consumers, architecture, policy) or asks whether an unverified state could flip the decision.
 
 ## 2. Evidence and provenance for agents
 NIST evaluation probes, ClaimReceipt, the Decision Evidence Maturity Model, NovaFabric, Agent Flight Recorder, Agent-Native Telemetry and the evidence-tracing survey (2606.04990) cover tamper-evident records, sufficiency/coverage and audit trails. They address "is the record trustworthy / sufficient", not "what plausible reality contradicts the conclusion".
@@ -16,7 +16,7 @@ Correlated-error results for LLM panels (2609.22512, 2605.29800, 2606.29270) jus
 archagent supplies deterministic architecture-invariant checking; OPA/Cedar/AgentCore Policy/Dogwood supply pre-action authorization and action-sequence runtime verification. These are sources of reality evidence to import.
 
 ## 6. Impact / blast-radius analysis
-Commercial and OSS tools compute downstream consumers from dependency graphs at PR time. The "hidden downstream dependency" detector is an existing capability; AgentMirror should consume it.
+Commercial and OSS tools compute downstream consumers from dependency graphs at PR time. The "hidden downstream dependency" detector is an existing capability; Agentvow should consume it.
 
 ## 7. Visualization and observability
 AgentGUI, Agent Trajectory Explorer, TraceView, Graphectory and OTel-based stacks show trajectories. None claims decision-centric claim/reality views. Agent Map is an engineering/UX contribution only.

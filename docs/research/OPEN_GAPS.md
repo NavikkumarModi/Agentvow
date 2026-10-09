@@ -4,7 +4,7 @@
 2. **Decision-impact suppression** (show only unknowns that can flip the approve/reject rule) and its effect on review burden and alert fatigue. Neighbours: pivotal-vote analysis, Planfence frontier. Not found as a human-evaluated mechanism.
 3. **Structural independence typing** capping SUPPORTED. Existing work is statistical or role-based. N-version diversity and common-cause failure literature unsearched and likely has analogues.
 4. **Claim-vs-reality view for humans.** Visualization SOTA is process-centric; no claim-vs-reality decision view found.
-5. **Human-centred evaluation** with seeded divergences, AgentMirror-error trials (constant-reliability verifiers breed complacency), an LLM-reviewer arm, Need-for-Cognition and difficulty covariates, appropriate-reliance metrics. Tension: forcing functions reduce overreliance but add burden; the research question's "without increasing review burden" must be tested as a trade-off, not assumed.
+5. **Human-centred evaluation** with seeded divergences, Agentvow-error trials (constant-reliability verifiers breed complacency), an LLM-reviewer arm, Need-for-Cognition and difficulty covariates, appropriate-reliance metrics. Tension: forcing functions reduce overreliance but add burden; the research question's "without increasing review burden" must be tested as a trade-off, not assumed.
 6. **Approval-scope semantics** (what approval does NOT authorize): US12688261 is adjacent; not otherwise audited.
 
 ## Open decisions flowing from the SOTA

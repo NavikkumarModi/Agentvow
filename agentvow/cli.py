@@ -25,7 +25,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
     git = lambda *x: subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), *x], capture_output=True, text=True, check=True).stdout.strip()
     head, base_sha = git("rev-parse", "HEAD"), git("rev-parse", "--verify", "--end-of-options", base + "^{commit}")
     subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "prune"], capture_output=True)   # leftovers of a killed earlier run
-    tmp = Path(tempfile.mkdtemp(prefix="agentmirror_"))
+    tmp = Path(tempfile.mkdtemp(prefix="agentvow_"))
     try:
         for name, sha in (("base", base_sha), ("head", head)):
             git("worktree", "add", "--detach", str(tmp / name), sha)
@@ -42,7 +42,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
             b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub)
             h = runner.run_tests(tmp / "head", argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
                                  write=False, suite=name, subdir=sub, base_repo=tmp / "base")
-            reality.safe_write(repo, Path(".agentmirror") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
+            reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
     finally:
         for name in ("base", "head"):
             subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
@@ -55,7 +55,7 @@ def _write_sealed(repo: Path, d) -> None:
     obj["run_id"] = uuid.uuid4().hex
     obj["repo"] = os.path.realpath(repo)   # bound to this repository: a result copied from another one is rejected by the extension
     page, dec = render_html(d).encode("utf-8"), json.dumps(obj).encode("utf-8")
-    last = Path(".agentmirror") / "last"
+    last = Path(".agentvow") / "last"
     reality.safe_write(repo, last / "report.html", page)
     reality.safe_write(repo, last / "decision.json", dec)
     reality.safe_write(repo, last / "decision.sig", reality.seal(page, dec))  # lets the editor extension reject files it did not receive from this tool
@@ -64,17 +64,17 @@ def _write_sealed(repo: Path, d) -> None:
 
 def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a) -> None:
     """Run the tests AFTER the hook has returned (they can take minutes; agents give hooks about a minute): a detached process updates the result."""
-    spool = Path(tempfile.mkdtemp(prefix="agentmirror_turn_"))
+    spool = Path(tempfile.mkdtemp(prefix="agentvow_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
-    cmd = [sys.executable, "-m", "agentmirror_check", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
+    cmd = [sys.executable, "-m", "agentvow", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
            "--test-timeout", str(a.test_timeout)] + (["--python", a.python] if a.python else [])
     subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 def run_finish_turn(a) -> int:
     repo, spool = Path(a.repo).resolve(), Path(a.spool)
-    lock = repo / ".agentmirror" / "finish.lock"
+    lock = repo / ".agentvow" / "finish.lock"
     try:
         text = (spool / "message.txt").read_text(encoding="utf-8")
         turn_changed = json.loads((spool / "changed.json").read_text())
@@ -85,12 +85,12 @@ def run_finish_turn(a) -> int:
                 return 0
         except (OSError, ValueError):
             pass
-        reality.safe_write(repo, Path(".agentmirror") / "finish.lock", str(os.getpid()))
+        reality.safe_write(repo, Path(".agentvow") / "finish.lock", str(os.getpid()))
         py = a.python or envsetup.default_python(repo)
         collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         d = check(repo, a.base, text, None, "unknown", changed_override=turn_changed)
         d.scope += " Includes a test run that finished after the agent stopped."
-        cur = reality.read_sealed_result(repo / ".agentmirror" / "last")[0]
+        cur = reality.read_sealed_result(repo / ".agentvow" / "last")[0]
         if cur and cur.get("run_id") == a.run_id:   # still this turn's result: a newer turn must not be overwritten by a slow run
             _write_sealed(repo, d)
         return 0
@@ -107,15 +107,15 @@ def run_hook(a) -> int:
     """Stop/agentStop hook for any agent (Claude Code, VS Code/Copilot, Copilot CLI/cloud agent, Codex, Cursor, Gemini...).
 
     Informs, never blocks: exit 0 and no "decision" field. The result is (1) printed as a systemMessage for harnesses that
-    show it, and (2) written to <repo>/.agentmirror/last/ so an editor extension can display it for harnesses that do not."""
+    show it, and (2) written to <repo>/.agentvow/last/ so an editor extension can display it for harnesses that do not."""
     try:
         payload = json.loads(sys.stdin.read() or "{}")
         info = adapters.parse_hook_payload(payload)
-        if os.environ.get("AGENTMIRROR_DEBUG") and info["cwd"] and (Path(info["cwd"]) / ".git").exists():
+        if os.environ.get("AGENTVOW_DEBUG") and info["cwd"] and (Path(info["cwd"]) / ".git").exists():
             # structure only (key names, types, lengths): safe to share to diagnose an unknown agent format
             shapes = {"hook_payload": adapters.shape_of(payload), "parsed": {k: bool(v) for k, v in info.items()},
                       "transcript": adapters.transcript_shapes(Path(info["transcript"]).expanduser()) if info["transcript"] else None}
-            reality.safe_write(Path(info["cwd"]).resolve(), Path(".agentmirror") / "last" / "payload_shape.json", json.dumps(shapes, indent=2))
+            reality.safe_write(Path(info["cwd"]).resolve(), Path(".agentvow") / "last" / "payload_shape.json", json.dumps(shapes, indent=2))
         if info["loop"]:
             return 0
         repo = Path(info["cwd"] or ".").resolve()
@@ -125,7 +125,7 @@ def run_hook(a) -> int:
         if not text and info["transcript"]:
             # Agents run the stop hook milliseconds after writing the final answer (observed: 5 ms with Copilot), so the transcript may not
             # contain it yet. Wait briefly for it instead of judging nothing, or worse the previous turn's answer.
-            deadline = time.time() + float(os.environ.get("AGENTMIRROR_WAIT", "3"))
+            deadline = time.time() + float(os.environ.get("AGENTVOW_WAIT", "3"))
             tpath = Path(info["transcript"]).expanduser()
             while True:
                 msg, is_final, cop = adapters.final_message_info_file(tpath)
@@ -146,7 +146,7 @@ def run_hook(a) -> int:
         prev = reality.load_turn_state(repo)
         turn_changed = reality.changed_this_turn(repo, prev) if prev else None
         d = check(repo, base, text, extra, a.new_test_failures, message_missing=unreadable, changed_override=turn_changed)
-        d.scope += (" Changes are counted since the previous AgentMirror check in this repository (this turn, plus anything you edited in between)."
+        d.scope += (" Changes are counted since the previous Agentvow check in this repository (this turn, plus anything you edited in between)."
                     if prev else " First check in this repository: every uncommitted change is counted, including work that predates this turn.")
         d.scope += f" Compared against {base} ({base_how}); if that is not the state before the agent's work, regressions can be hidden."
         msg = render(d)
@@ -155,12 +155,12 @@ def run_hook(a) -> int:
         if a.background_tests and not a.run_tests:
             _spawn_finish(repo, base, text, turn_changed, run_id, a)
     except Exception as e:
-        msg = f"AgentMirror could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
+        msg = f"Agentvow could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
         try:   # a crash is not a verdict: replace any older sealed result so a stale all-clear is not left on display
             r = locals().get("repo")
             if r is not None and (r / ".git").exists():
                 _write_sealed(r, Decision("INSUFFICIENT EVIDENCE", "unknown", False, [], [Finding(
-                    "(the check could not complete)", "error", "UNKNOWN", f"AgentMirror failed on this turn ({type(e).__name__}). Nothing was verified.")],
+                    "(the check could not complete)", "error", "UNKNOWN", f"Agentvow failed on this turn ({type(e).__name__}). Nothing was verified.")],
                     "No check completed.", []))
         except Exception:
             pass
@@ -172,20 +172,20 @@ def run_hook(a) -> int:
     return 0
 
 
-INSTR_BEGIN, INSTR_END = "<!-- agentmirror:begin -->", "<!-- agentmirror:end -->"
+INSTR_BEGIN, INSTR_END = "<!-- agentvow:begin -->", "<!-- agentvow:end -->"
 
 
 def instructions_block(exe: str) -> str:
     q = f'"{exe}"' if any(ch in exe for ch in " \t") else exe
-    return (f"{INSTR_BEGIN}\n## AgentMirror check\n"
+    return (f"{INSTR_BEGIN}\n## Agentvow check\n"
             "When you changed code, or you report test results, or you state that something is unaffected, then BEFORE your final answer run this in the "
-            "terminal, replacing the heredoc body with the exact draft of your final answer. Show its output under the heading \"AgentMirror check\" and "
+            "terminal, replacing the heredoc body with the exact draft of your final answer. Show its output under the heading \"Agentvow check\" and "
             "do not edit it. If it lists a contradicted claim, correct your answer first.\n\n"
-            f"```bash\n{q} check --repo . --transcript - --markdown - <<'AGENTMIRROR_EOF' || true\n<your draft final answer>\nAGENTMIRROR_EOF\n```\n{INSTR_END}\n")
+            f"```bash\n{q} check --repo . --transcript - --markdown - <<'AGENTVOW_EOF' || true\n<your draft final answer>\nAGENTVOW_EOF\n```\n{INSTR_END}\n")
 
 
 def run_agent_instructions(a) -> int:
-    exe = shutil.which("agentmirror") or sys.argv[0]
+    exe = shutil.which("agentvow") or sys.argv[0]
     block = instructions_block(os.path.abspath(exe))
     if not a.write:
         print(block)
@@ -196,11 +196,11 @@ def run_agent_instructions(a) -> int:
         return 3
     existing = target.read_text(encoding="utf-8") if target.exists() else ""
     if INSTR_BEGIN in existing:
-        print(f"{target} already contains the AgentMirror block; left unchanged.")
+        print(f"{target} already contains the Agentvow block; left unchanged.")
         return 0
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text((existing.rstrip() + "\n\n" if existing.strip() else "") + block, encoding="utf-8")
-    print(f"added the AgentMirror block to {target}")
+    print(f"added the Agentvow block to {target}")
     return 0
 
 
@@ -212,13 +212,13 @@ def context_for_agent(dec: dict) -> str:
     f = [x for x in dec.get("findings", []) if x.get("kind") != "snapshot"]
     bad = [x for x in f if x.get("verdict") == "CONTRADICTED"]
     unk = [x for x in f if x.get("verdict") == "UNKNOWN"]
-    lines = [f"AgentMirror (an independent, deterministic check; not an AI) examined your previous reply. Result: {str(dec.get('status', 'unknown'))[:60]}. "
+    lines = [f"Agentvow (an independent, deterministic check; not an AI) examined your previous reply. Result: {str(dec.get('status', 'unknown'))[:60]}. "
              f"{len(bad)} contradicted, {len(unk)} unknown."]
     if f and all(x.get("kind") in ("none", None) for x in f):
         lines.append("It found no checkable claims in that reply, so nothing was verified.")
     for x in bad[:5]:
         lines.append(f'- contradicted: "{str(x.get("claim", ""))[:160]}" ({why.get(x.get("kind"), "the repository contradicts it")})')
-    lines.append("Begin your next answer with ONE short line telling the user this AgentMirror result, quoting the result text exactly. "
+    lines.append("Begin your next answer with ONE short line telling the user this Agentvow result, quoting the result text exactly. "
                  "Do not change anything you said earlier unless a claim is listed as contradicted.")
     return "\n".join(lines)
 
@@ -230,7 +230,7 @@ def run_prompt_hook(a) -> int:
         payload = json.loads(sys.stdin.read() or "{}")
         info = adapters.parse_hook_payload(payload)
         repo = Path(info["cwd"] or ".").resolve()
-        last = repo / ".agentmirror" / "last"
+        last = repo / ".agentvow" / "last"
         dec, stamp = reality.read_sealed_result(last)
         if dec is not None and stamp:
             delivered = (last / "delivered.sig").read_text().strip() if (last / "delivered.sig").is_file() else ""
@@ -238,7 +238,7 @@ def run_prompt_hook(a) -> int:
             if stamp != delivered and worth:
                 out = {"additionalContext": context_for_agent(dec)}
             if stamp != delivered:
-                reality.safe_write(repo, Path(".agentmirror") / "last" / "delivered.sig", stamp)   # deliver each verdict at most once
+                reality.safe_write(repo, Path(".agentvow") / "last" / "delivered.sig", stamp)   # deliver each verdict at most once
     except Exception:
         out = {}
     print(json.dumps(out))
@@ -254,9 +254,9 @@ def agent_feedback(d) -> str | None:
     if not bad:
         return None
     lines = [f'- "{f.claim[:160]}": {why.get(f.kind, "the repository contradicts it")}' for f in bad[:5]]
-    return ("An independent check (AgentMirror) found that these statements in your last message are contradicted by the repository:\n" + "\n".join(lines)
+    return ("An independent check (Agentvow) found that these statements in your last message are contradicted by the repository:\n" + "\n".join(lines)
             + "\nPlease verify them and revise your final answer to say only what is true; do not repeat the contradicted statements."
-            + "\nStart your revised answer with one short line telling the user that an independent check (AgentMirror) flagged your previous answer and which statement it corrected, "
+            + "\nStart your revised answer with one short line telling the user that an independent check (Agentvow) flagged your previous answer and which statement it corrected, "
               "so the user knows the answer changed and why.")
 
 
@@ -276,8 +276,8 @@ def final_message(path: Path):
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(prog="agentmirror")
-    ap.add_argument("--version", action="version", version=f"agentmirror {__version__}")
+    ap = argparse.ArgumentParser(prog="agentvow")
+    ap.add_argument("--version", action="version", version=f"agentvow {__version__}")
     sub = ap.add_subparsers(dest="cmd", required=True)
     ft = sub.add_parser("finish-turn", help=argparse.SUPPRESS)
     for flag in ("--repo", "--base", "--spool", "--run-id"):
@@ -285,10 +285,10 @@ def main(argv=None) -> int:
     ft.add_argument("--python", default=None)
     ft.add_argument("--test-timeout", type=int, default=600)
     dm = sub.add_parser("demo", help="build a small demo repository, check a sample claim and write the sealed result (see the verdict without an agent)")
-    dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentmirror-demo"))
+    dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentvow-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
     d.add_argument("--repo", default=".")
-    ai = sub.add_parser("agent-instructions", help="print (or write) instructions that make a chat agent run AgentMirror itself and show the verdict in the chat")
+    ai = sub.add_parser("agent-instructions", help="print (or write) instructions that make a chat agent run Agentvow itself and show the verdict in the chat")
     ai.add_argument("--write", metavar="PATH", help="append the block to this file (e.g. .github/copilot-instructions.md); idempotent")
     ph = sub.add_parser("prompt-hook", help="UserPromptSubmit hook: hand the previous turn's sealed verdict to the agent once, as context, so it can state it in chat")
     ph.add_argument("--min", choices=["always", "review"], default="always", help="always: every new verdict; review: only when a claim was contradicted")
@@ -313,7 +313,7 @@ def main(argv=None) -> int:
     c.add_argument("--json", action="store_true")
     c.add_argument("--run-tests", action="store_true",
                    help="run the tests at --base and HEAD in temporary worktrees (network denied, macOS sandbox)")
-    c.add_argument("--python", default=None, help="python used to run tests. Default: the project's own .venv/venv/env if present, else the interpreter running agentmirror")
+    c.add_argument("--python", default=None, help="python used to run tests. Default: the project's own .venv/venv/env if present, else the interpreter running agentvow")
     c.add_argument("--setup", choices=["none", "auto"], default="none",
                    help="auto: build a throwaway virtualenv from the project's declared dependencies (for CI/servers; installs run sandboxed with size/disk guards). Prefer --python with your own venv")
     c.add_argument("--test-timeout", type=int, default=600, help="seconds allowed for each test run (base and head); the whole process group is killed on timeout")
@@ -352,12 +352,12 @@ def main(argv=None) -> int:
     dirty = reality.snapshot(repo).dirty if (repo / ".git").exists() else False
     base, base_how = (a.base, "given") if a.base else (reality.default_base(repo, dirty) if (repo / ".git").exists() else ("HEAD~1", "assumed"))
     if a.run_tests and a.setup == "auto":
-        venv_root = Path(tempfile.mkdtemp(prefix="agentmirror_env_"))
+        venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
         try:
             py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
             a.python = py
             if aborted or not py:
-                print(f"agentmirror: automatic environment setup incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
+                print(f"agentvow: automatic environment setup incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
             d = _run(a, repo, base, base_how, text)
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)
@@ -412,7 +412,7 @@ def run() -> int:
     except SystemExit:
         raise
     except Exception as e:  # never let a crash look like a verdict
-        print(f"agentmirror: tool error: {type(e).__name__}: {e}", file=sys.stderr)
+        print(f"agentvow: tool error: {type(e).__name__}: {e}", file=sys.stderr)
         return 3
 
 

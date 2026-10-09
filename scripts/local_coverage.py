@@ -1,4 +1,4 @@
-"""Can AgentMirror verify agent test claims locally? Coverage + agreement with CI on real PRs (see docs/research/LOCAL_COVERAGE.md).
+"""Can Agentvow verify agent test claims locally? Coverage + agreement with CI on real PRs (see docs/research/LOCAL_COVERAGE.md).
 
 Per repo: clone, automatic env setup ladder (sandboxed pip: network allowed, writes limited), then per PR: tests at base and head under the
 network-denied sandbox, verdict from the real decision logic. Resumable; output data/local_coverage.jsonl.
@@ -18,7 +18,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror_check import claims, decision, envsetup, reality, runner  # noqa: E402
+from agentvow import claims, decision, envsetup, reality, runner  # noqa: E402
 
 DATA = ROOT / "data"
 REPOS = DATA / "repos2"
@@ -78,7 +78,7 @@ def pip(venv, repo, args, timeout=300):
 
 
 def setup_env(repo: Path, key: str):
-    """Uses the shipped agentmirror_check.envsetup (same ladder and resource guards as `--setup auto`)."""
+    """Uses the shipped agentvow.envsetup (same ladder and resource guards as `--setup auto`)."""
     py, notes, aborted = envsetup.build_env(repo, VENVS / key, DATA / "home")
     if aborted:
         notes = notes + [aborted]
@@ -135,7 +135,7 @@ def _one_repo(repo_name, prs):
             b = runner.run_tests(tmp / "base", argv, timeout=240, write=False, env_extra={"PYTHONPATH": f"{tmp}/base/src:{tmp}/base"})
             h = runner.run_tests(tmp / "head", argv, timeout=240, write=False, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
                                  env_extra={"PYTHONPATH": f"{tmp}/head/src:{tmp}/head"})
-            ev = repo / ".agentmirror" / "evidence"
+            ev = repo / ".agentvow" / "evidence"
             ev.mkdir(parents=True, exist_ok=True)
             (ev / f"testrun_{head[:10]}_0.json").write_text(json.dumps(reality.sign_record(h)))
             d = decision.check(repo, base, body)

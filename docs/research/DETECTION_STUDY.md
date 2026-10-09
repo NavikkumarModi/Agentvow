@@ -3,7 +3,7 @@
 Script: `scripts/local_coverage.py` (run with `detection_sample.csv`), analysis `scripts/detection_analyze.py`; data local in `data/` (`detection_results.jsonl`).
 
 ## Design
-46 Python PRs from AIDev that claim "tests pass", in repositories under 100 MB: 23 where a CI test job failed on the PR head commit (`ci_failed`) and 23 CI-passing controls (`ci_passed`), same repos where possible. Zero-config environment (`agentmirror_check.envsetup`: venv, editable install with extras, PEP 735 groups, requirements files, pytest; installs sandboxed with size/disk guards), then tests at the PR's base and head under the network-denied sandbox, verdict from the shipped decision logic. The study was resumed once after a fix (`$HOME` was outside the sandbox's writable paths): the two repos that hit it were re-run; all other rows are from the same code.
+46 Python PRs from AIDev that claim "tests pass", in repositories under 100 MB: 23 where a CI test job failed on the PR head commit (`ci_failed`) and 23 CI-passing controls (`ci_passed`), same repos where possible. Zero-config environment (`agentvow.envsetup`: venv, editable install with extras, PEP 735 groups, requirements files, pytest; installs sandboxed with size/disk guards), then tests at the PR's base and head under the network-denied sandbox, verdict from the shipped decision logic. The study was resumed once after a fix (`$HOME` was outside the sandbox's writable paths): the two repos that hit it were re-run; all other rows are from the same code.
 
 ## Results (46 PRs, 25 repos)
 | group | not run (environment too heavy) | ran | CONTRADICTED | UNKNOWN | other verdicts |
@@ -34,4 +34,4 @@ With `review`, unresolved failures in tests added or changed by the same PR set 
 n small (36 ran), small repos only, one annotator for categories, repository clustering (knocker alone is 8 PRs), zero-config setup only, no project-specific setup, no CI-failing PR reproduced under a good environment.
 
 ## Bugs found by this study (fixed, tested)
-`$HOME` for test runs was outside the sandbox's writable paths, so tests that write caches/config there failed (now `<worktree>/.agentmirror/home`). Earlier in this line of work: killed pip installs left GBs of temp files in `/tmp` (pip temp now inside the throwaway environment).
+`$HOME` for test runs was outside the sandbox's writable paths, so tests that write caches/config there failed (now `<worktree>/.agentvow/home`). Earlier in this line of work: killed pip installs left GBs of temp files in `/tmp` (pip temp now inside the throwaway environment).

@@ -1,12 +1,12 @@
 import json, os, tempfile, unittest
 from pathlib import Path
-from agentmirror_check import demo, reality
+from agentvow import demo, reality
 
 
 class Demo(unittest.TestCase):
     def test_demo_is_sealed_and_red_and_rerunnable(self):
         with tempfile.TemporaryDirectory() as d:
-            os.environ["AGENTMIRROR_HOME"] = str(Path(d) / "home")
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
             p = Path(d) / "demo"
             info = demo.run_demo(p)
             self.assertEqual(info["status"], "REVIEW REQUIRED")

@@ -10,10 +10,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
+os.environ.setdefault("AGENTVOW_HOME", tempfile.mkdtemp(prefix="am_home_"))
 
-from agentmirror_check import api_diff, ci, claims, decision, reality, runner  # noqa: E402
-from agentmirror_check.reality import Evidence, Snapshot  # noqa: E402
+from agentvow import api_diff, ci, claims, decision, reality, runner  # noqa: E402
+from agentvow.reality import Evidence, Snapshot  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 IND = {"framing": "separate", "evidence": "separate", "mechanism": "separate", "authority": "unknown"}
@@ -28,7 +28,7 @@ class Evidence_(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             head = git(repo, "rev-parse", "HEAD")
-            (repo / ".agentmirror/evidence/forged.json").write_text(json.dumps(
+            (repo / ".agentvow/evidence/forged.json").write_text(json.dumps(
                 {"commit": head, "result": "pass", "counts": {"passed": 5}, "summary": "ok", "produced_by": "ci"}))
             e = next(x for x in reality.load_prior_evidence(repo, reality.snapshot(repo)) if x.evidence_id == "forged")
             self.assertEqual(e.independence["mechanism"], "same")
@@ -43,7 +43,7 @@ class Evidence_(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             head = git(repo, "rev-parse", "HEAD")
-            (repo / ".agentmirror/evidence/d.json").write_text(json.dumps({"commit": head, "tree": "deadbeef", "result": "pass"}))
+            (repo / ".agentvow/evidence/d.json").write_text(json.dumps({"commit": head, "tree": "deadbeef", "result": "pass"}))
             e = next(x for x in reality.load_prior_evidence(repo, reality.snapshot(repo)) if x.evidence_id == "d")
             self.assertEqual(e.freshness, "STALE")
 
@@ -155,8 +155,8 @@ class APIDiffFixes(unittest.TestCase):
 
 class ExitCodes(unittest.TestCase):
     def run_cli(self, text, repo):
-        return subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--repo", str(repo)], input=text, capture_output=True,
-                              text=True, cwd=ROOT, env={**os.environ, "AGENTMIRROR_HOME": os.environ["AGENTMIRROR_HOME"]}).returncode
+        return subprocess.run([sys.executable, "-m", "agentvow", "check", "--repo", str(repo)], input=text, capture_output=True,
+                              text=True, cwd=ROOT, env={**os.environ, "AGENTVOW_HOME": os.environ["AGENTVOW_HOME"]}).returncode
 
     def test_insufficient_evidence_is_nonzero(self):
         with tempfile.TemporaryDirectory() as t:
@@ -175,7 +175,7 @@ class ExitCodes(unittest.TestCase):
     def test_tool_crash_is_three_not_a_verdict(self):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--repo", str(repo), "--session", str(Path(t) / "nope.jsonl")],
+            r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--repo", str(repo), "--session", str(Path(t) / "nope.jsonl")],
                                capture_output=True, text=True, cwd=ROOT, env={**os.environ})
             self.assertEqual(r.returncode, 3)
 
@@ -191,9 +191,9 @@ class Productisation(unittest.TestCase):
             (repo / "tests/test_retry.py").write_text("def test_retry():\n    assert True\n")  # trivialised
             git(repo, "add", "-A"); git(repo, "commit", "-qm", "edit test")
             head = git(repo, "rev-parse", "HEAD")
-            (repo / ".agentmirror/evidence").mkdir(parents=True, exist_ok=True)
-            (repo / ".agentmirror/evidence/run.json").write_text(json.dumps(reality.sign_record({
-                "commit": head, "tree": "", "result": "pass", "produced_by": "agentmirror-runner", "summary": "ok",
+            (repo / ".agentvow/evidence").mkdir(parents=True, exist_ok=True)
+            (repo / ".agentvow/evidence/run.json").write_text(json.dumps(reality.sign_record({
+                "commit": head, "tree": "", "result": "pass", "produced_by": "agentvow-runner", "summary": "ok",
                 "counts": {"passed": 2, "failed": 0, "skipped": 0, "regressions": 0, "uncomparable": 0, "missing": 0}})))
             d = decision.check(repo, "HEAD~1", "All 2 tests pass.")
             f = next(x for x in d.findings if x.kind == claims.TESTS_PASS)
@@ -209,20 +209,20 @@ class Productisation(unittest.TestCase):
             repo = build(Path(t) / "r")
             sess = Path(t) / "s.jsonl"
             sess.write_text(json.dumps({"type": "assistant", "message": {"content": [{"type": "text", "text": "No downstream impact."}]}}))
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+            r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                                input=json.dumps({"transcript_path": str(sess), "cwd": str(repo)}), env={**os.environ})
             self.assertEqual(r.returncode, 0)
             self.assertIn("REVIEW REQUIRED", json.loads(r.stdout)["systemMessage"])
 
     def test_hook_ignores_non_repo_and_loop_guard(self):
-        r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+        r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                            input=json.dumps({"stop_hook_active": True}), env={**os.environ})
         self.assertEqual((r.returncode, r.stdout.strip()), (0, ""))
 
 
 class EnvSetup(unittest.TestCase):
     def test_default_python_prefers_the_projects_own_venv(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             repo = Path(t)
             self.assertEqual(envsetup.default_python(repo), sys.executable)
@@ -231,21 +231,21 @@ class EnvSetup(unittest.TestCase):
             self.assertEqual(envsetup.default_python(repo), str(repo / ".venv/bin/python"))
 
     def test_extras_are_detected_from_pyproject(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             repo = Path(t)
             (repo / "pyproject.toml").write_text('[project]\nname="x"\n[project.optional-dependencies]\ndev=["a"]\ndocs=["b"]\ntest=["c"]\n')
             self.assertEqual(envsetup.detect_extras(repo), ["test", "dev"])
 
     def test_low_disk_refuses_to_start(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             py, notes, aborted = envsetup.build_env(Path(t), Path(t) / "v", Path(t) / "h", min_free=10**18)
             self.assertIsNone(py)
             self.assertEqual(aborted, "disk low")
 
     def test_size_watchdog_kills_a_runaway_install(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             venv = Path(t) / "venv"
             (venv / "bin").mkdir(parents=True)
@@ -259,13 +259,13 @@ class EnvSetup(unittest.TestCase):
 
 class DependencyGroups(unittest.TestCase):
     def test_pep735_test_groups_are_detected(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             repo = Path(t)
             (repo / "pyproject.toml").write_text('[project]\nname="x"\n[dependency-groups]\ndocs=["a"]\ndev=["b"]\ntest=["c"]\n')
             self.assertEqual(envsetup.detect_groups(repo), ["test", "dev"])
 
     def test_no_groups_is_empty(self):
-        from agentmirror_check import envsetup
+        from agentvow import envsetup
         with tempfile.TemporaryDirectory() as t:
             self.assertEqual(envsetup.detect_groups(Path(t)), [])

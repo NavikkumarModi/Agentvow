@@ -12,8 +12,8 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror_check import adapters, ci, claims, envsetup, reality, report, runner  # noqa: E402
+os.environ.setdefault("AGENTVOW_HOME", tempfile.mkdtemp(prefix="am_home_"))
+from agentvow import adapters, ci, claims, envsetup, reality, report, runner  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 
@@ -46,7 +46,7 @@ class G2_SandboxCannotForgeEvidence(unittest.TestCase):
     def test_signing_key_cannot_be_read_from_inside_the_sandbox(self):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
-            key = Path(os.environ["AGENTMIRROR_HOME"]) / "key"
+            key = Path(os.environ["AGENTVOW_HOME"]) / "key"
             reality._key()   # make sure it exists
             self.assertTrue(key.exists())
             rec = runner.run_tests(repo, passfail(f"cat {key}"), write=False)
@@ -75,28 +75,28 @@ class G3_NoSymlinkWrites(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo, victim_dir = build(Path(t) / "r"), Path(t) / "victim"
             victim_dir.mkdir()
-            (repo / ".agentmirror").mkdir(exist_ok=True)
-            os.symlink(victim_dir, repo / ".agentmirror" / "last")
+            (repo / ".agentvow").mkdir(exist_ok=True)
+            os.symlink(victim_dir, repo / ".agentvow" / "last")
             with self.assertRaises(OSError):
-                reality.safe_write(repo, Path(".agentmirror") / "last" / "report.html", "x")
+                reality.safe_write(repo, Path(".agentvow") / "last" / "report.html", "x")
             self.assertEqual(list(victim_dir.iterdir()), [])
-            (repo / ".agentmirror" / "last").unlink()
-            (repo / ".agentmirror" / "last").mkdir()
+            (repo / ".agentvow" / "last").unlink()
+            (repo / ".agentvow" / "last").mkdir()
             victim = Path(t) / "victim.txt"
             victim.write_text("keep")
-            os.symlink(victim, repo / ".agentmirror" / "last" / "report.html")
+            os.symlink(victim, repo / ".agentvow" / "last" / "report.html")
             with self.assertRaises(OSError):
-                reality.safe_write(repo, Path(".agentmirror") / "last" / "report.html", "x")
+                reality.safe_write(repo, Path(".agentvow") / "last" / "report.html", "x")
             self.assertEqual(victim.read_text(), "keep")
 
     def test_hook_does_not_overwrite_a_file_through_a_planted_symlink(self):
         with tempfile.TemporaryDirectory() as t:
             repo, victim = build(Path(t) / "r"), Path(t) / "victim.txt"
             victim.write_text("keep")
-            last = repo / ".agentmirror" / "last"
+            last = repo / ".agentvow" / "last"
             last.mkdir(parents=True)
             os.symlink(victim, last / "report.html")
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+            r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                                input=json.dumps({"cwd": str(repo), "last_assistant_message": "No downstream impact."}), env={**os.environ})
             self.assertEqual(victim.read_text(), "keep")
             self.assertEqual(r.returncode, 0)   # still informs, never blocks
@@ -145,7 +145,7 @@ class G9_Platform(unittest.TestCase):
             repo = build(Path(t) / "r")
             runner._SANDBOX_OK.clear()   # the availability probe is cached
             try:
-                with mock.patch("agentmirror_check.runner.shutil.which", return_value=None):
+                with mock.patch("agentvow.runner.shutil.which", return_value=None):
                     with self.assertRaises(RuntimeError) as cm:
                         runner.run_tests(repo, ["true"], write=False)
             finally:

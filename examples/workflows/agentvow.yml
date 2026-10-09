@@ -1,6 +1,6 @@
 # Add to .github/workflows/. Works for pull requests from any agent (Copilot cloud agent, Codex, Devin, Cursor, Claude Code, ...).
 # Note: for Copilot cloud agent PRs, GitHub requires a person to approve workflow runs unless the repository admin disables that setting.
-name: AgentMirror
+name: Agentvow
 on:
   pull_request:
     types: [opened, synchronize, edited, reopened]
@@ -9,13 +9,13 @@ permissions:
   checks: read
   pull-requests: write
 jobs:
-  agentmirror:
+  agentvow:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: YOUR-ORG/agentmirror@main   # replace with where you host this action
+      - uses: YOUR-ORG/agentvow@main   # replace with where you host this action
         with:
-          fail-on: none   # AgentMirror informs; set to 'review' only if you want it to gate merges
+          fail-on: none   # Agentvow informs; set to 'review' only if you want it to gate merges

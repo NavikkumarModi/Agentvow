@@ -1,6 +1,6 @@
 """Built-in demo: a small repository where an agent "raised payment retries" and claims no downstream impact.
 
-`agentmirror demo` builds it, checks the claim and writes a sealed result, so the verdict view can be seen without any agent."""
+`agentvow demo` builds it, checks the claim and writes a sealed result, so the verdict view can be seen without any agent."""
 import json
 import os
 import shutil
@@ -42,7 +42,7 @@ def build(dest: Path) -> Path:
     git(dest, "add", "-A")
     git(dest, "commit", "-qm", "initial")
     first = git(dest, "rev-parse", "HEAD")
-    ev = dest / ".agentmirror" / "evidence"
+    ev = dest / ".agentvow" / "evidence"
     ev.mkdir(parents=True)
     (ev / "ci_run_before.json").write_text(json.dumps(
         {"commit": first, "result": "pass", "summary": "pytest passed", "produced_by": "ci"}))
@@ -54,8 +54,8 @@ def build(dest: Path) -> Path:
 
 def run_demo(dest: Path) -> dict:
     if dest.exists():
-        if not (dest / ".agentmirror").exists() or not (dest / "payments").exists():
-            raise SystemExit(f"{dest} exists and is not an AgentMirror demo; choose another --path")
+        if not (dest / ".agentvow").exists() or not (dest / "payments").exists():
+            raise SystemExit(f"{dest} exists and is not an Agentvow demo; choose another --path")
         shutil.rmtree(dest)
     build(dest)
     from .cli import _write_sealed

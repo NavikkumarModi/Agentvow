@@ -12,7 +12,7 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
-SKIP_DIRS = {".git", "__pycache__", "node_modules", ".venv", "venv", ".agentmirror"}
+SKIP_DIRS = {".git", "__pycache__", "node_modules", ".venv", "venv", ".agentvow"}
 OTHER_CODE = {".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".rb", ".kt", ".c", ".cpp"}
 
 
@@ -22,7 +22,7 @@ class CollectorError(Exception):
 
 def _key() -> bytes:
     """Per-user signing key kept OUTSIDE the repo (an agent editing the repo cannot forge a signature without reading this file)."""
-    p = Path(os.environ.get("AGENTMIRROR_HOME", Path.home() / ".agentmirror")) / "key"
+    p = Path(os.environ.get("AGENTVOW_HOME", Path.home() / ".agentvow")) / "key"
     if not p.exists():
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(os.urandom(32))
@@ -103,7 +103,7 @@ class Snapshot:
 
 def _tree_hash(repo: Path, commit: str) -> str:
     h = hashlib.sha256(commit.encode())
-    files = _git(repo, "ls-files", "-co", "--exclude-standard", "-z", "--", ".", ":(exclude).agentmirror").split("\0")
+    files = _git(repo, "ls-files", "-co", "--exclude-standard", "-z", "--", ".", ":(exclude).agentvow").split("\0")
     for f in sorted(x for x in files if x):
         p = repo / f
         h.update(f.encode() + b"\0")
@@ -129,17 +129,17 @@ def turn_state(repo: Path) -> dict:
     files = sorted(set(_git(repo, "diff", "--name-only", "HEAD").splitlines()) |
                    set(_git(repo, "ls-files", "-o", "--exclude-standard").splitlines()))
     return {"head": _git(repo, "rev-parse", "HEAD"),
-            "files": {f: _file_hash(repo / f) for f in files if not f.startswith(".agentmirror/")}}
+            "files": {f: _file_hash(repo / f) for f in files if not f.startswith(".agentvow/")}}
 
 
 def save_turn_state(repo: Path) -> None:
-    safe_write(repo, Path(".agentmirror") / "turn_state.json", json.dumps(sign_record(turn_state(repo))))
+    safe_write(repo, Path(".agentvow") / "turn_state.json", json.dumps(sign_record(turn_state(repo))))
 
 
 def load_turn_state(repo: Path):
     """The state saved at the end of the previous check in this repository, if it is intact and ours; else None."""
     try:
-        rec = json.loads((repo / ".agentmirror" / "turn_state.json").read_text())
+        rec = json.loads((repo / ".agentvow" / "turn_state.json").read_text())
         return rec if verify_record(rec) and isinstance(rec.get("files"), dict) and rec.get("head") else None
     except (OSError, ValueError):
         return None
@@ -154,20 +154,20 @@ def changed_this_turn(repo: Path, prev: dict) -> list:
             out |= set(_git(repo, "diff", "--name-only", f"{prev['head']}..{cur['head']}").splitlines())
         except CollectorError:
             pass
-    return sorted(f for f in out if not f.startswith(".agentmirror/"))
+    return sorted(f for f in out if not f.startswith(".agentvow/"))
 
 
 def snapshot(repo: Path) -> Snapshot:
     commit = _git(repo, "rev-parse", "HEAD")
-    dirty = bool(_git(repo, "status", "--porcelain", "--", ".", ":(exclude).agentmirror"))
+    dirty = bool(_git(repo, "status", "--porcelain", "--", ".", ":(exclude).agentvow"))
     return Snapshot(commit, dirty, _tree_hash(repo, commit) if dirty else "")
 
 
 def changed_files(repo: Path, base: str) -> list[str]:
     committed = _git(repo, "diff", "--name-only", f"{base}..HEAD").splitlines()
     working = _git(repo, "diff", "--name-only", "HEAD").splitlines()
-    untracked = _git(repo, "ls-files", "-o", "--exclude-standard", "--", ".", ":(exclude).agentmirror").splitlines()
-    return sorted(f for f in set(committed) | set(working) | set(untracked) if not f.startswith(".agentmirror/"))
+    untracked = _git(repo, "ls-files", "-o", "--exclude-standard", "--", ".", ":(exclude).agentvow").splitlines()
+    return sorted(f for f in set(committed) | set(working) | set(untracked) if not f.startswith(".agentvow/"))
 
 
 @dataclass
@@ -260,9 +260,9 @@ class Evidence:
 
 
 def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
-    """Discover earlier verification artifacts in .agentmirror/evidence/*.json and bind them to the snapshot."""
+    """Discover earlier verification artifacts in .agentvow/evidence/*.json and bind them to the snapshot."""
     out = []
-    d = repo / ".agentmirror" / "evidence"
+    d = repo / ".agentvow" / "evidence"
     for f in sorted(d.glob("*.json")) if d.is_dir() else []:
         raw = f.read_bytes()
         h = hashlib.sha256(raw).hexdigest()[:16]

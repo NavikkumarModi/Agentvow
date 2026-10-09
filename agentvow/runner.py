@@ -109,7 +109,7 @@ _DENY_EXEC = "".join(f'(deny process-exec (literal "{p}"))' for p in ("/usr/bin/
 def _deny_reads() -> str:
     """Reads are allowed by default (Python and tools need the system), but never of the signing key or common credential stores."""
     home = Path.home()
-    key = Path(os.environ.get("AGENTMIRROR_HOME", home / ".agentmirror"))
+    key = Path(os.environ.get("AGENTVOW_HOME", home / ".agentvow"))
     targets = {os.path.realpath(t) for t in (key, *(home / d for d in _SECRET_DIRS))}   # the sandbox matches canonical paths (/var -> /private/var)
     return "".join(f'(deny file-read* (subpath "{t}"))(deny file-read* (literal "{t}"))' for t in sorted(targets))
 
@@ -150,7 +150,7 @@ def scratch_base() -> str:
 def _bwrap_prefix(writable: list, network: bool) -> list:
     """Linux: bubblewrap. The whole filesystem is read-only except `writable`; secret directories are hidden; no network unless asked; own PID namespace."""
     home = Path.home()
-    key = Path(os.environ.get("AGENTMIRROR_HOME", home / ".agentmirror"))
+    key = Path(os.environ.get("AGENTVOW_HOME", home / ".agentvow"))
     cmd = ["bwrap", "--die-with-parent", "--new-session", "--unshare-pid", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc"]
     if not network:
         cmd.append("--unshare-net")
@@ -267,7 +267,7 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
       * uncomparable = fails now but did not exist at base (new or renamed test) -> cannot be judged"""
     snap = R.snapshot(repo)
     # HOME must be inside a path the sandbox lets tests write to (tests often write caches/config to $HOME). It lives under the
-    # (throwaway) worktree's .agentmirror/, which is excluded from status and from the tree hash.
+    # (throwaway) worktree's .agentvow/, which is excluded from status and from the tree hash.
     _require_sandbox()
     repo = Path(repo).resolve()
     # HOME and TMPDIR must be SHORT paths (macOS limits unix-socket paths to 104 chars; gpg-agent and others hang otherwise) and writable: one private
@@ -314,7 +314,7 @@ def _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_pass
         local = repo_local_names(repo) | (repo_local_names(base_repo) if base_repo else set())  # a module that existed at base (renamed/removed) is a regression, not a missing dependency
         env_missing = sorted(m for m in set(_MISSING_MOD.findall(out)) if m not in local)
         if env_missing and result != "pass" and not counts.get("passed"):
-            result, summary = "inconclusive", f"missing dependency in AgentMirror's environment: {', '.join(env_missing[:4])} (pass --python with the project's virtualenv, or use --setup auto)"
+            result, summary = "inconclusive", f"missing dependency in Agentvow's environment: {', '.join(env_missing[:4])} (pass --python with the project's virtualenv, or use --setup auto)"
             baseline_failed = baseline_passed = None
     except subprocess.TimeoutExpired:
         counts, ids, ok_ids, result, summary, hint = {}, [], [], "inconclusive", f"timeout after {timeout}s", ""
@@ -332,8 +332,8 @@ def _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_pass
             result = "fail"
     rec = ({
         "commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": result, "counts": counts, "summary": summary[:200],
-        "command": " ".join(argv), "produced_by": "agentmirror-runner", "duration_s": round(time.time() - started, 1),
-        "network": "denied", "env": "agentmirror venv; may differ from project CI", "failed_ids": ids, "passed_ids": ok_ids, "hint": hint})
+        "command": " ".join(argv), "produced_by": "agentvow-runner", "duration_s": round(time.time() - started, 1),
+        "network": "denied", "env": "agentvow venv; may differ from project CI", "failed_ids": ids, "passed_ids": ok_ids, "hint": hint})
     if write:
-        R.safe_write(repo, Path(".agentmirror") / "evidence" / f"testrun_{snap.commit[:10]}.json", json.dumps(R.sign_record(rec)))
+        R.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{snap.commit[:10]}.json", json.dumps(R.sign_record(rec)))
     return rec

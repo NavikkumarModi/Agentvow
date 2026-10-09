@@ -9,20 +9,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror_check import cli  # noqa: E402
+os.environ.setdefault("AGENTVOW_HOME", tempfile.mkdtemp(prefix="am_home_"))
+from agentvow import cli  # noqa: E402
 from make_demo import build  # noqa: E402
 
 
 def cmd(*args, cwd=ROOT):
-    return subprocess.run([sys.executable, "-m", "agentmirror_check", *args], capture_output=True, text=True, cwd=cwd, env={**os.environ})
+    return subprocess.run([sys.executable, "-m", "agentvow", *args], capture_output=True, text=True, cwd=cwd, env={**os.environ})
 
 
 class Instructions(unittest.TestCase):
     def test_block_is_delimited_and_quotes_paths_with_spaces(self):
-        b = cli.instructions_block("/Users/me/My Tools/agentmirror")
+        b = cli.instructions_block("/Users/me/My Tools/agentvow")
         self.assertTrue(b.startswith(cli.INSTR_BEGIN) and b.rstrip().endswith(cli.INSTR_END))
-        self.assertIn('"/Users/me/My Tools/agentmirror" check', b)
+        self.assertIn('"/Users/me/My Tools/agentvow" check', b)
         self.assertIn("|| true", b)                      # a non-zero verdict exit code must not make the agent's tool call fail
 
     def test_write_creates_appends_once_and_preserves_existing_content(self):
@@ -50,21 +50,21 @@ class Instructions(unittest.TestCase):
 
     def test_the_command_in_the_block_really_runs_and_shows_the_verdict(self):
         with tempfile.TemporaryDirectory() as t:
-            shim = Path(t) / "agentmirror"
-            shim.write_text(f'#!/bin/sh\nPYTHONPATH={ROOT} exec {sys.executable} -m agentmirror_check "$@"\n')
+            shim = Path(t) / "agentvow"
+            shim.write_text(f'#!/bin/sh\nPYTHONPATH={ROOT} exec {sys.executable} -m agentvow "$@"\n')
             shim.chmod(0o755)
             repo = build(Path(t) / "repo")
             block = cli.instructions_block(str(shim))
             script = re.search(r"```bash\n(.*?)\n```", block, re.S).group(1).replace("<your draft final answer>", "I changed it. There is no downstream impact.")
             r = subprocess.run(["bash", "-c", script], cwd=repo, capture_output=True, text=True, env={**os.environ})
             self.assertEqual(r.returncode, 0, r.stderr)    # '|| true'
-            self.assertIn("AgentMirror", r.stdout)
+            self.assertIn("Agentvow", r.stdout)
             self.assertIn("Contradicted", r.stdout)
 
     def test_version_flag(self):
         r = cmd("--version")
         self.assertEqual(r.returncode, 0)
-        self.assertRegex(r.stdout, r"agentmirror \d+\.\d+\.\d+")
+        self.assertRegex(r.stdout, r"agentvow \d+\.\d+\.\d+")
 
 
 if __name__ == "__main__":

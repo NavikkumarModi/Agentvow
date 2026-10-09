@@ -1,6 +1,6 @@
-# AgentMirror security model (2026-10-07)
+# Agentvow security model (2026-10-07)
 
-AgentMirror reads a repository that an agent (or anyone) controls and, optionally, runs that repository's test code. This page states what is protected, what is not, and what was found by adversarial review (`research/RISKS.md`). Prototype: treat as unaudited.
+Agentvow reads a repository that an agent (or anyone) controls and, optionally, runs that repository's test code. This page states what is protected, what is not, and what was found by adversarial review (`research/RISKS.md`). Prototype: treat as unaudited.
 
 ## What runs, and where
 | Action | Executes repository code? | Protection |
@@ -8,12 +8,12 @@ AgentMirror reads a repository that an agent (or anyone) controls and, optionall
 | Static checks (claims, import graph, API diff, CI read) | No | `git` calls neutralise hooks/fsmonitor/ext protocols (`-c core.fsmonitor=false -c core.hooksPath=/dev/null`); text from the repo/agent is length-bounded, depth-bounded and escaped on output |
 | `--run-tests` | **Yes** (the project's tests, conftest, plugins) | macOS `sandbox-exec`: network denied; writes only inside the throwaway worktree (HOME and TMPDIR live there); reads of the signing key and common credential stores denied; **all other reads allowed** |
 | `--setup auto` | **Yes** (dependency installs run build scripts) | Installs from a throwaway copy (the real repo is never written to, no editable link back); network allowed; writes limited to the throwaway environment; reads of the key/credentials denied; size/disk/time guards |
-| Hook (`--hook`) | Only if `--run-tests` is added | Writes only under `<repo>/.agentmirror/` and refuses symlinks (no write-through to other files) |
+| Hook (`--hook`) | Only if `--run-tests` is added | Writes only under `<repo>/.agentvow/` and refuses symlinks (no write-through to other files) |
 
 On a platform without `sandbox-exec` (Linux, Windows) the tool **refuses** to run repository code; there is no unsandboxed fallback. The GitHub Action therefore only reads CI results (it does not run tests).
 
 ## Integrity of results
-- Evidence AgentMirror records (`.agentmirror/evidence/*.json`) is HMAC-signed with a per-user key stored **outside** the repository (`~/.agentmirror/key`, or `$AGENTMIRROR_HOME`). Unsigned records are never treated as independent evidence. The sandboxed test process cannot read the key or write outside its worktree.
+- Evidence Agentvow records (`.agentvow/evidence/*.json`) is HMAC-signed with a per-user key stored **outside** the repository (`~/.agentvow/key`, or `$AGENTVOW_HOME`). Unsigned records are never treated as independent evidence. The sandboxed test process cannot read the key or write outside its worktree.
 - The hook's result files (`report.html`, `decision.json`) are sealed with `decision.sig` (HMAC over both). The VS Code extension displays a hook result only if the seal verifies.
 - **Limit:** the key is readable by any process running as you that is not sandboxed. A fully privileged local agent can read it and forge evidence or seals. These measures stop a repository, a cloned/malicious project, or sandboxed test code from forging a result; they do not stop a compromised or malicious agent that runs with your permissions outside the sandbox.
 
@@ -30,7 +30,7 @@ On a platform without `sandbox-exec` (Linux, Windows) the tool **refuses** to ru
 This is a research prototype. Findings from reviews are recorded in `docs/research/RISKS.md`.
 
 ## Known limit: replay of an old sealed result
-The seal proves AgentMirror produced a result, not that it is the latest one. A process that can write `.agentmirror/last/` could put back an older genuine result and the extension would display it as sealed. The result carries `generated_at`/`run_id`; the report shows them. Not mitigated in 0.1.0.
+The seal proves Agentvow produced a result, not that it is the latest one. A process that can write `.agentvow/last/` could put back an older genuine result and the extension would display it as sealed. The result carries `generated_at`/`run_id`; the report shows them. Not mitigated in 0.1.0.
 
 ## Transcript bounds
 Hooks read at most the last 8 MB of the transcript, only regular files (fifos/devices refused), and skip lines over 2 MB; the extension reads only regular, size-bounded result files (no symlinks).

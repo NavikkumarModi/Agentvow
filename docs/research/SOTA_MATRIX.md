@@ -4,7 +4,7 @@ Status: all entries `[snippet]` (web-search summaries, 2026-09-30). Full reads r
 
 Legend for columns: Claim↔Evidence = checks agent claims against evidence; Snap = binds evidence to a state snapshot; Indep = addresses verification independence; Arch = architecture-aware; Pol = policy-aware; Viz = visualization; HDS = human decision support; Reuse = prior-work reuse; CE = counterexample/counter-state search.
 
-| System | Source | Problem / mechanism | Claim↔Ev | Snap | Indep | Arch | Pol | Viz | HDS | Reuse | CE | Key limit vs AgentMirror |
+| System | Source | Problem / mechanism | Claim↔Ev | Snap | Indep | Arch | Pol | Viz | HDS | Reuse | CE | Key limit vs Agentvow |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | backcheck (Vector Institute) | github.com/VectorInstitute/backcheck | Checks Claude Code claims vs its own session transcript; zero LLM calls | ✓ | partial | ✗ (evidence is agent's own transcript) | ✗ | ✗ | ✗ | verdict list | ✗ | ✗ | Evidence = agent-produced; no system reality |
 | Aga Verify Agent | github.com/agakadela/aga-verify-agent | Codex skill: task vs claims vs diff vs proof for *that commit*; rejects stale tests | ✓ | ✓ | partial | ✗ | ✗ | ✗ | checklist | ✗ | ✗ | Coding-task completion only; LLM skill |

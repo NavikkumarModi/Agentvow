@@ -29,7 +29,7 @@ Output only findings that pass all three. Three-valued result per claim: SUPPORT
 H1–H7 as in the master plan (harmful approvals, automation bias, downstream detection, UNKNOWN recognition, reuse, compression, reality-challenge vs model agreement). H7 is the core one. H5 (reuse) is likely the weakest novelty but easiest win.
 
 ## Non-goals
-Not an observability dashboard, LLM judge, self-reflection prompt, generic coding-agent UI, static-analysis/architecture/policy-engine replacement, or chatbot. AgentMirror composes existing tools and contributes the decision-centric layer. It never approves, merges or deploys.
+Not an observability dashboard, LLM judge, self-reflection prompt, generic coding-agent UI, static-analysis/architecture/policy-engine replacement, or chatbot. Agentvow composes existing tools and contributes the decision-centric layer. It never approves, merges or deploys.
 
 ## SOTA scope
 Domains: agent observability; trajectory visualization; claim/transcript verification; snapshot-bound verification; verification independence; LLM-judge reliability; architecture-aware agents; policy/runtime verification; provenance/evidence; agent memory staleness; blast-radius/impact analysis; counterfactual explanation; human oversight (automation bias, approval fatigue); protocols (OTel GenAI, MCP, A2A, ACP). Initial domain: coding agents. Sources: arXiv, GitHub, vendor docs, standards. Patent search: see PRIOR_ART.md limitation.

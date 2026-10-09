@@ -8,18 +8,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror_check import claims, decision, reality  # noqa: E402
+os.environ.setdefault("AGENTVOW_HOME", tempfile.mkdtemp(prefix="am_home_"))
+from agentvow import claims, decision, reality  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 
 def repo_with_failing_new_tests(t):
     repo = build(Path(t) / "r")
     head = git(repo, "rev-parse", "HEAD")
-    ev = repo / ".agentmirror" / "evidence"
+    ev = repo / ".agentvow" / "evidence"
     ev.mkdir(parents=True, exist_ok=True)
     (ev / "run.json").write_text(json.dumps(reality.sign_record({
-        "commit": head, "tree": "", "result": "fail", "produced_by": "agentmirror-runner", "summary": "x",
+        "commit": head, "tree": "", "result": "fail", "produced_by": "agentvow-runner", "summary": "x",
         "counts": {"passed": 60, "failed": 3, "skipped": 0, "errors": 0, "regressions": 0, "uncomparable": 3, "missing": 0}})))
     return repo
 
@@ -45,9 +45,9 @@ class NewTestFailuresPolicy(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             head = git(repo, "rev-parse", "HEAD")
-            (repo / ".agentmirror" / "evidence").mkdir(parents=True, exist_ok=True)
-            (repo / ".agentmirror" / "evidence" / "run.json").write_text(json.dumps(reality.sign_record({
-                "commit": head, "tree": "", "result": "pass", "produced_by": "agentmirror-runner", "summary": "x",
+            (repo / ".agentvow" / "evidence").mkdir(parents=True, exist_ok=True)
+            (repo / ".agentvow" / "evidence" / "run.json").write_text(json.dumps(reality.sign_record({
+                "commit": head, "tree": "", "result": "pass", "produced_by": "agentvow-runner", "summary": "x",
                 "counts": {"passed": 5, "failed": 0, "skipped": 0, "errors": 0, "regressions": 0, "uncomparable": 0, "missing": 0}})))
             d = decision.check(repo, "HEAD~1", "All 5 tests pass.", new_test_failures="review")
             self.assertFalse(any(f.attention for f in d.findings))
@@ -62,16 +62,16 @@ class NoBaseline(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             head = git(repo, "rev-parse", "HEAD")
-            (repo / ".agentmirror" / "evidence").mkdir(parents=True, exist_ok=True)
-            (repo / ".agentmirror" / "evidence" / "run.json").write_text(json.dumps(reality.sign_record({
-                "commit": head, "tree": "", "result": "fail", "produced_by": "agentmirror-runner", "summary": "x",
+            (repo / ".agentvow" / "evidence").mkdir(parents=True, exist_ok=True)
+            (repo / ".agentvow" / "evidence" / "run.json").write_text(json.dumps(reality.sign_record({
+                "commit": head, "tree": "", "result": "fail", "produced_by": "agentvow-runner", "summary": "x",
                 "counts": {"passed": 0, "failed": 0, "skipped": 0, "errors": 6, "regressions": 0, "uncomparable": 6, "missing": 0, "no_baseline": 1}})))
             d = decision.check(repo, "HEAD~1", "All tests pass.", new_test_failures="review")
             self.assertFalse(any(f.attention for f in d.findings))
             self.assertNotEqual(d.status, decision.REVIEW)
 
     def test_runner_flags_no_baseline_when_base_had_no_passing_tests(self):
-        from agentmirror_check import runner
+        from agentvow import runner
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             rec = runner.run_tests(repo, ["sh", "-c", "echo 'PASSED tests/a.py::t1'; echo '1 passed in 0.01s'"], write=False,

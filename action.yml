@@ -1,4 +1,4 @@
-name: "AgentMirror"
+name: "Agentvow"
 description: "Check what an AI agent's pull request says it did against what is in the repository. Informs reviewers; never approves or merges."
 inputs:
   claim-text:
@@ -27,7 +27,7 @@ runs:
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
-    - name: Install AgentMirror
+    - name: Install Agentvow
       shell: bash
       run: python -m pip install --quiet "${{ github.action_path }}"
     - name: Check the claim against the repository
@@ -43,19 +43,19 @@ runs:
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
         set +e
-        mkdir -p "$RUNNER_TEMP/agentmirror"
-        if [ -n "$CLAIM_INPUT" ]; then printf '%s' "$CLAIM_INPUT" > "$RUNNER_TEMP/agentmirror/claim.txt"; else printf '%s' "$PR_BODY" > "$RUNNER_TEMP/agentmirror/claim.txt"; fi
+        mkdir -p "$RUNNER_TEMP/agentvow"
+        if [ -n "$CLAIM_INPUT" ]; then printf '%s' "$CLAIM_INPUT" > "$RUNNER_TEMP/agentvow/claim.txt"; else printf '%s' "$PR_BODY" > "$RUNNER_TEMP/agentvow/claim.txt"; fi
         BASE="${BASE_INPUT:-$BASE_SHA}"
-        agentmirror check --repo . ${BASE:+--base "$BASE"} --transcript "$RUNNER_TEMP/agentmirror/claim.txt" \
+        agentvow check --repo . ${BASE:+--base "$BASE"} --transcript "$RUNNER_TEMP/agentvow/claim.txt" \
           --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} \
-          --html "$RUNNER_TEMP/agentmirror/report.html" --markdown "$RUNNER_TEMP/agentmirror/summary.md" > /dev/null
+          --html "$RUNNER_TEMP/agentvow/report.html" --markdown "$RUNNER_TEMP/agentvow/summary.md" > /dev/null
         echo "code=$?" >> "$GITHUB_OUTPUT"
-        cat "$RUNNER_TEMP/agentmirror/summary.md" >> "$GITHUB_STEP_SUMMARY"
-        echo "report=$RUNNER_TEMP/agentmirror/report.html" >> "$GITHUB_OUTPUT"
+        cat "$RUNNER_TEMP/agentvow/summary.md" >> "$GITHUB_STEP_SUMMARY"
+        echo "report=$RUNNER_TEMP/agentvow/report.html" >> "$GITHUB_OUTPUT"
     - uses: actions/upload-artifact@v4
       with:
-        name: agentmirror-report
-        path: ${{ runner.temp }}/agentmirror/report.html
+        name: agentvow-report
+        path: ${{ runner.temp }}/agentvow/report.html
     - name: Post or update the pull request comment
       if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
       shell: bash
@@ -64,14 +64,14 @@ runs:
         PR: ${{ github.event.pull_request.number }}
         REPO: ${{ github.repository }}
       run: |
-        MARK='<!-- agentmirror-report -->'
+        MARK='<!-- agentvow-report -->'
         # update only OUR previous comment (identified by the marker and the workflow's own bot account), never someone else's last comment
         ID=$(gh api "repos/$REPO/issues/$PR/comments" --paginate --jq ".[] | select(.user.login == \"github-actions[bot]\") | select(.body | contains(\"$MARK\")) | .id" 2>/dev/null | head -1)
         if [ -n "$ID" ]; then
-          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -F "body=@$RUNNER_TEMP/agentmirror/summary.md" > /dev/null \
+          gh api -X PATCH "repos/$REPO/issues/comments/$ID" -F "body=@$RUNNER_TEMP/agentvow/summary.md" > /dev/null \
             || echo "Could not update the comment; the summary is in the job summary."
         else
-          gh pr comment "$PR" --body-file "$RUNNER_TEMP/agentmirror/summary.md" \
+          gh pr comment "$PR" --body-file "$RUNNER_TEMP/agentvow/summary.md" \
             || echo "Could not post the comment (missing pull-requests: write, or a fork). The summary is in the job summary."
         fi
     - name: Apply fail-on
@@ -84,5 +84,5 @@ runs:
           review) [ "$CODE" = "1" ] && exit 1 ;;
           insufficient) [ "$CODE" = "1" ] || [ "$CODE" = "2" ] && exit 1 ;;
         esac
-        [ "$CODE" = "3" ] && { echo "AgentMirror tool error"; exit 1; }
+        [ "$CODE" = "3" ] && { echo "Agentvow tool error"; exit 1; }
         exit 0

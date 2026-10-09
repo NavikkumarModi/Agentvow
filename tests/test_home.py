@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-from agentmirror_check import runner  # noqa: E402
+from agentvow import runner  # noqa: E402
 from make_demo import build  # noqa: E402
 
 
@@ -21,13 +21,13 @@ class HomeIsWritable(unittest.TestCase):
     def test_writing_outside_the_allowed_paths_is_still_blocked(self):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
-            target = Path.home() / "agentmirror_should_not_exist.txt"
+            target = Path.home() / "agentvow_should_not_exist.txt"
             rec = runner.run_tests(repo, ["sh", "-c", f"echo x > {target} 2>/dev/null && echo '1 passed in 0.01s' || echo '1 failed in 0.01s'"], write=False)
             self.assertFalse(target.exists())
             self.assertEqual(rec["counts"].get("failed"), 1)
 
     def test_home_is_excluded_from_the_tree_hash(self):
-        from agentmirror_check import reality
+        from agentvow import reality
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             before = reality.snapshot(repo)

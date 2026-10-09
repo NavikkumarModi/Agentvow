@@ -12,7 +12,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror_check import claims  # noqa: E402
+from agentvow import claims  # noqa: E402
 
 
 def gh(path):

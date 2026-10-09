@@ -1,6 +1,6 @@
 import json, os, subprocess, tempfile, unittest
 from pathlib import Path
-from agentmirror_check import api_diff, cli, reality
+from agentvow import api_diff, cli, reality
 
 
 def mkrepo(d):
@@ -34,10 +34,10 @@ class Review2(unittest.TestCase):
 
     def test_hook_crash_replaces_stale_result_with_sealed_unknown(self):
         with tempfile.TemporaryDirectory() as d:
-            os.environ["AGENTMIRROR_HOME"] = str(Path(d) / "home")
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
             r = mkrepo(d)
             cli.main_hook = None
-            from agentmirror_check import decision
+            from agentvow import decision
             orig = decision.check
             def boom(*a, **k): raise RecursionError("x")
             cli.check = boom
@@ -51,7 +51,7 @@ class Review2(unittest.TestCase):
                     sys.stdout = so; sys.stdin = sys.__stdin__
             finally:
                 cli.check = orig
-            dec = json.loads((r / ".agentmirror/last/decision.json").read_text())
+            dec = json.loads((r / ".agentvow/last/decision.json").read_text())
             self.assertTrue(dec["status"].startswith("INSUFF"))
             self.assertEqual(dec["repo"], os.path.realpath(r))
 

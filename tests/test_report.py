@@ -8,8 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-from agentmirror_check import decision, report  # noqa: E402
-from agentmirror_check.decision import Decision, Finding  # noqa: E402
+from agentvow import decision, report  # noqa: E402
+from agentvow.decision import Decision, Finding  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 
@@ -59,7 +59,7 @@ class Report(unittest.TestCase):
             d = decision.check(repo, "HEAD~1", "No downstream impact. All 3 tests pass.")
             p = report.render_html(d)
             self.assertIn("payments/retry.py", p)
-            self.assertNotIn("<code>.agentmirror/", p)
+            self.assertNotIn("<code>.agentvow/", p)
 
 
 if __name__ == "__main__":

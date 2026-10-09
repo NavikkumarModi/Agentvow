@@ -1,4 +1,4 @@
-"""Run AgentMirror's test-run collector on pool PRs and print what a reviewer would be told.
+"""Run Agentvow's test-run collector on pool PRs and print what a reviewer would be told.
 
 Usage: python3 scripts/pilot_run.py <owner/repo> [--python /path/to/python] [--limit N]
 Tests run under sandbox-exec (network denied). Third-party code executes only inside that sandbox.
@@ -13,7 +13,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-from agentmirror_check import decision, runner  # noqa: E402
+from agentvow import decision, runner  # noqa: E402
 from feasibility import STRICT, find_commit, git  # noqa: E402
 
 ARGV = {

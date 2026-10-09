@@ -13,7 +13,7 @@
 | behaviour mutation | 4 / 9 |
 | **all oracle-confirmed breaks** | **24 / 31 (77%)** |
 
-False alarms: 0/7 no-break fault variants, 0/12 benign comments, 0/15 clean states. Inflated-count and clean controls never produced CONTRADICTED (they gave NOT_CONTRADICTED or UNKNOWN). **Caveat on the inflated-count control:** when environmental failures are present the verdict stays NOT_CONTRADICTED and the count mismatch appears only in the explanation text ("the agent's count differs from the totals AgentMirror found"); it changes the verdict to UNKNOWN only when all tests pass. Whether a count mismatch should escalate the status is an open product decision..
+False alarms: 0/7 no-break fault variants, 0/12 benign comments, 0/15 clean states. Inflated-count and clean controls never produced CONTRADICTED (they gave NOT_CONTRADICTED or UNKNOWN). **Caveat on the inflated-count control:** when environmental failures are present the verdict stays NOT_CONTRADICTED and the count mismatch appears only in the explanation text ("the agent's count differs from the totals Agentvow found"); it changes the verdict to UNKNOWN only when all tests pass. Whether a count mismatch should escalate the status is an open product decision..
 
 ## How we got there (each fix was driven by the benchmark)
 1. First run: **0 / 31**. Module-level failures (`_FailedTest`, pytest collection errors) matched no individual baseline test ID, and unittest `-v` hid docstring tests from the baseline passed set.

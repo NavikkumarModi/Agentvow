@@ -1,7 +1,7 @@
 """Aggregate-only survey of Claude Code session transcripts.
 
 Prints COUNTS ONLY: per project, how many sessions have a final assistant message and how many
-claims of each kind AgentMirror's rule-based extractor finds in it. It never prints message text,
+claims of each kind Agentvow's rule-based extractor finds in it. It never prints message text,
 file contents, paths inside sessions, or tool output.
 
 Usage: python3 scripts/survey_sessions.py <project_dir> [<project_dir> ...]
@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agentmirror_check import claims  # noqa: E402
+from agentvow import claims  # noqa: E402
 
 
 def final_text(path: Path):

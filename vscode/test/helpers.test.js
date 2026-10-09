@@ -39,7 +39,7 @@ test("the real CLI emits a report the extension can display (exit 1 = review req
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amr-"));
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore" });
   let out = "", code = 0;
-  try { out = execFileSync("python3", ["-m", "agentmirror_check", ...buildArgs({}, repo)], { cwd: root, input: "No downstream impact." }).toString(); }
+  try { out = execFileSync("python3", ["-m", "agentvow", ...buildArgs({}, repo)], { cwd: root, input: "No downstream impact." }).toString(); }
   catch (e) { out = e.stdout.toString(); code = e.status; }
   assert.strictEqual(code, 1);
   assert.ok(out.includes("<html") && out.includes("Review before approving"));
@@ -48,9 +48,9 @@ test("the real CLI emits a report the extension can display (exit 1 = review req
 test("hook file is valid, never blocks, and matches the shipped example", () => {
   const h = JSON.parse(hookFileContent());
   assert.strictEqual(h.version, 1);
-  assert.strictEqual(h.hooks.Stop[0].command, "agentmirror check --hook");
+  assert.strictEqual(h.hooks.Stop[0].command, "agentvow check --hook");
   assert.strictEqual(h.hooks.UserPromptSubmit, undefined, "the experimental chat hook must be off by default");
-  const ex = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "examples", "hooks", "agentmirror.json"), "utf8"));
+  const ex = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "examples", "hooks", "agentvow.json"), "utf8"));
   assert.deepStrictEqual(h, ex);
 });
 test("decision status maps to status codes and unknown shapes fail closed", () => {
@@ -64,11 +64,11 @@ test("end to end: the hook command writes files the extension watcher reads", ()
   const root = path.resolve(__dirname, "..", "..");
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amh-"));
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore" });
-  const out = execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: root, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) }).toString();
+  const out = execFileSync("python3", ["-m", "agentvow", "check", "--hook"], { cwd: root, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) }).toString();
   assert.ok(JSON.parse(out).systemMessage.includes("REVIEW REQUIRED"));
-  const dec = JSON.parse(fs.readFileSync(path.join(repo, ".agentmirror", "last", "decision.json"), "utf8"));
+  const dec = JSON.parse(fs.readFileSync(path.join(repo, ".agentvow", "last", "decision.json"), "utf8"));
   assert.strictEqual(statusCodeFromDecision(dec), 1);
-  assert.ok(fs.readFileSync(path.join(repo, ".agentmirror", "last", "report.html"), "utf8").includes("<html"));
+  assert.ok(fs.readFileSync(path.join(repo, ".agentvow", "last", "report.html"), "utf8").includes("<html"));
 });
 
 test("CSP forbids forms, base-uri, frames, scripts and network", () => {
@@ -79,7 +79,7 @@ test("CSP forbids forms, base-uri, frames, scripts and network", () => {
 test("command, python and testCommand cannot be set by a workspace; untrusted workspaces restrict them", () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
   const props = pkg.contributes.configuration.properties;
-  for (const k of ["agentmirror.command", "agentmirror.python", "agentmirror.testCommand"]) {
+  for (const k of ["agentvow.command", "agentvow.python", "agentvow.testCommand"]) {
     assert.strictEqual(props[k].scope, "machine", k);
     assert.ok(pkg.capabilities.untrustedWorkspaces.restrictedConfigurations.includes(k), k);
   }
@@ -88,10 +88,10 @@ test("a sealed hook result verifies; a forged or tampered one does not", () => {
   const root = path.resolve(__dirname, "..", "..");
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "amk-"));
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amr-"));
-  const env = { ...process.env, AGENTMIRROR_HOME: home };
+  const env = { ...process.env, AGENTVOW_HOME: home };
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore", env });
-  execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: root, env, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) });
-  const dir = path.join(repo, ".agentmirror", "last");
+  execFileSync("python3", ["-m", "agentvow", "check", "--hook"], { cwd: root, env, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) });
+  const dir = path.join(repo, ".agentvow", "last");
   const kp = path.join(home, "key");
   assert.ok(verifySeal(dir, kp), "genuine result must verify");
   fs.appendFileSync(path.join(dir, "decision.json"), " ");                       // tamper with the decision
@@ -102,22 +102,22 @@ test("a sealed hook result verifies; a forged or tampered one does not", () => {
 });
 test("a repository-written green result without a seal is rejected", () => {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amf-"));
-  const dir = path.join(repo, ".agentmirror", "last"); fs.mkdirSync(dir, { recursive: true });
+  const dir = path.join(repo, ".agentvow", "last"); fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, "report.html"), "<html>all good</html>");
   fs.writeFileSync(path.join(dir, "decision.json"), JSON.stringify({ status: "NO CONTRADICTION FOUND (scoped, not a safety verdict)" }));
   assert.ok(!verifySeal(dir, path.join(repo, "nokey")));
 });
 
 test("the hook file uses the full path when given one, quoted if it has spaces", () => {
-  assert.strictEqual(JSON.parse(hookFileContent("/opt/anaconda3/bin/agentmirror")).hooks.Stop[0].command, "/opt/anaconda3/bin/agentmirror check --hook");
-  assert.strictEqual(JSON.parse(hookFileContent("/Users/me/My Tools/agentmirror")).hooks.Stop[0].command, '"/Users/me/My Tools/agentmirror" check --hook');
+  assert.strictEqual(JSON.parse(hookFileContent("/opt/anaconda3/bin/agentvow")).hooks.Stop[0].command, "/opt/anaconda3/bin/agentvow check --hook");
+  assert.strictEqual(JSON.parse(hookFileContent("/Users/me/My Tools/agentvow")).hooks.Stop[0].command, '"/Users/me/My Tools/agentvow" check --hook');
   assert.strictEqual(shellQuote("/a/b"), "/a/b");
   assert.ok(shellQuote("/a b/$x").startsWith('"') && shellQuote("/a b/$x").includes("\\$"));
 });
 test("the doctor command is contributed", () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
-  assert.ok(pkg.contributes.commands.some((c) => c.command === "agentmirror.doctor"));
-  assert.ok(pkg.contributes.commands.some((c) => c.command === "agentmirror.installHook"));
+  assert.ok(pkg.contributes.commands.some((c) => c.command === "agentvow.doctor"));
+  assert.ok(pkg.contributes.commands.some((c) => c.command === "agentvow.installHook"));
 });
 
 test("the extension activates at startup so its result watcher runs without any command", () => {
@@ -135,7 +135,7 @@ test("describeDecision summarises counts, unexamined statements and the first cl
 });
 test("a notify setting exists with a conservative default", () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
-  const n = pkg.contributes.configuration.properties["agentmirror.notify"];
+  const n = pkg.contributes.configuration.properties["agentvow.notify"];
   assert.strictEqual(n.default, "review");
   assert.deepStrictEqual(n.enum, ["review", "always", "never"]);
 });
@@ -149,14 +149,14 @@ test("decisionMarkdown renders the verdict and escapes agent-controlled text (no
 });
 test("the chat participant is contributed and the engine supports the chat API", () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
-  assert.strictEqual(pkg.contributes.chatParticipants[0].name, "agentmirror");
+  assert.strictEqual(pkg.contributes.chatParticipants[0].name, "agentvow");
   assert.ok(parseFloat(pkg.engines.vscode.replace("^", "").split(".").slice(0, 2).join(".")) >= 1.95);
 });
 
 test("the experimental chat hook is added only when explicitly requested", () => {
-  const h = JSON.parse(hookFileContent("agentmirror", true));
-  assert.strictEqual(h.hooks.UserPromptSubmit[0].command, "agentmirror prompt-hook");
+  const h = JSON.parse(hookFileContent("agentvow", true));
+  assert.strictEqual(h.hooks.UserPromptSubmit[0].command, "agentvow prompt-hook");
   assert.ok(h.hooks.Stop);
-  const ex = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "examples", "hooks", "agentmirror-with-experimental-chat-hook.json"), "utf8"));
+  const ex = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "examples", "hooks", "agentvow-with-experimental-chat-hook.json"), "utf8"));
   assert.deepStrictEqual(h, ex);
 });

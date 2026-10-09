@@ -1,7 +1,7 @@
 """The sandbox guarantees, asserted directly on whichever platform runs the tests (macOS sandbox-exec, Linux bubblewrap)."""
 import os, subprocess, sys, tempfile, unittest
 from pathlib import Path
-from agentmirror_check import runner
+from agentvow import runner
 
 
 def sandboxed(code, repo, scratch, **kw):
@@ -21,7 +21,7 @@ class Guarantees(unittest.TestCase):
     def test_can_write_inside_worktree_and_scratch_only(self):
         ok = sandboxed(f"open(r'{self.repo}/a','w').write('x'); open(r'{self.scratch}/b','w').write('x'); print('ok')", self.repo, self.scratch)
         self.assertEqual(ok.stdout.strip(), "ok", ok.stderr)
-        outside = Path.home() / "agentmirror_sandbox_probe.txt"
+        outside = Path.home() / "agentvow_sandbox_probe.txt"
         try:
             bad = sandboxed(f"open(r'{outside}','w').write('x')", self.repo, self.scratch)
             self.assertNotEqual(bad.returncode, 0)
@@ -36,12 +36,12 @@ class Guarantees(unittest.TestCase):
 
     def test_signing_key_directory_is_unreadable(self):
         home = Path(self.t.name, "amhome").resolve(); home.mkdir(); (home / "key").write_text("SECRET")
-        old = os.environ.get("AGENTMIRROR_HOME"); os.environ["AGENTMIRROR_HOME"] = str(home)
+        old = os.environ.get("AGENTVOW_HOME"); os.environ["AGENTVOW_HOME"] = str(home)
         try:
             r = sandboxed(f"import sys\ntry:\n    print('LEAK', open(r'{home}/key').read())\nexcept OSError:\n    print('denied')\n", self.repo, self.scratch)
         finally:
-            if old is None: os.environ.pop("AGENTMIRROR_HOME", None)
-            else: os.environ["AGENTMIRROR_HOME"] = old
+            if old is None: os.environ.pop("AGENTVOW_HOME", None)
+            else: os.environ["AGENTVOW_HOME"] = old
         self.assertEqual(r.stdout.strip(), "denied", r.stdout + r.stderr)
 
     def test_install_mode_allows_network_flag_only_when_asked(self):

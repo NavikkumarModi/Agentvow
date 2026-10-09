@@ -54,7 +54,7 @@ def detect_groups(repo: Path) -> list:
 
 
 def default_python(repo: Path) -> str:
-    """The project's own virtualenv if it has one in the usual places; otherwise the interpreter running AgentMirror."""
+    """The project's own virtualenv if it has one in the usual places; otherwise the interpreter running Agentvow."""
     for d in (".venv", "venv", "env"):
         py = repo / d / "bin" / "python"
         if py.exists():
@@ -111,7 +111,7 @@ def _copy_project(repo: Path, dest: Path, limit: int = 500 * 1024**2) -> bool:
             pass
         if total > limit:
             return False
-    ignore = shutil.ignore_patterns(".git", "node_modules", "__pycache__", ".venv", "venv", ".agentmirror", ".tox", ".mypy_cache", ".pytest_cache", "*.pyc")
+    ignore = shutil.ignore_patterns(".git", "node_modules", "__pycache__", ".venv", "venv", ".agentvow", ".tox", ".mypy_cache", ".pytest_cache", "*.pyc")
     shutil.copytree(repo, dest, ignore=ignore, symlinks=True)
     return True
 

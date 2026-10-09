@@ -10,7 +10,7 @@ Date of research: 2026-10-01. Author: sota-researcher.
 Fields I could not establish are written "not stated in source read" rather than guessed.
 
 ## Headline findings (read first)
-1. **Assay (arXiv 2609.36170, 2026-09-28) is the closest single work found and was NOT on the prior target list.** It binds agent claims to the Merkle hash of the dependency cone of covered code, defines staleness as hash mismatch, equates blast radius with the invalidation frontier, reuses claims across agents as a "build cache for assertions", separates doer from independent reviewer, and gates merges mechanically with no model in the path. It overlaps AgentMirror's evidence-reuse, snapshot-binding, downstream-impact, deterministic-verdict and independence-of-reviewer elements. It has no counter-reality search and no UNKNOWN/unprovable verdict.
+1. **Assay (arXiv 2609.36170, 2026-09-28) is the closest single work found and was NOT on the prior target list.** It binds agent claims to the Merkle hash of the dependency cone of covered code, defines staleness as hash mismatch, equates blast radius with the invalidation frontier, reuses claims across agents as a "build cache for assertions", separates doer from independent reviewer, and gates merges mechanically with no model in the path. It overlaps Agentvow's evidence-reuse, snapshot-binding, downstream-impact, deterministic-verdict and independence-of-reviewer elements. It has no counter-reality search and no UNKNOWN/unprovable verdict.
 2. **EA-Graph (2608.04278) overlaps the Work Memory / evidence-reuse element strongly** (sub-path artifact identity, content-hash anchors, evidence x freshness lattices, refusal on STALE, terminal UNPROVABLE state, LLM quarantine). It has no cross-agent independence mechanism, no claim extraction from agents, no policy/architecture layer, no UI, no counter-reality search.
 3. **backcheck, agent-receipts, claimcheck, Receipts, Aga, AgentCheck** collectively already cover claim-vs-evidence verdicts with STALE/UNVERIFIED/CONTRADICTED/uncheckable classes at the transcript/diff/test level. The "claim-reality reconciliation" element in its simplest form is solved many times.
 4. **Decision-sensitive counter-reality search: none of the works read does it.** Nearest conceptual neighbours are (a) ClaimReceipt's claim-sufficiency definition (evidence E is sufficient iff no two executions with equal retained evidence differ in claim truth), which is a definitional/identifiability notion with no search and no decision rule, (b) EA-Graph's UNPROVABLE terminal state (a changed dependency whose content is unavailable), which is a one-hop special case of "unexcludable alternative state" with no decision-flip filter, (c) the Counterfactual Auditability construct in 2608.29912, which perturbs an *evaluator's inputs* to ask whether its decision would change (a statistical test of a model's behaviour, not a search over states of the world), and (d) Assay's blast radius/obligation levels, which are a deterministic risk-proportional gate, not counter-state enumeration. Verdict: **the mechanism remains a potential gap requiring further verification**; see per-work sections and the verdict section.
@@ -37,8 +37,8 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Prior-work reuse**: yes, this is the core. Claims persist across sessions and are withdrawn only if anchors change. Reduced implementation evaluates only the withdrawal query Q1 (Q2 dependence and Q3 impact are defined but not evaluated; write/kill edges not populated; PARTIAL/UNKNOWN grades and multi-hop meet not exercised).
 - **Counterexample support**: none. UNPROVABLE (changed dependency, replacement content withheld) is the nearest relative: it says "no evidence in reach can settle this claim". There is no enumeration of alternative states and no decision rule.
 - **Limitations (as stated)**: synthetic generated repos, 42 sessions, 7 worlds; Sonnet ceiling effects left preregistered contrasts non-significant; no efficiency or repair-quality claim; efficiency not tested (eager hashing); only reduced implementation.
-- **Overlap with AgentMirror**: HIGH for snapshot-bound evidence reuse and for the evidence-vs-freshness separation; HIGH for "UNKNOWN is a first-class terminal result"; MEDIUM for downstream-impact queries (Q3).
-- **Possible differentiation**: AgentMirror reconciles claims made by *any* agent against an independent graph (EA-Graph stores the claims of the sessions themselves); AgentMirror adds independence vectors, policy/architecture rules, human-facing decisions, counter-reality search with a decision-flip filter. Must cite EA-Graph for the unprovable state and evidence/freshness separation and not claim these.
+- **Overlap with Agentvow**: HIGH for snapshot-bound evidence reuse and for the evidence-vs-freshness separation; HIGH for "UNKNOWN is a first-class terminal result"; MEDIUM for downstream-impact queries (Q3).
+- **Possible differentiation**: Agentvow reconciles claims made by *any* agent against an independent graph (EA-Graph stores the claims of the sessions themselves); Agentvow adds independence vectors, policy/architecture rules, human-facing decisions, counter-reality search with a decision-flip filter. Must cite EA-Graph for the unprovable state and evidence/freshness separation and not claim these.
 - **SOURCE STATUS**: [read-full] (pdftotext of the arXiv PDF; sections 1 to ~4.4 read in detail, rest skimmed through earlier fetch summary).
 
 ### 2. ClaimReceipt
@@ -54,10 +54,10 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Architecture/policy/state awareness**: no architecture; "policy" only as coverage policy in the manifest; state = committed manifest hash, not code snapshot.
 - **Visualization / human decision support**: none (verdict tables).
 - **Prior-work reuse**: none beyond deterministic replay of retained records.
-- **Counterexample support**: no search. It does contain a formal sufficiency definition: E is claim-sufficient iff for all executions tau1,tau2, retained evidence equal implies claim truth equal. This is the identifiability condition under which a counter-reality (two worlds with the same evidence, different claim truth) cannot exist. This is the closest *formal* relative of AgentMirror's "cannot be excluded by available evidence" predicate, but it is used to design schemas, not to search per decision.
+- **Counterexample support**: no search. It does contain a formal sufficiency definition: E is claim-sufficient iff for all executions tau1,tau2, retained evidence equal implies claim truth equal. This is the identifiability condition under which a counter-reality (two worlds with the same evidence, different claim truth) cannot exist. This is the closest *formal* relative of Agentvow's "cannot be excluded by available evidence" predicate, but it is used to design schemas, not to search per decision.
 - **Limitations**: single domain (buyer-seller sims); own frozen spec "not yet unambiguous to an independent reader"; no second domain or independent implementation.
-- **Overlap with AgentMirror**: LOW for coding agents; MEDIUM on INCONCLUSIVE as first-class verdict and the sufficiency definition.
-- **Possible differentiation**: AgentMirror applies the same identifiability idea at oversight time to enumerate the specific unexcluded states relevant to a pending approval. Cite ClaimReceipt for the sufficiency definition and "universe/coverage" framing.
+- **Overlap with Agentvow**: LOW for coding agents; MEDIUM on INCONCLUSIVE as first-class verdict and the sufficiency definition.
+- **Possible differentiation**: Agentvow applies the same identifiability idea at oversight time to enumerate the specific unexcluded states relevant to a pending approval. Cite ClaimReceipt for the sufficiency definition and "universe/coverage" framing.
 - **SOURCE STATUS**: [read-full] (PDF text; abstract, intro, problem formulation, design, limitations read; mid-section tables skimmed via grep).
 
 ### 3. backcheck (Vector Institute)
@@ -68,7 +68,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Evidence source**: the agent's own tool-call records in its transcript. **Independence**: "the agent's account cannot influence the record of it", i.e. prose vs. record separation, but both are the same session's artefacts (the record is produced by the harness, not by the model's prose).
 - **Architecture/policy awareness**: none. **State awareness**: partial (stale-green detection via transcript order, per README; not hash-bound). **Visualization**: none. **Human decision support**: verdict list. **Prior-work reuse**: none (cross-session references read as unsupported). **Counterexample**: none.
 - **Limitations**: regex claim detection; Claude Code only; no system reality beyond transcript.
-- **Overlap**: HIGH for the simplest claim-reconciliation (tests ran, commit happened) and no-LLM-verdict discipline. **Differentiation**: AgentMirror's evidence is independent of the agent's session where possible and covers claims the transcript cannot (downstream impact, architecture). Reuse backcheck as an importer/collector rather than rebuild.
+- **Overlap**: HIGH for the simplest claim-reconciliation (tests ran, commit happened) and no-LLM-verdict discipline. **Differentiation**: Agentvow's evidence is independent of the agent's session where possible and covers claims the transcript cannot (downstream impact, architecture). Reuse backcheck as an importer/collector rather than rebuild.
 - **SOURCE STATUS**: [read-page] (README + src listing).
 
 ### 4. Aga Verify Agent
@@ -77,7 +77,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Input**: task text, agent final answer, base+candidate commits, CI/test output. **Output**: VERIFIED / PARTIALLY_VERIFIED / NOT_VERIFIED / MISALIGNED / UNSAFE_TO_MERGE + next action.
 - **Evidence source**: raw test/CI output and diffs; agent prose counts as claims only. **Independence**: prose-vs-proof separation only. **Architecture/policy**: none stated; high-risk areas (auth, payments, migrations) explicitly out of scope. **State**: yes, commit-bound. **Visualization**: none. **Human decision support**: verdict + next action. **Reuse / counterexample**: none.
 - **Limitations**: not code review, no runtime testing, no high-risk changes.
-- **Overlap**: HIGH for commit-bound proof; MEDIUM for task-scope (MISALIGNED). **Differentiation**: LLM in the verdict path (violates AgentMirror rule); no reality graph.
+- **Overlap**: HIGH for commit-bound proof; MEDIUM for task-scope (MISALIGNED). **Differentiation**: LLM in the verdict path (violates Agentvow rule); no reality graph.
 - **SOURCE STATUS**: [read-page].
 
 ### 5. AgentCheck
@@ -140,7 +140,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Problem/mechanism**: deterministic validation of agent-to-agent handoffs against a versioned workflow contract ("anchor"), no LLM in validation or scoring.
 - **Output**: verdicts, halt/continue, cost. **Result**: +7.7% to +29.1% when attributed to verified defects, 17-53% model-call cost cut, but 37% of alarms in hand review were validator defects (the author reports post-publication audit lowering initial 2.9-26.5% gains).
 - **Independence**: no LLM in path (mechanism-independent). **Policy**: contract = policy. **Others**: no architecture, viz, HDS, reuse, counterexample.
-- **Overlap**: LOW-MEDIUM (deterministic contract gate between agents). **Differentiation**: handoff contracts vs. reality graph. Its 37% validator-false-alarm finding is a useful warning for AgentMirror's own checkers.
+- **Overlap**: LOW-MEDIUM (deterministic contract gate between agents). **Differentiation**: handoff contracts vs. reality graph. Its 37% validator-false-alarm finding is a useful warning for Agentvow's own checkers.
 - **SOURCE STATUS**: [read-page].
 
 ### 13. Beyond LLM-as-a-Judge (Zenodo 22368667)
@@ -149,7 +149,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Mechanism**: Evaluator Conflict Score weighting disagreement across heterogeneous verifiers (semantic LLM, deterministic symbolic, programmatic, retrieval); conflict-gated cascade escalating verification.
 - **Independence mechanism**: heterogeneity of paradigms plus conflict gating (scalar score, not a vector).
 - **Others**: no architecture/policy/state/viz/reuse/counterexample.
-- **Overlap**: LOW-MEDIUM; supports the independence premise. **Differentiation**: AgentMirror's independence is a typed vector over framing/evidence/mechanism/authority and *caps* SUPPORTED, versus a scalar disagreement trigger. **Note**: the record is a single-author preprint; repo not inspected.
+- **Overlap**: LOW-MEDIUM; supports the independence premise. **Differentiation**: Agentvow's independence is a typed vector over framing/evidence/mechanism/authority and *caps* SUPPORTED, versus a scalar disagreement trigger. **Note**: the record is a single-author preprint; repo not inspected.
 - **SOURCE STATUS**: [read-page] (Zenodo record page); code [unavailable/not read].
 
 ### 14. When Stale Constraints Go Unchecked
@@ -184,8 +184,8 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Prior-work reuse**: yes: "ledger as a build cache for assertions"; same predicate and subject reusable across agents if fresh.
 - **Counterexample support**: none. The paper explicitly states it does not explore what-if scenarios; gate validates a single proposed change against current and historical evidence. Future work: "what tests would need to pass".
 - **Limitations (stated)**: regex parser under-approximates dynamic imports; directory-level modules coarse; gate checks plausibility not sufficiency; key security not enforced; no model-in-loop evaluation (SWE-bench trial future work).
-- **Overlap with AgentMirror**: VERY HIGH on snapshot-bound evidence reuse, dependency-based blast radius = invalidation frontier, deterministic verdict path, reviewer independence, risk-proportional human escalation. LOW on counter-reality, UNKNOWN semantics, independence vectors, plain-language UI.
-- **Possible differentiation**: AgentMirror's Reality Graph is agent-independent and typed beyond module dependencies; it adds UNKNOWN with survivor enumeration and the decision-flip filter; independence as a vector with SUPPORTED cap; claims from heterogeneous agents. AgentMirror must not claim "claims bound to dependency-cone hashes", "blast radius = invalidation frontier" or "evidence ledger as build cache" as novel.
+- **Overlap with Agentvow**: VERY HIGH on snapshot-bound evidence reuse, dependency-based blast radius = invalidation frontier, deterministic verdict path, reviewer independence, risk-proportional human escalation. LOW on counter-reality, UNKNOWN semantics, independence vectors, plain-language UI.
+- **Possible differentiation**: Agentvow's Reality Graph is agent-independent and typed beyond module dependencies; it adds UNKNOWN with survivor enumeration and the decision-flip filter; independence as a vector with SUPPORTED cap; claims from heterogeneous agents. Agentvow must not claim "claims bound to dependency-cone hashes", "blast radius = invalidation frontier" or "evidence ledger as build cache" as novel.
 - **SOURCE STATUS**: [read-full] (PDF text extracted and keyword-searched; main sections read via full fetch summary and raw text grep; I did not read every paragraph).
 
 ### B. Verification-Time Dependency on a Disappearing Evaluator (Counterfactual Auditability)
@@ -195,7 +195,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **Overlap**: LOW-MEDIUM (vocabulary and independence labelling). **SOURCE STATUS**: [read-full] (PDF text extracted; abstract, intro, section 4 partially read).
 
 ### C. Others found (all [read-page] unless noted)
-- **Looping Is Not Reliability** (2607.24604, Alibaba, v2 Sept 2026): state-bound evidence for code repair; stale traces harm 34/135 correct starts vs 4/135 with current traces; rejects inferring verifier independence from model-family diversity (phi = 0.641 within Qwen family). Empirical support for snapshot binding and for AgentMirror's independence premise. No claim reconciliation, no counter-state search.
+- **Looping Is Not Reliability** (2607.24604, Alibaba, v2 Sept 2026): state-bound evidence for code repair; stale traces harm 34/135 correct starts vs 4/135 with current traces; rejects inferring verifier independence from model-family diversity (phi = 0.641 within Qwen family). Empirical support for snapshot binding and for Agentvow's independence premise. No claim reconciliation, no counter-state search.
 - **Explanation-Bound Tool Execution (EBTE)** (2607.25364, 2026-07-28): converts agent explanations to structured action claims verified against independently held server facts (intent certificates, tool registry, policy, risk snapshot) -> Allow / Review / Deny. Same *shape* as claim-vs-independent-reality plus policy awareness, but for tool-call authorization, not codebase claims; no graph, reuse, or counter-state search. Overlap MEDIUM on "claims vs independent facts, Review route".
 - **RETRACE** (2608.08950, 2026-08-09): independent patch verification by backward reconstruction of the problem from the patch alone and reconciliation; LLM-based, same backbone for both paths. Independence of *framing* mechanism only (withholds the issue). Relevant as a framing-independence precedent; LLM in verdict path.
 - **Evidence-Ledger Adjudication** (2607.26512): claim/evidence relations (supports/contradicts/missing/mixed) for writing; LLM-based; not code.
@@ -204,7 +204,7 @@ Fields I could not establish are written "not stated in source read" rather than
 - **roam-code** (Cranot): SQLite code graph, 28 languages, `roam preflight` (what a change could affect incl. tests), `guard-pr` (what changed, which checks required/ran/missing), ChangeEvidence packets, SARIF, signed run ledger. Does NOT validate agent claims; states findings are leads. Overlaps the "downstream impact + missing checks" evidence-collector layer. [read-page].
 - **Zero-trust / provenance-graph neighbours** [snippet only]: ARM (denied actions as first-class provenance nodes with counterfactual edges, a security-flow notion unrelated to claim verification), FAVA, AgentFlow, Grade, Agentproof (static verification of agent workflow graphs, e.g. "can this graph reach a destructive tool"). They reason about the *agent's own workflow* graph, not the system under change.
 - **Designing for Doubt / informed abstention** (2606.02965): pre-condition-aware pause that names what is missing; 144 scenarios; abstention is on the agent side. Related to UNKNOWN-as-result, not to reality graphs. No counterfactual enumeration.
-- **Uncertainty/UQ for agents** (2609.07395 etc.) [snippet]: probabilistic confidence; contradicts AgentMirror's "no confidence from missing evidence" stance rather than overlapping.
+- **Uncertainty/UQ for agents** (2609.07395 etc.) [snippet]: probabilistic confidence; contradicts Agentvow's "no confidence from missing evidence" stance rather than overlapping.
 
 ---
 

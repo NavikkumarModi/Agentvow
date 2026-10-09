@@ -36,9 +36,9 @@ function latestSession(workspace, home = os.homedir()) {
   return files.map((f) => ({ f: path.join(dir, f), t: fs.statSync(path.join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t)[0].f;
 }
 
-// The hook seals report.html + decision.json with an HMAC (key kept outside the repo, ~/.agentmirror/key). A repository (or an agent
+// The hook seals report.html + decision.json with an HMAC (key kept outside the repo, ~/.agentvow/key). A repository (or an agent
 // working in it) can write these files; only a result sealed by the tool is displayed.
-function keyPath() { return path.join(process.env.AGENTMIRROR_HOME || path.join(os.homedir(), ".agentmirror"), "key"); }
+function keyPath() { return path.join(process.env.AGENTVOW_HOME || path.join(os.homedir(), ".agentvow"), "key"); }
 function verifySeal(dir, kp = keyPath()) {
   try {
     const page = fs.readFileSync(path.join(dir, "report.html"));
@@ -49,7 +49,7 @@ function verifySeal(dir, kp = keyPath()) {
   } catch (e) { return false; }
 }
 
-// One call that answers: is there a result, is it new (stamp), is it sealed by AgentMirror, and what does it say?
+// One call that answers: is there a result, is it new (stamp), is it sealed by Agentvow, and what does it say?
 function readResult(dir, kp, repoRoot) {
   let st;
   try { st = fs.lstatSync(path.join(dir, "decision.sig")); } catch (e) { return null; }
@@ -66,18 +66,18 @@ function readResult(dir, kp, repoRoot) {
 }
 
 const STATUS = {
-  4: { text: "$(shield) AgentMirror: unverified result ignored", tip: "A result file in this repository was not sealed by AgentMirror (it may have been written by the repository or an agent), so it is not shown." },
-  0: { text: "$(check) AgentMirror: no contradiction (scoped)", tip: "No contradiction found in what could be checked. Not a safety verdict." },
-  1: { text: "$(error) AgentMirror: review required", tip: "Something the agent said does not match the repository." },
-  2: { text: "$(question) AgentMirror: not enough evidence", tip: "Treat the agent's claims as unverified." },
-  3: { text: "$(warning) AgentMirror: tool error", tip: "The check could not run. Nothing was verified." },
+  4: { text: "$(shield) Agentvow: unverified result ignored", tip: "A result file in this repository was not sealed by Agentvow (it may have been written by the repository or an agent), so it is not shown." },
+  0: { text: "$(check) Agentvow: no contradiction (scoped)", tip: "No contradiction found in what could be checked. Not a safety verdict." },
+  1: { text: "$(error) Agentvow: review required", tip: "Something the agent said does not match the repository." },
+  2: { text: "$(question) Agentvow: not enough evidence", tip: "Treat the agent's claims as unverified." },
+  3: { text: "$(warning) Agentvow: tool error", tip: "The check could not run. Nothing was verified." },
 };
 
 function shellQuote(p) { return /[^A-Za-z0-9_\/.@:+-]/.test(p) ? `"${p.replace(/(["\\$`])/g, "\\$1")}"` : p; }
 
-// `command` is the agentmirror executable. Hooks run with the AGENT's PATH, which often lacks conda/venv/pyenv directories, so the
+// `command` is the agentvow executable. Hooks run with the AGENT's PATH, which often lacks conda/venv/pyenv directories, so the
 // installer writes the full path when it can find one.
-function hookFileContent(command = "agentmirror", withChatHook = false) {
+function hookFileContent(command = "agentvow", withChatHook = false) {
   const c = shellQuote(command);
   const hooks = { Stop: [{ type: "command", command: `${c} check --hook`, timeout: 60 }] };   // judges the final answer, writes the sealed result
   // EXPERIMENTAL, off by default: hands the last verdict to the agent as context on the next prompt. In one live session the first
@@ -86,7 +86,7 @@ function hookFileContent(command = "agentmirror", withChatHook = false) {
   return JSON.stringify({ version: 1, hooks }, null, 2) + "\n";
 }
 
-// decision.json (written by `agentmirror check --hook`) -> exit-code-like status for the status bar
+// decision.json (written by `agentvow check --hook`) -> exit-code-like status for the status bar
 function statusCodeFromDecision(dec) {
   const s = (dec && dec.status) || "";
   if (s.startsWith("REVIEW")) return 1;
@@ -108,11 +108,11 @@ function decisionMarkdown(dec) {
   const f = ((dec && dec.findings) || []).filter((x) => x.kind !== "snapshot");
   const icon = { CONTRADICTED: "✗", SUPPORTED_BY_PRIOR_EVIDENCE: "✓", NOT_CONTRADICTED: "~", UNKNOWN: "?" };
   const label = { CONTRADICTED: "Contradicted", SUPPORTED_BY_PRIOR_EVIDENCE: "Supported", NOT_CONTRADICTED: "Not contradicted (scoped)", UNKNOWN: "Unknown" };
-  const lines = [`### AgentMirror: ${esc((dec && dec.status) || "no result")}`, ""];
+  const lines = [`### Agentvow: ${esc((dec && dec.status) || "no result")}`, ""];
   if (!f.length) lines.push("No checkable claims were found, so nothing was verified.");
   for (const x of f) lines.push(`- ${icon[x.verdict] || "?"} **${label[x.verdict] || "Unknown"}** — ${esc(x.claim)}`, `  - ${esc(x.why)}`);
   if (dec && dec.unexamined) lines.push("", `_${dec.unexamined} other statement\\(s\\) in the answer were not examined._`);
-  lines.push("", "_AgentMirror informs your decision; it does not approve, reject or merge anything._");
+  lines.push("", "_Agentvow informs your decision; it does not approve, reject or merge anything._");
   return lines.join("\n");
 }
 

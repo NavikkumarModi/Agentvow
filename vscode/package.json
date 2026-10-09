@@ -1,9 +1,9 @@
 {
-  "name": "agentmirror",
-  "displayName": "AgentMirror",
+  "name": "agentvow",
+  "displayName": "Agentvow",
   "description": "Check what a coding agent says it did against what is actually in your repository, before you approve.",
   "version": "0.1.0",
-  "publisher": "agentmirror-dev",
+  "publisher": "agentvow-dev",
   "license": "MIT",
   "engines": {
     "vscode": "^1.95.0"
@@ -21,101 +21,101 @@
       "supported": "limited",
       "description": "Running tests executes the workspace's code and the command/python settings choose what is executed; both are ignored in untrusted workspaces.",
       "restrictedConfigurations": [
-        "agentmirror.command",
-        "agentmirror.python",
-        "agentmirror.testCommand",
-        "agentmirror.runTests",
-        "agentmirror.useCI"
+        "agentvow.command",
+        "agentvow.python",
+        "agentvow.testCommand",
+        "agentvow.runTests",
+        "agentvow.useCI"
       ]
     }
   },
   "contributes": {
     "commands": [
       {
-        "command": "agentmirror.checkMessage",
-        "title": "AgentMirror: Check an agent's message"
+        "command": "agentvow.checkMessage",
+        "title": "Agentvow: Check an agent's message"
       },
       {
-        "command": "agentmirror.checkClipboard",
-        "title": "AgentMirror: Check the message on the clipboard"
+        "command": "agentvow.checkClipboard",
+        "title": "Agentvow: Check the message on the clipboard"
       },
       {
-        "command": "agentmirror.checkSelection",
-        "title": "AgentMirror: Check the selected text"
+        "command": "agentvow.checkSelection",
+        "title": "Agentvow: Check the selected text"
       },
       {
-        "command": "agentmirror.checkClaudeSession",
-        "title": "AgentMirror: Check the latest Claude Code session in this workspace"
+        "command": "agentvow.checkClaudeSession",
+        "title": "Agentvow: Check the latest Claude Code session in this workspace"
       },
       {
-        "command": "agentmirror.installHook",
-        "title": "AgentMirror: Add the agent hook to this workspace (.github/hooks)"
+        "command": "agentvow.installHook",
+        "title": "Agentvow: Add the agent hook to this workspace (.github/hooks)"
       },
       {
-        "command": "agentmirror.showReport",
-        "title": "AgentMirror: Show the last report"
+        "command": "agentvow.showReport",
+        "title": "Agentvow: Show the last report"
       },
       {
-        "command": "agentmirror.menu",
-        "title": "AgentMirror: Menu"
+        "command": "agentvow.menu",
+        "title": "Agentvow: Menu"
       },
       {
-        "command": "agentmirror.tryDemo",
-        "title": "AgentMirror: Try the demo (see a verdict in 10 seconds)"
+        "command": "agentvow.tryDemo",
+        "title": "Agentvow: Try the demo (see a verdict in 10 seconds)"
       },
       {
-        "command": "agentmirror.doctor",
-        "title": "AgentMirror: Check the setup (doctor)"
+        "command": "agentvow.doctor",
+        "title": "Agentvow: Check the setup (doctor)"
       },
       {
-        "command": "agentmirror.showLog",
-        "title": "AgentMirror: Show the log"
+        "command": "agentvow.showLog",
+        "title": "Agentvow: Show the log"
       }
     ],
     "configuration": {
-      "title": "AgentMirror",
+      "title": "Agentvow",
       "properties": {
-        "agentmirror.command": {
+        "agentvow.command": {
           "type": "string",
-          "default": "agentmirror",
-          "description": "The agentmirror executable (pip install agentmirror, or the path to it).",
+          "default": "agentvow",
+          "description": "The agentvow executable (pip install agentvow, or the path to it).",
           "scope": "machine"
         },
-        "agentmirror.base": {
+        "agentvow.base": {
           "type": "string",
           "default": "",
           "description": "Git ref the agent started from. Empty: merge-base with the default branch, or HEAD for uncommitted work."
         },
-        "agentmirror.runTests": {
+        "agentvow.runTests": {
           "type": "boolean",
           "default": false,
           "description": "Also run the project's tests (in a network-denied sandbox on macOS). Executes the workspace's test code.",
           "scope": "machine-overridable"
         },
-        "agentmirror.python": {
+        "agentvow.python": {
           "type": "string",
           "default": "",
-          "description": "Python used to run tests (e.g. a virtualenv's python). Empty: the one running agentmirror.",
+          "description": "Python used to run tests (e.g. a virtualenv's python). Empty: the one running agentvow.",
           "scope": "machine"
         },
-        "agentmirror.testCommand": {
+        "agentvow.testCommand": {
           "type": "string",
           "default": "",
           "description": "Test command; {py} is replaced by the python above. Empty: pytest.",
           "scope": "machine"
         },
-        "agentmirror.autoOpen": {
+        "agentvow.autoOpen": {
           "type": "boolean",
           "default": false,
           "description": "Open the report panel automatically when an agent hook produces a new result (otherwise only the status bar updates)."
         },
-        "agentmirror.useCI": {
+        "agentvow.useCI": {
           "type": "boolean",
           "default": false,
           "description": "Also read the project's CI results for HEAD (needs the GitHub CLI, gh).",
           "scope": "machine-overridable"
         },
-        "agentmirror.notify": {
+        "agentvow.notify": {
           "type": "string",
           "enum": [
             "review",
@@ -129,10 +129,10 @@
     },
     "chatParticipants": [
       {
-        "id": "agentmirror.chat",
-        "name": "agentmirror",
-        "fullName": "AgentMirror",
-        "description": "Show AgentMirror's independent check of the last agent answer",
+        "id": "agentvow.chat",
+        "name": "agentvow",
+        "fullName": "Agentvow",
+        "description": "Show Agentvow's independent check of the last agent answer",
         "isSticky": false,
         "commands": [
           {

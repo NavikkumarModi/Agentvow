@@ -38,7 +38,7 @@ def build(dest: Path) -> Path:
     git(dest, "add", "-A")
     git(dest, "commit", "-qm", "initial")
     first = git(dest, "rev-parse", "HEAD")
-    ev = dest / ".agentmirror" / "evidence"
+    ev = dest / ".agentvow" / "evidence"
     ev.mkdir(parents=True)
     (ev / "ci_run_before.json").write_text(json.dumps(
         {"commit": first, "result": "pass", "summary": "pytest passed", "produced_by": "ci"}))

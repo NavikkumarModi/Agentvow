@@ -1,8 +1,8 @@
-# AgentMirror Development Rules
+# Agentvow Development Rules
 
 ## Mission
 
-AgentMirror is a research-first project. The goal is not to build a generic agent dashboard.
+Agentvow is a research-first project. The goal is not to build a generic agent dashboard.
 
 The central research question is whether an independent, evidence-grounded model of system reality can identify decision-changing divergences between agent claims and observable reality.
 
@@ -34,7 +34,7 @@ The default UI must explain decisions in plain language. Simplify language witho
 
 ## Human agency
 
-AgentMirror informs the human. It does not silently approve, reject, deploy, merge or alter the user's system.
+Agentvow informs the human. It does not silently approve, reject, deploy, merge or alter the user's system.
 
 ## Research honesty
 

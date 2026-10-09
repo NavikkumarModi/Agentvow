@@ -108,7 +108,7 @@ footer{margin-top:28px;color:var(--mut);font-size:12.5px}code{font-family:ui-mon
 """
 
 
-def render_html(d: Decision, title: str = "AgentMirror report") -> str:
+def render_html(d: Decision, title: str = "Agentvow report") -> str:
     cls, head, sub = HEADLINE.get(d.status, ("unk", d.status, ""))
     claims = [f for f in d.findings if f.kind not in ("snapshot",)]
     verified = [f for f in claims if f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED")]
@@ -143,11 +143,11 @@ def render_html(d: Decision, title: str = "AgentMirror report") -> str:
              + "".join(f"<li>verified: {_e(_cut(f.claim, 60))}</li>" for f in unknown[:4] + bad[:4])
              + "<li>that anything outside the checks listed here is safe</li><li>permission to deploy or make unrelated changes</li></ul></div></div>")
     o.append(f'<footer>Checked commit <code>{_e(d.commit[:10])}</code>{" (including uncommitted changes)" if d.dirty else ""}. Scope: {_e(d.scope)}. '
-             "AgentMirror informs your decision; it does not approve, reject or merge anything.</footer></main></body></html>")
+             "Agentvow informs your decision; it does not approve, reject or merge anything.</footer></main></body></html>")
     return "".join(o)
 
 
-MARKER = "<!-- agentmirror-report -->"
+MARKER = "<!-- agentvow-report -->"
 
 
 _MD_SPECIAL = "\\`*_{}[]()#+-.!|<>~&"
@@ -176,7 +176,7 @@ def render_markdown(d: Decision) -> str:
     cls, head, sub = HEADLINE.get(d.status, ("unk", d.status, ""))
     icon = {"bad": "🔴", "unk": "🟡", "ok": "🔵"}[cls]
     claims = [f for f in d.findings if f.kind != "snapshot"]
-    o = [MARKER, f"## {icon} AgentMirror: {head}", "", _md(sub), "",
+    o = [MARKER, f"## {icon} Agentvow: {head}", "", _md(sub), "",
          f"Checked commit `{d.commit[:10]}`{' (including uncommitted changes)' if d.dirty else ''}.", ""]
     if claims:
         o += ["| | Claim | Result |", "|---|---|---|"]
@@ -194,5 +194,5 @@ def render_markdown(d: Decision) -> str:
         o += ["No checkable claims were found, so nothing was verified.", ""]
     if d.unexamined:
         o += [f"_{d.unexamined} other statement\\(s\\) in the agent's message were not examined._", ""]
-    o += [f"_Scope: {_md(d.scope)}. AgentMirror informs your decision; it does not approve, reject or merge anything._"]
+    o += [f"_Scope: {_md(d.scope)}. Agentvow informs your decision; it does not approve, reject or merge anything._"]
     return "\n".join(o)

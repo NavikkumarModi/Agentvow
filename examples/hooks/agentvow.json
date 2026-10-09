@@ -4,7 +4,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "agentmirror check --hook",
+        "command": "agentvow check --hook",
         "timeout": 60
       }
     ]

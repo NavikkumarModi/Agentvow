@@ -1,5 +1,5 @@
-# AgentMirror checking its own pull requests (dogfooding; also the live test of action.yml).
-name: AgentMirror
+# Agentvow checking its own pull requests (dogfooding; also the live test of action.yml).
+name: Agentvow
 on:
   pull_request:
     types: [opened, synchronize, edited, reopened]
@@ -8,7 +8,7 @@ permissions:
   checks: read
   pull-requests: write
 jobs:
-  agentmirror:
+  agentvow:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

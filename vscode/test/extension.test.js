@@ -1,5 +1,5 @@
 "use strict";
-// Loads the REAL extension.js against a stubbed `vscode` module and drives it with REAL hook output (agentmirror check --hook).
+// Loads the REAL extension.js against a stubbed `vscode` module and drives it with REAL hook output (agentvow check --hook).
 const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("fs");
@@ -45,13 +45,13 @@ function loadExtension(stub) {
 function setup(settings) {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), "amx-"));
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amxr-"));
-  process.env.AGENTMIRROR_HOME = home;
-  process.env.AGENTMIRROR_POLL_MS = "150";
+  process.env.AGENTVOW_HOME = home;
+  process.env.AGENTVOW_POLL_MS = "150";
   execFileSync("python3", [path.join(ROOT, "examples", "make_demo.py"), repo], { stdio: "ignore", env: { ...process.env } });
   const { stub, rec } = makeStub(repo, settings);
   const ext = loadExtension(stub);
   const ctx = { subscriptions: [] };
-  const hook = (message) => execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: ROOT, env: { ...process.env },
+  const hook = (message) => execFileSync("python3", ["-m", "agentvow", "check", "--hook"], { cwd: ROOT, env: { ...process.env },
     input: JSON.stringify({ cwd: repo, last_assistant_message: message }) });
   return { repo, ext, ctx, rec, hook, stop: () => ctx.subscriptions.forEach((d) => d.dispose && d.dispose()) };
 }
@@ -109,13 +109,13 @@ test("a result that already exists when the window opens updates the status bar 
   t.stop();
 });
 
-test("a result that was not sealed by AgentMirror is ignored and flagged, never trusted", async () => {
+test("a result that was not sealed by Agentvow is ignored and flagged, never trusted", async () => {
   const t = setup({ notify: "always", autoOpen: false });
   t.ext.activate(t.ctx);
   t.hook("There is no downstream impact.");
   assert.ok(await until(() => t.rec.messages.length > 0));
   const n = t.rec.messages.length;
-  const dir = path.join(t.repo, ".agentmirror", "last");
+  const dir = path.join(t.repo, ".agentvow", "last");
   fs.writeFileSync(path.join(dir, "decision.json"), JSON.stringify({ status: "NO CONTRADICTION FOUND (scoped, not a safety verdict)", findings: [] }));  // forged green
   fs.writeFileSync(path.join(dir, "decision.sig"), "0".repeat(64));
   assert.ok(await until(() => t.rec.status.text.includes("unverified")), t.rec.status.text);
@@ -133,20 +133,20 @@ test("the extension survives a workspace with no result and no key (fails quiet,
   t.stop();
 });
 
-test("@agentmirror shows the sealed verdict in the chat (deterministic text + a button), and refuses unsealed results", async () => {
+test("@agentvow shows the sealed verdict in the chat (deterministic text + a button), and refuses unsealed results", async () => {
   const t = setup({ notify: "never", autoOpen: false });
   t.ext.activate(t.ctx);
-  assert.ok(t.rec.participant && t.rec.participant.id === "agentmirror.chat", "participant not registered");
+  assert.ok(t.rec.participant && t.rec.participant.id === "agentvow.chat", "participant not registered");
   const reply = { md: [], buttons: [] };
   const stream = { markdown: (m) => reply.md.push(m), button: (b) => reply.buttons.push(b) };
   await t.rec.participant.handler({}, {}, stream);
-  assert.ok(reply.md.join("").includes("No AgentMirror result"), "no result yet: say so");
+  assert.ok(reply.md.join("").includes("No Agentvow result"), "no result yet: say so");
   t.hook("There is no downstream impact.");
   reply.md.length = 0; reply.buttons.length = 0;
   await t.rec.participant.handler({}, {}, stream);
   assert.ok(reply.md.join("").includes("REVIEW REQUIRED") && reply.md.join("").includes("Contradicted"), reply.md.join(""));
-  assert.strictEqual(reply.buttons[0].command, "agentmirror.showReport");
-  const dir = path.join(t.repo, ".agentmirror", "last");
+  assert.strictEqual(reply.buttons[0].command, "agentvow.showReport");
+  const dir = path.join(t.repo, ".agentvow", "last");
   fs.writeFileSync(path.join(dir, "decision.sig"), "0".repeat(64));                // forge
   reply.md.length = 0;
   await t.rec.participant.handler({}, {}, stream);
@@ -160,13 +160,13 @@ test("the demo command builds the demo, shows the red verdict and offers a Copil
   const t = setup(settings);
   const gs = fs.mkdtempSync(path.join(os.tmpdir(), "amxg-"));
   t.ctx.globalStorageUri = { fsPath: gs };
-  const bin = path.join(gs, "agentmirror");
-  fs.writeFileSync(bin, `#!/bin/sh\nPYTHONPATH=${ROOT} exec python3 -m agentmirror_check.cli "$@"\n`, { mode: 0o755 });
+  const bin = path.join(gs, "agentvow");
+  fs.writeFileSync(bin, `#!/bin/sh\nPYTHONPATH=${ROOT} exec python3 -m agentvow.cli "$@"\n`, { mode: 0o755 });
   settings.command = bin;
   t.ext.activate(t.ctx);
-  t.rec.commands["agentmirror.tryDemo"]();
-  assert.ok(await until(() => t.rec.messages.some((m) => m.m.includes("AgentMirror demo")), 20000), "no demo notification: " + t.rec.log.join("|"));
-  assert.ok(t.rec.messages.find((m) => m.m.includes("AgentMirror demo")).m.includes("REVIEW REQUIRED"));
+  t.rec.commands["agentvow.tryDemo"]();
+  assert.ok(await until(() => t.rec.messages.some((m) => m.m.includes("Agentvow demo")), 20000), "no demo notification: " + t.rec.log.join("|"));
+  assert.ok(t.rec.messages.find((m) => m.m.includes("Agentvow demo")).m.includes("REVIEW REQUIRED"));
   assert.ok(t.rec.status.text.includes("review required"), t.rec.status.text);
   assert.ok(t.rec.panels >= 1);
   t.stop();
@@ -175,8 +175,8 @@ test("the demo command builds the demo, shows the red verdict and offers a Copil
 test("the status bar item is shown at once and opens a menu that reaches the demo (click-only access)", async () => {
   const t = setup({ notify: "never", autoOpen: false });
   t.ext.activate(t.ctx);
-  assert.ok(t.rec.status.shown && t.rec.status.text.includes("AgentMirror"));
-  await t.rec.commands["agentmirror.menu"]();
-  assert.deepStrictEqual(t.rec.executed, ["agentmirror.tryDemo"]);
+  assert.ok(t.rec.status.shown && t.rec.status.text.includes("Agentvow"));
+  await t.rec.commands["agentvow.menu"]();
+  assert.deepStrictEqual(t.rec.executed, ["agentvow.tryDemo"]);
   t.stop();
 });

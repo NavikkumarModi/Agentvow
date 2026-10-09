@@ -15,5 +15,5 @@
 
 Not audited: Honeycomb, Grafana AI, Graphite (docs 404), Lakera, Devin/OpenHands review internals; Sourcegraph, Codescene, Semgrep, Snyk at snippet level.
 
-## Name collision: PyPI `agentmirror` (checked 2026-10-09) [read]
-PyPI project `agentmirror` 0.1.0 (published 2026-03-30, github.com/naureen-fathima/agentmirror) is "production evaluation for multi-agent AI systems without ground truth": a `ConsistencyJudge` that paraphrases a query with an LLM, runs the variants through a LangGraph agent and scores semantic similarity of the answers (sentence-transformers). It does not compare agent claims with repository state and is not a competitor, but it installs a top-level module `agentmirror`. This project therefore ships as PyPI `agentmirror-check` with module `agentmirror_check` (command stays `agentmirror`).
+## Name collision that led to the rename [read]
+This project was developed as "AgentMirror". PyPI project `agentmirror` 0.1.0 (published 2026-03-30, github.com/naureen-fathima/agentmirror) is "production evaluation for multi-agent AI systems without ground truth": a `ConsistencyJudge` that paraphrases a query with an LLM, runs the variants through a LangGraph agent and scores semantic similarity of the answers (sentence-transformers). It does not compare agent claims with repository state and is not a competitor, but it installs a top-level module `agentmirror`, so the two could not be installed together. The project was renamed Agentvow (checked 2026-10-09: no PyPI, npm or GitHub-repository match, `.dev`/`.com` free). Not a trademark search.

@@ -9,8 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror_check import adapters, doctor  # noqa: E402
+os.environ.setdefault("AGENTVOW_HOME", tempfile.mkdtemp(prefix="am_home_"))
+from agentvow import adapters, doctor  # noqa: E402
 from make_demo import build  # noqa: E402
 
 SECRET = "TOP-SECRET-MARKER-12345"
@@ -42,8 +42,8 @@ class DebugMode(unittest.TestCase):
     def hook(self, payload, debug):
         env = {**os.environ}
         if debug:
-            env["AGENTMIRROR_DEBUG"] = "1"
-        return subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+            env["AGENTVOW_DEBUG"] = "1"
+        return subprocess.run([sys.executable, "-m", "agentvow", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                               input=json.dumps(payload), env=env)
 
     def test_debug_writes_a_content_free_shape_file(self):
@@ -53,7 +53,7 @@ class DebugMode(unittest.TestCase):
             tr.write_text(json.dumps({"role": "assistant", "content": f"{SECRET} No downstream impact."}) + "\n")
             r = self.hook({"cwd": str(repo), "transcript_path": str(tr), "session_id": "s", "extra": {"deep": SECRET}}, debug=True)
             self.assertEqual(r.returncode, 0)
-            shape = (repo / ".agentmirror" / "last" / "payload_shape.json").read_text()
+            shape = (repo / ".agentvow" / "last" / "payload_shape.json").read_text()
             self.assertNotIn(SECRET, shape)
             self.assertIn("hook_payload", shape)
             self.assertIn("transcript", shape)
@@ -62,7 +62,7 @@ class DebugMode(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             self.hook({"cwd": str(repo), "last_assistant_message": "No downstream impact."}, debug=False)
-            self.assertFalse((repo / ".agentmirror" / "last" / "payload_shape.json").exists())
+            self.assertFalse((repo / ".agentvow" / "last" / "payload_shape.json").exists())
 
     def test_camelcase_copilot_cli_payload_end_to_end(self):
         with tempfile.TemporaryDirectory() as t:
@@ -85,9 +85,9 @@ class Doctor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / ".github" / "hooks").mkdir(parents=True)
-            (repo / ".github" / "hooks" / "agentmirror_check.json").write_text(json.dumps(
-                {"version": 1, "hooks": {"Stop": [{"type": "command", "command": "agentmirror check --hook"}]}}))
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
+            (repo / ".github" / "hooks" / "agentvow.json").write_text(json.dumps(
+                {"version": 1, "hooks": {"Stop": [{"type": "command", "command": "agentvow check --hook"}]}}))
+            r = subprocess.run([sys.executable, "-m", "agentvow", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
                                env={**os.environ})
             self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
             self.assertIn("hook uses a bare command name", r.stdout)
@@ -98,8 +98,8 @@ class Doctor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / ".github" / "hooks").mkdir(parents=True)
-            (repo / ".github" / "hooks" / "agentmirror_check.json").write_text("{not json")
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
+            (repo / ".github" / "hooks" / "agentvow.json").write_text("{not json")
+            r = subprocess.run([sys.executable, "-m", "agentvow", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
                                env={**os.environ})
             self.assertEqual(r.returncode, 1)
             self.assertIn("invalid", r.stdout)

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 
-from agentmirror_check import claims, decision  # noqa: E402
+from agentvow import claims, decision  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 CLAIM = "I raised the retry limit to 5. There is no downstream impact. All tests pass."
@@ -42,25 +42,25 @@ class Demo(unittest.TestCase):
         self.assertIn("different commit", f.why)
 
     def _ev(self, fresh, mech, detail="pass: x"):
-        from agentmirror_check.reality import Evidence
+        from agentvow.reality import Evidence
         ind = {"framing": "s", "evidence": "s", "mechanism": mech, "authority": "?"}
         return Evidence("e", "prior_verification", "c", "abcdef123456", "h", fresh, ind, "e.json", detail)
 
     def test_agent_authored_evidence_is_not_independent(self):
-        from agentmirror_check.reality import Snapshot
+        from agentvow.reality import Snapshot
         c = claims.Claim(claims.TESTS_PASS, "tests pass")
         f = decision._tests(c, [self._ev("VALID", "same")], Snapshot("abcdef123456", False))
         self.assertEqual(f.verdict, "UNKNOWN")
         self.assertIn("agent itself", f.why)
 
     def test_independent_valid_passing_evidence_supports(self):
-        from agentmirror_check.reality import Snapshot
+        from agentvow.reality import Snapshot
         c = claims.Claim(claims.TESTS_PASS, "tests pass")
         f = decision._tests(c, [self._ev("VALID", "separate")], Snapshot("abcdef123456", False))
         self.assertEqual(f.verdict, "SUPPORTED_BY_PRIOR_EVIDENCE")
 
     def test_independent_failing_or_unverifiable_evidence_does_not_support(self):
-        from agentmirror_check.reality import Snapshot
+        from agentvow.reality import Snapshot
         c = claims.Claim(claims.TESTS_PASS, "tests pass")
         snap = Snapshot("abcdef123456", False)
         self.assertEqual(decision._tests(c, [self._ev("VALID", "separate", "fail: x")], snap).verdict, "UNKNOWN")
@@ -129,7 +129,7 @@ class CLI(unittest.TestCase):
     def test_cli_output_and_exit_code(self):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
-            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--repo", str(repo)],
+            r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--repo", str(repo)],
                                input=CLAIM, capture_output=True, text=True, cwd=ROOT)
             self.assertEqual(r.returncode, 1, r.stderr)
             self.assertIn("REVIEW REQUIRED", r.stdout)
@@ -179,7 +179,7 @@ class CompatTests(unittest.TestCase):
 
 class Session(unittest.TestCase):
     def test_final_message_takes_last_assistant_text(self):
-        from agentmirror_check.cli import final_message
+        from agentvow.cli import final_message
         with tempfile.TemporaryDirectory() as t:
             f = Path(t) / "s.jsonl"
             rows = [{"type": "assistant", "message": {"content": [{"type": "text", "text": "first"}]}},
@@ -192,13 +192,13 @@ class Session(unittest.TestCase):
 
 class WorkingTree(unittest.TestCase):
     def test_evidence_bound_to_working_tree_hash(self):
-        from agentmirror_check import reality
+        from agentvow import reality
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / "solo.py").write_text("X = 1\n")  # uncommitted, untracked
             snap = reality.snapshot(repo)
             self.assertTrue(snap.dirty and snap.tree)
-            ev = repo / ".agentmirror/evidence"
+            ev = repo / ".agentvow/evidence"
             (ev / "now.json").write_text(json.dumps({"commit": snap.commit, "tree": snap.tree, "result": "pass", "produced_by": "ci",
                                                      "counts": {"passed": 2}, "summary": "ok"}))
             fresh = {e.evidence_id: e.freshness for e in reality.load_prior_evidence(repo, snap)}
@@ -211,4 +211,4 @@ class WorkingTree(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / "new_mod.py").write_text("Y = 1\n")
-            self.assertIn("new_mod.py", __import__("agentmirror_check.reality", fromlist=["x"]).changed_files(repo, "HEAD"))
+            self.assertIn("new_mod.py", __import__("agentvow.reality", fromlist=["x"]).changed_files(repo, "HEAD"))

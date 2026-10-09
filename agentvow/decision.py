@@ -70,7 +70,7 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
         elif c.kind == C.BACKCOMPAT:
             findings.append(_compat(c, repo, base, changed))
         else:
-            findings.append(Finding(c.text, c.kind, "UNKNOWN", "AgentMirror has no check for this kind of claim; it is unverified."))
+            findings.append(Finding(c.text, c.kind, "UNKNOWN", "Agentvow has no check for this kind of claim; it is unverified."))
     touched = [f for f in changed if R.is_test(f) and R.existed_at(repo, base, f)]
     if touched:
         for f in findings:
@@ -80,11 +80,11 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
                           f"{', …' if len(touched) > 3 else ''}), and a green run does not show the tests still test what they did before.")
     if message_missing:
         findings.append(Finding("(the agent's message for this turn could not be read)", "none", "UNKNOWN",
-                                "AgentMirror did not receive the agent's final message (the transcript did not contain it in time, or its format is not understood), "
+                                "Agentvow did not receive the agent's final message (the transcript did not contain it in time, or its format is not understood), "
                                 "so nothing was verified. This is not evidence that the agent made no claims."))
     elif not extracted:
         findings.append(Finding("(no checkable claims found)", "none", "UNKNOWN",
-                                "The message made no claim AgentMirror can check. Nothing was verified."))
+                                "The message made no claim Agentvow can check. Nothing was verified."))
     if new_test_failures == "review":
         for f in findings:
             n = f.meta.get("new_test_failures", 0)
@@ -110,7 +110,7 @@ def _gap_summary(gaps: list) -> str:
     parts = []
     if unsup:
         dirs = Counter(u.split("/")[0] if "/" in u else "(top level)" for u in unsup)
-        parts.append("non-Python code AgentMirror cannot analyse (" + ", ".join(f"{n} file(s) in {d}" for d, n in dirs.most_common(3)) +
+        parts.append("non-Python code Agentvow cannot analyse (" + ", ".join(f"{n} file(s) in {d}" for d, n in dirs.most_common(3)) +
                      "); such code could still depend on the changed files, for example through an HTTP API or a subprocess call")
     if other:
         parts.append(f"{other} other item(s) that could not be read or have dynamic imports")
@@ -125,7 +125,7 @@ def _no_impact(c, changed, changed_py, graph) -> Finding:
     gone = [f for f in changed if f.endswith(".py") and f not in graph.imports and not R.is_test(f)]
     if gone:
         return Finding(c.text, c.kind, "UNKNOWN",
-                       "Some changed Python files no longer exist (deleted or renamed), so AgentMirror cannot tell who depended on them.",
+                       "Some changed Python files no longer exist (deleted or renamed), so Agentvow cannot tell who depended on them.",
                        unknowns=[f"missing: {g}" for g in gone[:6]])
     for f in changed_py:
         for d in graph.dependents(f):
@@ -197,7 +197,7 @@ def _tests(c, evidence, snap) -> Finding:
         return Finding(c.text, c.kind, "UNKNOWN",
                        "The only evidence was produced by the agent itself. That is its claim, not independent evidence.",
                        evidence=[e.raw_reference for e in agent_only])
-    return Finding(c.text, c.kind, "UNKNOWN", "No test result was found for this state. AgentMirror did not run the tests.")
+    return Finding(c.text, c.kind, "UNKNOWN", "No test result was found for this state. Agentvow did not run the tests.")
 
 
 def _from_runs(c, runs) -> Finding:
@@ -210,7 +210,7 @@ def _from_runs(c, runs) -> Finding:
         return sum(e.counts.get(k, 0) for e in ok)
     passed, failed, skipped = tot("passed"), tot("failed") + tot("errors"), tot("skipped")
     per = "; ".join(f"{e.suite or 'tests'}: {e.counts.get('passed', 0)} passed, {e.counts.get('failed', 0) + e.counts.get('errors', 0)} failed" for e in ok)
-    ran = f"AgentMirror ran {len(ok)} test suite(s) on this exact state ({per}); total {passed} passed, {failed} failed, {skipped} skipped."
+    ran = f"Agentvow ran {len(ok)} test suite(s) on this exact state ({per}); total {passed} passed, {failed} failed, {skipped} skipped."
     partial = f" {len(runs) - len(ok)} suite(s) were inconclusive and are not counted." if len(ok) < len(runs) else ""
     missing = sum(e.counts.get("missing", 0) for e in ok)
     if not failed and passed == 0:
@@ -228,16 +228,16 @@ def _from_runs(c, runs) -> Finding:
             return Finding(c.text, c.kind, "CONTRADICTED",
                            f"The agent said tests pass, but {ran} {sum(r for r in regs if r)} test(s) that passed before the change now fail.{partial}", evidence=refs)
         if any(r is None for r in regs):
-            why = "AgentMirror did not run the tests before the change, so it cannot tell whether the failures are new."
+            why = "Agentvow did not run the tests before the change, so it cannot tell whether the failures are new."
         elif sum(e.counts.get("uncomparable", 0) for e in ok):
             new_failing = 0 if any(e.counts.get("no_baseline") for e in ok) else sum(e.counts.get("uncomparable", 0) for e in ok)
             why = ("Some failing tests did not exist before the change (new or renamed), so there is nothing to compare them with; "
-                   "they may reflect AgentMirror's environment (for example, no network).")
+                   "they may reflect Agentvow's environment (for example, no network).")
         else:
             nfail = sum(e.counts.get("failed", 0) + e.counts.get("errors", 0) for e in ok)
             return Finding(c.text, c.kind, "UNKNOWN",
-                           f"{ran} {nfail} test(s) fail in AgentMirror's run, so 'all tests pass' was not observed. The same tests also fail without the "
-                           f"change (likely AgentMirror's environment, such as no network), and no test that passed before fails now.{partial} "
+                           f"{ran} {nfail} test(s) fail in Agentvow's run, so 'all tests pass' was not observed. The same tests also fail without the "
+                           f"change (likely Agentvow's environment, such as no network), and no test that passed before fails now.{partial} "
                            f"Whether they pass in the project's own setup is unknown.", evidence=refs)
         return Finding(c.text, c.kind, "UNKNOWN", f"{ran} {why}{partial} The claim could be neither confirmed nor refuted.", evidence=refs,
                        meta={"new_test_failures": locals().get("new_failing", 0)})
@@ -250,7 +250,7 @@ def _from_runs(c, runs) -> Finding:
 
 
 def render(d: Decision) -> str:
-    lines = ["AGENTMIRROR", "", f"STATUS: {d.status}", f"Checked commit {d.commit[:8]}"
+    lines = ["AGENTVOW", "", f"STATUS: {d.status}", f"Checked commit {d.commit[:8]}"
              + (" (including uncommitted changes)" if d.dirty else "") + f". Changed files: {', '.join(d.changed) or 'none'}.", ""]
     for f in d.findings:
         mark = {"CONTRADICTED": "✗", "SUPPORTED_BY_PRIOR_EVIDENCE": "✓", "NOT_CONTRADICTED": "~", "UNKNOWN": "?"}[f.verdict]
@@ -259,7 +259,7 @@ def render(d: Decision) -> str:
         lines += [f"   unknown:  {u}" for u in f.unknowns]
         lines.append("")
     if d.unexamined:
-        lines.append(f"Not examined: {d.unexamined} other statement(s) in the agent's message were not checked by AgentMirror.")
+        lines.append(f"Not examined: {d.unexamined} other statement(s) in the agent's message were not checked by Agentvow.")
         lines.append("")
     lines += [f"Scope of this check: {d.scope}.",
               "This tool informs your decision; it does not approve, reject or merge anything."]

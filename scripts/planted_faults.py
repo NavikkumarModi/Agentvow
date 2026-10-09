@@ -17,8 +17,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-from agentmirror_check import claims, decision, reality, runner  # noqa: E402
-from agentmirror_check.reality import Evidence, Snapshot  # noqa: E402
+from agentvow import claims, decision, reality, runner  # noqa: E402
+from agentvow.reality import Evidence, Snapshot  # noqa: E402
 from feasibility import STRICT, find_commit, git  # noqa: E402
 
 VENV = str(ROOT / "data/venvs/dbbackup/bin/python")
@@ -115,7 +115,7 @@ def main():
                                  ("benign_comment", f0, lambda f0=f0: append(wh, f0, "# planted comment"))]
                 variants.append(("inflated_count", f"claims {pc + 50}", None))
                 for kind, detail, fn in variants:
-                    sh(wh, "checkout", "-q", "-f", "--", "."); sh(wh, "clean", "-fdq", "-e", ".agentmirror")
+                    sh(wh, "checkout", "-q", "-f", "--", "."); sh(wh, "clean", "-fdq", "-e", ".agentvow")
                     if fn:
                         fn()
                     rec = clean if kind in ("clean", "inflated_count") else runner.run_tests(

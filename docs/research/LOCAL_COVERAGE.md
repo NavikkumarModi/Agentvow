@@ -1,4 +1,4 @@
-# Local-run coverage: can AgentMirror verify agent test claims on unfamiliar repos? (2026-10-07)
+# Local-run coverage: can Agentvow verify agent test claims on unfamiliar repos? (2026-10-07)
 
 Script: `scripts/local_coverage.py`; data (local): `data/local_coverage.jsonl` (+ run1/run2 snapshots). Sample: 33 merged PRs in 27 small public Python repos (<40 MB), from the CI study: 18 with no CI at all, 15 where CI could judge (all 15 happened to be CI-SUPPORTED, so no CI-failing PR is in the sample). Automatic environment ladder per repo: venv, `pip install -e .[test|tests|testing|dev]`, requirements files, pytest; installs and tests run under `sandbox-exec` (installs: network allowed, writes limited; tests: network denied). Environment built once per repo at the first PR's head and reused; tests run at the PR's base and head states.
 
@@ -13,7 +13,7 @@ Script: `scripts/local_coverage.py`; data (local): `data/local_coverage.jsonl` (
 - Detection: no CI-failing PR was in the sample, so recall on real bad PRs is untested here. 0 CONTRADICTED and 0 disagreements is not evidence of correctness.
 - n=33 (28 ran), small repos only (<40 MB), one annotator, one setup ladder; project-specific setup (e.g. Django settings variables, services, system libraries) is not handled.
 
-## Defects in AgentMirror found by this run (all fixed, with tests)
+## Defects in Agentvow found by this run (all fixed, with tests)
 1. A PR that adds a new third-party dependency looked like a broken import (CONTRADICTED with 138 "regressions" on a PR that CI had passed). Now a module that is not part of the repo is an environment limit: inconclusive, never a regression.
 2. A project whose pytest config makes output extra quiet has no final "N passed" line; counts parsed as zero and the suite was reported as unable to run (same false CONTRADICTED). Now counts fall back to the per-test lines, and "suite cannot run" requires that no test result exists at all.
 3. Runs record the first error line (`hint`) so an inconclusive result says why.

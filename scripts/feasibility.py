@@ -1,4 +1,4 @@
-"""S0 step 3: can AgentMirror's collectors run on real agent PRs?
+"""S0 step 3: can Agentvow's collectors run on real agent PRs?
 
 For each merged AIDev PR with a strict 'tests pass' claim in the cloned repos, find the merge
 commit, check it out, and run `check` with the PR body as the transcript. Static analysis only:
@@ -14,7 +14,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror_check import decision  # noqa: E402
+from agentvow import decision  # noqa: E402
 
 REPOS = {"NewFuture/DDNS": "NewFuture_DDNS", "Archmonger/django-dbbackup": "Archmonger_django-dbbackup",
          "dvershinin/gixy": "dvershinin_gixy", "translate/translate": "translate_translate",
