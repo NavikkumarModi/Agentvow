@@ -24,7 +24,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: "3.12"
     - name: Install Agentvow
@@ -52,7 +52,7 @@ runs:
         echo "code=$?" >> "$GITHUB_OUTPUT"
         cat "$RUNNER_TEMP/agentvow/summary.md" >> "$GITHUB_STEP_SUMMARY"
         echo "report=$RUNNER_TEMP/agentvow/report.html" >> "$GITHUB_OUTPUT"
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: agentvow-report
         path: ${{ runner.temp }}/agentvow/report.html

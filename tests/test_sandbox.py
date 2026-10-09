@@ -53,3 +53,34 @@ class Guarantees(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(sys.platform.startswith("linux") and not runner.sandbox_problem(), "Linux bubblewrap only")
+class LinuxHidesTheUsersFiles(unittest.TestCase):
+    def setUp(self):
+        self.t = tempfile.TemporaryDirectory(dir=runner.scratch_base())
+        self.repo = Path(self.t.name, "repo").resolve(); self.repo.mkdir()
+        self.scratch = Path(self.t.name, "s").resolve(); self.scratch.mkdir()
+
+    def tearDown(self):
+        self.t.cleanup()
+
+    def test_home_and_tmp_are_empty_inside_the_sandbox(self):
+        probes = [Path.home() / ".agentvow_sandbox_probe", Path(tempfile.gettempdir()) / "agentvow_sandbox_probe"]
+        try:
+            for p in probes:
+                p.write_text("private")
+            code = "\n".join(f"print({str(p)!r}, __import__('os').path.exists({str(p)!r}))" for p in probes)
+            out = sandboxed(code, self.repo, self.scratch).stdout
+            self.assertNotIn("True", out, out)
+        finally:
+            for p in probes:
+                p.unlink(missing_ok=True)
+
+    def test_a_venv_inside_a_hidden_location_still_works(self):
+        venv = Path(self.t.name, "venv")
+        subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True, capture_output=True)
+        py = str(venv / "bin" / "python")
+        r = subprocess.run(runner.wrap([py, "-c", "import sys; print('ok', sys.prefix)"], self.repo, self.scratch, env={"PATH": os.environ["PATH"]}),
+                           capture_output=True, text=True, timeout=60, cwd=self.repo)
+        self.assertIn("ok", r.stdout, r.stdout + r.stderr)

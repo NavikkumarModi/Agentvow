@@ -69,7 +69,7 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
         if c.kind == C.NO_IMPACT:
             findings.append(_no_impact(c, changed, changed_py, graph))
         elif c.kind == C.TESTS_PASS:
-            findings.append(_tests(c, evidence, snap))
+            findings.append(_tests(c, evidence, snap, changed))
         elif c.kind == C.BACKCOMPAT:
             findings.append(_compat(c, repo, base, changed))
         else:
@@ -168,7 +168,14 @@ def _compat(c, repo, base, changed) -> Finding:
                    "other languages, config and runtime compatibility are not checked.")
 
 
-def _tests(c, evidence, snap) -> Finding:
+CI_CONFIG = (".github/workflows/", ".github/actions/", ".circleci/", ".gitlab-ci", "azure-pipelines", "jenkinsfile", ".travis.yml", "buildkite", "tox.ini", "noxfile.py")
+
+
+def _ci_config_changed(changed) -> list:
+    return [f for f in changed if any(m in f.lower() for m in CI_CONFIG)]
+
+
+def _tests(c, evidence, snap, changed=()) -> Finding:
     valid = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "separate"]
     runs = [e for e in valid if e.counts]
     agent_only = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "same"]
@@ -181,6 +188,12 @@ def _tests(c, evidence, snap) -> Finding:
                            "The agent said tests pass, but the project's CI reports failing test job(s) on this exact commit: "
                            + "; ".join(e.raw_reference.split(":", 1)[-1] for e in bad[:4]) + ".", evidence=[e.raw_reference for e in bad])
         good = [e for e in ci if e.detail.startswith("pass")]
+        edited = _ci_config_changed(changed)
+        if good and not runs and edited:   # the change under review edited how CI decides pass/fail: its green result proves much less
+            return Finding(c.text, c.kind, "NOT_CONTRADICTED",
+                           "The project's CI reports passing test job(s) on this exact commit, but this change also edits CI/test configuration ("
+                           + ", ".join(edited[:3]) + (", …" if len(edited) > 3 else "") + "), so the green result may not mean the tests ran or still test what they did. "
+                           "CI also does not check the count the agent gave.", evidence=[e.raw_reference for e in good])
         if good and not runs:
             return Finding(c.text, c.kind, "SUPPORTED_BY_PRIOR_EVIDENCE",
                            "The project's CI reports passing test job(s) on this exact commit. CI runs separately from the agent, but the change under review can edit the CI configuration, and CI does not check the count the agent gave.",

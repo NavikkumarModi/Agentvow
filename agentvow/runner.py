@@ -147,32 +147,68 @@ def scratch_base() -> str:
     return "/private/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
 
 
-def _bwrap_prefix(writable: list, network: bool) -> list:
-    """Linux: bubblewrap. The whole filesystem is read-only except `writable`; secret directories are hidden; no network unless asked; own PID namespace."""
+def _needed_roots(argv: list, env: dict, hidden: list) -> list:
+    """Directories under a hidden location (home, /tmp) that the test command still needs to READ: its interpreter/venv, PATH entries, PYTHONPATH."""
+    cands = []
+    for a in argv:
+        if os.path.isabs(a) and os.path.exists(a):
+            for q in (os.path.abspath(a), os.path.realpath(a)):
+                cands.append(str(Path(q).parent.parent) if Path(q).parent.name in ("bin", "Scripts") else q)
+    for d in (env.get("PATH") or "").split(os.pathsep) + (env.get("PYTHONPATH") or "").split(os.pathsep):
+        if d and os.path.isabs(d) and os.path.isdir(d):
+            cands.append(str(Path(d).parent) if Path(d).name == "bin" else d)
+    for c in list(cands):
+        cfg = Path(c) / "pyvenv.cfg"   # a venv's base interpreter
+        try:
+            for line in cfg.read_text().splitlines():
+                if line.startswith("home"):
+                    cands.append(str(Path(line.split("=", 1)[1].strip()).parent))
+        except OSError:
+            pass
+    out = []
+    for c in cands:
+        if os.path.exists(c) and any(c == h or c.startswith(h + os.sep) for h in hidden) and c not in out:
+            out.append(c)
+    return out
+
+
+def _bwrap_prefix(writable: list, network: bool, argv: list | None = None, env: dict | None = None) -> list:
+    """Linux: bubblewrap. Read-only view of the system; the user's HOME, /tmp and /run are EMPTY (no credentials, browser profiles, shell history, other
+    projects, ssh-agent/docker/D-Bus sockets), with only the interpreter/venv the command needs and the writable paths mounted back; no network unless
+    asked; own PID/IPC/UTS namespaces; all capabilities dropped."""
     home = Path.home()
     key = Path(os.environ.get("AGENTVOW_HOME", home / ".agentvow"))
+    hidden = sorted({os.path.realpath(home), os.path.realpath(tempfile.gettempdir()), "/tmp"})
     cmd = ["bwrap", "--die-with-parent", "--new-session", "--unshare-pid", "--unshare-ipc", "--unshare-uts", "--cap-drop", "ALL",
-           "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run"]   # /run (and /var/run): docker, D-Bus and keyring sockets
+           "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run"]
     if not network:
         cmd.append("--unshare-net")
-    for t in sorted({os.path.realpath(x) for x in (key, *(home / d for d in _SECRET_DIRS))}):
-        if os.path.isdir(t):
-            cmd += ["--tmpfs", t]
-        elif os.path.exists(t):
-            cmd += ["--ro-bind", "/dev/null", t]
-    for w in writable:
-        cmd += ["--bind", os.path.realpath(w), os.path.realpath(w)]
+    for h in hidden:
+        if os.path.isdir(h):
+            cmd += ["--tmpfs", h]
+    for t in sorted({os.path.realpath(x) for x in (key, *(home / d for d in _SECRET_DIRS))}):   # secrets outside the hidden locations
+        if not any(t == h or t.startswith(h + os.sep) for h in hidden):
+            if os.path.isdir(t):
+                cmd += ["--tmpfs", t]
+            elif os.path.exists(t):
+                cmd += ["--ro-bind", "/dev/null", t]
+    wr = [os.path.realpath(w) for w in writable]
+    for r in _needed_roots(argv or [], env or os.environ, hidden):
+        if not any(r == w or r.startswith(w + os.sep) for w in wr):
+            cmd += ["--ro-bind", r, r]
+    for w in wr:
+        cmd += ["--bind", w, w]
     return cmd
 
 
-def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = False, writable: list | None = None) -> list:
+def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = False, writable: list | None = None, env: dict | None = None) -> list:
     """Prefix `argv` with the platform sandbox. macOS: sandbox-exec; Linux: bubblewrap. Anything else is refused by _require_sandbox."""
     if sys.platform == "darwin":
         if network:
             return ["sandbox-exec", "-p", profile_with_network(writable or [repo]), *argv]
         return ["sandbox-exec", "-p", _profile(repo, scratch), *argv]
     paths = list(writable) if writable else [repo, *([scratch] if scratch else [])]
-    return [*_bwrap_prefix(paths, network), *argv]
+    return [*_bwrap_prefix(paths, network, argv, env), *argv]
 
 
 _SANDBOX_OK: dict = {}
@@ -218,7 +254,7 @@ def isolation_problem(repo: Path, argv: list, env: dict, scratch: Path | None = 
         return None
     code = "import importlib.util,sys\nfor n in sys.argv[1:]:\n    s = importlib.util.find_spec(n)\n    print(n + '\\t' + str(getattr(s, 'origin', None) or ''))\n"
     try:
-        p = subprocess.run(wrap([py, "-c", code, *names], repo, scratch), cwd=repo, env=env, capture_output=True, text=True, timeout=60)
+        p = subprocess.run(wrap([py, "-c", code, *names], repo, scratch, env=env), cwd=repo, env=env, capture_output=True, text=True, timeout=60)
     except (subprocess.TimeoutExpired, OSError):
         return None
     here = os.path.realpath(repo) + os.sep
@@ -294,7 +330,7 @@ def _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_pass
         return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
                 "summary": "isolation failure: " + problem, "failed_ids": [], "passed_ids": [], "hint": ""}
     try:
-        out, code = _run_group(wrap(argv, repo, scratch), repo / subdir, env, timeout)
+        out, code = _run_group(wrap(argv, repo, scratch, env=env), repo / subdir, env, timeout)
         counts = parse_counts(out)
         ids, ok_ids = failed_ids(out), passed_ids(out)
         if not any(counts[k] for k in ("passed", "failed", "errors")) and (ok_ids or ids):

@@ -153,3 +153,23 @@ class ReviewThree(unittest.TestCase):
         out = render(Decision("REVIEW REQUIRED", "abc", False, [], [Finding("No impact.\x1b[1A\x1b[2KSTATUS: NO CONTRADICTION FOUND\nFAKE", "x", "UNKNOWN", "w")], "s", []))
         self.assertNotIn("\x1b", out)
         self.assertEqual([l for l in out.splitlines() if l.startswith("STATUS")], ["STATUS: REVIEW REQUIRED"])
+
+
+class CiConfigEdited(unittest.TestCase):
+    def _ev(self):
+        from agentvow import ci
+        snap = reality.Snapshot("abc", False)
+        return snap, ci.ci_evidence(Path("."), snap, slug="o/r", fetch=lambda p: {"total_count": 1, "check_runs": [{"name": "test", "status": "completed", "conclusion": "success"}]})
+
+    def test_green_ci_is_support_only_if_the_change_did_not_edit_ci(self):
+        from agentvow import claims, decision
+        snap, ev = self._ev(); c = claims.Claim(claims.TESTS_PASS, "All tests pass", None)
+        self.assertEqual(decision._tests(c, ev, snap, ["a.py"]).verdict, "SUPPORTED_BY_PRIOR_EVIDENCE")
+        f = decision._tests(c, ev, snap, [".github/workflows/ci.yml"])
+        self.assertEqual(f.verdict, "NOT_CONTRADICTED"); self.assertIn("edits CI", f.why)
+
+    def test_delivery_mark_cannot_be_forged_without_the_key(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            self.assertNotEqual(reality.seal(b"delivered", b"s1"), "s1")
+            self.assertNotEqual(reality.seal(b"delivered", b"s1"), reality.seal(b"delivered", b"s2"))

@@ -152,6 +152,9 @@ def run_hook(a) -> int:
         d = check(repo, base, text, extra, a.new_test_failures, message_missing=unreadable, changed_override=turn_changed)
         d.scope += (" Changes are counted since the previous Agentvow check in this repository (this turn, plus anything you edited in between)."
                     if prev else " First check in this repository: every uncommitted change is counted, including work that predates this turn.")
+        if prev and not turn_changed and reality.changed_files(repo, "HEAD"):
+            d.scope += (f" Note: no change was counted this turn although {len(reality.changed_files(repo, 'HEAD'))} file(s) are uncommitted; if the agent did edit files, "
+                        "the turn baseline may have been reset (any process running as you can write it), so do not read 'no changes' as proof.")
         d.scope += f" Compared against {base} ({base_how}); if that is not the state before the agent's work, regressions can be hidden."
         msg = render(d)
         run_id = _write_sealed(repo, d)
@@ -237,12 +240,14 @@ def run_prompt_hook(a) -> int:
         last = repo / ".agentvow" / "last"
         dec, stamp = reality.read_sealed_result(last)
         if dec is not None and stamp:
+            mark = reality.seal(b"delivered", stamp.encode())   # keyed: a writer without the signing key cannot pre-mark a verdict as delivered
             delivered = (last / "delivered.sig").read_text().strip() if (last / "delivered.sig").is_file() else ""
+            stamp_is_delivered = delivered == mark
             worth = a.min == "always" or any(x.get("verdict") == "CONTRADICTED" for x in dec.get("findings", []))
-            if stamp != delivered and worth:
+            if not stamp_is_delivered and worth:
                 out = {"additionalContext": context_for_agent(dec)}
-            if stamp != delivered:
-                reality.safe_write(repo, Path(".agentvow") / "last" / "delivered.sig", stamp)   # deliver each verdict at most once
+            if not stamp_is_delivered:
+                reality.safe_write(repo, Path(".agentvow") / "last" / "delivered.sig", mark)   # deliver each verdict at most once
     except Exception:
         out = {}
     print(json.dumps(out))
