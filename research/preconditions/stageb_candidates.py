@@ -1,6 +1,7 @@
 """Stage B phase 1 (docs/research/forecast_grounding/STAGE_B.md section 2): structural candidates from merged AIDev Python PRs. Read-only GitHub API.
 Seed fixed here: SEED = 2028. Usage: python3 research/preconditions/stageb_candidates.py [n_sample=2600]  -> data/preconditions/stageb_cands.jsonl (resumable)"""
 import json
+import os
 import random
 import subprocess
 import sys
@@ -18,15 +19,17 @@ MAX_LINES, MAX_FILES, MAX_MB = 200, 6, 300
 
 
 def gh(path):
-    for attempt in range(3):
+    for attempt in range(4):
+        time.sleep(0.25)   # stay under GitHub's secondary (burst) limiter
         r = subprocess.run(["gh", "api", path], capture_output=True, text=True)
         if r.returncode == 0 and r.stdout.strip():
             return json.loads(r.stdout)
         if "rate limit" in (r.stderr or "").lower():
-            time.sleep(120)
+            time.sleep(180)
             continue
         return None
-    return None
+    print("GitHub rate limit persists; stopping WITHOUT recording failures (resumable)", file=sys.stderr, flush=True)
+    os._exit(3)
 
 
 def is_test(f):
@@ -100,7 +103,7 @@ def main(n_sample=2600):
     todo = [r for r in rows if (r["repo"], r["pr"]) not in done]
     print(f"pool {len(d)}; sample {len(rows)}; to screen {len(todo)}; seed {SEED}", file=sys.stderr)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    with OUT.open("a") as fh, ThreadPoolExecutor(6) as ex:
+    with OUT.open("a") as fh, ThreadPoolExecutor(2) as ex:
         for i, res in enumerate(ex.map(screen, todo), 1):
             fh.write(json.dumps(res) + "\n"); fh.flush()
             if i % 200 == 0:
