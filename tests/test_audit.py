@@ -95,4 +95,4 @@ class Plumbing(unittest.TestCase):
     def test_pipes_and_redirections_are_not_packages(self):
         with tempfile.TemporaryDirectory() as t:
             a = audit.audit(["pip install pytest requests 2>&1 | tail -5", "pip install numpy > log.txt 2>&1", "python -m pip install -q 'pytest>=7' &> /dev/null"], Path(t))
-            self.assertEqual(sorted(f.detail for f in a.findings if f.kind == "install"), ["numpy", "pytest", "pytest", "requests"])
+            self.assertEqual(sorted(f.detail for f in a.findings if f.kind == "install"), ["numpy", "pytest", "requests"])   # identical findings are deduplicated
