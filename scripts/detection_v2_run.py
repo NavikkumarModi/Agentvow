@@ -82,7 +82,7 @@ def pip(venv, repo, args, timeout=300):
 
 def setup_env(repo: Path, key: str):
     """Uses the shipped agentvow.envsetup (same ladder and resource guards as `--setup auto`)."""
-    py, notes, aborted = envsetup.build_env(repo, VENVS / key, DATA / "home")
+    py, notes, aborted = envsetup.build_env(repo, VENVS / key, DATA / "home" / key)   # `home` must be per repository: build_env caches the project copy in <home>/proj
     if aborted:
         notes = notes + [aborted]
     return (VENVS / key if py else None), notes
@@ -99,7 +99,7 @@ def one_repo(item):
     finally:
         shutil.rmtree(VENVS / repo_name.replace("/", "_"), ignore_errors=True)  # keep disk free: environments are disposable
         shutil.rmtree(REPOS / repo_name.replace("/", "_"), ignore_errors=True)   # and so are the clones
-        shutil.rmtree(DATA / "home" / "tmp", ignore_errors=True)
+        shutil.rmtree(DATA / "home" / repo_name.replace("/", "_"), ignore_errors=True)
 
 
 def _one_repo(repo_name, prs):
