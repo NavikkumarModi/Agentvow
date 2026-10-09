@@ -50,6 +50,8 @@ class PromptHook(unittest.TestCase):
             repo = build(Path(t) / "r")
             stop_hook(repo, "Refactored some things in the code.")
             self.assertEqual(prompt_hook(repo, "--min", "review"), {})
+            with (repo / "payments" / "retry.py").open("a") as f:
+                f.write("# changed in the second turn\n")   # changes are counted per turn
             stop_hook(repo, "There is no downstream impact.")
             self.assertIn("additionalContext", prompt_hook(repo, "--min", "review"))
 

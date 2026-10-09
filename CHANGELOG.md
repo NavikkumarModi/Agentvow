@@ -9,3 +9,4 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 
 ### Unreleased
 - `agentmirror demo` and VS Code command "Try the demo"; second adversarial review fixes (see docs/SECURITY_MODEL.md).
+- Per-turn change tracking (changes counted since the previous check, signed state file); `--background-tests` for the hook.

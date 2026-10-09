@@ -59,6 +59,48 @@ def _write_sealed(repo: Path, d) -> None:
     reality.safe_write(repo, last / "report.html", page)
     reality.safe_write(repo, last / "decision.json", dec)
     reality.safe_write(repo, last / "decision.sig", reality.seal(page, dec))  # lets the editor extension reject files it did not receive from this tool
+    return obj["run_id"]
+
+
+def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a) -> None:
+    """Run the tests AFTER the hook has returned (they can take minutes; agents give hooks about a minute): a detached process updates the result."""
+    spool = Path(tempfile.mkdtemp(prefix="agentmirror_turn_"))
+    (spool / "message.txt").write_text(text, encoding="utf-8")
+    (spool / "changed.json").write_text(json.dumps(turn_changed))
+    cmd = [sys.executable, "-m", "agentmirror", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
+           "--test-timeout", str(a.test_timeout)] + (["--python", a.python] if a.python else [])
+    subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+def run_finish_turn(a) -> int:
+    repo, spool = Path(a.repo).resolve(), Path(a.spool)
+    lock = repo / ".agentmirror" / "finish.lock"
+    try:
+        text = (spool / "message.txt").read_text(encoding="utf-8")
+        turn_changed = json.loads((spool / "changed.json").read_text())
+        try:   # one background run per repository: a newer turn's run supersedes this one
+            pid = int(lock.read_text()) if lock.exists() else 0
+            if pid and pid != os.getpid():
+                os.kill(pid, 0)
+                return 0
+        except (OSError, ValueError):
+            pass
+        reality.safe_write(repo, Path(".agentmirror") / "finish.lock", str(os.getpid()))
+        py = a.python or envsetup.default_python(repo)
+        collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
+        d = check(repo, a.base, text, None, "unknown", changed_override=turn_changed)
+        d.scope += " Includes a test run that finished after the agent stopped."
+        cur = reality.read_sealed_result(repo / ".agentmirror" / "last")[0]
+        if cur and cur.get("run_id") == a.run_id:   # still this turn's result: a newer turn must not be overwritten by a slow run
+            _write_sealed(repo, d)
+        return 0
+    finally:
+        shutil.rmtree(spool, ignore_errors=True)
+        try:
+            if lock.exists() and lock.read_text().strip() == str(os.getpid()):
+                lock.unlink()
+        except OSError:
+            pass
 
 
 def run_hook(a) -> int:
@@ -101,12 +143,17 @@ def run_hook(a) -> int:
             collect_test_evidence(repo, base, [("tests", a.test_cmd[0].format(py=py).split(), "")] if a.test_cmd else
                                   [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         extra = ci.ci_evidence(repo, reality.snapshot(repo)) if a.ci else []
-        d = check(repo, base, text, extra, a.new_test_failures, message_missing=unreadable)
+        prev = reality.load_turn_state(repo)
+        turn_changed = reality.changed_this_turn(repo, prev) if prev else None
+        d = check(repo, base, text, extra, a.new_test_failures, message_missing=unreadable, changed_override=turn_changed)
+        d.scope += (" Changes are counted since the previous AgentMirror check in this repository (this turn, plus anything you edited in between)."
+                    if prev else " First check in this repository: every uncommitted change is counted, including work that predates this turn.")
         d.scope += f" Compared against {base} ({base_how}); if that is not the state before the agent's work, regressions can be hidden."
         msg = render(d)
-        obj = to_dict(d)
-        obj["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # every run gets a unique seal, so each turn's verdict is a new one
-        _write_sealed(repo, d)
+        run_id = _write_sealed(repo, d)
+        reality.save_turn_state(repo)
+        if a.background_tests and not a.run_tests:
+            _spawn_finish(repo, base, text, turn_changed, run_id, a)
     except Exception as e:
         msg = f"AgentMirror could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
         try:   # a crash is not a verdict: replace any older sealed result so a stale all-clear is not left on display
@@ -230,6 +277,11 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="agentmirror")
     ap.add_argument("--version", action="version", version=f"agentmirror {__version__}")
     sub = ap.add_subparsers(dest="cmd", required=True)
+    ft = sub.add_parser("finish-turn", help=argparse.SUPPRESS)
+    for flag in ("--repo", "--base", "--spool", "--run-id"):
+        ft.add_argument(flag, required=True)
+    ft.add_argument("--python", default=None)
+    ft.add_argument("--test-timeout", type=int, default=600)
     dm = sub.add_parser("demo", help="build a small demo repository, check a sample claim and write the sealed result (see the verdict without an agent)")
     dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentmirror-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
@@ -250,6 +302,7 @@ def main(argv=None) -> int:
     c.add_argument("--ci-sha", help="commit to read CI results for (default: HEAD); use the PR head SHA in pull_request workflows")
     c.add_argument("--new-test-failures", choices=["unknown", "review"], default="unknown",
                    help="failing tests that this change added or changed have no baseline: unknown (default, conservative) or review (raise REVIEW REQUIRED; can alert on network-dependent new tests)")
+    c.add_argument("--background-tests", action="store_true", help="with --hook: after the hook returns, run the tests in the background and update the result when they finish")
     c.add_argument("--feedback-to-agent", action="store_true",
                    help="hook mode, opt-in: when a claim is CONTRADICTED, ask the agent (once) to revise its answer (decision=block + reason). Off by default: the hook otherwise never blocks")
     c.add_argument("--hook", action="store_true",
@@ -271,6 +324,8 @@ def main(argv=None) -> int:
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":
         return run_prompt_hook(a)
+    if a.cmd == "finish-turn":
+        return run_finish_turn(a)
     if a.cmd == "demo":
         from .demo import run_demo
         print(json.dumps(run_demo(Path(a.path))))

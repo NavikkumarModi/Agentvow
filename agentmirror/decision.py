@@ -42,18 +42,19 @@ class Decision:
     tests_touched: list = field(default_factory=list)
 
 
-def _reality(repo: Path, base: str):
+def _reality(repo: Path, base: str, changed_override=None):
     snap = R.snapshot(repo)
-    changed = R.changed_files(repo, base)
+    changed = R.changed_files(repo, base) if changed_override is None else list(changed_override)
     graph = R.build_graph(repo)
     return snap, changed, graph
 
 
-def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_failures: str = "unknown", message_missing: bool = False) -> Decision:
+def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_failures: str = "unknown", message_missing: bool = False,
+          changed_override=None) -> Decision:
     extracted = C.extract(transcript)
     unexamined = C.count_unexamined(transcript, extracted)
     try:
-        snap, changed, graph = _reality(repo, base)
+        snap, changed, graph = _reality(repo, base, changed_override)
     except R.CollectorError as e:
         f = [Finding(c.text, c.kind, "UNKNOWN", f"could not observe the repository: {e}") for c in extracted]
         return Decision(INSUFFICIENT, "?", False, [], f or [Finding("(none)", "none", "UNKNOWN", str(e))],

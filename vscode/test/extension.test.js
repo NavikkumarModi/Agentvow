@@ -92,6 +92,7 @@ test("notify=review notifies only for contradicted claims", async () => {
   t.hook("Refactored a few things in the code.");
   assert.ok(await until(() => t.rec.status.text.includes("not enough evidence")));
   assert.strictEqual(t.rec.messages.length, 0);
+  fs.appendFileSync(path.join(t.repo, "payments", "retry.py"), "# changed in the second turn\n");   // changes are counted per turn
   t.hook("There is no downstream impact.");
   assert.ok(await until(() => t.rec.messages.length > 0));
   assert.strictEqual(t.rec.messages[0].kind, "warning");
