@@ -300,6 +300,11 @@ def main(argv=None) -> int:
         ft.add_argument(flag, required=True)
     ft.add_argument("--python", default=None)
     ft.add_argument("--test-timeout", type=int, default=600)
+    au = sub.add_parser("audit-env", help="compare what an agent session installed/exported with what the repository and the recipe declare")
+    au.add_argument("--repo", default=".")
+    au.add_argument("--session", required=True, help="Claude Code session .jsonl or Copilot CLI events.jsonl")
+    au.add_argument("--recipe", default=None)
+    au.add_argument("--json", action="store_true")
     dm = sub.add_parser("demo", help="build a small demo repository, check a sample claim and write the sealed result (see the verdict without an agent)")
     dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentvow-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
@@ -344,6 +349,18 @@ def main(argv=None) -> int:
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":
         return run_prompt_hook(a)
+    if a.cmd == "audit-env":
+        from . import audit as audit_mod, recipe as recipe_mod
+        rec = None
+        if a.recipe:
+            try:
+                rec = recipe_mod.load(a.recipe)
+            except (recipe_mod.RecipeError, OSError) as e:
+                print(f"agentvow: recipe not used ({e})", file=sys.stderr)
+        cmds, trunc = audit_mod.session_commands(Path(a.session))
+        res = audit_mod.audit(cmds, Path(a.repo).resolve(), rec, trunc)
+        print(json.dumps({"commands": res.commands_seen, "truncated": res.truncated, "findings": [vars(f) for f in res.findings], "undeclared": len(res.undeclared)}) if a.json else audit_mod.render(res))
+        return 1 if res.undeclared else 0
     if a.cmd == "finish-turn":
         return run_finish_turn(a)
     if a.cmd == "demo":

@@ -17,6 +17,7 @@ agentvow check --repo . --transcript msg.txt --run-tests --python venv/bin/pytho
 agentvow check --repo . --transcript msg.txt --ci --html report.html                # also read CI results; write a visual report
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
+`agentvow audit-env --session <session.jsonl> [--recipe recipe.json]` lists what an agent session installed or exported and whether the repository or recipe declares it.
 Exit codes: `0` no contradiction found (scoped), `1` review required, `2` insufficient evidence, `3` tool error. Other options: `--markdown`, `--json`, `--session <Claude Code session.jsonl>`, `--base <ref>`, `--test-cmd`, `--test-timeout`, `--setup auto`, `--new-test-failures review`.
 
 ![What the verdict view shows](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/report.png)
@@ -80,4 +81,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 216 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 222 Python tests, 32 node tests -->
