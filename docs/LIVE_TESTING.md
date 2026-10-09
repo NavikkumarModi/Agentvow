@@ -50,3 +50,9 @@ All of these are single runs, with claims the test steered the agent into; they 
 - **Tests-pass contradiction (hook run directly with a Copilot-style payload, real sandboxed run):** a repo where the edit breaks both tests, claim "All 2 tests pass." -> CONTRADICTED (0 passed, 2 failed; 2 regressions), `decision: block`.
 - **Claude declined to claim untested passes:** when told not to run tests it refused to say they pass; AgentMirror recorded the statement as unchecked and did not invent a verdict.
 - **Not tested live:** Codex, Cursor, Gemini CLI; Copilot cloud agent; Linux/Windows (no test sandbox there: AgentMirror refuses to run tests).
+
+## GitHub Action and CI (2026-10-09, GitHub-hosted runners, private repository)
+- **CI (`.github/workflows/ci.yml`):** the full suite (199 tests incl. `tests/test_sandbox.py`) and the node tests pass on `ubuntu-latest` (bubblewrap sandbox) and `macos-latest` (sandbox-exec). Nothing skipped. `agentmirror doctor` reports the sandbox as working on both.
+- **Action (`action.yml`, run as `uses: ./` on a real pull request):** the PR description was the claim ("no downstream impact. All 199 tests pass."). It posted one comment: no-downstream-impact CONTRADICTED (15 modules import the edited file), tests UNKNOWN. After the PR description was edited the same comment was updated in place (no duplicate).
+- **Finding and fix:** the first runs executed while the test jobs were still running, so CI evidence was missing. The action now waits (`ci-wait`, default 600 s) for running test jobs; on the next run the tests claim became SUPPORTED by the CI result, with the caveat that CI does not check the agent's count and that a PR can edit CI configuration.
+- Not run: fork pull requests (comment permission), Copilot cloud-agent PRs.
