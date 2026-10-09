@@ -100,6 +100,11 @@ _SECRET_DIRS = (".ssh", ".aws", ".gnupg", ".config/gh", ".config/gcloud", ".dock
                 ".pypirc", ".git-credentials", "Library/Keychains")
 
 
+# (allow default) lets tools reach OS services that act outside the sandbox (found by review: `defaults write` persisted a value).
+# Deny the obvious helpers; this is NOT a complete containment of Mach services (see docs/SECURITY_MODEL.md).
+_DENY_EXEC = "".join(f'(deny process-exec (literal "{p}"))' for p in ("/usr/bin/open", "/usr/bin/defaults", "/usr/bin/osascript", "/bin/launchctl", "/usr/bin/pbcopy", "/usr/bin/pbpaste"))
+
+
 def _deny_reads() -> str:
     """Reads are allowed by default (Python and tools need the system), but never of the signing key or common credential stores."""
     home = Path.home()
@@ -111,7 +116,7 @@ def _deny_reads() -> str:
 def _profile(repo: Path, scratch: Path | None = None) -> str:
     """Tests: network denied; writes only inside the worktree and one private scratch directory (HOME and TMPDIR), /dev; no reads of the key or credentials."""
     extra = f' (subpath "{os.path.realpath(scratch)}")' if scratch else ""
-    return f'(version 1)(allow default)(deny network*){_deny_reads()}(deny file-write*)(allow file-write* (subpath "{repo}"){extra} (subpath "/dev"))'
+    return f'(version 1)(allow default)(deny network*){_deny_reads()}{_DENY_EXEC}(deny file-write*)(allow file-write* (subpath "{repo}"){extra} (subpath "/dev"))'
 
 
 def profile_with_network(writable: list) -> str:
@@ -274,11 +279,3 @@ def _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_pass
     if write:
         R.safe_write(repo, Path(".agentmirror") / "evidence" / f"testrun_{snap.commit[:10]}.json", json.dumps(R.sign_record(rec)))
     return rec
-
-
-def run_pair(repo: Path, base: str, head: str, argv: list[str], timeout: int = 600) -> dict:
-    """Run at `base` (not recorded as evidence) then at `head` (recorded), comparing failing test ids."""
-    subprocess.run(["git", "-C", str(repo), "checkout", "-q", "-f", "--detach", base], check=True)
-    b = run_tests(repo, argv, timeout, write=False)
-    subprocess.run(["git", "-C", str(repo), "checkout", "-q", "-f", "--detach", head], check=True)
-    return run_tests(repo, argv, timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"])

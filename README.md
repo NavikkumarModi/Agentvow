@@ -49,7 +49,7 @@ Details and a step-by-step live test: `docs/LIVE_TESTING.md`.
 Then **Developer: Reload Window**. The extension is plain JavaScript with no dependencies; it calls the `agentmirror` command, which must be reachable by path (use the full path in `agentmirror.command` if VS Code does not see your shell's PATH).
 
 ## Safety in one paragraph
-Running tests executes the project's code. It runs under macOS `sandbox-exec` (network denied, writes only inside a throwaway worktree, signing key and credential folders unreadable, whole process group killed on timeout); on other platforms AgentMirror refuses to run tests. Results are HMAC-sealed with a key outside the repository; a repository (or sandboxed test code) cannot forge them, a fully privileged local agent could. Text from agents and repositories is length-bounded and escaped. Full model, reviews and open weaknesses: `docs/SECURITY_MODEL.md`, `docs/research/RISKS.md`.
+Running tests executes the project's code. It runs under macOS `sandbox-exec` (network denied, file writes only inside a throwaway worktree plus a private scratch directory, signing key and credential folders unreadable, a few helper programs such as `open`/`defaults`/`osascript` blocked, whole process group killed on timeout); on other platforms AgentMirror refuses to run tests. The sandbox is **not** a complete containment: it allows OS services by default, and a review showed a Mach service could still write outside it. Results are HMAC-sealed with a key outside the repository, which stops casual forgery and files copied from elsewhere, **but test results are only as trustworthy as the repository's own test code**: a hostile `conftest.py` can print fake pass counts. Treat a "no contradiction" on an untrusted repository accordingly. Text from agents and repositories is length-bounded and escaped. Full model, reviews and open weaknesses: `docs/SECURITY_MODEL.md`, `docs/research/RISKS.md`.
 
 ## Evidence so far (and what it does not show)
 - Agent PR claims in the wild (688 public Python PRs from five agents that claim tests pass): CI test jobs could judge 33%; of those about 27% had a failing test job (clustered in a few repositories; not an agent ranking). `docs/research/CI_CLAIM_STUDY.md`
@@ -67,4 +67,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 183 Python tests, 30 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 188 Python tests, 30 node tests -->

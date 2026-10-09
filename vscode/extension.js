@@ -75,7 +75,7 @@ function watchHookResults(context) {
   const check = (folder, initial) => {
     const dir = path.join(folder.uri.fsPath, ".agentmirror", "last");
     try {
-      const r = readResult(dir);
+      const r = readResult(dir, undefined, folder.uri.fsPath);
       if (!r || seen.get(dir) === r.stamp) return;
       seen.set(dir, r.stamp);
       log(`${initial ? "existing" : "NEW"} result in ${dir} (stamp ${r.stamp}); sealed and readable: ${r.valid}`);
@@ -157,7 +157,7 @@ function activate(context) {
     try {
       const part = vscode.chat.createChatParticipant("agentmirror.chat", async (request, chatContext, stream) => {
         const root = workspaceRoot();
-        const r = root ? readResult(path.join(root, ".agentmirror", "last")) : null;
+        const r = root ? readResult(path.join(root, ".agentmirror", "last"), undefined, root) : null;
         if (!r) stream.markdown("No AgentMirror result in this workspace yet. Add the hook (command: *AgentMirror: Add the agent hook*), run an agent turn, then ask again.");
         else if (!r.valid) stream.markdown("The result file in this workspace was **not sealed by AgentMirror**, so it is not shown.");
         else {

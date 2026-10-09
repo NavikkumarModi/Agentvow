@@ -80,6 +80,6 @@ def diff(repo: Path, base: str, files: list):
                 found.append(f"removed file: {f}")
                 continue
             found += [f"{f}: {x}" for x in breaking(public_api(old, f.endswith('__init__.py')), public_api(new_src, f.endswith('__init__.py')))]
-        except (SyntaxError, UnicodeDecodeError):
+        except (SyntaxError, UnicodeDecodeError, RecursionError, MemoryError, ValueError):
             gaps.append(f"could not parse {f} for API comparison")
     return found, gaps

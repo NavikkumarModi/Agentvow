@@ -41,14 +41,15 @@ class Differential(unittest.TestCase):
     def test_regression_contradicts(self):
         self.assertEqual(self.verdict({"passed": 8, "failed": 2, "regressions": 1, "uncomparable": 0}), "CONTRADICTED")
 
-    def test_environmental_failures_do_not_contradict(self):
-        self.assertEqual(self.verdict({"passed": 8, "failed": 2, "regressions": 0, "uncomparable": 0}), "NOT_CONTRADICTED")
+    def test_environmental_failures_do_not_contradict_but_are_not_support(self):
+        # review finding: failing tests mean "all tests pass" was not observed, even if they also fail at base
+        self.assertEqual(self.verdict({"passed": 8, "failed": 2, "regressions": 0, "uncomparable": 0}), "UNKNOWN")
 
     def test_agent_count_equal_to_total_is_noted(self):
         f = decision._tests(claims.Claim(claims.TESTS_PASS, "All 10 tests pass", 10),
                             [ev({"passed": 8, "failed": 2, "regressions": 0, "uncomparable": 0})], self.snap)
-        self.assertEqual(f.verdict, "NOT_CONTRADICTED")
-        self.assertIn("consistent with those failures being environmental", f.why)
+        self.assertEqual(f.verdict, "UNKNOWN")
+        self.assertIn("2 test(s) fail", f.why)
 
     def test_uncomparable_failures_are_unknown(self):
         self.assertEqual(self.verdict({"passed": 8, "failed": 2, "regressions": 0, "uncomparable": 2}), "UNKNOWN")

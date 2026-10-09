@@ -50,7 +50,7 @@ function verifySeal(dir, kp = keyPath()) {
 }
 
 // One call that answers: is there a result, is it new (stamp), is it sealed by AgentMirror, and what does it say?
-function readResult(dir, kp) {
+function readResult(dir, kp, repoRoot) {
   let st;
   try { st = fs.lstatSync(path.join(dir, "decision.sig")); } catch (e) { return null; }
   for (const f of ["decision.sig", "decision.json", "report.html"]) {   // regular, bounded files only: no symlinks to elsewhere, no huge reads
@@ -59,7 +59,9 @@ function readResult(dir, kp) {
   const stamp = `${st.mtimeMs}:${st.size}`;
   if (!verifySeal(dir, kp)) return { stamp, valid: false };
   try {
-    return { stamp, valid: true, dec: JSON.parse(fs.readFileSync(path.join(dir, "decision.json"), "utf8")), page: fs.readFileSync(path.join(dir, "report.html"), "utf8") };
+    const dec = JSON.parse(fs.readFileSync(path.join(dir, "decision.json"), "utf8"));
+    if (repoRoot && dec.repo && fs.realpathSync(repoRoot) !== dec.repo) return { stamp, valid: false, error: "result belongs to another repository" };   // copied from elsewhere
+    return { stamp, valid: true, dec, page: fs.readFileSync(path.join(dir, "report.html"), "utf8") };
   } catch (e) { return { stamp, valid: false, error: String(e) }; }
 }
 
