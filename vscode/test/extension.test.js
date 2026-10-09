@@ -13,7 +13,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function until(fn, ms = 6000) { const t = Date.now(); while (Date.now() - t < ms) { if (fn()) return true; await sleep(100); } return false; }
 
 function makeStub(folder, settings) {
-  const rec = { participant: null, messages: [], status: { text: "", tooltip: "", shown: false }, log: [], panels: 0, commands: {} };
+  const rec = { participant: null, messages: [], status: { text: "", tooltip: "", shown: false }, log: [], panels: 0, commands: {}, executed: [] };
   const stub = {
     workspace: { workspaceFolders: [{ uri: { fsPath: folder } }], isTrusted: true,
       getConfiguration: () => ({ get: (k) => settings[k] }),
@@ -27,9 +27,9 @@ function makeStub(folder, settings) {
       showErrorMessage: () => Promise.resolve(undefined),
       createOutputChannel: () => ({ appendLine: (l) => rec.log.push(l), show() {}, clear() {} }),
       createWebviewPanel: () => { rec.panels++; return { webview: {}, reveal() {}, onDidDispose() {} }; },
-      withProgress: () => Promise.resolve(), showInputBox: () => Promise.resolve(undefined), activeTextEditor: undefined },
+      withProgress: () => Promise.resolve(), showInputBox: () => Promise.resolve(undefined), showQuickPick: (items) => Promise.resolve(items[1]), activeTextEditor: undefined },
     chat: { createChatParticipant: (id, handler) => { rec.participant = { id, handler }; return { dispose() {} }; } },
-    commands: { registerCommand: (id, fn) => { rec.commands[id] = fn; return { dispose() {} }; }, executeCommand: () => Promise.resolve() },
+    commands: { registerCommand: (id, fn) => { rec.commands[id] = fn; return { dispose() {} }; }, executeCommand: (id) => { rec.executed.push(id); return Promise.resolve(); } },
     Uri: { file: (p) => p },
     StatusBarAlignment: { Left: 1 }, ViewColumn: { Beside: 2 }, ProgressLocation: { Window: 10 }, env: { clipboard: { readText: () => Promise.resolve(""), writeText: (t) => { rec.clip = t; return Promise.resolve(); } } },
   };
@@ -168,5 +168,14 @@ test("the demo command builds the demo, shows the red verdict and offers a Copil
   assert.ok(t.rec.messages.find((m) => m.m.includes("AgentMirror demo")).m.includes("REVIEW REQUIRED"));
   assert.ok(t.rec.status.text.includes("review required"), t.rec.status.text);
   assert.ok(t.rec.panels >= 1);
+  t.stop();
+});
+
+test("the status bar item is shown at once and opens a menu that reaches the demo (click-only access)", async () => {
+  const t = setup({ notify: "never", autoOpen: false });
+  t.ext.activate(t.ctx);
+  assert.ok(t.rec.status.shown && t.rec.status.text.includes("AgentMirror"));
+  await t.rec.commands["agentmirror.menu"]();
+  assert.deepStrictEqual(t.rec.executed, ["agentmirror.tryDemo"]);
   t.stop();
 });
