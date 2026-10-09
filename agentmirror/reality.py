@@ -303,3 +303,4 @@ def default_base(repo: Path, dirty: bool):
 
 def existed_at(repo: Path, ref: str, path: str) -> bool:
     return subprocess.run(["git", *GIT_SAFE, "-C", str(repo), "cat-file", "-e", f"{ref}:{path}"], capture_output=True).returncode == 0
+# comment-only edit for the live action test
