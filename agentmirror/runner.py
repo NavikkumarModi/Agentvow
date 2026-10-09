@@ -7,6 +7,7 @@ separate tool (not the agent).
 """
 import json
 import os
+import sys
 import re
 import shutil
 import subprocess
@@ -142,9 +143,66 @@ def _run_group(cmd: list, cwd: Path, env: dict, timeout: int):
     return so + "\n" + se, proc.returncode
 
 
+def scratch_base() -> str:
+    return "/private/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
+
+
+def _bwrap_prefix(writable: list, network: bool) -> list:
+    """Linux: bubblewrap. The whole filesystem is read-only except `writable`; secret directories are hidden; no network unless asked; own PID namespace."""
+    home = Path.home()
+    key = Path(os.environ.get("AGENTMIRROR_HOME", home / ".agentmirror"))
+    cmd = ["bwrap", "--die-with-parent", "--new-session", "--unshare-pid", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc"]
+    if not network:
+        cmd.append("--unshare-net")
+    for t in sorted({os.path.realpath(x) for x in (key, *(home / d for d in _SECRET_DIRS))}):
+        if os.path.isdir(t):
+            cmd += ["--tmpfs", t]
+        elif os.path.exists(t):
+            cmd += ["--ro-bind", "/dev/null", t]
+    for w in writable:
+        cmd += ["--bind", os.path.realpath(w), os.path.realpath(w)]
+    return cmd
+
+
+def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = False, writable: list | None = None) -> list:
+    """Prefix `argv` with the platform sandbox. macOS: sandbox-exec; Linux: bubblewrap. Anything else is refused by _require_sandbox."""
+    if sys.platform == "darwin":
+        if network:
+            return ["sandbox-exec", "-p", profile_with_network(writable or [repo]), *argv]
+        return ["sandbox-exec", "-p", _profile(repo, scratch), *argv]
+    paths = list(writable) if writable else [repo, *([scratch] if scratch else [])]
+    return [*_bwrap_prefix(paths, network), *argv]
+
+
+_SANDBOX_OK: dict = {}
+
+
+def sandbox_problem() -> str | None:
+    """None if a working sandbox exists on this machine, else why not (checked by actually running a trivial command inside it)."""
+    if "v" in _SANDBOX_OK:
+        return _SANDBOX_OK["v"]
+    tool = "sandbox-exec" if sys.platform == "darwin" else "bwrap" if sys.platform.startswith("linux") else None
+    if tool is None:
+        why = f"no test sandbox is implemented for {sys.platform}"
+    elif shutil.which(tool) is None:
+        why = f"{tool} not found" + (" (install bubblewrap: apt install bubblewrap)" if tool == "bwrap" else "")
+    else:
+        t = Path(tempfile.mkdtemp(prefix="am", dir=scratch_base()))
+        try:
+            p = subprocess.run(wrap([sys.executable, "-c", "print(1)"], t, t), capture_output=True, text=True, timeout=30)
+            why = None if p.returncode == 0 and p.stdout.strip() == "1" else f"{tool} cannot start here: {(p.stderr or p.stdout).strip()[:200]}"
+        except (OSError, subprocess.TimeoutExpired) as e:
+            why = f"{tool} cannot start here: {e}"
+        finally:
+            shutil.rmtree(t, ignore_errors=True)
+    _SANDBOX_OK["v"] = why
+    return why
+
+
 def _require_sandbox():
-    if shutil.which("sandbox-exec") is None:
-        raise RuntimeError("running tests needs the macOS sandbox (sandbox-exec); refusing to run repository code unsandboxed on this platform")
+    why = sandbox_problem()
+    if why:
+        raise RuntimeError(f"running tests needs a sandbox ({why}); refusing to run repository code unsandboxed")
 
 
 def isolation_problem(repo: Path, argv: list, env: dict, scratch: Path | None = None):
@@ -159,7 +217,7 @@ def isolation_problem(repo: Path, argv: list, env: dict, scratch: Path | None = 
         return None
     code = "import importlib.util,sys\nfor n in sys.argv[1:]:\n    s = importlib.util.find_spec(n)\n    print(n + '\\t' + str(getattr(s, 'origin', None) or ''))\n"
     try:
-        p = subprocess.run(["sandbox-exec", "-p", _profile(repo, scratch), py, "-c", code, *names], cwd=repo, env=env, capture_output=True, text=True, timeout=60)
+        p = subprocess.run(wrap([py, "-c", code, *names], repo, scratch), cwd=repo, env=env, capture_output=True, text=True, timeout=60)
     except (subprocess.TimeoutExpired, OSError):
         return None
     here = os.path.realpath(repo) + os.sep
@@ -214,7 +272,7 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
     repo = Path(repo).resolve()
     # HOME and TMPDIR must be SHORT paths (macOS limits unix-socket paths to 104 chars; gpg-agent and others hang otherwise) and writable: one private
     # scratch directory directly under /private/tmp, the only writable place besides the worktree; removed afterwards.
-    scratch = Path(tempfile.mkdtemp(prefix="am", dir="/private/tmp"))
+    scratch = Path(tempfile.mkdtemp(prefix="am", dir=scratch_base()))
     (scratch / "h").mkdir()
     (scratch / "t").mkdir()
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(scratch / "h"), "TMPDIR": str(scratch / "t"),
@@ -235,7 +293,7 @@ def _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_pass
         return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
                 "summary": "isolation failure: " + problem, "failed_ids": [], "passed_ids": [], "hint": ""}
     try:
-        out, code = _run_group(["sandbox-exec", "-p", _profile(repo, scratch), *argv], repo / subdir, env, timeout)
+        out, code = _run_group(wrap(argv, repo, scratch), repo / subdir, env, timeout)
         counts = parse_counts(out)
         ids, ok_ids = failed_ids(out), passed_ids(out)
         if not any(counts[k] for k in ("passed", "failed", "errors")) and (ok_ids or ids):

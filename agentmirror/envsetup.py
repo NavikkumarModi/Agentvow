@@ -67,8 +67,7 @@ def _pip(venv: Path, repo: Path, home: Path, args: list, timeout: int, max_venv:
     tmp = home / "tmp"   # pip unpacks wheels into TMPDIR; keep it inside the throwaway root so a killed install cannot leave GBs behind in /tmp
     tmp.mkdir(parents=True, exist_ok=True)
     env = {"PATH": os.environ["PATH"], "HOME": str(home), "TMPDIR": str(tmp), "PIP_NO_CACHE_DIR": "1", "PIP_DISABLE_PIP_VERSION_CHECK": "1"}
-    prof = runner.profile_with_network([venv, repo, home])
-    proc = subprocess.Popen(["sandbox-exec", "-p", prof, str(venv / "bin/pip"), *args], cwd=repo, env=env, stdout=subprocess.PIPE,
+    proc = subprocess.Popen(runner.wrap([str(venv / "bin/pip"), *args], repo, network=True, writable=[venv, repo, home]), cwd=repo, env=env, stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, text=True, start_new_session=True)
     start = time.time()
     while proc.poll() is None:
