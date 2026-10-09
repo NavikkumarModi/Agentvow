@@ -298,6 +298,7 @@ def main(argv=None) -> int:
                    help="git ref the agent started from (default: HEAD if the tree has uncommitted changes, else HEAD~1)")
     c.add_argument("--transcript", default="-", help="file with the agent's final message/transcript, or - for stdin")
     c.add_argument("--session", help="Claude Code session .jsonl; its final assistant message is used as the transcript")
+    c.add_argument("--ci-wait", type=int, default=0, metavar="SECONDS", help="with --ci: wait up to this long for test jobs that are still running (default 0)")
     c.add_argument("--ci", action="store_true", help="also read the project's CI check results for HEAD (GitHub, via the gh CLI)")
     c.add_argument("--html", metavar="PATH", help="write a self-contained visual report (use - for stdout)")
     c.add_argument("--markdown", metavar="PATH", help="write a compact markdown summary (use - for stdout), e.g. for a PR comment")
@@ -381,7 +382,7 @@ def _run(a, repo, base, base_how, text):
                 raise SystemExit(f"--test-cmd subdir must be inside the repo: {sub}")
             suites.append((name, cmd.format(py=a.python).split(), sub))
         collect_test_evidence(repo, base, suites, a.test_timeout)
-    extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha) if a.ci else []
+    extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
     d.scope += f"; base: {base_how}"
     if a.markdown:
