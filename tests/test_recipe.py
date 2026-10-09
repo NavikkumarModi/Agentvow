@@ -119,3 +119,54 @@ class Prepare(unittest.TestCase):
                 import shutil; shutil.rmtree(r / ".agentvow", ignore_errors=True)
             self.assertNotEqual(res["without"], "pass")   # the ignored fixture does not exist in a clean checkout (an error, so inconclusive)
             self.assertEqual(res["with"], "pass")      # the declared script generates it, inside the sandbox
+
+
+class Integrity(unittest.TestCase):
+    def _repo(self, d, script):
+        r = Path(d) / "r"; (r / "tests").mkdir(parents=True); (r / "scripts").mkdir()
+        g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+        (r / "tests" / "__init__.py").write_text("")
+        (r / "tests" / "test_a.py").write_text("import unittest\nclass T(unittest.TestCase):\n    def test_f(self):\n        self.assertEqual(1, 2)\n")
+        (r / "scripts" / "mk.py").write_text(script)
+        g("add", "-A"); g("commit", "-qm", "base")
+        return r
+
+    def _run(self, r, d):
+        p = Path(d) / "rec.json"
+        p.write_text(json.dumps({"setup": [], "prepare": ["python scripts/mk.py"], "test": "python -m unittest discover -s tests -p 'test_*.py' -t ."}))
+        import io
+        old = sys.stdin, sys.stdout; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out
+        try:
+            cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+        finally:
+            sys.stdin, sys.stdout = old
+        ev = [json.loads(f.read_text()) for f in (r / ".agentvow" / "evidence").glob("testrun_*.json")]
+        return ev[-1], json.loads(out.getvalue())
+
+    def test_a_prepare_script_that_rewrites_a_test_is_not_accepted_as_evidence(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = self._repo(d, "import pathlib\npathlib.Path('tests/test_a.py').write_text('import unittest\\nclass T(unittest.TestCase):\\n    def test_f(self):\\n        pass\\n')\n")
+            ev, o = self._run(r, d)
+            self.assertEqual(ev["result"], "inconclusive"); self.assertIn("changed existing repository files", ev["summary"])
+            f = [x for x in o["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertEqual(f["verdict"], "UNKNOWN")
+
+    def test_a_prepare_script_may_create_new_files(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = self._repo(d, "import pathlib\npathlib.Path('tests/data').mkdir(exist_ok=True)\npathlib.Path('tests/data/x.txt').write_text('hi')\n")
+            ev, o = self._run(r, d)
+            self.assertNotIn("changed existing", ev["summary"])       # the (deliberately failing) test ran: creation is allowed
+            self.assertIn(ev["result"], ("fail", "inconclusive"))
+
+    def test_recipe_support_states_its_basis(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = self._repo(d, "pass\n")
+            (r / "tests" / "test_a.py").write_text("import unittest\nclass T(unittest.TestCase):\n    def test_f(self):\n        pass\n")
+            ev, o = self._run(r, d)
+            f = [x for x in o["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertIn(f["verdict"], ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"))
+            self.assertIn("declared recipe", f["why"]); self.assertEqual(f["meta"].get("support_basis"), "agent_recipe")

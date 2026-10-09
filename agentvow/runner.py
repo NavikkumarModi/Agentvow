@@ -315,11 +315,19 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(scratch / "h"), "TMPDIR": str(scratch / "t"),
            "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": f"{repo / 'src'}:{repo}", **(env_extra or {})}  # this worktree's code wins over any installed copy
     try:
+        before = R.file_hashes(repo) if prepare else None
         for step in prepare or []:   # agent-declared preparation (recipe `prepare`): a repository script, sandboxed like the tests, before them
             out, code = _run_group(wrap(step, repo, scratch, env=env), repo / subdir, env, min(timeout, 300))
             if code != 0:
                 return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
                         "summary": f"the declared prepare step failed (exit {code}): {' '.join(step)[:80]}", "failed_ids": [], "passed_ids": [], "hint": (out or "")[-200:]}
+        if prepare:
+            after = R.file_hashes(repo)
+            altered = sorted(f for f, h in before.items() if after.get(f) != h)
+            if altered:   # a preparation step may CREATE generated files; rewriting or deleting existing ones (tests included) would manufacture a pass
+                return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
+                        "summary": "the declared prepare step changed existing repository files (" + ", ".join(altered[:3]) + "); it may only create new files, so the run was not used",
+                        "failed_ids": [], "passed_ids": [], "hint": ""}
         return _run_tests(repo, argv, timeout, env, scratch, baseline_failed, baseline_passed, write, suite, subdir, base_repo, snap, started := time.time())
     finally:
         shutil.rmtree(scratch, ignore_errors=True)

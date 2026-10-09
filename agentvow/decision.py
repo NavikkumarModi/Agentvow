@@ -207,6 +207,10 @@ def _tests(c, evidence, snap, changed=()) -> Finding:
                            evidence=[e.raw_reference for e in good])
     if runs:
         f = _from_runs(c, runs)
+        if any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
+            f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
+                      "this does not show the repository reproduces it from its own setup instructions.")
+            f.meta = {**f.meta, "support_basis": "agent_recipe"}
         deps = _dep_manifests_changed(changed)
         if f.verdict == "CONTRADICTED" and deps:
             # Found by the v2 detection study (foamlib#453, a false alarm): the test environment is built for ONE commit, so when the change itself edits

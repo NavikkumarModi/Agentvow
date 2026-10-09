@@ -191,6 +191,15 @@ def changed_this_turn(repo: Path, prev: dict) -> list:
     return sorted(f for f in out if not f.startswith(".agentvow/"))
 
 
+def file_hashes(repo: Path) -> dict:
+    """path -> content hash of every tracked or untracked-but-not-ignored file (what a reviewer would see). Used to detect scripts that rewrite existing files."""
+    out = {}
+    for f in _git(repo, "ls-files", "-co", "--exclude-standard", "-z", "--", ".", ":(exclude).agentvow").split("\0"):
+        if f:
+            out[f] = _file_hash(repo / f)
+    return out
+
+
 def snapshot(repo: Path) -> Snapshot:
     commit = _git(repo, "rev-parse", "HEAD")
     dirty = bool(_git(repo, "status", "--porcelain", "--", ".", ":(exclude).agentvow"))
@@ -291,6 +300,7 @@ class Evidence:
     detail: str = ""
     suite: str = ""
     counts: dict = field(default_factory=dict)  # passed/failed/skipped/errors when a test run was recorded
+    basis: str = ""  # "recipe" when the run was replayed from the AGENT's own declared recipe (conditioned support), else ""
 
 
 def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
@@ -312,7 +322,8 @@ def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
         trusted = verify_record(rec) and rec.get("produced_by") != "agent"  # unsigned records can be forged by whoever can write the repo
         out.append(Evidence(f.stem, "prior_verification", "work-harvester", commit, h, fresh,
                             _INDEP_TOOL if trusted else _INDEP_AGENT,
-                            str(f.relative_to(repo)), f'{rec.get("result", "?")}: {rec.get("summary", "")}', rec.get("suite", ""), rec.get("counts", {})))
+                            str(f.relative_to(repo)), f'{rec.get("result", "?")}: {rec.get("summary", "")}', rec.get("suite", ""), rec.get("counts", {}),
+                            "recipe" if rec.get("declared_by") == "agent recipe" else ""))
     return out
 
 

@@ -40,3 +40,7 @@ If the tests need files that a repository script generates and that are not comm
 {"schema": "agentvow-recipe/1", "setup": ["pip install pytest"], "prepare": ["python scripts/make_fixture.py"], "test": "pytest -q"}
 ```
 Each `prepare` entry must be `python <script.py inside the repository> [plain args]` (at most 3). It runs inside the same sandbox as the tests (network denied, writes only inside the worktree), before the tests, at the base and head commits. It is repository code, exactly like the tests themselves; it is not a shell line.
+
+## Integrity rules for replays
+- A `prepare` step may **create** files (generated fixtures). If it rewrites or deletes any existing tracked or untracked-but-not-ignored file, including a test, the run is **not used as evidence** (UNKNOWN with the reason); the agent's patch is what reviewers see, and a script must not be able to change the tests behind it.
+- A SUPPORTED verdict obtained from a recipe says so ("Basis: the agent's own declared recipe"): it supports the claim under the declared conditions only.
