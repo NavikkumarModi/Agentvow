@@ -72,6 +72,7 @@ if [ -n "$WHL" ]; then
   echo '{"cwd":"'"$TMP/repo"'"}' | "$AM" prompt-hook | python3 -c "import sys,json;o=json.load(sys.stdin);assert 'additionalContext' in o" && pass "prompt-hook delivers the sealed verdict" || fail "prompt-hook"
   echo '{"cwd":"'"$TMP/repo"'"}' | "$AM" prompt-hook | grep -q '^{}$' && pass "prompt-hook delivers once" || fail "prompt-hook repeated a delivery"
   "$AM" agent-instructions --write "$TMP/repo/.github/copilot-instructions.md" >/dev/null && grep -q "agentmirror:begin" "$TMP/repo/.github/copilot-instructions.md" && pass "agent-instructions writes its block" || fail "agent-instructions"
+  "$AM" demo --path "$TMP/demo" | grep -q "REVIEW REQUIRED" && pass "installed CLI: demo produces the red verdict" || fail "demo"
   "$AM" doctor --repo "$TMP/repo" >"$TMP/doctor.txt" 2>&1; [ $? -eq 0 ] && pass "doctor passes (both payload styles end to end)" || { fail "doctor"; grep -E '^✗' "$TMP/doctor.txt" | head -4 | sed 's/^/         /'; }
   cd "$ROOT" || exit 2
 fi

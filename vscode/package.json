@@ -56,6 +56,10 @@
         "title": "AgentMirror: Show the last report"
       },
       {
+        "command": "agentmirror.tryDemo",
+        "title": "AgentMirror: Try the demo (see a verdict in 10 seconds)"
+      },
+      {
         "command": "agentmirror.doctor",
         "title": "AgentMirror: Check the setup (doctor)"
       },

@@ -230,6 +230,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="agentmirror")
     ap.add_argument("--version", action="version", version=f"agentmirror {__version__}")
     sub = ap.add_subparsers(dest="cmd", required=True)
+    dm = sub.add_parser("demo", help="build a small demo repository, check a sample claim and write the sealed result (see the verdict without an agent)")
+    dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentmirror-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
     d.add_argument("--repo", default=".")
     ai = sub.add_parser("agent-instructions", help="print (or write) instructions that make a chat agent run AgentMirror itself and show the verdict in the chat")
@@ -269,6 +271,10 @@ def main(argv=None) -> int:
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":
         return run_prompt_hook(a)
+    if a.cmd == "demo":
+        from .demo import run_demo
+        print(json.dumps(run_demo(Path(a.path))))
+        return 0
     if a.cmd == "doctor":
         from .doctor import run_doctor
         return run_doctor(Path(a.repo))
@@ -288,7 +294,6 @@ def main(argv=None) -> int:
     dirty = reality.snapshot(repo).dirty if (repo / ".git").exists() else False
     base, base_how = (a.base, "given") if a.base else (reality.default_base(repo, dirty) if (repo / ".git").exists() else ("HEAD~1", "assumed"))
     if a.run_tests and a.setup == "auto":
-        import tempfile
         venv_root = Path(tempfile.mkdtemp(prefix="agentmirror_env_"))
         try:
             py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")

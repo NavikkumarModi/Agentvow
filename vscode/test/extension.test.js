@@ -13,7 +13,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function until(fn, ms = 6000) { const t = Date.now(); while (Date.now() - t < ms) { if (fn()) return true; await sleep(100); } return false; }
 
 function makeStub(folder, settings) {
-  const rec = { participant: null, messages: [], status: { text: "", tooltip: "", shown: false }, log: [], panels: 0 };
+  const rec = { participant: null, messages: [], status: { text: "", tooltip: "", shown: false }, log: [], panels: 0, commands: {} };
   const stub = {
     workspace: { workspaceFolders: [{ uri: { fsPath: folder } }], isTrusted: true,
       getConfiguration: () => ({ get: (k) => settings[k] }),
@@ -29,8 +29,9 @@ function makeStub(folder, settings) {
       createWebviewPanel: () => { rec.panels++; return { webview: {}, reveal() {}, onDidDispose() {} }; },
       withProgress: () => Promise.resolve(), showInputBox: () => Promise.resolve(undefined), activeTextEditor: undefined },
     chat: { createChatParticipant: (id, handler) => { rec.participant = { id, handler }; return { dispose() {} }; } },
-    commands: { registerCommand: (id, fn) => ({ dispose() {} }) },
-    StatusBarAlignment: { Left: 1 }, ViewColumn: { Beside: 2 }, ProgressLocation: { Window: 10 }, env: { clipboard: { readText: () => Promise.resolve("") } },
+    commands: { registerCommand: (id, fn) => { rec.commands[id] = fn; return { dispose() {} }; }, executeCommand: () => Promise.resolve() },
+    Uri: { file: (p) => p },
+    StatusBarAlignment: { Left: 1 }, ViewColumn: { Beside: 2 }, ProgressLocation: { Window: 10 }, env: { clipboard: { readText: () => Promise.resolve(""), writeText: (t) => { rec.clip = t; return Promise.resolve(); } } },
   };
   return { stub, rec };
 }
@@ -150,5 +151,22 @@ test("@agentmirror shows the sealed verdict in the chat (deterministic text + a 
   await t.rec.participant.handler({}, {}, stream);
   assert.ok(reply.md.join("").includes("not sealed"), reply.md.join(""));
   assert.ok(!reply.md.join("").includes("REVIEW REQUIRED"));
+  t.stop();
+});
+
+test("the demo command builds the demo, shows the red verdict and offers a Copilot prompt", async () => {
+  const settings = { notify: "never", autoOpen: false };
+  const t = setup(settings);
+  const gs = fs.mkdtempSync(path.join(os.tmpdir(), "amxg-"));
+  t.ctx.globalStorageUri = { fsPath: gs };
+  const bin = path.join(gs, "agentmirror");
+  fs.writeFileSync(bin, `#!/bin/sh\nPYTHONPATH=${ROOT} exec python3 -m agentmirror.cli "$@"\n`, { mode: 0o755 });
+  settings.command = bin;
+  t.ext.activate(t.ctx);
+  t.rec.commands["agentmirror.tryDemo"]();
+  assert.ok(await until(() => t.rec.messages.some((m) => m.m.includes("AgentMirror demo")), 20000), "no demo notification: " + t.rec.log.join("|"));
+  assert.ok(t.rec.messages.find((m) => m.m.includes("AgentMirror demo")).m.includes("REVIEW REQUIRED"));
+  assert.ok(t.rec.status.text.includes("review required"), t.rec.status.text);
+  assert.ok(t.rec.panels >= 1);
   t.stop();
 });

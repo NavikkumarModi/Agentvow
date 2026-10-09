@@ -6,3 +6,6 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Visual HTML report, markdown summary, JSON; hook for Claude Code and GitHub Copilot (Stop/agentStop) with sealed results; VS Code extension (status bar, notifications, `@agentmirror`); GitHub Action; `doctor`; `agent-instructions`.
 - Security hardening after three adversarial reviews (sandboxed installs/tests, signed evidence and seals, symlink-safe writes, hardened git).
 - Studies and honest limits in `docs/research/`.
+
+### Unreleased
+- `agentmirror demo` and VS Code command "Try the demo"; second adversarial review fixes (see docs/SECURITY_MODEL.md).
