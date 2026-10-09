@@ -101,8 +101,9 @@ def run_doctor(repo: Path) -> int:
     if exe and not exe.startswith(("/usr/bin", "/bin", "/usr/local/bin", "/opt/homebrew/bin")):
         add(WARN, "hooks may not find it", f"{exe} is outside the default GUI PATH",
             f"apps launched from the Dock (VS Code) often do not have this directory on PATH: use the full path in hook commands: {exe} check --hook")
-    sb = shutil.which("sandbox-exec")
-    add(OK if sb else WARN, "test sandbox (macOS sandbox-exec)", sb or "not available",
+    from . import runner
+    why = runner.sandbox_problem()
+    add(OK if not why else WARN, "test sandbox (macOS sandbox-exec / Linux bubblewrap)", "working" if not why else why,
         "without it AgentMirror refuses to run tests (static checks and CI reading still work)")
     add(OK if shutil.which("git") else FAIL, "git", shutil.which("git") or "not found", "install git")
     gh = shutil.which("gh")
