@@ -18,7 +18,8 @@ MAX_BYTES, MAX_COMMANDS = 60_000_000, 20_000
 _SECRET = re.compile(r"KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|AUTH", re.I)
 _PIPS = (("pip", "install"), ("pip3", "install"), ("uv", "pip", "install"), ("uv", "add"), ("poetry", "add"), ("pipx", "install"), ("conda", "install"), ("mamba", "install"))
 _SYSTEM = (("apt", "install"), ("apt-get", "install"), ("brew", "install"), ("apk", "add"), ("yum", "install"), ("dnf", "install"), ("npm", "install", "-g"), ("npm", "i", "-g"), ("gem", "install"), ("cargo", "install"))
-_SPLIT = re.compile(r"\s*(?:&&|\|\||;|\n)\s*")
+_SPLIT = re.compile(r"\s*(?:&&|\|\||\||;|\n)\s*")
+_REDIR = re.compile(r"^(\d*[<>]{1,2}&?\d*|&>>?)$")
 
 
 @dataclass
@@ -137,6 +138,7 @@ def audit(commands: list, repo: Path, recipe=None, truncated: bool = False) -> A
                 toks = shlex.split(part, comments=True)
             except ValueError:
                 continue
+            toks = _strip_redirections(toks)
             _scan(toks, part, declared_repo, declared_recipe, recipe_env, res)
             if re.search(r"\b(curl|wget)\b[^|]*\|\s*(sudo\s+)?(ba|z)?sh\b", cmd):
                 res.findings.append(Finding("remote_script", "pipes a downloaded script into a shell", "no", part[:120]))
@@ -147,6 +149,23 @@ def audit(commands: list, repo: Path, recipe=None, truncated: bool = False) -> A
             seen.add(k); uniq.append(f)
     res.findings = uniq
     return res
+
+
+def _strip_redirections(toks):
+    """`2>&1`, `> log.txt`, `< in` are shell plumbing, not arguments."""
+    out, skip = [], False
+    for t in toks:
+        if skip:
+            skip = False
+            continue
+        if _REDIR.match(t):
+            skip = not re.search(r"&\d*$", t) and not t.endswith("&")   # `>` / `2>` take a file operand; `2>&1` does not
+            continue
+        m = re.match(r"^\d*[<>]{1,2}(?!&)(.+)$", t)
+        if m and not re.match(r"^[<>]=", t[1:]):
+            continue                      # `>log.txt` glued
+        out.append(t)
+    return out
 
 
 def _scan(toks, part, d_repo, d_recipe, recipe_env, res):
