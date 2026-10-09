@@ -216,8 +216,8 @@ class Productisation(unittest.TestCase):
 
     def test_hook_ignores_non_repo_and_loop_guard(self):
         r = subprocess.run([sys.executable, "-m", "agentvow", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
-                           input=json.dumps({"stop_hook_active": True}), env={**os.environ})
-        self.assertEqual((r.returncode, r.stdout.strip()), (0, ""))
+                           input=json.dumps({"stop_hook_active": True, "cwd": tempfile.gettempdir()}), env={**os.environ})
+        self.assertEqual((r.returncode, r.stdout.strip()), (0, ""))   # not a git repository: nothing to check
 
 
 class EnvSetup(unittest.TestCase):

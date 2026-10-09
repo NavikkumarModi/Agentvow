@@ -127,7 +127,7 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
     if not proj.exists() and not _copy_project(repo, proj):
         return None, ["project too large to copy for installation"], "too large"
     if not (venv / "bin/python").exists():
-        r = subprocess.run([sys.executable, "-m", "venv", str(venv)], capture_output=True, text=True)
+        r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
         if r.returncode:
             return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
     extras = detect_extras(proj)

@@ -85,9 +85,9 @@ class G3_NoSymlinkWrites(unittest.TestCase):
             victim = Path(t) / "victim.txt"
             victim.write_text("keep")
             os.symlink(victim, repo / ".agentvow" / "last" / "report.html")
-            with self.assertRaises(OSError):
-                reality.safe_write(repo, Path(".agentvow") / "last" / "report.html", "x")
+            reality.safe_write(repo, Path(".agentvow") / "last" / "report.html", "x")   # the link itself is replaced (rename), never followed
             self.assertEqual(victim.read_text(), "keep")
+            self.assertFalse((repo / ".agentvow" / "last" / "report.html").is_symlink())
 
     def test_hook_does_not_overwrite_a_file_through_a_planted_symlink(self):
         with tempfile.TemporaryDirectory() as t:

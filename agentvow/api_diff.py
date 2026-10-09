@@ -2,12 +2,12 @@
 import ast
 import subprocess
 
-from .reality import GIT_SAFE
+from .reality import safe_prefix
 from pathlib import Path
 
 
 def _show(repo: Path, ref: str, path: str):
-    r = subprocess.run(["git", *GIT_SAFE, "-C", str(repo), "show", f"{ref}:{path}"], capture_output=True, text=True)
+    r = subprocess.run(["git", *safe_prefix(repo), "-C", str(repo), "show", f"{ref}:{path}"], capture_output=True, text=True)
     return r.stdout if r.returncode == 0 else None
 
 

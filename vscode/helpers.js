@@ -39,13 +39,15 @@ function latestSession(workspace, home = os.homedir()) {
 // The hook seals report.html + decision.json with an HMAC (key kept outside the repo, ~/.agentvow/key). A repository (or an agent
 // working in it) can write these files; only a result sealed by the tool is displayed.
 function keyPath() { return path.join(process.env.AGENTVOW_HOME || path.join(os.homedir(), ".agentvow"), "key"); }
-function verifySeal(dir, kp = keyPath()) {
+function sealOk(page, dec, sig, kp) {   // verification over buffers already in memory: what is checked is exactly what is displayed (no check-then-read gap)
   try {
-    const page = fs.readFileSync(path.join(dir, "report.html"));
-    const dec = fs.readFileSync(path.join(dir, "decision.json"));
-    const sig = fs.readFileSync(path.join(dir, "decision.sig"), "utf8").trim();
     const mac = crypto.createHmac("sha256", fs.readFileSync(kp)).update(Buffer.concat([page, Buffer.from([0]), dec])).digest("hex");
     return crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(sig));
+  } catch (e) { return false; }
+}
+function verifySeal(dir, kp = keyPath()) {
+  try {
+    return sealOk(fs.readFileSync(path.join(dir, "report.html")), fs.readFileSync(path.join(dir, "decision.json")), fs.readFileSync(path.join(dir, "decision.sig"), "utf8").trim(), kp);
   } catch (e) { return false; }
 }
 
@@ -57,11 +59,16 @@ function readResult(dir, kp, repoRoot) {
     try { const x = fs.lstatSync(path.join(dir, f)); if (!x.isFile() || x.size > 20e6) return { stamp: `${st.mtimeMs}:${st.size}`, valid: false }; } catch (e) { return f === "decision.sig" ? null : { stamp: `${st.mtimeMs}:${st.size}`, valid: false }; }
   }   // the seal is written last: no seal, no (complete) result
   const stamp = `${st.mtimeMs}:${st.size}`;
-  if (!verifySeal(dir, kp)) return { stamp, valid: false };
+  let pageBuf, decBuf, sig;
   try {
-    const dec = JSON.parse(fs.readFileSync(path.join(dir, "decision.json"), "utf8"));
+    pageBuf = fs.readFileSync(path.join(dir, "report.html")); decBuf = fs.readFileSync(path.join(dir, "decision.json"));
+    sig = fs.readFileSync(path.join(dir, "decision.sig"), "utf8").trim();
+  } catch (e) { return { stamp, valid: false }; }
+  if (!sealOk(pageBuf, decBuf, sig, kp === undefined ? keyPath() : kp)) return { stamp, valid: false };
+  try {
+    const dec = JSON.parse(decBuf.toString("utf8"));
     if (repoRoot && dec.repo && fs.realpathSync(repoRoot) !== dec.repo) return { stamp, valid: false, error: "result belongs to another repository" };   // copied from elsewhere
-    return { stamp, valid: true, dec, page: fs.readFileSync(path.join(dir, "report.html"), "utf8") };
+    return { stamp, valid: true, dec, page: pageBuf.toString("utf8") };
   } catch (e) { return { stamp, valid: false, error: String(e) }; }
 }
 
@@ -95,12 +102,13 @@ function statusCodeFromDecision(dec) {
   return 3;
 }
 
+const clean = (x) => String(x).replace(/[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, "").replace(/\s+/g, " ");
 function describeDecision(dec) {
   const f = ((dec && dec.findings) || []).filter((x) => x.kind !== "snapshot");
   const n = (vs) => f.filter((x) => vs.includes(x.verdict)).length;
-  const first = f[0] ? ` First: ${String(f[0].claim).slice(0, 80)}` : "";
+  const first = f[0] ? ` First: ${clean(f[0].claim).slice(0, 80)}` : "";
   const un = dec && dec.unexamined ? `; ${dec.unexamined} statement(s) not examined` : "";
-  return `${(dec && dec.status) || "unknown status"}. ${n(["CONTRADICTED"])} contradicted, ${n(["SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"])} not contradicted or supported, ${n(["UNKNOWN"])} unknown${un}.${first}`;
+  return `${clean((dec && dec.status) || "unknown status")}. ${n(["CONTRADICTED"])} contradicted, ${n(["SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"])} not contradicted or supported, ${n(["UNKNOWN"])} unknown${un}.${first}`;
 }
 
 function decisionMarkdown(dec) {

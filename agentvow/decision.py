@@ -61,6 +61,9 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
                         "collector failed", [])
     evidence = R.load_prior_evidence(repo, snap) + list(extra_evidence or [])
     changed_py = [f for f in changed if f.endswith(".py") and f in graph.imports]
+    for f in changed:   # a changed Python file the graph does not know (odd file name, unreadable, new type) must not silently vanish from the analysis
+        if f.endswith(".py") and f not in graph.imports and (repo / f).is_file():
+            graph.gaps.append(f"changed file not analysed: {f}")
     findings = []
     for c in extracted:
         if c.kind == C.NO_IMPACT:
@@ -249,18 +252,25 @@ def _from_runs(c, runs) -> Finding:
     return Finding(c.text, c.kind, "SUPPORTED_BY_PRIOR_EVIDENCE" if not partial else "UNKNOWN", ran + extra + partial, evidence=refs)
 
 
+def _t(x) -> str:
+    """Plain-text output is shown in terminals and hook messages: strip control/format characters (an ESC sequence could overwrite the real STATUS
+    line) and collapse newlines (a claim must not be able to start a fake line)."""
+    import unicodedata
+    return " ".join("".join(ch for ch in str(x) if unicodedata.category(ch) not in ("Cc", "Cf") or ch in " \n\t").split())
+
+
 def render(d: Decision) -> str:
-    lines = ["AGENTVOW", "", f"STATUS: {d.status}", f"Checked commit {d.commit[:8]}"
-             + (" (including uncommitted changes)" if d.dirty else "") + f". Changed files: {', '.join(d.changed) or 'none'}.", ""]
+    lines = ["AGENTVOW", "", f"STATUS: {_t(d.status)}", f"Checked commit {_t(d.commit)[:8]}"
+             + (" (including uncommitted changes)" if d.dirty else "") + f". Changed files: {', '.join(_t(c) for c in d.changed) or 'none'}.", ""]
     for f in d.findings:
         mark = {"CONTRADICTED": "✗", "SUPPORTED_BY_PRIOR_EVIDENCE": "✓", "NOT_CONTRADICTED": "~", "UNKNOWN": "?"}[f.verdict]
-        lines += [f'{mark} The agent said: "{f.claim}"', f"   {f.verdict}: {f.why}"]
-        lines += [f"   evidence: {e}" for e in f.evidence]
-        lines += [f"   unknown:  {u}" for u in f.unknowns]
+        lines += [f'{mark} The agent said: "{_t(f.claim)}"', f"   {f.verdict}: {_t(f.why)}"]
+        lines += [f"   evidence: {_t(e)}" for e in f.evidence]
+        lines += [f"   unknown:  {_t(u)}" for u in f.unknowns]
         lines.append("")
     if d.unexamined:
         lines.append(f"Not examined: {d.unexamined} other statement(s) in the agent's message were not checked by Agentvow.")
         lines.append("")
-    lines += [f"Scope of this check: {d.scope}.",
+    lines += [f"Scope of this check: {_t(d.scope)}.",
               "This tool informs your decision; it does not approve, reject or merge anything."]
     return "\n".join(lines)

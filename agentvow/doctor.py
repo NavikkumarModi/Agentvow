@@ -17,7 +17,7 @@ def self_test(py: str = sys.executable, camel: bool = False):
     with tempfile.TemporaryDirectory(prefix="am_doctor_") as t:
         repo = Path(t) / "repo"
         repo.mkdir()
-        run = lambda *a: subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), *a], capture_output=True, text=True, check=True)
+        run = lambda *a: subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), *a], capture_output=True, text=True, check=True)
         run("init", "-q")
         run("config", "user.email", "d@example.com")
         run("config", "user.name", "doctor")
@@ -32,7 +32,7 @@ def self_test(py: str = sys.executable, camel: bool = False):
         tr.write_text(json.dumps({"role": "assistant", "content": "Changed X. There is no downstream impact."}) + "\n")
         payload = ({"cwd": str(repo), "transcriptPath": str(tr), "sessionId": "doctor", "stopReason": "end_turn"} if camel else
                    {"cwd": str(repo), "transcript_path": str(tr), "session_id": "doctor", "hook_event_name": "Stop"})
-        p = subprocess.run([py, "-m", "agentvow", "check", "--hook"], input=json.dumps(payload), capture_output=True, text=True, timeout=120)
+        p = subprocess.run(reality.isolated_argv(py, "check", "--hook"), cwd=t, input=json.dumps(payload), capture_output=True, text=True, timeout=120)
         if p.returncode != 0:
             return False, f"hook exited {p.returncode}: {p.stderr[-200:]}"
         try:

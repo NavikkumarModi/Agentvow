@@ -123,7 +123,7 @@ async function installHook() {
   const cmd = resolveCommand(config().command);
   const note = cmd ? `The hook will run ${cmd} check --hook.` : `Could not find '${config().command}' on your login shell's PATH; the hook will use the bare name and may fail inside agents. Install it first (pip install .) or set agentvow.command to its full path.`;
   const pick = await vscode.window.showWarningMessage(
-    `Add .github/hooks/agentvow.json? Agents that support hooks (Copilot in VS Code, Copilot CLI and cloud agent, and others that read this format) will run Agentvow when they stop. It only informs; it never blocks. ${note}`,
+    `Add .github/hooks/agentvow.json? Agents that support hooks (Copilot in VS Code, Copilot CLI and cloud agent, and others that read this format) will run Agentvow when they stop. It only informs; it never blocks. ${note} The file contains the path to your own copy of the command: do not commit it to a shared repository.`,
     { modal: true, detail: "Optional and EXPERIMENTAL: also add a chat hook that tells the agent the last verdict on your next prompt. In one live test the first delivery coincided with a stalled Copilot chat (cause unproven). Not recommended yet." },
     "Add the file", "Add with the experimental chat hook");
   if (!pick) return;

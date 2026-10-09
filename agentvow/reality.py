@@ -20,13 +20,21 @@ class CollectorError(Exception):
     pass
 
 
+def home_dir() -> Path:
+    return Path(os.environ.get("AGENTVOW_HOME", Path.home() / ".agentvow"))
+
+
 def _key() -> bytes:
     """Per-user signing key kept OUTSIDE the repo (an agent editing the repo cannot forge a signature without reading this file)."""
-    p = Path(os.environ.get("AGENTVOW_HOME", Path.home() / ".agentvow")) / "key"
+    p = home_dir() / "key"
     if not p.exists():
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_bytes(os.urandom(32))
-        p.chmod(0o600)
+        try:   # created private from the first byte (no moment where it is world-readable) and race-free
+            fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "wb") as fh:
+                fh.write(os.urandom(32))
+        except FileExistsError:
+            pass
     return p.read_bytes()
 
 
@@ -64,7 +72,31 @@ def verify_record(rec: dict) -> bool:
 
 
 # Untrusted repositories can configure code to run on ordinary git commands (hooks, fsmonitor). Neutralise them everywhere.
-GIT_SAFE = ["-c", "core.fsmonitor=false", "-c", "core.hooksPath=/dev/null", "-c", "protocol.ext.allow=never"]
+GIT_SAFE = ["-c", "core.fsmonitor=false", "-c", "core.hooksPath=/dev/null", "-c", "protocol.ext.allow=never", "-c", "core.quotepath=false"]
+
+
+def safe_prefix(repo) -> list:
+    """GIT_SAFE plus a neutralisation of every clean/smudge/process filter and textconv/external-diff driver the repository's own config defines:
+    those run commands during checkout, diff and status, and an agent can write them with `git config`."""
+    out = list(GIT_SAFE)
+    try:
+        cfg = subprocess.run(["git", *GIT_SAFE, "-C", str(repo), "config", "--local", "--name-only", "--get-regexp", r"^(filter|diff)\."],
+                             capture_output=True, text=True, timeout=20).stdout.split()
+    except (OSError, subprocess.TimeoutExpired):
+        cfg = []
+    for key in sorted(set(cfg)):
+        parts = key.split(".")
+        if len(parts) >= 3 and parts[-1] in ("clean", "smudge", "process", "textconv", "command"):
+            out += ["-c", f"{key}="]
+        elif len(parts) >= 3 and parts[-1] == "required":
+            out += ["-c", f"{key}=false"]
+    return out + ["-c", "diff.external="]
+
+
+def isolated_argv(py: str, *args: str) -> list:
+    """Run Agentvow itself in a child interpreter WITHOUT the current directory on sys.path (python -m would import a hostile repo's own `agentvow/`)."""
+    parent = str(Path(__file__).resolve().parent.parent)
+    return [py, "-I", "-c", "import sys; sys.path.insert(0, sys.argv[1]); from agentvow.cli import main; sys.exit(main(sys.argv[2:]))", parent, *args]
 
 
 def safe_write(root: Path, rel: Path, data) -> Path:
@@ -80,15 +112,17 @@ def safe_write(root: Path, rel: Path, data) -> Path:
             raise OSError(f"refusing to write through a symlink: {cur}")
         cur.mkdir(exist_ok=True)
     target = cur / rel.parts[-1]
-    fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW, 0o644)
+    tmp = cur / f".{rel.parts[-1]}.{os.getpid()}.tmp"   # write beside, then rename: readers never see a half-written file, and a symlink at `target` is replaced, not followed
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW, 0o644)
     with os.fdopen(fd, "wb") as fh:
         fh.write(data if isinstance(data, bytes) else data.encode("utf-8"))
+    os.replace(tmp, target)
     return target
 
 
 def _git(repo: Path, *args: str) -> str:
     try:
-        out = subprocess.run(["git", *GIT_SAFE, "-C", str(repo), *args], capture_output=True, text=True, check=True)
+        out = subprocess.run(["git", *safe_prefix(repo), "-C", str(repo), *args], capture_output=True, text=True, check=True)
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         raise CollectorError(f"git {' '.join(args)} failed: {e}") from e
     return out.stdout.strip()
@@ -302,4 +336,4 @@ def default_base(repo: Path, dirty: bool):
 
 
 def existed_at(repo: Path, ref: str, path: str) -> bool:
-    return subprocess.run(["git", *GIT_SAFE, "-C", str(repo), "cat-file", "-e", f"{ref}:{path}"], capture_output=True).returncode == 0
+    return subprocess.run(["git", *safe_prefix(repo), "-C", str(repo), "cat-file", "-e", f"{ref}:{path}"], capture_output=True).returncode == 0

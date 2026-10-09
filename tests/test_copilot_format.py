@@ -85,7 +85,7 @@ class CopilotHookEndToEnd(unittest.TestCase):
             self.assertEqual(out["decision"], "block")
             self.assertIn("No downstream impact", out["reason"])
             again = self.run_hook(repo, tr, extra=["--feedback-to-agent"], stop_hook_active=True)
-            self.assertEqual(again.stdout.strip(), "")                     # loop guard: never blocks twice in a row
+            self.assertNotIn("decision", json.loads(again.stdout))        # loop guard: never blocks twice in a row (the second pass still checks and reports)
 
     def test_feedback_text_contains_no_repository_controlled_strings(self):
         with tempfile.TemporaryDirectory() as t:

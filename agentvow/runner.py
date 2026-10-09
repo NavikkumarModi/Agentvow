@@ -151,7 +151,8 @@ def _bwrap_prefix(writable: list, network: bool) -> list:
     """Linux: bubblewrap. The whole filesystem is read-only except `writable`; secret directories are hidden; no network unless asked; own PID namespace."""
     home = Path.home()
     key = Path(os.environ.get("AGENTVOW_HOME", home / ".agentvow"))
-    cmd = ["bwrap", "--die-with-parent", "--new-session", "--unshare-pid", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc"]
+    cmd = ["bwrap", "--die-with-parent", "--new-session", "--unshare-pid", "--unshare-ipc", "--unshare-uts", "--cap-drop", "ALL",
+           "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run"]   # /run (and /var/run): docker, D-Bus and keyring sockets
     if not network:
         cmd.append("--unshare-net")
     for t in sorted({os.path.realpath(x) for x in (key, *(home / d for d in _SECRET_DIRS))}):

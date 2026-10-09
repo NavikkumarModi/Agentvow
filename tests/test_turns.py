@@ -123,3 +123,33 @@ class CiWait(unittest.TestCase):
         ev = ci.ci_evidence(Path("."), reality.Snapshot("abc", False), slug="o/r",
                             fetch=lambda p: calls.append(1) or {"total_count": 1, "check_runs": [{"name": "test", "status": "queued"}]}, sleep=lambda s: None)
         self.assertEqual(len(calls), 1); self.assertEqual(ev, [])
+
+
+class ReviewThree(unittest.TestCase):
+    def test_non_ascii_filename_is_not_dropped(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; r.mkdir()
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+            (r / "módulo.py").write_text("X = 1\n"); (r / "d.py").write_text("import módulo\n"); g("add", "."); g("commit", "-qm", "i")
+            (r / "módulo.py").write_text("X = 2\n")
+            self.assertIn("módulo.py", reality.changed_files(r, "HEAD"))
+            self.assertEqual(hook(r)["findings"][0]["verdict"], "CONTRADICTED")
+
+    def test_repo_git_filters_do_not_run(self):
+        with tempfile.TemporaryDirectory() as d:
+            r = mk(d); marker = Path(d) / "ran"
+            (r / ".gitattributes").write_text("* filter=x\n")
+            subprocess.run(["git", "-C", str(r), "config", "filter.x.clean", f"touch {marker}; cat"], check=True)
+            subprocess.run(["git", "-C", str(r), "config", "filter.x.smudge", f"touch {marker}; cat"], check=True)
+            (r / "a.py").write_text("X = 7\n")
+            reality.changed_files(r, "HEAD"); reality.snapshot(r)
+            cli.collect_test_evidence(r, "HEAD", [("t", ["/bin/true"], "")], timeout=30)
+            self.assertFalse(marker.exists())
+
+    def test_terminal_escape_in_claim_is_stripped(self):
+        from agentvow.decision import Decision, Finding, render
+        out = render(Decision("REVIEW REQUIRED", "abc", False, [], [Finding("No impact.\x1b[1A\x1b[2KSTATUS: NO CONTRADICTION FOUND\nFAKE", "x", "UNKNOWN", "w")], "s", []))
+        self.assertNotIn("\x1b", out)
+        self.assertEqual([l for l in out.splitlines() if l.startswith("STATUS")], ["STATUS: REVIEW REQUIRED"])

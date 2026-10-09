@@ -9,7 +9,7 @@ import time
 import subprocess
 from pathlib import Path
 
-from .reality import GIT_SAFE,  Evidence, Snapshot
+from .reality import safe_prefix,  Evidence, Snapshot
 
 # v2 (2026-10-07, post-hoc after the RQ4 audit: v1 had 91% precision, 59% recall on 60 blind-judged job names).
 # Token-aware (underscores and digits do not hide a word), recognises python-version matrix names, excludes test.pypi.
@@ -24,7 +24,7 @@ def _gh(path: str):
 
 
 def _slug(repo: Path):
-    r = subprocess.run(["git", *GIT_SAFE, "-C", str(repo), "remote", "get-url", "origin"], capture_output=True, text=True)
+    r = subprocess.run(["git", *safe_prefix(repo), "-C", str(repo), "remote", "get-url", "origin"], capture_output=True, text=True)
     m = re.search(r"github\.com[:/]([\w.-]+/[\w.-]+?)(?:\.git)?$", r.stdout.strip())
     return m.group(1) if m else None
 

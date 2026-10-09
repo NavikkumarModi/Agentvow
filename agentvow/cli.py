@@ -22,9 +22,9 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
 
     suites: list of (name, argv, subdir). Uncommitted work is overlaid onto the HEAD worktree so the tests see exactly
     what the agent left behind, and the evidence is bound to that working-tree hash."""
-    git = lambda *x: subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), *x], capture_output=True, text=True, check=True).stdout.strip()
+    git = lambda *x: subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), *x], capture_output=True, text=True, check=True).stdout.strip()
     head, base_sha = git("rev-parse", "HEAD"), git("rev-parse", "--verify", "--end-of-options", base + "^{commit}")
-    subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "prune"], capture_output=True)   # leftovers of a killed earlier run
+    subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), "worktree", "prune"], capture_output=True)   # leftovers of a killed earlier run
     tmp = Path(tempfile.mkdtemp(prefix="agentvow_"))
     try:
         for name, sha in (("base", base_sha), ("head", head)):
@@ -45,7 +45,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
             reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
     finally:
         for name in ("base", "head"):
-            subprocess.run(["git", *reality.GIT_SAFE, "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
+            subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
         shutil.rmtree(tmp, ignore_errors=True)
 
 
@@ -67,25 +67,34 @@ def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a
     spool = Path(tempfile.mkdtemp(prefix="agentvow_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
-    cmd = [sys.executable, "-m", "agentvow", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
-           "--test-timeout", str(a.test_timeout)] + (["--python", a.python] if a.python else [])
-    subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    cmd = reality.isolated_argv(sys.executable, "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
+                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []))
+    subprocess.Popen(cmd, cwd=tempfile.gettempdir(), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 def run_finish_turn(a) -> int:
+    """Background half of --background-tests. One run per repository at a time, serialised with an OS file lock kept in the user's private
+    Agentvow home (not in the repository: a repository-writable lock could be planted to stop tests from ever running; an OS lock also vanishes with
+    its process, so there is no stale-pid case). A newer turn waits for the older run, then runs; the older run's result is dropped if a newer
+    verdict has already replaced the one it started from."""
+    import fcntl
+    import hashlib
     repo, spool = Path(a.repo).resolve(), Path(a.spool)
-    lock = repo / ".agentvow" / "finish.lock"
+    lockdir = reality.home_dir() / "locks"
+    lockdir.mkdir(parents=True, exist_ok=True)
+    fd = os.open(lockdir / (hashlib.sha256(str(repo).encode()).hexdigest()[:16] + ".lock"), os.O_RDWR | os.O_CREAT, 0o600)
     try:
         text = (spool / "message.txt").read_text(encoding="utf-8")
         turn_changed = json.loads((spool / "changed.json").read_text())
-        try:   # one background run per repository: a newer turn's run supersedes this one
-            pid = int(lock.read_text()) if lock.exists() else 0
-            if pid and pid != os.getpid():
-                os.kill(pid, 0)
-                return 0
-        except (OSError, ValueError):
-            pass
-        reality.safe_write(repo, Path(".agentvow") / "finish.lock", str(os.getpid()))
+        deadline = time.time() + 2 * a.test_timeout + 120
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except OSError:
+                if time.time() > deadline:
+                    return 0
+                time.sleep(2)
         py = a.python or envsetup.default_python(repo)
         collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         d = check(repo, a.base, text, None, "unknown", changed_override=turn_changed)
@@ -95,12 +104,8 @@ def run_finish_turn(a) -> int:
             _write_sealed(repo, d)
         return 0
     finally:
+        os.close(fd)
         shutil.rmtree(spool, ignore_errors=True)
-        try:
-            if lock.exists() and lock.read_text().strip() == str(os.getpid()):
-                lock.unlink()
-        except OSError:
-            pass
 
 
 def run_hook(a) -> int:
@@ -116,8 +121,7 @@ def run_hook(a) -> int:
             shapes = {"hook_payload": adapters.shape_of(payload), "parsed": {k: bool(v) for k, v in info.items()},
                       "transcript": adapters.transcript_shapes(Path(info["transcript"]).expanduser()) if info["transcript"] else None}
             reality.safe_write(Path(info["cwd"]).resolve(), Path(".agentvow") / "last" / "payload_shape.json", json.dumps(shapes, indent=2))
-        if info["loop"]:
-            return 0
+        loop = bool(info["loop"])   # second pass after a feedback block: still check (the revised answer may repeat the claim) but never block again
         repo = Path(info["cwd"] or ".").resolve()
         if not (repo / ".git").exists():
             return 0
@@ -152,7 +156,7 @@ def run_hook(a) -> int:
         msg = render(d)
         run_id = _write_sealed(repo, d)
         reality.save_turn_state(repo)
-        if a.background_tests and not a.run_tests:
+        if a.background_tests and not a.run_tests and not loop:
             _spawn_finish(repo, base, text, turn_changed, run_id, a)
     except Exception as e:
         msg = f"Agentvow could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
@@ -166,7 +170,7 @@ def run_hook(a) -> int:
             pass
     out = {"systemMessage": msg}
     fb = None if locals().get("d") is None else agent_feedback(d)
-    if a.feedback_to_agent and fb:
+    if a.feedback_to_agent and fb and not loop:
         out.update({"decision": "block", "reason": fb})   # explicit opt-in; stop_hook_active (checked above) limits this to once per chain
     print(json.dumps(out))
     return 0
