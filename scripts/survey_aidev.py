@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agentmirror import claims  # noqa: E402
+from agentmirror_check import claims  # noqa: E402
 
 CANDIDATES = {
     "no_breaking_changes": re.compile(r"\b(?:no|without|non)[- ](?:breaking|behaviou?ral|functional) (?:changes?|impact)\b|\bbackward[s]?[- ]compatib|\bno functional change", re.I),

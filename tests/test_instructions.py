@@ -10,12 +10,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror import cli  # noqa: E402
+from agentmirror_check import cli  # noqa: E402
 from make_demo import build  # noqa: E402
 
 
 def cmd(*args, cwd=ROOT):
-    return subprocess.run([sys.executable, "-m", "agentmirror", *args], capture_output=True, text=True, cwd=cwd, env={**os.environ})
+    return subprocess.run([sys.executable, "-m", "agentmirror_check", *args], capture_output=True, text=True, cwd=cwd, env={**os.environ})
 
 
 class Instructions(unittest.TestCase):
@@ -51,7 +51,7 @@ class Instructions(unittest.TestCase):
     def test_the_command_in_the_block_really_runs_and_shows_the_verdict(self):
         with tempfile.TemporaryDirectory() as t:
             shim = Path(t) / "agentmirror"
-            shim.write_text(f'#!/bin/sh\nPYTHONPATH={ROOT} exec {sys.executable} -m agentmirror "$@"\n')
+            shim.write_text(f'#!/bin/sh\nPYTHONPATH={ROOT} exec {sys.executable} -m agentmirror_check "$@"\n')
             shim.chmod(0o755)
             repo = build(Path(t) / "repo")
             block = cli.instructions_block(str(shim))

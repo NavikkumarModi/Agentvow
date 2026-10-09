@@ -39,7 +39,7 @@ test("the real CLI emits a report the extension can display (exit 1 = review req
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amr-"));
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore" });
   let out = "", code = 0;
-  try { out = execFileSync("python3", ["-m", "agentmirror", ...buildArgs({}, repo)], { cwd: root, input: "No downstream impact." }).toString(); }
+  try { out = execFileSync("python3", ["-m", "agentmirror_check", ...buildArgs({}, repo)], { cwd: root, input: "No downstream impact." }).toString(); }
   catch (e) { out = e.stdout.toString(); code = e.status; }
   assert.strictEqual(code, 1);
   assert.ok(out.includes("<html") && out.includes("Review before approving"));
@@ -64,7 +64,7 @@ test("end to end: the hook command writes files the extension watcher reads", ()
   const root = path.resolve(__dirname, "..", "..");
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amh-"));
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore" });
-  const out = execFileSync("python3", ["-m", "agentmirror", "check", "--hook"], { cwd: root, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) }).toString();
+  const out = execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: root, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) }).toString();
   assert.ok(JSON.parse(out).systemMessage.includes("REVIEW REQUIRED"));
   const dec = JSON.parse(fs.readFileSync(path.join(repo, ".agentmirror", "last", "decision.json"), "utf8"));
   assert.strictEqual(statusCodeFromDecision(dec), 1);
@@ -90,7 +90,7 @@ test("a sealed hook result verifies; a forged or tampered one does not", () => {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "amr-"));
   const env = { ...process.env, AGENTMIRROR_HOME: home };
   execFileSync("python3", [path.join(root, "examples", "make_demo.py"), repo], { stdio: "ignore", env });
-  execFileSync("python3", ["-m", "agentmirror", "check", "--hook"], { cwd: root, env, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) });
+  execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: root, env, input: JSON.stringify({ cwd: repo, last_assistant_message: "No downstream impact." }) });
   const dir = path.join(repo, ".agentmirror", "last");
   const kp = path.join(home, "key");
   assert.ok(verifySeal(dir, kp), "genuine result must verify");

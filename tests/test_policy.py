@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror import claims, decision, reality  # noqa: E402
+from agentmirror_check import claims, decision, reality  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 
@@ -71,7 +71,7 @@ class NoBaseline(unittest.TestCase):
             self.assertNotEqual(d.status, decision.REVIEW)
 
     def test_runner_flags_no_baseline_when_base_had_no_passing_tests(self):
-        from agentmirror import runner
+        from agentmirror_check import runner
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             rec = runner.run_tests(repo, ["sh", "-c", "echo 'PASSED tests/a.py::t1'; echo '1 passed in 0.01s'"], write=False,

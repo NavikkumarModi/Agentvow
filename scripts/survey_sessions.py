@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agentmirror import claims  # noqa: E402
+from agentmirror_check import claims  # noqa: E402
 
 
 def final_text(path: Path):

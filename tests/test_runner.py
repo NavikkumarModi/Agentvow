@@ -3,8 +3,8 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agentmirror import claims, decision, runner  # noqa: E402
-from agentmirror.reality import Evidence, Snapshot  # noqa: E402
+from agentmirror_check import claims, decision, runner  # noqa: E402
+from agentmirror_check.reality import Evidence, Snapshot  # noqa: E402
 
 UNITTEST = ("test_a (m.C.test_a) ... ok\ntest_b (m.C.test_b) ... skipped 'x'\ntest_c (m.C.test_c) ... ok\n"
             "FAIL: test_d (m.C.test_d)\nERROR: test_e (m.C.test_e)\nRan 5 tests in 0.1s\nFAILED (failures=1, errors=1, skipped=1)")
@@ -131,7 +131,7 @@ class CIEvidence(unittest.TestCase):
         return lambda path: {"check_runs": runs}
 
     def verdict(self, runs, claim="All tests pass."):
-        from agentmirror import ci
+        from agentmirror_check import ci
         ev = ci.ci_evidence(Path("."), self.snap, fetch=self.fetch(runs), slug="o/r")
         return decision._tests(claims.extract(claim)[0], ev, self.snap)
 
@@ -149,7 +149,7 @@ class CIEvidence(unittest.TestCase):
         self.assertEqual(f.verdict, "UNKNOWN")  # no test job at all: not a pass
 
     def test_dirty_tree_has_no_ci_evidence(self):
-        from agentmirror import ci
+        from agentmirror_check import ci
         self.assertEqual(ci.ci_evidence(Path("."), Snapshot("a", True), fetch=self.fetch([]), slug="o/r"), [])
 
     def test_count_mismatch_is_unknown_even_with_environmental_failures(self):
@@ -180,13 +180,13 @@ class RealWorldPhrasing(unittest.TestCase):
 
 class JobClassifier(unittest.TestCase):
     def test_v2_recognises_real_world_test_job_names(self):
-        from agentmirror.ci import TEST_JOB
+        from agentmirror_check.ci import TEST_JOB
         for n in ("tests (3.10)", "test_typings_docker", "test1 (langchain / autologging)", "pytester (ubuntu-22.04)", "Python 3.8",
                   "Python Tests (3.11, macos-latest)", "integration-app-harness (redis)", "Frontend Unit Tests"):
             self.assertTrue(TEST_JOB.search(n), n)
 
     def test_v2_rejects_non_test_jobs(self):
-        from agentmirror.ci import TEST_JOB
+        from agentmirror_check.ci import TEST_JOB
         for n in ("Security Scan", "SonarCloud Code Analysis", "validate_pr_title", "Publish release build to test.pypi", "latest", "contest",
                   "Codacy Diff Coverage", "Type Checking", "labeling"):
             self.assertFalse(TEST_JOB.search(n), n)

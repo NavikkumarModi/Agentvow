@@ -20,7 +20,7 @@ NODEN=$(grep -E '^ℹ tests ' "$TMP/node.out" | awk '{print $3}')
 [ $NRC -eq 0 ] && pass "node tests ($NODEN)" || { fail "node tests"; grep -E '✖|Error' "$TMP/node.out" | head -8 | sed 's/^/         /'; }
 
 section "3. Static validity"
-check "all python compiles" python3 -m compileall -q agentmirror scripts examples tests
+check "all python compiles" python3 -m compileall -q agentmirror_check scripts examples tests
 check "extension javascript parses" bash -c 'node --check vscode/extension.js && node --check vscode/helpers.js'
 check "yaml files parse (action + workflow)" python3 -c "import yaml;[yaml.safe_load(open(f)) for f in ('action.yml','examples/workflows/agentmirror.yml')]"
 check "json files parse (hooks examples, extension manifest)" python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('examples/hooks/*.json')+['vscode/package.json']]"
@@ -35,7 +35,7 @@ EOF
 
 section "4. Version and documentation consistency"
 V1=$(python3 -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
-V2=$(python3 -c "import re;print(re.search(r'__version__ = \"(.*?)\"',open('agentmirror/__init__.py').read()).group(1))")
+V2=$(python3 -c "import re;print(re.search(r'__version__ = \"(.*?)\"',open('agentmirror_check/__init__.py').read()).group(1))")
 V3=$(python3 -c "import json;print(json.load(open('vscode/package.json'))['version'])")
 [ "$V1" = "$V2" ] && [ "$V2" = "$V3" ] && pass "versions agree ($V1)" || fail "version mismatch: pyproject=$V1 __init__=$V2 extension=$V3"
 grep -q "$PYN Python tests" README.md && grep -q "$NODEN node tests" README.md && pass "README test counts match reality ($PYN Python, $NODEN node)" || fail "README test counts are stale (actual: $PYN Python, $NODEN node)"
@@ -49,12 +49,12 @@ if grep -rIEn --exclude-dir=data --exclude-dir=.git --exclude-dir=node_modules -
 
 section "6. Wheel build and CLEAN-ROOM install (nothing imported from the source tree)"
 mkdir -p dist
-rm -f dist/agentmirror-*.whl
+rm -f dist/agentmirror_check-*.whl
 python3 -m pip wheel . --no-deps -q -w dist >"$TMP/wheel.out" 2>&1 && pass "wheel builds" || { fail "wheel build"; tail -6 "$TMP/wheel.out" | sed 's/^/         /'; }
-WHL=$(ls dist/agentmirror-*.whl 2>/dev/null | head -1)
+WHL=$(ls dist/agentmirror_check-*.whl 2>/dev/null | head -1)
 if [ -n "$WHL" ]; then
   LISTING=$(python3 -c "import zipfile,sys;print('\n'.join(zipfile.ZipFile(sys.argv[1]).namelist()))" "$WHL")
-  echo "$LISTING" | grep -q "^agentmirror/cli.py" && pass "wheel contains the package" || fail "wheel is missing agentmirror/cli.py"
+  echo "$LISTING" | grep -q "^agentmirror_check/cli.py" && pass "wheel contains the package" || fail "wheel is missing agentmirror_check/cli.py"
   echo "$LISTING" | grep -E "^(tests|data|docs|scripts|examples|vscode)/" >/dev/null && fail "wheel contains non-package files" || pass "wheel contains only the package"
   python3 -m venv "$TMP/venv" && "$TMP/venv/bin/pip" install -q "$WHL" >"$TMP/install.out" 2>&1 && pass "wheel installs into a fresh venv" || { fail "wheel install"; tail -5 "$TMP/install.out" | sed 's/^/         /'; }
   AM="$TMP/venv/bin/agentmirror"

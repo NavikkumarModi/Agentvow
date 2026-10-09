@@ -1,7 +1,7 @@
 """The sandbox guarantees, asserted directly on whichever platform runs the tests (macOS sandbox-exec, Linux bubblewrap)."""
 import os, subprocess, sys, tempfile, unittest
 from pathlib import Path
-from agentmirror import runner
+from agentmirror_check import runner
 
 
 def sandboxed(code, repo, scratch, **kw):

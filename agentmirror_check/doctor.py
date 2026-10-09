@@ -32,7 +32,7 @@ def self_test(py: str = sys.executable, camel: bool = False):
         tr.write_text(json.dumps({"role": "assistant", "content": "Changed X. There is no downstream impact."}) + "\n")
         payload = ({"cwd": str(repo), "transcriptPath": str(tr), "sessionId": "doctor", "stopReason": "end_turn"} if camel else
                    {"cwd": str(repo), "transcript_path": str(tr), "session_id": "doctor", "hook_event_name": "Stop"})
-        p = subprocess.run([py, "-m", "agentmirror", "check", "--hook"], input=json.dumps(payload), capture_output=True, text=True, timeout=120)
+        p = subprocess.run([py, "-m", "agentmirror_check", "check", "--hook"], input=json.dumps(payload), capture_output=True, text=True, timeout=120)
         if p.returncode != 0:
             return False, f"hook exited {p.returncode}: {p.stderr[-200:]}"
         try:

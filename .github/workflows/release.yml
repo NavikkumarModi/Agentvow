@@ -1,0 +1,18 @@
+# Publishes to PyPI with trusted publishing (no token stored). One-time setup: see docs/PUBLISHING.md.
+name: release
+on:
+  release:
+    types: [published]
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python -m pip install -q build twine && python -m build && twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror import adapters, ci, claims, envsetup, reality, report, runner  # noqa: E402
+from agentmirror_check import adapters, ci, claims, envsetup, reality, report, runner  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 
@@ -96,7 +96,7 @@ class G3_NoSymlinkWrites(unittest.TestCase):
             last = repo / ".agentmirror" / "last"
             last.mkdir(parents=True)
             os.symlink(victim, last / "report.html")
-            r = subprocess.run([sys.executable, "-m", "agentmirror", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                                input=json.dumps({"cwd": str(repo), "last_assistant_message": "No downstream impact."}), env={**os.environ})
             self.assertEqual(victim.read_text(), "keep")
             self.assertEqual(r.returncode, 0)   # still informs, never blocks
@@ -145,7 +145,7 @@ class G9_Platform(unittest.TestCase):
             repo = build(Path(t) / "r")
             runner._SANDBOX_OK.clear()   # the availability probe is cached
             try:
-                with mock.patch("agentmirror.runner.shutil.which", return_value=None):
+                with mock.patch("agentmirror_check.runner.shutil.which", return_value=None):
                     with self.assertRaises(RuntimeError) as cm:
                         runner.run_tests(repo, ["true"], write=False)
             finally:

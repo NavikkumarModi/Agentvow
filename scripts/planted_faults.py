@@ -17,8 +17,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-from agentmirror import claims, decision, reality, runner  # noqa: E402
-from agentmirror.reality import Evidence, Snapshot  # noqa: E402
+from agentmirror_check import claims, decision, reality, runner  # noqa: E402
+from agentmirror_check.reality import Evidence, Snapshot  # noqa: E402
 from feasibility import STRICT, find_commit, git  # noqa: E402
 
 VENV = str(ROOT / "data/venvs/dbbackup/bin/python")

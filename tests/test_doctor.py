@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror import adapters, doctor  # noqa: E402
+from agentmirror_check import adapters, doctor  # noqa: E402
 from make_demo import build  # noqa: E402
 
 SECRET = "TOP-SECRET-MARKER-12345"
@@ -43,7 +43,7 @@ class DebugMode(unittest.TestCase):
         env = {**os.environ}
         if debug:
             env["AGENTMIRROR_DEBUG"] = "1"
-        return subprocess.run([sys.executable, "-m", "agentmirror", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+        return subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                               input=json.dumps(payload), env=env)
 
     def test_debug_writes_a_content_free_shape_file(self):
@@ -85,9 +85,9 @@ class Doctor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / ".github" / "hooks").mkdir(parents=True)
-            (repo / ".github" / "hooks" / "agentmirror.json").write_text(json.dumps(
+            (repo / ".github" / "hooks" / "agentmirror_check.json").write_text(json.dumps(
                 {"version": 1, "hooks": {"Stop": [{"type": "command", "command": "agentmirror check --hook"}]}}))
-            r = subprocess.run([sys.executable, "-m", "agentmirror", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
+            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
                                env={**os.environ})
             self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
             self.assertIn("hook uses a bare command name", r.stdout)
@@ -98,8 +98,8 @@ class Doctor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             (repo / ".github" / "hooks").mkdir(parents=True)
-            (repo / ".github" / "hooks" / "agentmirror.json").write_text("{not json")
-            r = subprocess.run([sys.executable, "-m", "agentmirror", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
+            (repo / ".github" / "hooks" / "agentmirror_check.json").write_text("{not json")
+            r = subprocess.run([sys.executable, "-m", "agentmirror_check", "doctor", "--repo", str(repo)], capture_output=True, text=True, cwd=ROOT,
                                env={**os.environ})
             self.assertEqual(r.returncode, 1)
             self.assertIn("invalid", r.stdout)

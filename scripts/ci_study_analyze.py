@@ -9,7 +9,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror.ci import TEST_JOB, TEST_JOB_V1  # noqa: E402
+from agentmirror_check.ci import TEST_JOB, TEST_JOB_V1  # noqa: E402
 
 BAD = {"failure", "timed_out", "cancelled", "action_required"}
 

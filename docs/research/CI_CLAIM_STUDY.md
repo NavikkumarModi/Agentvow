@@ -7,7 +7,7 @@
 - RQ4 (validation of our classifier). How precise is the name-based test-job classification?
 
 ## Population and sampling
-AIDev-pop (`hao-li/AIDev` v4) pull requests in repositories whose language is Python, with a non-empty body, where the current claim extractor finds a `tests_pass` claim (`agentmirror.claims.extract`). Stratified random sample (seed 2026): up to 300 PRs per agent (Claude_Code, Copilot, Devin, Cursor, Google_Jules, OpenAI_Codex), whatever exists if fewer. Previously examined 150-PR pilot sample (seed 7) is not reused for estimates.
+AIDev-pop (`hao-li/AIDev` v4) pull requests in repositories whose language is Python, with a non-empty body, where the current claim extractor finds a `tests_pass` claim (`agentmirror_check.claims.extract`). Stratified random sample (seed 2026): up to 300 PRs per agent (Claude_Code, Copilot, Devin, Cursor, Google_Jules, OpenAI_Codex), whatever exists if fewer. Previously examined 150-PR pilot sample (seed 7) is not reused for estimates.
 
 ## Data collection (frozen)
 Read-only GitHub API through `gh`: PR (head SHA, commit count, merged, state) and check-runs for the final head SHA (per_page=100; PRs with more runs than one page are excluded and counted as `truncated`). Legacy commit statuses are not read (limitation).

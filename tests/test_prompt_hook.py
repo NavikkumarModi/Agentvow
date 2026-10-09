@@ -10,17 +10,17 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
 os.environ.setdefault("AGENTMIRROR_HOME", tempfile.mkdtemp(prefix="am_home_"))
-from agentmirror import cli, reality  # noqa: E402
+from agentmirror_check import cli, reality  # noqa: E402
 from make_demo import build  # noqa: E402
 
 
 def stop_hook(repo, message):
-    return subprocess.run([sys.executable, "-m", "agentmirror", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+    return subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                           input=json.dumps({"cwd": str(repo), "last_assistant_message": message}), env={**os.environ})
 
 
 def prompt_hook(repo, *extra):
-    r = subprocess.run([sys.executable, "-m", "agentmirror", "prompt-hook", *extra], capture_output=True, text=True, cwd=ROOT,
+    r = subprocess.run([sys.executable, "-m", "agentmirror_check", "prompt-hook", *extra], capture_output=True, text=True, cwd=ROOT,
                        input=json.dumps({"cwd": str(repo), "prompt": "next question", "sessionId": "s"}), env={**os.environ})
     assert r.returncode == 0
     return json.loads(r.stdout)
@@ -75,7 +75,7 @@ class PromptHook(unittest.TestCase):
             self.assertNotIn("billing", ctx)
 
     def test_never_blocks_and_survives_garbage_input(self):
-        r = subprocess.run([sys.executable, "-m", "agentmirror", "prompt-hook"], capture_output=True, text=True, cwd=ROOT, input="not json", env={**os.environ})
+        r = subprocess.run([sys.executable, "-m", "agentmirror_check", "prompt-hook"], capture_output=True, text=True, cwd=ROOT, input="not json", env={**os.environ})
         self.assertEqual((r.returncode, json.loads(r.stdout)), (0, {}))
 
     def test_context_text_for_a_result_with_no_checkable_claims(self):

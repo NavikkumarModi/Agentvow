@@ -73,7 +73,7 @@ Result: **26/26 returned INSUFFICIENT EVIDENCE**, all because the "tests pass" c
 
 Next product step: a **test-run collector** that executes the project's tests at the PR head commit in an isolated environment, produces snapshot-bound evidence (pass/fail/skip counts, command, environment), and compares claimed counts with actual counts. This executes third-party code, so it needs a sandbox and your sign-off before any run.
 
-## Step 4 — sandboxed test-run collector on DDNS (2026-10-01; `agentmirror/runner.py`, `scripts/pilot_run.py`)
+## Step 4 — sandboxed test-run collector on DDNS (2026-10-01; `agentmirror_check/runner.py`, `scripts/pilot_run.py`)
 Approved by the user: run the five cloned repos' tests in a sandbox. Done so far: **NewFuture/DDNS only (10 merged Copilot PRs)**; django-dbbackup, translate and QuantEcon not yet run. Tests ran under macOS `sandbox-exec` (network denied; writes limited to repo/tmp). Self-test confirmed both blocks.
 
 Lessons (all driven by real data, now covered by `tests/test_runner.py`):
@@ -95,7 +95,7 @@ Overall across 15 PRs: **0 regressions found, 0 confirmed all-pass**. Still no r
 
 Product implications: (1) an installable-environment step is the main cost and failure mode (undeclared test deps, services); (2) the claimed count is a useful, cheap consistency signal; (3) to learn anything about detection we need PRs with *known* failures (follow-up-fix labels, rejected PRs, or CI-failing PRs), not just merged PRs with passing claims.
 
-## Step 6 — backward-compatibility check via public-API diff (`agentmirror/api_diff.py`)
+## Step 6 — backward-compatibility check via public-API diff (`agentmirror_check/api_diff.py`)
 Static Python diff of public names/signatures between base and head (removed names, removed/renamed params, new required params, positional-order change; test files excluded; parse failures = UNKNOWN). Sanity run on all merged agent PRs with a compat claim in the 5 cloned repos: 31 PRs → 25 NOT_CONTRADICTED, 5 CONTRADICTED, 1 UNKNOWN. Of the 5, 2 were false alarms from test files (now excluded); the other 3 look like genuine API changes (removed `proxy` param, removed module/`VERSION`) but are **not hand-verified and not ground-truth**; whether the change was actually breaking to users is unknown. Limits: no semantic/behaviour changes, no non-Python, private-vs-public judged by leading underscore only.
 
 ## Step 7 — first run on real own-sessions (user-directed, 2026-10-01)
@@ -123,5 +123,5 @@ Failing check names on the 27 PR head commits (by name heuristics, not hand-veri
 Conclusion: natural data yields ~1–3 reproducible positives per ~150 PRs. **A recall measurement from natural PRs is not feasible at this budget.** Honest route: a planted-fault benchmark (inject a known regression into a real PR's change in repos where tests run, keep the agent's "tests pass" claim, check whether AgentMirror reports CONTRADICTED with regressions>0). This measures pipeline sensitivity only; faults are authored by us, so it is not evidence of real-world detection (RISKS C1). Report it as such.
 Product-relevant side finding: CI is a free, independent second source. Ingesting GitHub check-runs for the head commit (when it exists) would give "tests pass" evidence without running anything, and 69/150 sampled PRs had no CI at all (where only a local run can help).
 
-## Step 11 — CI as independent evidence (`agentmirror/ci.py`, `--ci`; 2026-10-06)
+## Step 11 — CI as independent evidence (`agentmirror_check/ci.py`, `--ci`; 2026-10-06)
 For a clean, pushed HEAD, read the project's check-runs through `gh` (read-only). Only test-named jobs (`test|pytest|unit|integration|tox|nox|spec`) count for a "tests pass" claim; lint/security/title/release jobs are ignored. Dirty trees get no CI evidence (CI never saw them). No CI → no evidence (never a pass). Applied to the 145 usable PRs of the CI sample: **13 CONTRADICTED, 34 SUPPORTED, 98 UNKNOWN** (69 had no CI at all; 29 had CI but no test-named job). 6 of the 27 raw-CI-failure PRs came out SUPPORTED because their failing jobs were not test jobs (e.g., SonarCloud). Caveats: job-name heuristics misclassify (e.g. chardet's "build (3.8)" is a test job under another name); a green CI does not confirm the agent's stated count; PR bodies may predate later commits. Product decision taken the same day: a claimed test count that matches none of AgentMirror's totals is UNKNOWN even when failures are environmental (fail-closed).

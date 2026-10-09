@@ -51,7 +51,7 @@ function setup(settings) {
   const { stub, rec } = makeStub(repo, settings);
   const ext = loadExtension(stub);
   const ctx = { subscriptions: [] };
-  const hook = (message) => execFileSync("python3", ["-m", "agentmirror", "check", "--hook"], { cwd: ROOT, env: { ...process.env },
+  const hook = (message) => execFileSync("python3", ["-m", "agentmirror_check", "check", "--hook"], { cwd: ROOT, env: { ...process.env },
     input: JSON.stringify({ cwd: repo, last_assistant_message: message }) });
   return { repo, ext, ctx, rec, hook, stop: () => ctx.subscriptions.forEach((d) => d.dispose && d.dispose()) };
 }
@@ -161,7 +161,7 @@ test("the demo command builds the demo, shows the red verdict and offers a Copil
   const gs = fs.mkdtempSync(path.join(os.tmpdir(), "amxg-"));
   t.ctx.globalStorageUri = { fsPath: gs };
   const bin = path.join(gs, "agentmirror");
-  fs.writeFileSync(bin, `#!/bin/sh\nPYTHONPATH=${ROOT} exec python3 -m agentmirror.cli "$@"\n`, { mode: 0o755 });
+  fs.writeFileSync(bin, `#!/bin/sh\nPYTHONPATH=${ROOT} exec python3 -m agentmirror_check.cli "$@"\n`, { mode: 0o755 });
   settings.command = bin;
   t.ext.activate(t.ctx);
   t.rec.commands["agentmirror.tryDemo"]();

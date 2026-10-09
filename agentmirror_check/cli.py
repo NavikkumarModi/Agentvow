@@ -67,7 +67,7 @@ def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a
     spool = Path(tempfile.mkdtemp(prefix="agentmirror_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
-    cmd = [sys.executable, "-m", "agentmirror", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
+    cmd = [sys.executable, "-m", "agentmirror_check", "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
            "--test-timeout", str(a.test_timeout)] + (["--python", a.python] if a.python else [])
     subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 

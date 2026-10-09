@@ -4,9 +4,11 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 
 **Status: 0.1.0 release candidate (prototype).** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
 
+> **Naming:** the PyPI package is `agentmirror-check`; the command is `agentmirror` and the Python module is `agentmirror_check`. (The PyPI name `agentmirror` belongs to an unrelated project, a consistency evaluator for LangGraph agents, so this project avoids its module name too.)
+
 ## Quick start
 ```bash
-pip install .                                    # or: pip install dist/agentmirror-0.1.0-py3-none-any.whl  (no dependencies; Python 3.10+)
+pip install agentmirror-check                    # once published; from a checkout: pip install .  or: pip install dist/agentmirror_check-0.1.0-py3-none-any.whl  (no dependencies; Python 3.10+)
 agentmirror doctor --repo /path/to/project       # checks your setup and runs the whole hook path end to end
 echo "I changed X. All 12 tests pass. Nothing else depends on it." | agentmirror check --repo /path/to/project
 agentmirror check --repo . --transcript msg.txt --run-tests --python venv/bin/python   # also run the tests (sandboxed, macOS/Linux)

@@ -1,6 +1,6 @@
 import json, os, subprocess, tempfile, unittest
 from pathlib import Path
-from agentmirror import api_diff, cli, reality
+from agentmirror_check import api_diff, cli, reality
 
 
 def mkrepo(d):
@@ -37,7 +37,7 @@ class Review2(unittest.TestCase):
             os.environ["AGENTMIRROR_HOME"] = str(Path(d) / "home")
             r = mkrepo(d)
             cli.main_hook = None
-            from agentmirror import decision
+            from agentmirror_check import decision
             orig = decision.check
             def boom(*a, **k): raise RecursionError("x")
             cli.check = boom

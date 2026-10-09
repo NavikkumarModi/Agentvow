@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-from agentmirror import runner  # noqa: E402
+from agentmirror_check import runner  # noqa: E402
 from make_demo import build  # noqa: E402
 
 
@@ -27,7 +27,7 @@ class HomeIsWritable(unittest.TestCase):
             self.assertEqual(rec["counts"].get("failed"), 1)
 
     def test_home_is_excluded_from_the_tree_hash(self):
-        from agentmirror import reality
+        from agentmirror_check import reality
         with tempfile.TemporaryDirectory() as t:
             repo = build(Path(t) / "r")
             before = reality.snapshot(repo)

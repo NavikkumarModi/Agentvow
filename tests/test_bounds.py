@@ -1,6 +1,6 @@
 import json, os, tempfile, unittest
 from pathlib import Path
-from agentmirror import adapters
+from agentmirror_check import adapters
 
 
 class Bounds(unittest.TestCase):

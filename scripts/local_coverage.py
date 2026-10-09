@@ -18,7 +18,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror import claims, decision, envsetup, reality, runner  # noqa: E402
+from agentmirror_check import claims, decision, envsetup, reality, runner  # noqa: E402
 
 DATA = ROOT / "data"
 REPOS = DATA / "repos2"
@@ -78,7 +78,7 @@ def pip(venv, repo, args, timeout=300):
 
 
 def setup_env(repo: Path, key: str):
-    """Uses the shipped agentmirror.envsetup (same ladder and resource guards as `--setup auto`)."""
+    """Uses the shipped agentmirror_check.envsetup (same ladder and resource guards as `--setup auto`)."""
     py, notes, aborted = envsetup.build_env(repo, VENVS / key, DATA / "home")
     if aborted:
         notes = notes + [aborted]

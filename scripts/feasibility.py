@@ -14,7 +14,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from agentmirror import decision  # noqa: E402
+from agentmirror_check import decision  # noqa: E402
 
 REPOS = {"NewFuture/DDNS": "NewFuture_DDNS", "Archmonger/django-dbbackup": "Archmonger_django-dbbackup",
          "dvershinin/gixy": "dvershinin_gixy", "translate/translate": "translate_translate",

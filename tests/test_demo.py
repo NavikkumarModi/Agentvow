@@ -1,6 +1,6 @@
 import json, os, tempfile, unittest
 from pathlib import Path
-from agentmirror import demo, reality
+from agentmirror_check import demo, reality
 
 
 class Demo(unittest.TestCase):

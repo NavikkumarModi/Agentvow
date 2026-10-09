@@ -8,8 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-from agentmirror import decision, report  # noqa: E402
-from agentmirror.decision import Decision, Finding  # noqa: E402
+from agentmirror_check import decision, report  # noqa: E402
+from agentmirror_check.decision import Decision, Finding  # noqa: E402
 from make_demo import build, git  # noqa: E402
 
 

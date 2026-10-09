@@ -9,8 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "examples"))
-from agentmirror import adapters, ci, report, decision  # noqa: E402
-from agentmirror.reality import Snapshot  # noqa: E402
+from agentmirror_check import adapters, ci, report, decision  # noqa: E402
+from agentmirror_check.reality import Snapshot  # noqa: E402
 from make_demo import build  # noqa: E402
 
 CLAUDE = json.dumps({"type": "assistant", "message": {"content": [{"type": "text", "text": "All 5 tests pass."}]}})
@@ -61,7 +61,7 @@ class Payloads(unittest.TestCase):
 
 class HookEndToEnd(unittest.TestCase):
     def run_hook(self, payload):
-        return subprocess.run([sys.executable, "-m", "agentmirror", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
+        return subprocess.run([sys.executable, "-m", "agentmirror_check", "check", "--hook"], capture_output=True, text=True, cwd=ROOT,
                               input=json.dumps(payload), env={**os.environ})
 
     def test_copilot_style_payload_writes_report_files_and_never_blocks(self):

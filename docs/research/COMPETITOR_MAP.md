@@ -14,3 +14,6 @@
 | Adjacent research | Assurance 2.0 defeaters, SWE-ABS, BSG-VA, CFC | Counter-state ideas | Position explicitly in related work |
 
 Not audited: Honeycomb, Grafana AI, Graphite (docs 404), Lakera, Devin/OpenHands review internals; Sourcegraph, Codescene, Semgrep, Snyk at snippet level.
+
+## Name collision: PyPI `agentmirror` (checked 2026-10-09) [read]
+PyPI project `agentmirror` 0.1.0 (published 2026-03-30, github.com/naureen-fathima/agentmirror) is "production evaluation for multi-agent AI systems without ground truth": a `ConsistencyJudge` that paraphrases a query with an LLM, runs the variants through a LangGraph agent and scores semantic similarity of the answers (sentence-transformers). It does not compare agent claims with repository state and is not a competitor, but it installs a top-level module `agentmirror`. This project therefore ships as PyPI `agentmirror-check` with module `agentmirror_check` (command stays `agentmirror`).
