@@ -156,7 +156,7 @@ def parse(data: dict) -> Recipe:
         raise RecipeError("env must be an object with at most 20 entries")
     clean_env = {}
     for k, v in env.items():
-        if not re.fullmatch(r"[A-Z][A-Z0-9_]{0,60}", str(k)) or k in _BLOCKED_ENV or k.startswith(("LD_", "DYLD_", "PIP_", "GIT_", "PYTHON")) or _SECRET_NAME.search(k):
+        if not re.fullmatch(r"[A-Z][A-Z0-9_]{0,60}", str(k)) or k in _BLOCKED_ENV or k.startswith(("LD_", "DYLD_", "PIP_", "GIT_", "PYTHON", "PYTEST_", "TOX_", "UV_", "POETRY_", "PDM_", "SETUPTOOLS_", "VIRTUALENV_", "CONDA_", "COVERAGE_", "NODE_OPTIONS")) or _SECRET_NAME.search(k):
             raise RecipeError(f"env: name not allowed: {k!r}")
         if not isinstance(v, str) or len(v) > 200 or "\n" in v or "\x00" in v:
             raise RecipeError(f"env: value not allowed for {k}")
@@ -191,6 +191,12 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
     if r.returncode:
         return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
     notes = []
+    own = envsetup._project_name(proj)
+    if own:   # a setup step that installs a distribution with the PROJECT'S OWN name could shadow the code under test with someone else's package
+        for args in recipe.setup:
+            for a in args:
+                if not a.startswith("-") and a != "." and not a.startswith(".") and "/" not in a and re.split(r"[\[<>=!~ ]", a, 1)[0].replace("_", "-").lower() == str(own).replace("_", "-").lower():
+                    return None, [f"setup installs a package with the project's own name ({own}); refused"], "shadowing"
     for args in recipe.setup:
         rc, out = envsetup._pip(venv, proj, home, ["install", "-q", *args], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
         if rc == 125:

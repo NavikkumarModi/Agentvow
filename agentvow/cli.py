@@ -47,6 +47,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
                                  write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"), prepare=opts.get("prepare"))
             if opts.get("meta"):
                 h.update(opts["meta"])
+                h["executed_test_files"] = runner.executed_test_files(list(h.get("passed_ids", [])) + list(h.get("failed_ids", [])), tmp / "head")
                 if str(h.get("summary", "")).startswith("missing dependency"):   # the environment came ONLY from the declaration: say so
                     h["summary"] = re.sub(r"\(pass --python.*\)$", "(the agent's declared recipe does not provide it, so the declared preconditions were insufficient)", h["summary"])
             reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
@@ -401,6 +402,10 @@ def main(argv=None) -> int:
             a.python, a._recipe, a._recipe_notes = py, rec, notes
             if aborted or not py:
                 print(f"agentvow: recipe environment incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
+            if not py:   # no environment at all: fail closed (never fall back to the host interpreter)
+                a.run_tests = False
+                a._recipe = None
+                a._recipe_rejected = ("; ".join(notes) or "environment could not be built")[:80]
             d = _run(a, repo, base, base_how, text)
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)
@@ -425,7 +430,12 @@ def _run(a, repo, base, base_how, text):
     a.python = os.path.abspath(os.path.expanduser(a.python))  # relative paths would break once we run inside a worktree
     if a.run_tests and getattr(a, "_recipe", None):
         rec = a._recipe
-        collect_test_evidence(repo, base, [("tests", [a.python, *rec.test], "", {"env_extra": rec.env, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
+        targv = list(rec.test)   # make the executed test ids visible (the declared command is otherwise untouched)
+        if targv[1] == "pytest":
+            targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
+        elif targv[1] == "unittest" and "-v" not in targv:
+            targv.append("-v")
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []

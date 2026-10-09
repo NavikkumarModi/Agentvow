@@ -5,6 +5,7 @@ Design intent (fail-closed), with known gaps listed in docs/research/RISKS.md:
   * missing evidence, collector errors, parse gaps and unchecked claims should yield UNKNOWN. Known remaining fail-open
     paths: trivialised tests, ignored files, import-graph and API-diff blind spots (see RISKS.md).
 """
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -69,7 +70,7 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
         if c.kind == C.NO_IMPACT:
             findings.append(_no_impact(c, changed, changed_py, graph))
         elif c.kind == C.TESTS_PASS:
-            findings.append(_tests(c, evidence, snap, changed))
+            findings.append(_tests(c, evidence, snap, changed, repo))
         elif c.kind == C.BACKCOMPAT:
             findings.append(_compat(c, repo, base, changed))
         else:
@@ -182,7 +183,7 @@ def _ci_config_changed(changed) -> list:
     return [f for f in changed if any(m in f.lower() for m in CI_CONFIG)]
 
 
-def _tests(c, evidence, snap, changed=()) -> Finding:
+def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
     valid = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "separate"]
     runs = [e for e in valid if e.counts]
     agent_only = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "same"]
@@ -207,6 +208,16 @@ def _tests(c, evidence, snap, changed=()) -> Finding:
                            evidence=[e.raw_reference for e in good])
     if runs:
         f = _from_runs(c, runs)
+        rec_runs = [e for e in runs if e.basis == "recipe" and e.executed_files is not None]
+        if rec_runs and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
+            ran = set().union(*[set(e.executed_files) for e in rec_runs])
+            defined = [x for x in changed if re.fullmatch(r"(?:.*/)?(?:test_[^/]*|[^/]*_test)\.py", x) and (repo is None or (Path(repo) / x).is_file())]
+            skipped = [x for x in defined if x not in ran]
+            if skipped:   # a recipe whose test command skips the tests this change added or changed proves nothing about them (found by the adversarial review plan)
+                return Finding(c.text, c.kind, "UNKNOWN",
+                               "The agent's declared recipe replayed, but its test command did not execute the test file(s) this change added or changed: "
+                               + ", ".join(skipped[:3]) + (", …" if len(skipped) > 3 else "") + ". The replay therefore says nothing about them.",
+                               evidence=f.evidence, attention=True, meta={"narrowed": skipped})
         if any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
                       "this does not show the repository reproduces it from its own setup instructions.")

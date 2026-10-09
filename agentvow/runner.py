@@ -44,6 +44,23 @@ def passed_ids(output: str) -> list:
     return sorted(x for x in found if not x.startswith("(") and "\n" not in x)
 
 
+def executed_test_files(ids: list, root: Path) -> list:
+    """Test FILES (relative to `root`) that produced at least one passed/failed test id. pytest ids are `path::name`; unittest ids are `name (pkg.mod.Class.name)`."""
+    files = set()
+    for i in ids:
+        if "::" in i:
+            files.add(i.split("::", 1)[0].strip())
+            continue
+        m = re.search(r"\(([\w.]+)\)\s*$", i)
+        parts = (m.group(1) if m else i).split(".")
+        for k in range(len(parts), 0, -1):
+            cand = "/".join(parts[:k]) + ".py"
+            if (Path(root) / cand).is_file():
+                files.add(cand)
+                break
+    return sorted(files)
+
+
 _FAILED_MODULE = re.compile(r"_FailedTest\.([\w.]+)\)$")
 
 
@@ -110,7 +127,7 @@ def _deny_reads() -> str:
     """Reads are allowed by default (Python and tools need the system), but never of the signing key or common credential stores."""
     home = Path.home()
     key = Path(os.environ.get("AGENTVOW_HOME", home / ".agentvow"))
-    targets = {os.path.realpath(t) for t in (key, *(home / d for d in _SECRET_DIRS))}   # the sandbox matches canonical paths (/var -> /private/var)
+    targets = {os.path.realpath(t) for t in (key, home / ".agentvow", *(home / d for d in _SECRET_DIRS))}   # the sandbox matches canonical paths (/var -> /private/var)
     return "".join(f'(deny file-read* (subpath "{t}"))(deny file-read* (literal "{t}"))' for t in sorted(targets))
 
 
@@ -316,6 +333,11 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
            "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": f"{repo / 'src'}:{repo}", **(env_extra or {})}  # this worktree's code wins over any installed copy
     try:
         before = R.file_hashes(repo) if prepare else None
+        for step in prepare or []:
+            tgt = (repo / step[1]) if len(step) > 1 else None   # step = [interpreter, script, args...]
+            if tgt is not None and (tgt.is_symlink() or not str(tgt.resolve()).startswith(str(repo.resolve()) + os.sep)):
+                return {"commit": snap.commit, "tree": snap.tree, "suite": suite, "subdir": subdir, "result": "inconclusive", "counts": {},
+                        "summary": f"the declared prepare script is a symlink or lies outside the repository: {step[1][:60]}", "failed_ids": [], "passed_ids": [], "hint": ""}
         for step in prepare or []:   # agent-declared preparation (recipe `prepare`): a repository script, sandboxed like the tests, before them
             out, code = _run_group(wrap(step, repo, scratch, env=env), repo / subdir, env, min(timeout, 300))
             if code != 0:

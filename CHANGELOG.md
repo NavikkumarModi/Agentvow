@@ -14,3 +14,4 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Renamed from the working name AgentMirror to Agentvow: package/module/command `agentvow`, folder `.agentvow/`, env `AGENTVOW_*`, VS Code ids `agentvow.*`. Results saved under the old `.agentmirror/` folder are not read.
 - `--recipe`: claims with preconditions. The agent declares its setup and test command; Agentvow replays only that in a clean sandbox.
 - Recipe `prepare` step (run a repository script in the sandbox before the tests); claim extractor accepts singular and suite forms ("The test passes").
+- Recipe hardening from a red-team suite (fail-closed environments, tool-config env prefixes, shadowing, symlinked scripts), test-selection guard, default key dir always hidden.

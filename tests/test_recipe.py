@@ -170,3 +170,47 @@ class Integrity(unittest.TestCase):
             f = [x for x in o["findings"] if x["kind"] == "tests_pass"][0]
             self.assertIn(f["verdict"], ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"))
             self.assertIn("declared recipe", f["why"]); self.assertEqual(f["meta"].get("support_basis"), "agent_recipe")
+
+
+class SelectionFidelity(unittest.TestCase):
+    def _repo(self, d):
+        r = Path(d) / "r"; (r / "tests").mkdir(parents=True)
+        g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+        (r / "tests" / "__init__.py").write_text("")
+        (r / "tests" / "test_a.py").write_text("import unittest\nclass T(unittest.TestCase):\n    def test_a(self):\n        pass\n")
+        g("add", "-A"); g("commit", "-qm", "base")
+        # the patch adds a second test file
+        (r / "tests" / "test_b.py").write_text("import unittest\nclass U(unittest.TestCase):\n    def test_b(self):\n        pass\n")
+        return r
+
+    def _check(self, r, d, test):
+        p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": [], "test": test}))
+        import io
+        old = sys.stdin, sys.stdout; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out
+        try:
+            cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+        finally:
+            sys.stdin, sys.stdout = old
+        return [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
+
+    def test_a_recipe_that_skips_the_added_test_file_is_not_support(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = self._repo(d)
+            f = self._check(r, d, "python -m unittest discover -s tests -p 'test_a.py' -t .")
+            self.assertEqual(f["verdict"], "UNKNOWN"); self.assertIn("test_b.py", f["why"]); self.assertTrue(f["attention"])
+
+    def test_a_recipe_that_runs_everything_is_support(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = self._repo(d)
+            f = self._check(r, d, "python -m unittest discover -s tests -p 'test_*.py' -t .")
+            self.assertIn(f["verdict"], ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED")); self.assertIn("declared recipe", f["why"])
+
+    def test_executed_test_files_maps_pytest_and_unittest_ids(self):
+        from agentvow import runner
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "tests").mkdir(); (Path(d) / "tests" / "test_x.py").write_text("")
+            self.assertEqual(runner.executed_test_files(["tests/test_x.py::test_a", "tests/test_y.py::test_b"], Path(d)), ["tests/test_x.py", "tests/test_y.py"])
+            self.assertEqual(runner.executed_test_files(["test_f (tests.test_x.T.test_f)", "test_g (nowhere.T.test_g)"], Path(d)), ["tests/test_x.py"])
