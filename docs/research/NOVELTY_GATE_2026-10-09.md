@@ -33,3 +33,6 @@ Source status: **[read]** = page/README fetched and read by the reviewer agent (
 - Paper-grade reads (not abstracts) of Phoenix, ClaimReceipt, Gong et al., SWE-ABS, "Engineering Reliable Coding Agents" (2608.13867; PDF text could not be extracted by the fetch tool).
 - Source-level comparison with agent-verify and truth (does either sandbox, support Copilot, track turns?).
 - Regression-test-selection / mutation-testing and abstract-interpretation literature (impact analysis) read at paper level.
+
+## Update: detection study v2 result (same day)
+`DETECTION_V2.md`: on 140 fresh agent PRs, 13 CI-failing PRs reached a usable local run; 2 were CONTRADICTED (hand-checked real regressions), 4 flagged with the `review` policy, 0 declared fine, 1 environment-caused false alert in 14 controls. This is an execution-based measurement of how often a false "tests pass" statement on a real agent PR can be caught locally; no equivalent execution-based figure was found in the literature pass (Gong et al. measure message-code inconsistency with semantic similarity), so it remains a **potential gap requiring further verification**, not a novelty claim. It is small (13 usable CI-failed PRs, 8 repositories) and clustered.

@@ -171,6 +171,13 @@ def _compat(c, repo, base, changed) -> Finding:
 CI_CONFIG = (".github/workflows/", ".github/actions/", ".circleci/", ".gitlab-ci", "azure-pipelines", "jenkinsfile", ".travis.yml", "buildkite", "tox.ini", "noxfile.py")
 
 
+DEP_MANIFESTS = ("pyproject.toml", "setup.py", "setup.cfg", "requirements", "poetry.lock", "uv.lock", "pipfile", "environment.yml", "constraints", "tox.ini")
+
+
+def _dep_manifests_changed(changed) -> list:
+    return [f for f in changed if any(m in f.lower().rsplit("/", 1)[-1] for m in DEP_MANIFESTS)]
+
+
 def _ci_config_changed(changed) -> list:
     return [f for f in changed if any(m in f.lower() for m in CI_CONFIG)]
 
@@ -199,7 +206,17 @@ def _tests(c, evidence, snap, changed=()) -> Finding:
                            "The project's CI reports passing test job(s) on this exact commit. CI runs separately from the agent, but the change under review can edit the CI configuration, and CI does not check the count the agent gave.",
                            evidence=[e.raw_reference for e in good])
     if runs:
-        return _from_runs(c, runs)
+        f = _from_runs(c, runs)
+        deps = _dep_manifests_changed(changed)
+        if f.verdict == "CONTRADICTED" and deps:
+            # Found by the v2 detection study (foamlib#453, a false alarm): the test environment is built for ONE commit, so when the change itself edits
+            # dependency declarations a "regression" can just be a version mismatch. Do not call it a contradiction; ask for a review.
+            return Finding(c.text, c.kind, "UNKNOWN",
+                           f.why + " However this change also edits dependency declarations (" + ", ".join(deps[:3]) + (", …" if len(deps) > 3 else "") +
+                           "), and Agentvow's test environment was not built from them, so these failures may come from a dependency mismatch and not from the code. "
+                           "Run the suite in an environment built from this change before relying on either result.", evidence=f.evidence, attention=True,
+                           meta={**f.meta, "downgraded_from": "CONTRADICTED", "dependency_files": deps})
+        return f
     usable = [e for e in valid if e.detail.startswith("pass")]
     if usable:
         return Finding(c.text, c.kind, "SUPPORTED_BY_PRIOR_EVIDENCE",

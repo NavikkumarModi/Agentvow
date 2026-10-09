@@ -65,7 +65,8 @@ Running tests executes the project's code. It runs in a sandbox: macOS `sandbox-
 ## Evidence so far (and what it does not show)
 - Agent PR claims in the wild (688 public Python PRs from five agents that claim tests pass): CI test jobs could judge 33%; of those about 27% had a failing test job (clustered in a few repositories; not an agent ranking). `docs/research/CI_CLAIM_STUDY.md`
 - Local runs on unfamiliar repos with automatic setup reached a verdict for 29% of PRs; half stopped on a missing dependency. `docs/research/LOCAL_COVERAGE.md`
-- Planted faults (authored by us, 15 real PRs): 26 of 30 test-detectable breaks attributed, no false alarms. **Detection on real bad PRs is not demonstrated** (the zero-config setup could not run most of them). `docs/research/PLANTED_FAULTS.md`, `docs/research/DETECTION_STUDY.md`
+- Detection on real agent PRs (pre-registered v2, 140 PRs): the suite could be run locally for 19% of PRs; among the 13 CI-failing PRs that ran, 2 real regressions were flagged as contradicted (4 with the `review` policy), none was declared fine, and 1 of 14 CI-passing controls got a false alert (a dependency-version mismatch, since guarded). Small, clustered, in-sample for the follow-up rules. `docs/research/DETECTION_V2.md`
+- Planted faults (authored by us, 15 real PRs): 26 of 30 test-detectable breaks attributed, no false alarms. The zero-config setup could not run most real PRs (see the line above for what the runnable ones showed). `docs/research/PLANTED_FAULTS.md`, `docs/research/DETECTION_STUDY.md`
 - Novelty is **not** claimed: the closest prior work (Assay, EA-Graph, backcheck and others) and what remains open are in `docs/research/NOVELTY_BOUNDARY.md`.
 
 ## Known limits
@@ -78,4 +79,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 208 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 210 Python tests, 32 node tests -->

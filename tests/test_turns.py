@@ -173,3 +173,21 @@ class CiConfigEdited(unittest.TestCase):
             os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
             self.assertNotEqual(reality.seal(b"delivered", b"s1"), "s1")
             self.assertNotEqual(reality.seal(b"delivered", b"s1"), reality.seal(b"delivered", b"s2"))
+
+
+class DependencyChangeGuard(unittest.TestCase):
+    def _runs(self):
+        from agentvow.reality import Evidence
+        e = Evidence("t0", "test_run", "agentvow-runner", "abc", "", "VALID",
+                     {"framing": "separate", "evidence": "separate", "mechanism": "separate", "authority": "separate"}, "ref", "fail", counts={"passed": 5, "failed": 2, "errors": 0, "regressions": 2, "uncomparable": 0, "missing": 0})
+        return [e]
+
+    def test_regression_is_a_contradiction_when_dependencies_are_untouched(self):
+        from agentvow import claims, decision
+        f = decision._tests(claims.Claim(claims.TESTS_PASS, "All tests pass", None), self._runs(), reality.Snapshot("abc", False), ["src/a.py"])
+        self.assertEqual(f.verdict, "CONTRADICTED")
+
+    def test_regression_is_only_a_review_when_the_change_edits_dependencies(self):
+        from agentvow import claims, decision
+        f = decision._tests(claims.Claim(claims.TESTS_PASS, "All tests pass", None), self._runs(), reality.Snapshot("abc", False), ["src/a.py", "pyproject.toml"])
+        self.assertEqual(f.verdict, "UNKNOWN"); self.assertTrue(f.attention); self.assertIn("dependency", f.why)
