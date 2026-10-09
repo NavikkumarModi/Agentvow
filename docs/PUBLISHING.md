@@ -34,5 +34,5 @@ Trusted publishing: no token is stored anywhere.
 ## 3. Before and after
 - Already public: the GitHub repository. The history uses a GitHub no-reply address; one closed test pull request (#1) still references an older commit with a personal address (accepted).
 - Not a trademark search: do one before promoting the name.
-- After publishing, add the PyPI and Marketplace badges to the README and replace "once published" in its install section.
+- PyPI: published 2026-10-09 (v0.1.0, trusted publishing). The README now shows the PyPI and CI badges; add a Marketplace badge after the extension is published. The PyPI page keeps the README as of the release; it refreshes with the next version.
 - Support burden to expect: hooks and Copilot integration are Preview features that can change; the limits are in the README.

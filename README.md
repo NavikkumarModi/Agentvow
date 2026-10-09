@@ -1,5 +1,7 @@
 # Agentvow
 
+[![PyPI](https://img.shields.io/pypi/v/agentvow)](https://pypi.org/project/agentvow/) [![CI](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml/badge.svg)](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 When a coding agent says "all tests pass" or "nothing else depends on this", Agentvow checks that against the repository and tells you what it could confirm, what it contradicted, and what it could not check. It runs **outside** the agent (an agent must not grade itself), uses no LLM, and never approves, rejects or merges anything.
 
 **Status: 0.1.0 release candidate (prototype).** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
@@ -8,7 +10,7 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 
 ## Quick start
 ```bash
-pip install agentvow                    # once published; from a checkout: pip install .  or: pip install dist/agentvow-0.1.0-py3-none-any.whl  (no dependencies; Python 3.10+)
+pip install agentvow                    # from PyPI; or from a checkout: pip install .  (no dependencies; Python 3.10+)
 agentvow doctor --repo /path/to/project       # checks your setup and runs the whole hook path end to end
 echo "I changed X. All 12 tests pass. Nothing else depends on it." | agentvow check --repo /path/to/project
 agentvow check --repo . --transcript msg.txt --run-tests --python venv/bin/python   # also run the tests (sandboxed, macOS/Linux)
