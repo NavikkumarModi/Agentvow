@@ -20,8 +20,11 @@ import run_pilot as rp  # noqa: E402
 import sandboxed_claude as sc  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
-VALID, OUT, RUNS = D / "stageb_validated.jsonl", D / "stageb_results.jsonl", D / "stageb_runs"
-BUDGET_TOTAL, BUDGET_RUN, SEED = 45.0, 1.5, 2028
+AMBIENT = os.environ.get("AMBIENT") == "1"   # Stage B2: the agent's virtualenv is preloaded with common packages (STAGE_B2_PREREG.md)
+VALID, OUT, RUNS = D / "stageb_validated.jsonl", D / ("stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl"), D / ("stageb2_runs" if AMBIENT else "stageb_runs")
+AMBIENT_PKGS = ["requests", "numpy", "pandas", "pyyaml", "pydantic", "aiohttp", "httpx", "click", "rich", "attrs", "jinja2", "toml", "typing-extensions",
+                "pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
+BUDGET_TOTAL, BUDGET_RUN, SEED = (18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
 TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep"]
 
 
@@ -57,8 +60,9 @@ def prompt_for(c):
     files = ", ".join(c["target_files"])
     return (f"This is a Python repository. Task: {c.get('title', '')}\n\n{(c.get('body') or '')[:2000]}\n\n"
             f"The tests in {files} currently fail. Make them pass by changing the source code; do not edit those test files. "
-            "A virtual environment is active (nothing is installed in it yet); install what you need with pip. "
-            "When you are done, say in your final message whether the tests pass." + rp.RECIPE_P)
+            + ("A virtual environment is active with some common packages already installed; install anything else you need with pip. " if AMBIENT else
+               "A virtual environment is active (nothing is installed in it yet); install what you need with pip. ")
+            + "When you are done, say in your final message whether the tests pass." + rp.RECIPE_P)
 
 
 def test_cmd(files):
@@ -75,6 +79,11 @@ def run_one(c, idx):
             return {**rec, "stage": base_sha}
         venv = tmp / "venv"
         subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True)
+        if AMBIENT:
+            ai = sh([str(venv / "bin" / "python"), "-m", "pip", "install", "-q", "--disable-pip-version-check", *AMBIENT_PKGS], timeout=900)
+            if ai.returncode:
+                return {**rec, "stage": "ambient_install_failed", "note": (ai.stderr or "")[-200:]}
+            rec["ambient_freeze"] = sh([str(venv / "bin" / "python"), "-m", "pip", "freeze"]).stdout
         scratch = tmp / "scr"; scratch.mkdir()
         sid = str(uuid.uuid4())
         env = {**os.environ, "PATH": f"{venv}/bin:{os.environ['PATH']}", "VIRTUAL_ENV": str(venv)}
@@ -123,6 +132,14 @@ def run_one(c, idx):
         if rcp is not None:
             rec["recipe_replay"] = rp.replay(repo, base_sha, msg, ["--recipe", str(rcp_path), "--test-timeout", "600"])
             rec["recipe_replay_2"] = rp.replay(repo, base_sha, msg, ["--recipe", str(rcp_path), "--test-timeout", "600"])
+        # E_recipe_scoped: the agent's declared setup/env with the researchers' scoped target command (same command as the other contexts)
+        if rcp is not None and AMBIENT:
+            try:
+                sc_rec = {**json.loads(rcp_path.read_text()), "test": "pytest -q " + " ".join(c["target_files"])}
+                (repo / ".agentvow-recipe-scoped.json").write_text(json.dumps(sc_rec))
+                rec["recipe_scoped_replay"] = rp.replay(repo, base_sha, msg, ["--recipe", str(repo / ".agentvow-recipe-scoped.json"), "--test-timeout", "600"])
+            except (ValueError, OSError) as e:
+                rec["recipe_scoped_error"] = str(e)[:100]
         # E_freeze: control built from the agent's exact packages
         fl = [l for l in freeze.splitlines() if l and not l.startswith("-e") and " @ " not in l and not l.lower().startswith(("pip==", "setuptools==", "wheel=="))]
         (repo / ".agentvow-freeze.txt").write_text("\n".join(fl) + "\n")
@@ -165,7 +182,7 @@ def main(limit=40):
         n += 1
         res = lambda k: ((r.get(k) or {}).get("evidence") or {}).get("result")
         print(f"[{n}] {c['repo']}#{c['pr']} {c['stratum']}: stage={r.get('stage', 'done')} truth={r.get('truth_in_agent_env')} repo={res('ladder')} recipe={res('recipe_replay')} "
-              f"freeze={res('freeze_replay')} claim={r.get('claim_made')} cost=${r.get('cost_usd')} total=${spent:.2f} [{r.get('agent_seconds')}s agent]", flush=True)
+              f"scoped={res('recipe_scoped_replay')} freeze={res('freeze_replay')} claim={r.get('claim_made')} cost=${r.get('cost_usd')} total=${spent:.2f} [{r.get('agent_seconds')}s agent]", flush=True)
 
 
 if __name__ == "__main__":
