@@ -173,7 +173,7 @@ def main(limit=40):
     tasks = [j for j in map(json.loads, VALID.read_text().splitlines()) if j["valid"] or CAPTURE]   # B3 tasks are rejected-by-B0 candidates: validity is established from the run
     s2 = [t for t in tasks if t["stratum"] == "S2"]; s1 = [t for t in tasks if t["stratum"] == "S1"]
     random.Random(SEED).shuffle(s1)
-    order = s2 + s1
+    order = s2 + s1 + [t for t in tasks if t["stratum"] not in ("S1", "S2")]   # B3 tasks carry stratum X
     done = {(j["repo"], j["pr"]) for j in map(json.loads, OUT.read_text().splitlines())} if OUT.exists() else set()
     spent = sum(j.get("cost_usd") or 0 for j in map(json.loads, OUT.read_text().splitlines())) if OUT.exists() else 0.0
     n = 0

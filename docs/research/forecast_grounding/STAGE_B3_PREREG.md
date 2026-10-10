@@ -14,3 +14,4 @@ Origin: `GAP_ANALYSIS_VOLUME.md` section 3 hypothesis: a verifier can only close
 
 ## Deviation log
 - 2026-10-10: the first launch exited at once (the task loop kept only `valid` tasks and every B3 task is by construction `valid: false`); harness filter fixed (`or CAPTURE`), no run had started, nothing else changed.
+- 2026-10-10: second launch also did nothing (the ordering step kept only strata S1/S2 and B3 tasks carry stratum X, so the task list was empty); fixed, still no run had started, nothing else changed. Earlier detached launches also died silently when started from a shell subprocess; the run is started with the harness's own background mode.
