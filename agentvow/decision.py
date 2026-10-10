@@ -183,6 +183,11 @@ def _ci_config_changed(changed) -> list:
     return [f for f in changed if any(m in f.lower() for m in CI_CONFIG)]
 
 
+def _runner_meta(runs) -> dict:
+    sup = sorted({e.runner_supplied for e in runs if getattr(e, "runner_supplied", "") and e.basis == "recipe"})
+    return {"runner_supplied": ", ".join(sup)} if sup else {}
+
+
 def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
     valid = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "separate"]
     runs = [e for e in valid if e.counts]
@@ -225,11 +230,14 @@ def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
                            f"In the replay of the agent's declared recipe, the {e.scoped['passed']} test(s) this change added or changed ({', '.join(e.scoped['files'][:3])}) pass. "
                            f"{e.counts.get('failed', 0) + e.counts.get('errors', 0)} other test(s) in the replay fail, and they fail without the change too, so 'all tests pass' is not shown. "
                            "Basis: the AGENT's own declared recipe; this does not show the repository reproduces it from its own setup instructions.",
-                           evidence=f.evidence, attention=False, meta={"support_basis": "agent_recipe", "scope": "changed_tests"})
+                           evidence=f.evidence, attention=False, meta={"support_basis": "agent_recipe", "scope": "changed_tests", **_runner_meta(rec_runs)})
         if any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
                       "this does not show the repository reproduces it from its own setup instructions.")
-            f.meta = {**f.meta, "support_basis": "agent_recipe"}
+            f.meta = {**f.meta, "support_basis": "agent_recipe", **_runner_meta(runs)}
+            if f.meta.get("runner_supplied"):
+                f.why += (f" Agentvow installed {f.meta['runner_supplied']} itself because the recipe's test command uses it but the recipe does not declare it, so the recipe alone was not "
+                          "enough to run the tests; the support is for the agent's declared conditions plus that runner.")
         deps = _dep_manifests_changed(changed)
         if f.verdict == "CONTRADICTED" and deps:
             # Found by the v2 detection study (foamlib#453, a false alarm): the test environment is built for ONE commit, so when the change itself edits

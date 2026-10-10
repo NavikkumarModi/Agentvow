@@ -288,3 +288,28 @@ class ScopeToTheClaim(unittest.TestCase):
                 sys.stdin, sys.stdout = old
             f = [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
             self.assertNotEqual(f["verdict"], "NOT_CONTRADICTED")
+
+
+class RunnerSupplied(unittest.TestCase):
+    def test_uses_pytest_detection(self):
+        for t, want in (("pytest -q tests", True), ("python -m pytest tests", True), ("python -m unittest discover", False)):
+            self.assertEqual(recipe._uses_pytest(recipe.parse({"setup": [], "test": t})), want, t)
+
+
+@unittest.skipUnless(_online(), "needs network (installs the runner)")
+class RunnerSuppliedReplay(unittest.TestCase):
+    def test_an_omitted_pytest_is_installed_and_the_verdict_says_so(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = mkrepo(d, "import lib\n\ndef test_f():\n    assert lib.f() == 2\n")
+            p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": [], "test": "pytest -q tests"}))
+            import io
+            old = sys.stdin, sys.stdout, sys.stderr; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out; sys.stderr = io.StringIO()
+            try:
+                cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD~1", "--json"])
+            finally:
+                sys.stdin, sys.stdout, sys.stderr = old
+            f = [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertIn(f["verdict"], ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"), f)
+            self.assertEqual(f["meta"].get("runner_supplied"), "pytest", f)
+            self.assertIn("installed pytest itself", f["why"])

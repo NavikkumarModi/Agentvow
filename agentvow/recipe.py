@@ -44,6 +44,7 @@ class Recipe:
     python: str = ""
     notes: str = ""
     sha256: str = ""
+    runner_supplied: str = ""   # set by build_env: the test runner (pytest) Agentvow installed because the recipe used it but did not declare it
 
 
 def _rel_path_ok(s: str) -> bool:
@@ -181,6 +182,11 @@ def load(path) -> Recipe:
         raise RecipeError(f"not valid JSON: {e}")
 
 
+def _uses_pytest(recipe) -> bool:
+    t = list(recipe.test)
+    return "pytest" in t[:2] or (t[:1] == ["-m"] and t[1:2] == ["pytest"])
+
+
 def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int = 300):
     """Clean venv + ONLY the declared setup steps (sandboxed pip, size/disk guards from envsetup). -> (python path or None, notes, aborted)."""
     import subprocess, sys
@@ -213,4 +219,12 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
                 if rel != "." and rel not in recipe.local_roots:
                     recipe.local_roots.append(rel)
     envsetup.uninstall_project_dists(venv, proj, home, envsetup._project_name(proj), envsetup.MAX_VENV, envsetup.MIN_FREE)   # the project and any monorepo sub-packages
+    if _uses_pytest(recipe) and subprocess.run([str(venv / "bin/python"), "-I", "-c", "import pytest"], capture_output=True).returncode:
+        # the declared command runs pytest but nothing declared installs it (typically preinstalled in the agent's own environment). Supply ONLY the runner, and say so.
+        rc, out = envsetup._pip(venv, proj, home, ["install", "-q", "pytest"], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
+        if rc == 0:
+            recipe.runner_supplied = "pytest"
+            notes.append("the recipe's test command uses pytest but the recipe does not install it; Agentvow installed pytest (the runner only)")
+        else:
+            notes.append("the recipe's test command uses pytest, which the recipe does not install, and Agentvow could not install it: " + " ".join(str(out).split())[-100:])
     return str(venv / "bin/python"), notes, None

@@ -27,5 +27,6 @@ The freeze control was inconclusive in 3 runs (the two haliax tasks again report
 - Hidden-state markers: the session audit found undeclared installs or environment in 10/32 runs.
 
 ## Consequences
+0. **Product change made after this result (owner decision: install the runner and say so):** when a recipe's test command uses pytest and the recipe does not install it, the replay installs pytest (only the runner) and the verdict states it (`meta.runner_supplied`, text "Agentvow installed pytest itself ..."). B2's numbers above are as run, before this change and are not recomputed; the 11 omitted-runner runs are expected to replay under it (not re-run).
 1. `PAPER_FRAME.md` updated: the repository-only result now holds under an ambient condition; the recipe result is reported as a fragility finding with its cause.
 2. Product follow-up (not made): when a recipe's test command names pytest/unittest and the setup does not install it, install the runner in the replay environment and say so (the claim then carries the basis "runner supplied by Agentvow"), or report the omission explicitly as the cause instead of a bare UNKNOWN. The second is already partly true (the summary says "No module named pytest").

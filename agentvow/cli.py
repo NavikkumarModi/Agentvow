@@ -438,7 +438,7 @@ def _run(a, repo, base, base_how, text):
             targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
         elif targv[1] == "unittest" and "-v" not in targv:
             targv.append("-v")
-        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe", "runner_supplied": rec.runner_supplied}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []

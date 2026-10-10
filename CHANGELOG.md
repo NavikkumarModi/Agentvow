@@ -8,6 +8,7 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Studies and honest limits in `docs/research/`.
 
 ### Unreleased
+- Recipe replay installs `pytest` (the runner only) when the recipe's test command uses it but does not declare it, and states that in the verdict (`meta.runner_supplied`); found by Stage B2, where 11 of 17 failed recipe replays were an omitted runner.
 - `agentvow demo` and VS Code command "Try the demo"; second adversarial review fixes (see docs/SECURITY_MODEL.md).
 - Per-turn change tracking (changes counted since the previous check, signed state file); `--background-tests` for the hook.
 - Linux test sandbox (bubblewrap), validated in CI on ubuntu and macos; sandbox guarantees tested directly (tests/test_sandbox.py).

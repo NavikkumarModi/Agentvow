@@ -45,6 +45,9 @@ Each `prepare` entry must be `python <script.py inside the repository> [plain ar
 - A `prepare` step may **create** files (generated fixtures). If it rewrites or deletes any existing tracked or untracked-but-not-ignored file, including a test, the run is **not used as evidence** (UNKNOWN with the reason); the agent's patch is what reviewers see, and a script must not be able to change the tests behind it.
 - A SUPPORTED verdict obtained from a recipe says so ("Basis: the agent's own declared recipe"): it supports the claim under the declared conditions only.
 
+## The test runner is supplied if you forget it
+Agents often have `pytest` installed already and so do not list it. If the recipe's test command uses `pytest` and nothing in `setup` installs it, the replay installs `pytest` itself (only the runner, nothing else) and the verdict says so: "Agentvow installed pytest itself because the recipe's test command uses it but the recipe does not declare it". The support is then for the agent's declared conditions plus that runner (`meta.runner_supplied`). Declare it anyway (`pip install pytest`) to avoid the note. Other missing packages are still not supplied: that stays UNKNOWN.
+
 ## Scope of the replay and monorepos
 - If the declared test command runs more than the claim covers and unrelated tests fail (also without the change), Agentvow reports what is true: the tests the change added or changed pass, and "all tests pass" is not shown (verdict NOT_CONTRADICTED with `meta.scope = "changed_tests"`, never SUPPORTED). If any added or changed test fails, this rule does not apply.
 - A setup step that installs a sub-package of a monorepo (`pip install libs/sub`) is supported: every distribution installed from the project copy is removed after setup, and the sub-package's source folder (and its `src/`) stays importable from each worktree, so the worktree's own copy is the one under test.

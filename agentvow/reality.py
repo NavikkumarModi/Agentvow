@@ -303,6 +303,7 @@ class Evidence:
     scoped: dict | None = None  # recipe runs: results for just the test files the change added/changed {"files": [...], "passed": n, "failed": m}
     executed_files: list | None = None  # test files that produced at least one passed/failed id in the replay (recipe runs); None = not recorded
     basis: str = ""  # "recipe" when the run was replayed from the AGENT's own declared recipe (conditioned support), else ""
+    runner_supplied: str = ""  # recipe runs: the test runner Agentvow itself installed because the recipe used but did not declare it
 
 
 def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
@@ -325,7 +326,7 @@ def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
         out.append(Evidence(f.stem, "prior_verification", "work-harvester", commit, h, fresh,
                             _INDEP_TOOL if trusted else _INDEP_AGENT,
                             str(f.relative_to(repo)), f'{rec.get("result", "?")}: {rec.get("summary", "")}', rec.get("suite", ""), rec.get("counts", {}),
-                            rec.get("scoped"), rec.get("executed_test_files"), "recipe" if rec.get("declared_by") == "agent recipe" else ""))
+                            rec.get("scoped"), rec.get("executed_test_files"), "recipe" if rec.get("declared_by") == "agent recipe" else "", str(rec.get("runner_supplied") or "")))
     return out
 
 
