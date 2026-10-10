@@ -20,11 +20,14 @@ import run_pilot as rp  # noqa: E402
 import sandboxed_claude as sc  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
+CAPTURE = os.environ.get("CAPTURE") == "1"   # Stage B3: tasks where reconstruction failed; capture vs reconstruction (STAGE_B3_PREREG.md)
 AMBIENT = os.environ.get("AMBIENT") == "1"   # Stage B2: the agent's virtualenv is preloaded with common packages (STAGE_B2_PREREG.md)
-VALID, OUT, RUNS = D / "stageb_validated.jsonl", D / ("stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl"), D / ("stageb2_runs" if AMBIENT else "stageb_runs")
+VALID = D / ("stageb3_tasks.jsonl" if CAPTURE else "stageb_validated.jsonl")
+OUT = D / ("stageb3_results.jsonl" if CAPTURE else "stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl")
+RUNS = D / ("stageb3_runs" if CAPTURE else "stageb2_runs" if AMBIENT else "stageb_runs")
 AMBIENT_PKGS = ["requests", "numpy", "pandas", "pyyaml", "pydantic", "aiohttp", "httpx", "click", "rich", "attrs", "jinja2", "toml", "typing-extensions",
                 "pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
-BUDGET_TOTAL, BUDGET_RUN, SEED = (18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
+BUDGET_TOTAL, BUDGET_RUN, SEED = (15.0 if os.environ.get("CAPTURE") == "1" else 18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
 TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep"]
 
 
@@ -126,6 +129,12 @@ def run_one(c, idx):
         t = sh([str(venv / "bin" / "python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", *c["target_files"]], repo, {**env, **envx}, 900)
         rec["truth_in_agent_env"] = "pass" if t.returncode == 0 else "fail"
         freeze = sh([str(venv / "bin" / "python"), "-m", "pip", "freeze"], repo, env).stdout
+        if CAPTURE:   # non-triviality: without the agent's changes (tracked edits reverted, untracked files removed) the target tests must FAIL in the agent's own environment
+            nt = Path(tempfile.mkdtemp(prefix="nontriv_", dir=tmp))
+            shutil.copytree(repo, nt / "r", symlinks=True)
+            sh(["git", "checkout", "-q", "--", "."], nt / "r"); sh(["git", "clean", "-fdqx"], nt / "r")
+            tb = sh([str(venv / "bin" / "python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", *c["target_files"]], nt / "r", {**env, **envx}, 900)
+            rec["base_fails_in_agent_env"] = tb.returncode != 0
         # E_repo: zero-config replay of the target tests
         rec["ladder"] = rp.replay(repo, base_sha, msg, ["--run-tests", "--setup", "auto", "--test-cmd", "{py} -m " + test_cmd(c["target_files"]), "--test-timeout", "600"])
         # E_recipe (twice, for determinism)
@@ -133,7 +142,7 @@ def run_one(c, idx):
             rec["recipe_replay"] = rp.replay(repo, base_sha, msg, ["--recipe", str(rcp_path), "--test-timeout", "600"])
             rec["recipe_replay_2"] = rp.replay(repo, base_sha, msg, ["--recipe", str(rcp_path), "--test-timeout", "600"])
         # E_recipe_scoped: the agent's declared setup/env with the researchers' scoped target command (same command as the other contexts)
-        if rcp is not None and AMBIENT:
+        if rcp is not None and (AMBIENT or CAPTURE):
             try:
                 sc_rec = {**json.loads(rcp_path.read_text()), "test": "pytest -q " + " ".join(c["target_files"])}
                 (repo / ".agentvow-recipe-scoped.json").write_text(json.dumps(sc_rec))
