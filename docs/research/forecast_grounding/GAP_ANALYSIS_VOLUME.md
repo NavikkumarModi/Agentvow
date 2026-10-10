@@ -26,3 +26,6 @@ P1 attention allocation: route each change to leave-alone / escalate by risk, no
 
 ## 4. Falsifiable next steps (cheap first)
 (a) Using the AIDev data already sampled: estimate the share of agent PRs that a *perfectly replayable* world could close with independent evidence (requires attempt-time capture to emulate: run agents ourselves in a captured environment and measure reachability, compared with 11-19%). (b) Replay 2601.00753's triage on our PR sets to compare effort-based routing with evidence-based routing on recall of real failures. (c) Only then a human attention study.
+
+## Update 2026-10-11: first test of the capture hypothesis (Stage B3, `STAGE_B3_RESULTS.md`)
+On 11 valid runs from tasks where reconstruction failed, reconstruction reproduced 0/11 and the agent's captured `pip freeze` 5/11 (45%); the pre-registered bar (>= 70% and +30 points) was not met, so the result is inconclusive. Several capture failures looked like limits of the crude capture and the replay's guards. The hypothesis is neither confirmed nor refuted; a fuller capture is the next test.
