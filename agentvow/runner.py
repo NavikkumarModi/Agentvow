@@ -200,6 +200,8 @@ def _bwrap_prefix(writable: list, network: bool, argv: list | None = None, env: 
            "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/run"]
     if not network:
         cmd.append("--unshare-net")
+    elif os.path.isdir("/run/systemd/resolve"):   # /etc/resolv.conf on systemd hosts points here; without it the sandboxed pip cannot resolve any host (found by CI on ubuntu)
+        cmd += ["--ro-bind", "/run/systemd/resolve", "/run/systemd/resolve"]
     for h in hidden:
         if os.path.isdir(h):
             cmd += ["--tmpfs", h]
