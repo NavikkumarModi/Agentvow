@@ -2,7 +2,9 @@
 A candidate is VALID only if a reference environment reproduces the PR's target tests at its head (S1: zero-config ladder; S2: CI-derived recipe), the same
 tests FAIL at the base once the PR's test files are applied (the task is non-trivial), and the head result is the same twice (determinism).
 Quota-driven: candidates are processed in a seeded random order until 30 valid S1 and 30 valid S2 tasks (<= 2 per repository) exist or candidates run out.
-Usage: python3 research/preconditions/stageb_validate.py  -> data/preconditions/stageb_validated.jsonl (resumable)"""
+Usage: python3 research/preconditions/stageb_validate.py  -> data/preconditions/stageb_validated.jsonl (resumable)
+       python3 research/preconditions/stageb_validate.py --rescreen  -> stageb_validated_v2.jsonl: re-attempts only the candidates rejected as "no_s1_and_no_ci_recipe" with the
+       extended CI extractor (tox / make / uv / poetry / pdm translation); the earlier valid tasks are kept and count toward the quota and the per-repository cap."""
 import json
 import os
 import random
@@ -21,6 +23,11 @@ import ci_recipe  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
 CANDS, OUT = D / "stageb_cands.jsonl", D / "stageb_validated.jsonl"
+RESCREEN = "--rescreen" in sys.argv
+OUT2 = D / "stageb_validated_v2.jsonl"
+BASE_OUT = OUT
+if RESCREEN:
+    OUT = OUT2
 WORK = D / "stageb_work"
 SEED, QUOTA, PER_REPO = 2028, 30, 2
 MAX_TRIES = 4   # a repository with this many failed attempts and no valid task is skipped (its failure is repo-level: no reference environment); logged in STAGE_B.md section 11
@@ -70,7 +77,8 @@ def validate(repo_dir: Path, c: dict) -> dict:
         # --- S2: CI-derived recipe (only when S1 failed for a dependency-like reason)
         if env_py is None:
             wf = {p.name: p.read_text() for p in (hw / ".github" / "workflows").glob("*.y*ml")} if (hw / ".github" / "workflows").is_dir() else {}
-            rec_data, cnotes = ci_recipe.derive(wf)
+            rt = {n: (hw / n).read_text(errors='replace') for n in ('pyproject.toml', 'tox.ini', 'Makefile') if (hw / n).is_file()}
+            rec_data, cnotes = ci_recipe.derive(wf, rt)
             out["ci_notes"] = cnotes[:4]
             if rec_data is None:
                 return {**out, "why": "no_s1_and_no_ci_recipe"}
@@ -113,7 +121,14 @@ def validate(repo_dir: Path, c: dict) -> dict:
 def main():
     cands = [j for j in map(json.loads, CANDS.read_text().splitlines()) if j.get("ok")]
     random.Random(SEED).shuffle(cands)
-    done = {(j["repo"], j["pr"]): j for j in map(json.loads, OUT.read_text().splitlines())} if OUT.exists() else {}
+    done = {(j["repo"], j["pr"]): j for j in map(json.loads, BASE_OUT.read_text().splitlines())} if BASE_OUT.exists() else {}
+    base = dict(done)
+    if RESCREEN:
+        retry = {k for k, j in base.items() if j.get("why") == "no_s1_and_no_ci_recipe"}
+        cands = [c for c in cands if (c["repo"], c["pr"]) in retry or base.get((c["repo"], c["pr"]), {}).get("valid")]
+        done = {k: j for k, j in base.items() if k not in retry}
+        if OUT2.exists():
+            done.update({(j["repo"], j["pr"]): j for j in map(json.loads, OUT2.read_text().splitlines())})
     per_repo, quota = {}, {"S1": 0, "S2": 0}
     for j in done.values():
         if j["valid"]:

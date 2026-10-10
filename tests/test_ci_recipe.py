@@ -61,4 +61,30 @@ class Wrappers(unittest.TestCase):
         d, notes = ci_recipe.derive({"w.yml": wf})
         self.assertEqual(d["test"], "pytest -q tests")
         self.assertEqual(d["setup"], ["pip install -e ."])
-        self.assertTrue(any("skipped" in n for n in notes), notes)
+        self.assertTrue(any("translated" in n for n in notes), notes)
+
+    def test_sync_commands_become_editable_installs_with_extras(self):
+        wf = "jobs:\n  t:\n    steps:\n      - run: uv sync --extra test --extra dev\n      - run: poetry install --all-extras\n      - run: pytest\n"
+        py = "[project]\nname='x'\n[project.optional-dependencies]\ndocs=['a']\ntest=['b']\n"
+        d, _ = ci_recipe.derive({"w.yml": wf}, {"pyproject.toml": py})
+        self.assertEqual(d["setup"], ["pip install -e '.[test,dev]'", "pip install -e '.[docs,test]'"])
+
+    def test_tox_and_make_test_commands_are_resolved_from_repo_files(self):
+        tox = "[testenv]\ndeps =\n    pytest>=7\n    {[base]deps}\ncommands = pytest {posargs:tests} -q\n"
+        d, notes = ci_recipe.derive({"w.yml": "jobs:\n  t:\n    steps:\n      - run: tox -e py\n"}, {"tox.ini": tox})
+        self.assertTrue(d["test"].startswith("pytest") and "{" not in d["test"], d["test"])
+        self.assertEqual(d["setup"], ["pip install 'pytest>=7'"])
+        mk = "test:\n\t@python -m pytest -q tests\n\nlint:\n\truff .\n"
+        d2, _ = ci_recipe.derive({"w.yml": "jobs:\n  t:\n    steps:\n      - run: make test\n"}, {"Makefile": mk})
+        self.assertEqual(d2["test"], "pytest -q tests")
+        d3, n3 = ci_recipe.derive({"w.yml": "jobs:\n  t:\n    steps:\n      - run: make test\n"}, {"Makefile": "test:\n\t$(PY) -m pytest\n"})
+        self.assertIsNone(d3)
+
+
+class Prefixes(unittest.TestCase):
+    def test_literal_env_prefix_and_runner_are_understood(self):
+        wf = "jobs:\n  t:\n    steps:\n      - run: FOO=bar uv run pytest tests -q\n"
+        d, _ = ci_recipe.derive({"w.yml": wf})
+        self.assertEqual((d["test"], d["env"]), ("pytest tests -q", {"FOO": "bar"}))
+        d2, _ = ci_recipe.derive({"w.yml": "jobs:\n  t:\n    steps:\n      - run: make t\n"}, {"Makefile": "t:\n\tuv run pytest -x\n"})
+        self.assertEqual(d2["test"], "pytest -x")
