@@ -60,3 +60,6 @@ Full-text read of 2610.00425, SetupBench and ResearchEnvBench; the patent search
 
 ## 8. Adversarial review, 2026-10-10 (independent subagent, read-only)
 Verdict: **not defensible as written**; defensible after the edits above as a feasibility and instrument paper whose central question (do recipes help where hidden state exists in real repositories?) is explicitly untested. Blocking: (1) "recipe adds 0" was a ceiling effect of the S1 filter; (2) B1 removed ambient state by design. Major: asymmetric contexts, post-hoc 28/30, S2 and reachability overstated. Minor: injected claim sentence, unsupported literature assertion, novelty wording. Instrument: no false SUPPORTED found in the 24 passes; sync/tox/make translation touched only S2 screening (0 tasks). The numbers themselves reproduced from raw data; the detail of the jaseci single-test recipes and the `.` normalisation are the reviewer's observations, not yet re-checked by me.
+
+## 9. Prior-art audit
+See `PRIOR_ART_2026-10-10.md`: abstract-level checks done, full-text claims from an external write-up carried as unverified, patent gate still open.
