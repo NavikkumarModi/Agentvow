@@ -160,6 +160,8 @@ def parse(data: dict) -> Recipe:
     clean_env = {}
     for k, v in env.items():
         if not re.fullmatch(r"[A-Z][A-Z0-9_]{0,60}", str(k)) or k in _BLOCKED_ENV or k.startswith(("LD_", "DYLD_", "PIP_", "GIT_", "PYTHON", "PYTEST_", "TOX_", "UV_", "POETRY_", "PDM_", "SETUPTOOLS_", "VIRTUALENV_", "CONDA_", "COVERAGE_", "NODE_OPTIONS")) or _SECRET_NAME.search(k):
+            if k in ("HOME", "TMPDIR", "TEMP", "TMP"):
+                raise RecipeError(f"env: {k} is not declared: the replay already runs the tests with an empty, writable HOME and TMPDIR of its own (a redirected {k} is usually only needed to work around a sandbox in the agent's own environment); remove it")
             raise RecipeError(f"env: name not allowed: {k!r} (plain NAME=value pairs only: not PATH, PYTHONPATH or other PYTHON*, PIP_*, GIT_*, pytest/tox/uv/poetry settings, or anything secret-looking; the project's own source folders are already importable)")
         if not isinstance(v, str) or len(v) > 200 or "\n" in v or "\x00" in v:
             raise RecipeError(f"env: value not allowed for {k}")

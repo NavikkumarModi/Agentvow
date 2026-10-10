@@ -321,3 +321,13 @@ class RunnerSuppliedReplay(unittest.TestCase):
             self.assertIn(f["verdict"], ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"), f)
             self.assertEqual(f["meta"].get("runner_supplied"), "pytest", f)
             self.assertIn("installed pytest itself", f["why"])
+
+
+class HomeGuidance(unittest.TestCase):
+    def test_home_is_rejected_with_an_explanation_not_a_bare_refusal(self):
+        for k in ("HOME", "TMPDIR"):
+            with self.assertRaises(recipe.RecipeError) as cm:
+                recipe.parse({"setup": [], "test": "pytest -q", "env": {k: "/tmp/x"}})
+            self.assertIn("already runs the tests with an empty, writable HOME", str(cm.exception))
+        with self.assertRaises(recipe.RecipeError):   # other blocked names keep the general message
+            recipe.parse({"setup": [], "test": "pytest -q", "env": {"PATH": "/x"}})
