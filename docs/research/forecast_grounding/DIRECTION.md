@@ -47,3 +47,7 @@ What remains as a **potential gap requiring further verification** (not shown no
 
 ## Product semantics adopted from this discussion
 Verdicts keep their existing classes; the *basis* of support is now stated: a SUPPORTED/NOT_CONTRADICTED finding produced from the agent's own recipe carries `meta.support_basis = "agent_recipe"` and says it shows the result under the declared conditions, not that the repository reproduces it from its own setup instructions. A `prepare` step may only create files; if it rewrites or deletes an existing file (tests included) the run is not used as evidence (adversarial-recipe guard, unit-tested).
+
+
+## Update 2026-10-10
+The claim was re-scoped after the real-repository study; see `PAPER_FRAME.md` for what the evidence supports and what it does not.
