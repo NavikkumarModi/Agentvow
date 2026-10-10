@@ -1,6 +1,7 @@
 """Post-hoc: re-replay B1 runs with the fixed instrument from the SAVED patch and recipe (no agent). New untracked files are not in the saved patch, so
 runs that created files cannot be reconstructed faithfully and are skipped (reported). Usage: python3 research/preconditions/stageb_rereplay.py"""
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -8,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(Path(__file__).resolve().parent))
+B2 = "--b2" in sys.argv   # Stage B2 (ambient) runs whose scoped recipe replay failed only because pytest was not declared
+if B2:
+    os.environ["AMBIENT"] = "1"
 import stageb_run as sb  # noqa: E402
 import run_pilot as rp  # noqa: E402
 
@@ -15,9 +19,11 @@ D = ROOT / "data" / "preconditions"
 
 
 def main():
-    rows = [json.loads(l) for l in (D / "stageb_results.jsonl").read_text().splitlines()]
+    rows = [json.loads(l) for l in (D / ("stageb2_results.jsonl" if B2 else "stageb_results.jsonl")).read_text().splitlines()]
     valid = {(j["repo"], j["pr"]): j for j in map(json.loads, (D / "stageb_validated.jsonl").read_text().splitlines()) if j["valid"]}
     targets = [r for r in rows if r["truth_in_agent_env"] == "pass" and ((r.get("recipe_replay") or {}).get("evidence") or {}).get("result") != "pass"]
+    if B2:
+        targets = [r for r in rows if "No module named pytest" in json.dumps(r.get("recipe_scoped_replay"))]
     for r in targets:
         c = valid[(r["repo"], r["pr"])]
         rd = Path(r["run_dir"])
