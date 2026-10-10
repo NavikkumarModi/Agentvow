@@ -13,4 +13,4 @@ Origin: `GAP_ANALYSIS_VOLUME.md` section 3 hypothesis: a verifier can only close
 **Known limits stated in advance.** Capture is pip-freeze only; tasks are the population on which reconstruction failed, so they may be harder for the agent too (low agent success reduces N); a run where the agent installs from VCS or local paths has those entries dropped from the capture; one model; one run per task; reconstruction tasks, not natural bug reports; third-party code (snapshots stay local).
 
 ## Deviation log
-(none yet)
+- 2026-10-10: the first launch exited at once (the task loop kept only `valid` tasks and every B3 task is by construction `valid: false`); harness filter fixed (`or CAPTURE`), no run had started, nothing else changed.

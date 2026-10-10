@@ -170,7 +170,7 @@ def run_one(c, idx):
 
 def main(limit=40):
     D.mkdir(parents=True, exist_ok=True); RUNS.mkdir(parents=True, exist_ok=True)
-    tasks = [j for j in map(json.loads, VALID.read_text().splitlines()) if j["valid"]]
+    tasks = [j for j in map(json.loads, VALID.read_text().splitlines()) if j["valid"] or CAPTURE]   # B3 tasks are rejected-by-B0 candidates: validity is established from the run
     s2 = [t for t in tasks if t["stratum"] == "S2"]; s1 = [t for t in tasks if t["stratum"] == "S1"]
     random.Random(SEED).shuffle(s1)
     order = s2 + s1
