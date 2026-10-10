@@ -37,6 +37,7 @@ class RecipeError(ValueError):
 @dataclass
 class Recipe:
     setup: list = field(default_factory=list)      # each: list of pip arguments after `pip install`
+    local_roots: list = field(default_factory=list)   # set by build_env: repository sub-directories the recipe installs from (monorepo packages), added to PYTHONPATH at run time
     prepare: list = field(default_factory=list)    # each: argv after the interpreter, e.g. ["scripts/make_fixture.py"]; run in the sandbox before the tests
     test: list = field(default_factory=list)       # argv after the interpreter, e.g. ["-m", "pytest", "-q", "tests/test_x.py"]
     env: dict = field(default_factory=dict)
@@ -81,7 +82,8 @@ def _parse_setup(line: str):
         if a in ("-e", "--editable"):
             if i + 1 >= len(args) or not (_rel_path_ok(args[i + 1]) or args[i + 1].startswith(".")):
                 raise RecipeError("setup: -e needs a path inside the repository")
-            out += ["-e" if False else args[i + 1]]   # installed non-editable from a throwaway copy (see envsetup); declared intent recorded in the hash
+            tgt = args[i + 1]
+            out += [tgt if tgt.startswith(".") else "./" + tgt]   # a PATH, never a PyPI name (`-e jac` must not install the PyPI package "jac"); installed non-editable from a throwaway copy
             i += 2
             continue
         if a.startswith("-"):
@@ -157,7 +159,7 @@ def parse(data: dict) -> Recipe:
     clean_env = {}
     for k, v in env.items():
         if not re.fullmatch(r"[A-Z][A-Z0-9_]{0,60}", str(k)) or k in _BLOCKED_ENV or k.startswith(("LD_", "DYLD_", "PIP_", "GIT_", "PYTHON", "PYTEST_", "TOX_", "UV_", "POETRY_", "PDM_", "SETUPTOOLS_", "VIRTUALENV_", "CONDA_", "COVERAGE_", "NODE_OPTIONS")) or _SECRET_NAME.search(k):
-            raise RecipeError(f"env: name not allowed: {k!r}")
+            raise RecipeError(f"env: name not allowed: {k!r} (plain NAME=value pairs only: not PATH, PYTHONPATH or other PYTHON*, PIP_*, GIT_*, pytest/tox/uv/poetry settings, or anything secret-looking; the project's own source folders are already importable)")
         if not isinstance(v, str) or len(v) > 200 or "\n" in v or "\x00" in v:
             raise RecipeError(f"env: value not allowed for {k}")
         clean_env[k] = v
@@ -204,7 +206,11 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
             return str(venv / "bin/python"), notes, out
         if rc:
             notes.append(f"setup `pip install {' '.join(args)}` failed: " + " ".join(str(out).split())[-140:])
-    name = envsetup._project_name(proj)
-    if name:   # keep the dependencies, drop the project: tests must import the code under test from the worktree
-        envsetup._pip(venv, proj, home, ["uninstall", "-y", name], 120, envsetup.MAX_VENV, envsetup.MIN_FREE)
+    for args in recipe.setup:   # directories INSIDE the repository that the recipe installs from (monorepo sub-packages): their sources must stay importable from each worktree
+        for a in args:
+            if not a.startswith("-") and a not in (".",) and not a.startswith("./.") and (proj / a.split("[", 1)[0]).is_dir() and ".." not in Path(a).parts:
+                rel = a.split("[", 1)[0].strip("./") or "."
+                if rel != "." and rel not in recipe.local_roots:
+                    recipe.local_roots.append(rel)
+    envsetup.uninstall_project_dists(venv, proj, home, envsetup._project_name(proj), envsetup.MAX_VENV, envsetup.MIN_FREE)   # the project and any monorepo sub-packages
     return str(venv / "bin/python"), notes, None

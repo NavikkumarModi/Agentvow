@@ -218,6 +218,14 @@ def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
                                "The agent's declared recipe replayed, but its test command did not execute the test file(s) this change added or changed: "
                                + ", ".join(skipped[:3]) + (", …" if len(skipped) > 3 else "") + ". The replay therefore says nothing about them.",
                                evidence=f.evidence, attention=True, meta={"narrowed": skipped})
+        sc = [e for e in rec_runs if e.scoped and e.scoped.get("files") and e.counts.get("regressions", 0) == 0 and e.counts.get("uncomparable", 0) == 0]
+        if f.verdict == "UNKNOWN" and sc and all(e.scoped["failed"] == 0 and e.scoped["passed"] > 0 for e in sc):
+            e = sc[0]   # the declared command ran more than the claim covers; the tests this change added or changed pass, the rest fail with and without the change
+            return Finding(c.text, c.kind, "NOT_CONTRADICTED",
+                           f"In the replay of the agent's declared recipe, the {e.scoped['passed']} test(s) this change added or changed ({', '.join(e.scoped['files'][:3])}) pass. "
+                           f"{e.counts.get('failed', 0) + e.counts.get('errors', 0)} other test(s) in the replay fail, and they fail without the change too, so 'all tests pass' is not shown. "
+                           "Basis: the AGENT's own declared recipe; this does not show the repository reproduces it from its own setup instructions.",
+                           evidence=f.evidence, attention=False, meta={"support_basis": "agent_recipe", "scope": "changed_tests"})
         if any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
                       "this does not show the repository reproduces it from its own setup instructions.")

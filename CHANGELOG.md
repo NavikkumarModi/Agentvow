@@ -15,3 +15,4 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - `--recipe`: claims with preconditions. The agent declares its setup and test command; Agentvow replays only that in a clean sandbox.
 - Recipe `prepare` step (run a repository script in the sandbox before the tests); claim extractor accepts singular and suite forms ("The test passes").
 - Recipe hardening from a red-team suite (fail-closed environments, tool-config env prefixes, shadowing, symlinked scripts), test-selection guard, default key dir always hidden.
+- Recipe replay: monorepo sub-package installs cleaned up with their sources importable per worktree; changed-tests scoping when the declared command runs more than the claim covers; clearer recipe guidance.

@@ -214,3 +214,77 @@ class SelectionFidelity(unittest.TestCase):
             (Path(d) / "tests").mkdir(); (Path(d) / "tests" / "test_x.py").write_text("")
             self.assertEqual(runner.executed_test_files(["tests/test_x.py::test_a", "tests/test_y.py::test_b"], Path(d)), ["tests/test_x.py", "tests/test_y.py"])
             self.assertEqual(runner.executed_test_files(["test_f (tests.test_x.T.test_f)", "test_g (nowhere.T.test_g)"], Path(d)), ["tests/test_x.py"])
+
+
+def _online():
+    import socket
+    try:
+        socket.create_connection(("pypi.org", 443), timeout=4).close()
+        return True
+    except OSError:
+        return False
+
+
+@unittest.skipUnless(_online(), "needs network (pip builds a sub-package)")
+class Monorepo(unittest.TestCase):
+    def test_a_sub_package_install_is_cleaned_up_and_its_sources_stay_importable(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; (r / "libs" / "sub" / "subpkg").mkdir(parents=True); (r / "tests").mkdir()
+            (r / "libs" / "sub" / "pyproject.toml").write_text('[build-system]\nrequires = ["setuptools>=61"]\nbuild-backend = "setuptools.build_meta"\n[project]\nname = "sub-dist"\nversion = "0.1"\n[tool.setuptools]\npackages = ["subpkg"]\n')
+            (r / "libs" / "sub" / "subpkg" / "__init__.py").write_text("VALUE = 2\n")
+            (r / "tests" / "__init__.py").write_text("")
+            (r / "tests" / "test_a.py").write_text("import unittest\nimport subpkg\nclass T(unittest.TestCase):\n    def test_a(self):\n        self.assertEqual(subpkg.VALUE, 2)\n")
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t"); g("add", "-A"); g("commit", "-qm", "base")
+            (r / "libs" / "sub" / "subpkg" / "__init__.py").write_text("VALUE = 2  # changed\n")        # the patch edits the sub-package
+            p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": ["pip install -e libs/sub"], "test": "python -m unittest discover -s tests -p 'test_*.py' -t ."}))
+            import io
+            old = sys.stdin, sys.stdout, sys.stderr; sys.stdin = io.StringIO("All tests pass."); sys.stdout = io.StringIO(); sys.stderr = io.StringIO()
+            try:
+                cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+            finally:
+                sys.stdin, sys.stdout, sys.stderr = old
+            ev = [json.loads(f.read_text()) for f in (r / ".agentvow" / "evidence").glob("testrun_*.json")][-1]
+            self.assertEqual(ev["result"], "pass", ev.get("summary"))   # no isolation failure, and the worktree's copy of subpkg is the one imported
+
+
+class ScopeToTheClaim(unittest.TestCase):
+    def test_a_broad_command_with_unrelated_failures_still_reports_the_changed_tests(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; (r / "tests").mkdir(parents=True)
+            (r / "tests" / "__init__.py").write_text("")
+            (r / "tests" / "test_other.py").write_text("import unittest\nclass O(unittest.TestCase):\n    def test_unrelated(self):\n        self.fail('pre-existing')\n")
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t"); g("add", "-A"); g("commit", "-qm", "base")
+            (r / "tests" / "test_new.py").write_text("import unittest\nclass N(unittest.TestCase):\n    def test_new(self):\n        self.assertTrue(True)\n")
+            p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": [], "test": "python -m unittest discover -s tests -p 'test_*.py' -t ."}))
+            import io
+            old = sys.stdin, sys.stdout; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out
+            try:
+                cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+            finally:
+                sys.stdin, sys.stdout = old
+            f = [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertEqual(f["verdict"], "NOT_CONTRADICTED")
+            self.assertIn("test_new.py", f["why"]); self.assertIn("'all tests pass' is not shown", f["why"])
+            self.assertEqual(f["meta"].get("scope"), "changed_tests")
+
+    def test_if_a_changed_test_fails_the_scope_rule_does_not_apply(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; (r / "tests").mkdir(parents=True); (r / "tests" / "__init__.py").write_text("")
+            (r / "tests" / "test_a.py").write_text(TEST_PASS if False else "import unittest\nclass A(unittest.TestCase):\n    def test_a(self):\n        pass\n")
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t"); g("add", "-A"); g("commit", "-qm", "base")
+            (r / "tests" / "test_new.py").write_text("import unittest\nclass N(unittest.TestCase):\n    def test_new(self):\n        self.fail('the new test fails')\n")
+            p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": [], "test": "python -m unittest discover -s tests -p 'test_*.py' -t ."}))
+            import io
+            old = sys.stdin, sys.stdout; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out
+            try:
+                cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD", "--json"])
+            finally:
+                sys.stdin, sys.stdout = old
+            f = [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertNotEqual(f["verdict"], "NOT_CONTRADICTED")

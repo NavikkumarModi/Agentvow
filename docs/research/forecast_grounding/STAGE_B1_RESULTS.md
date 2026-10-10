@@ -34,3 +34,19 @@ Protocol: `STAGE_B.md` (sections 0-11). **32 valid tasks (< 40): this is a feasi
 2. **A defensible, narrower contribution remains:** (a) a measured rate of locally-true-but-non-portable claims on real PRs (1/32 here, on declarable repositories), (b) the reachability funnel (19% of real PRs reach a usable run), (c) a validated, adversarially tested replay instrument with an explicit support basis. Whether any of this is novel is unestablished.
 3. **Instrument fixes suggested by the failures (not yet made):** recognise sub-package installs in monorepos and clean them up before the isolation check; replay the *claimed* tests (or report the broader command's failures against a baseline) when a recipe's test command is broader than the claim; tell the agent that `PYTHONPATH` is not accepted.
 4. **S2 needs a different route** (extend the CI-derived recipe vocabulary to tox/make/uv/poetry, or find repositories where CI is the only setup record); until then the question "does a recipe help where it should?" is open for real repositories.
+
+## Addendum (2026-10-10, POST-HOC): instrument fixes and a re-replay of the non-reproducing recipes
+Written after seeing the B1 results; the fixes and this analysis are not part of the protocol, and the table in the first section stays as the registered result.
+**Fixes made:** (1) `pip install -e <dir>` was flattened to the bare name, which pip reads as a PyPI package: for the jaseci monorepo the replay installed an unrelated PyPI package called `jac` (a real validator bug; now a path `./dir`); every distribution installed from the project copy is now removed after setup and a monorepo sub-package's source folder stays importable from each worktree. (2) When a declared test command runs more than the claim covers, Agentvow reports the tests the change added or changed (NOT_CONTRADICTED, never SUPPORTED); this rule did not apply to B1 because B1's target tests are already in the base commit. (3) Agent guidance and the validator message now say that `PYTHONPATH`/`PATH` and tool-configuration variables are not accepted and that the repository's own source folders are already importable.
+**Re-replay from the saved patch and recipe (no agent), 8 runs whose recipe replay had not reproduced:**
+
+| run | before | after the fixes | with the test command scoped to the claimed tests |
+|---|---|---|---|
+| jaseci #1897, #1992 | inconclusive (isolation failure) | **pass** (SUPPORTED) | pass |
+| ComfyUI-Lora-Manager #487 | fail (whole suite; unrelated failures) | fail | **pass** |
+| b2500-meter #135 | fail (whole suite) | fail | **pass** |
+| python-telegram-bot #4908 | fail (also fails in repository-only and freeze contexts) | fail | fail |
+| haliax #206, #208 | recipe rejected (`PYTHONPATH`) | still rejected (by design; guidance added) | not replayable |
+| extending-move #375 | fail (whole suite) | not reconstructable (the agent created a file the saved patch lacks) | not reconstructed |
+
+**Reading:** of the 30 accepted recipes, 24 reproduced as run; **2 more reproduce after the validator fix (26/30)**, and **2 more have a sufficient setup and a broader-than-claimed test command (28/30 on a setup-sufficiency reading)**. The remaining non-reproduction are one unreconstructable run and one genuine true-but-non-portable claim (`telegram#4908`), plus 2 rejected recipes. This does not change the main conclusion: **on real, declarable repositories the repository's own declarations already reproduced 97% and the recipe added no reproduction beyond them**; what the follow-up shows is that most of the recipe replay's apparent shortfall was the instrument and the scope of the declared test command, not missing knowledge by the agent.

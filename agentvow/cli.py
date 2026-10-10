@@ -42,12 +42,15 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
         for i, spec in enumerate(suites):
             name, argv, sub = spec[:3]
             opts = spec[3] if len(spec) > 3 else {}   # {"env_extra": {...}, "meta": {...}} (agent-declared recipe)
-            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"), prepare=opts.get("prepare"))
+            b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"), prepare=opts.get("prepare"), pythonpath_rel=opts.get("pythonpath_rel"))
             h = runner.run_tests(tmp / "head", argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
-                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"), prepare=opts.get("prepare"))
+                                 write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"), prepare=opts.get("prepare"), pythonpath_rel=opts.get("pythonpath_rel"))
             if opts.get("meta"):
                 h.update(opts["meta"])
                 h["executed_test_files"] = runner.executed_test_files(list(h.get("passed_ids", [])) + list(h.get("failed_ids", [])), tmp / "head")
+                tf = [x for x in reality.changed_files(repo, base) if re.fullmatch(r"(?:.*/)?(?:test_[^/]*|[^/]*_test)\.py", x) and (repo / x).is_file()]
+                per = lambda ids: sum(1 for i in ids if any(f in runner.executed_test_files([i], tmp / "head") for f in tf))
+                h["scoped"] = {"files": tf, "passed": per(h.get("passed_ids", [])), "failed": per(h.get("failed_ids", []))}
                 if str(h.get("summary", "")).startswith("missing dependency"):   # the environment came ONLY from the declaration: say so
                     h["summary"] = re.sub(r"\(pass --python.*\)$", "(the agent's declared recipe does not provide it, so the declared preconditions were insufficient)", h["summary"])
             reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
@@ -435,7 +438,7 @@ def _run(a, repo, base, base_how, text):
             targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
         elif targv[1] == "unittest" and "-v" not in targv:
             targv.append("-v")
-        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe"}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []

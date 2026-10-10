@@ -92,6 +92,42 @@ def _pip(venv: Path, repo: Path, home: Path, args: list, timeout: int, max_venv:
     return proc.returncode, proc.stdout.read()
 
 
+_DIRECT_URL_SNIPPET = (
+    "import importlib.metadata as m, json, sys\n"
+    "root = sys.argv[1]\n"
+    "out = []\n"
+    "for d in m.distributions():\n"
+    "    t = d.read_text('direct_url.json')\n"
+    "    if not t:\n"
+    "        continue\n"
+    "    try:\n"
+    "        u = json.loads(t).get('url', '')\n"
+    "    except ValueError:\n"
+    "        continue\n"
+    "    if u.startswith('file://') and u[7:].startswith(root):\n"
+    "        out.append(d.metadata['Name'])\n"
+    "print(json.dumps(sorted(set(out))))\n")
+
+
+def installed_from(venv: Path, proj: Path) -> list:
+    """Distributions installed in `venv` from a local path inside the throwaway project copy `proj` (the project itself AND any sub-packages of a monorepo)."""
+    import json
+    p = subprocess.run([str(Path(venv) / "bin" / "python"), "-I", "-c", _DIRECT_URL_SNIPPET, str(Path(proj).resolve())], capture_output=True, text=True, timeout=60)
+    try:
+        return json.loads(p.stdout or "[]") if p.returncode == 0 else []
+    except ValueError:
+        return []
+
+
+def uninstall_project_dists(venv: Path, proj: Path, home: Path, name, max_venv: int, min_free: float):
+    """Keep the dependencies, drop the code under test: tests must import it from the worktree. Handles monorepos (several local distributions)."""
+    names = set(installed_from(venv, proj))
+    if name:
+        names.add(name)
+    if names:
+        _pip(venv, proj, home, ["uninstall", "-y", *sorted(names)], 120, max_venv, min_free)
+
+
 def _project_name(repo: Path):
     try:
         return tomllib.loads((repo / "pyproject.toml").read_text()).get("project", {}).get("name")
@@ -151,7 +187,5 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
                 return str(venv / "bin/python"), notes, out
         if rc:
             notes.append(f"{label} failed: " + " ".join(str(out).split())[-140:])
-    name = _project_name(proj)
-    if name:  # keep the dependencies, drop the project itself: the tests must import the code from the worktree under test
-        _pip(venv, proj, home, ["uninstall", "-y", name], 120, max_venv, min_free)
+    uninstall_project_dists(venv, proj, home, _project_name(proj), max_venv, min_free)   # keep the dependencies, drop the project (and monorepo sub-packages)
     return str(venv / "bin/python"), notes, None

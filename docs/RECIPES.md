@@ -26,7 +26,7 @@ agentvow check --repo . --transcript final_message.txt --recipe recipe.json
 - The agent proposes; deterministic, sandboxed execution decides. No language model is in the verdict path. Setup steps run with network access (they must) inside the install sandbox with the usual size/disk guards, on a throwaway environment.
 
 ## Instruction to give an agent
-> Before you finish, write `.agentvow-recipe.json` (schema `agentvow-recipe/1`) declaring exactly what is needed to reproduce the test run your claim relies on from a clean checkout: the `pip install` steps, the test command, and any environment variables. Do not claim anything your recipe does not reproduce.
+> Before you finish, write `.agentvow-recipe.json` (schema `agentvow-recipe/1`) declaring exactly what is needed to reproduce the test run your claim relies on from a clean checkout: the `pip install` steps, the test command (the tests your claim is about; run those, not the whole suite, unless your claim is about the whole suite), and any plain environment variables (NAME=value; `PATH`, `PYTHONPATH` and tool-configuration variables are not accepted, and the repository's own source folders are already importable). Do not claim anything your recipe does not reproduce.
 
 ## What the result means
 - **Supported / not contradicted** under the declared preconditions: the agent's own recipe reproduced the result independently. It does not show the tests are good, or that the recipe is minimal.
@@ -44,3 +44,7 @@ Each `prepare` entry must be `python <script.py inside the repository> [plain ar
 ## Integrity rules for replays
 - A `prepare` step may **create** files (generated fixtures). If it rewrites or deletes any existing tracked or untracked-but-not-ignored file, including a test, the run is **not used as evidence** (UNKNOWN with the reason); the agent's patch is what reviewers see, and a script must not be able to change the tests behind it.
 - A SUPPORTED verdict obtained from a recipe says so ("Basis: the agent's own declared recipe"): it supports the claim under the declared conditions only.
+
+## Scope of the replay and monorepos
+- If the declared test command runs more than the claim covers and unrelated tests fail (also without the change), Agentvow reports what is true: the tests the change added or changed pass, and "all tests pass" is not shown (verdict NOT_CONTRADICTED with `meta.scope = "changed_tests"`, never SUPPORTED). If any added or changed test fails, this rule does not apply.
+- A setup step that installs a sub-package of a monorepo (`pip install libs/sub`) is supported: every distribution installed from the project copy is removed after setup, and the sub-package's source folder (and its `src/`) stays importable from each worktree, so the worktree's own copy is the one under test.

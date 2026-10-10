@@ -312,7 +312,7 @@ def parse_counts(output: str) -> dict:
 
 def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict | None = None,
               baseline_failed: list | None = None, baseline_passed: list | None = None, write: bool = True, suite: str = "", subdir: str = "",
-              base_repo: Path | None = None, prepare: list | None = None) -> dict:
+              base_repo: Path | None = None, prepare: list | None = None, pythonpath_rel: list | None = None) -> dict:
     """Run `argv` in `repo` (already checked out); write evidence JSON; return the record.
 
     Differential rule (avoids false alarms from environment limits such as a missing network):
@@ -330,7 +330,9 @@ def run_tests(repo: Path, argv: list[str], timeout: int = 600, env_extra: dict |
     (scratch / "h").mkdir()
     (scratch / "t").mkdir()
     env = {"PATH": os.environ.get("PATH", ""), "HOME": str(scratch / "h"), "TMPDIR": str(scratch / "t"),
-           "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": f"{repo / 'src'}:{repo}", **(env_extra or {})}  # this worktree's code wins over any installed copy
+           "PYTHONDONTWRITEBYTECODE": "1", **(env_extra or {})}
+    if "PYTHONPATH" not in (env_extra or {}):   # this worktree's code wins over any installed copy; monorepo sub-package roots (declared by a recipe) stay importable
+        env["PYTHONPATH"] = ":".join([str(repo / "src"), str(repo), *[str(repo / r / x) if x else str(repo / r) for r in (pythonpath_rel or []) for x in ("src", "")]])  # this worktree's code wins over any installed copy
     try:
         before = R.file_hashes(repo) if prepare else None
         for step in prepare or []:
