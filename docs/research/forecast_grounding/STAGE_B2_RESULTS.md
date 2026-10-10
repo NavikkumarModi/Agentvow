@@ -5,10 +5,10 @@ Pre-registration: `STAGE_B2_PREREG.md` (written and committed before the run; no
 ## Result against the pre-registered rule
 | context (same frozen patch, scoped target tests) | reproduces | 95% CI |
 |---|---|---|
-| repository-only replay (zero-config) | **31/32 = 96%** | 84-99 |
-| agent's recipe, scoped command | 15/32 = 46% | 31-64 |
-| agent's recipe, agent's own command | 12/32 = 37% | 23-55 |
-| agent's exact `pip freeze` (control) | 28/32 = 87% | 72-95 |
+| repository-only replay (zero-config) | **31/32 = 97%** | 84-99 |
+| agent's recipe, scoped command | 15/32 = 47% | 31-64 |
+| agent's recipe, agent's own command | 12/32 = 38% | 23-55 |
+| agent's exact `pip freeze` (control) | 28/32 = 88% | 72-95 |
 
 Pre-registered reading: repository-only replay at least 90% means **B1's "small gap" reading survives this condition**. It does: ambient packages in the agent's environment did not make claims irreproducible from the repository's own declarations (31/32; the one failure is the same telegram#4908 case as in B1, failing in the repository-only and freeze contexts).
 
@@ -38,7 +38,7 @@ The 11 runs whose scoped recipe replay failed on `No module named pytest`; 10 co
 | **pass** (SUPPORTED, with the "Agentvow installed pytest itself" note) | **5**: translate#5770, issue-metrics#610, gidgethub#225, scoringengine#1045, skillz#2 |
 | inconclusive on a *second* undeclared package that was only in the ambient set | **3**: sunbeam#567 (`yaml`), staticjinja#202 (`typing_extensions`), KToolBox#274 (`httpx`) |
 | fail (not investigated) | **2**: open-webui-developer-toolkit#401 (pytest exit 4: probably the hidden `.tests/` path), openai-agents-python#1554 (2 failed; probably an undeclared pytest plugin from the ambient set such as pytest-asyncio) |
-**Reading:** the runner change recovers about half (5/10). The other half were never only "pytest omitted": the same ambient environment also hid project dependencies and plugins, which Agentvow deliberately does not supply (they stay UNKNOWN or fail, and the message names the missing module). Updated B2 scoped recipe reproduction on this reading: 15 + 5 = 20/32 (62%) against 31/32 for repository-only replay: the recipe is still the weaker context under ambient state, and the remaining gap is genuine undeclared ambient state (3 + probably 2 runs) plus 4 rejected recipes (2 `PYTHONPATH`, 2 `HOME`) and 1 unreconstructable. Post-hoc analysis, labelled as such; the registered B2 table above is unchanged.
+**Reading:** the runner change recovers about half (5/10). The other half were never only "pytest omitted": the same ambient environment also hid project dependencies and plugins, which Agentvow deliberately does not supply (they stay UNKNOWN or fail, and the message names the missing module). Updated B2 scoped recipe reproduction on this reading: 15 + 5 = 20/32 (63%) against 31/32 for repository-only replay: the recipe is still the weaker context under ambient state, and the remaining gap is genuine undeclared ambient state (3 + probably 2 runs) plus 4 rejected recipes (2 `PYTHONPATH`, 2 `HOME`) and 1 unreconstructable. Post-hoc analysis, labelled as such; the registered B2 table above is unchanged.
 
 ## The HOME rejections (2 of 32 recipes; looked at 2026-10-10)
 Both agents (ComfyUI-Lora-Manager#586, jaseci#1897) declared `"HOME": "/tmp/agentvow-home"`. That path is a workaround for their own S0-sandboxed environment (the real home is hidden there), not a property of the claim: the replay already runs tests with an empty, writable `HOME` and `TMPDIR` of its own (`runner.py`), so the declaration is unnecessary. **Decision: keep rejecting** (accepting an agent-chosen `HOME` would let a recipe point tools at agent-planted configuration such as a `pip.conf`, `.netrc` or pytest settings) **but explain**: the message now says the replay supplies them, and the agent instruction says so. Not re-run; the two runs are expected to replay once the declaration is dropped, which was not tested.
