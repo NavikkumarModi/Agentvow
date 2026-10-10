@@ -217,6 +217,10 @@ def _env(assign, recipe_env, res, part):
 _IMPORT_SNIPPET = (
     "import ast,json,sys,pathlib,importlib.metadata as m\n"
     "root=pathlib.Path(sys.argv[1]); local={p.name.split('.')[0] for p in root.iterdir() if not p.name.startswith('.')}\n"
+    "for sub in ('src','lib'):\n"
+    "    if (root/sub).is_dir(): local|={p.name.split('.')[0] for p in (root/sub).iterdir()}\n"
+    "for t in list(root.rglob('tests'))+list(root.rglob('test')):\n"
+    "    if t.is_dir() and '.git' not in t.parts: local|={p.name.split('.')[0] for p in t.iterdir()}\n"
     "mods=set()\n"
     "for f in root.rglob('*.py'):\n"
     "    if any(x in f.parts for x in ('.git','node_modules','.venv','venv','build','dist','.agentvow')): continue\n"

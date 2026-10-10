@@ -96,3 +96,15 @@ class Plumbing(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             a = audit.audit(["pip install pytest requests 2>&1 | tail -5", "pip install numpy > log.txt 2>&1", "python -m pip install -q 'pytest>=7' &> /dev/null"], Path(t))
             self.assertEqual(sorted(f.detail for f in a.findings if f.kind == "install"), ["numpy", "pytest", "requests"])   # identical findings are deduplicated
+
+
+class LocalModules(unittest.TestCase):
+    def test_src_layout_and_test_helpers_are_local_not_ambient(self):
+        import sys
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t)
+            (r / "src" / "mypkg").mkdir(parents=True); (r / "src" / "mypkg" / "__init__.py").write_text("")
+            (r / "tests").mkdir(); (r / "tests" / "test_utils.py").write_text("")
+            (r / "tests" / "test_a.py").write_text("import mypkg\nfrom test_utils import x\nimport pytest\n")
+            out = dict(audit.ambient_imports(r, sys.executable))
+            self.assertNotIn("mypkg", out); self.assertNotIn("test_utils", out); self.assertIn("pytest", out)

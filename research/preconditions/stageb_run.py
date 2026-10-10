@@ -126,7 +126,7 @@ def run_one(c, idx):
         # E_freeze: control built from the agent's exact packages
         fl = [l for l in freeze.splitlines() if l and not l.startswith("-e") and " @ " not in l and not l.lower().startswith(("pip==", "setuptools==", "wheel=="))]
         (repo / ".agentvow-freeze.txt").write_text("\n".join(fl) + "\n")
-        frec = {"schema": recipe_mod.SCHEMA, "setup": ["pip install -r .agentvow-freeze.txt"], "test": test_cmd(c["target_files"]), "env": rcp.env if rcp else {}}
+        frec = {"schema": recipe_mod.SCHEMA, "setup": ["pip install -r .agentvow-freeze.txt"], "test": "pytest -q " + " ".join(c["target_files"]), "env": rcp.env if rcp else {}}
         (repo / ".agentvow-freeze-recipe.json").write_text(json.dumps(frec))
         rec["freeze_replay"] = rp.replay(repo, base_sha, msg, ["--recipe", str(repo / ".agentvow-freeze-recipe.json"), "--test-timeout", "600"])
         # artifacts
