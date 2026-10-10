@@ -298,6 +298,14 @@ class RunnerSupplied(unittest.TestCase):
 
 @unittest.skipUnless(_online(), "needs network (installs the runner)")
 class RunnerSuppliedReplay(unittest.TestCase):
+    def test_build_env_supplies_pytest(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = mkrepo(d, "def test_f():\n    pass\n")
+            rec = recipe.parse({"setup": [], "test": "pytest -q tests"})
+            py, notes, aborted = recipe.build_env(r, rec, Path(d) / "venv", Path(d) / "h")
+            self.assertEqual(rec.runner_supplied, "pytest", (rec.test, notes, aborted))
+
     def test_an_omitted_pytest_is_installed_and_the_verdict_says_so(self):
         with tempfile.TemporaryDirectory() as d:
             os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
