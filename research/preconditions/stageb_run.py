@@ -15,19 +15,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from agentvow import audit, claims, recipe as recipe_mod, reality  # noqa: E402
+from agentvow import audit, claims, envsetup, recipe as recipe_mod, reality  # noqa: E402
 import run_pilot as rp  # noqa: E402
 import sandboxed_claude as sc  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
-CAPTURE = os.environ.get("CAPTURE") == "1"   # Stage B3: tasks where reconstruction failed; capture vs reconstruction (STAGE_B3_PREREG.md)
+B4 = os.environ.get("B4") == "1"   # Stage B4: registered test of the FULLER capture (STAGE_B4_PREREG.md); implies CAPTURE
+CAPTURE = os.environ.get("CAPTURE") == "1" or B4   # Stage B3: tasks where reconstruction failed; capture vs reconstruction (STAGE_B3_PREREG.md)
 AMBIENT = os.environ.get("AMBIENT") == "1"   # Stage B2: the agent's virtualenv is preloaded with common packages (STAGE_B2_PREREG.md)
-VALID = D / ("stageb3_tasks.jsonl" if CAPTURE else "stageb_validated.jsonl")
-OUT = D / ("stageb3_results.jsonl" if CAPTURE else "stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl")
-RUNS = D / ("stageb3_runs" if CAPTURE else "stageb2_runs" if AMBIENT else "stageb_runs")
+VALID = D / ("stageb4_tasks.jsonl" if B4 else "stageb3_tasks.jsonl" if CAPTURE else "stageb_validated.jsonl")
+OUT = D / ("stageb4_results.jsonl" if B4 else "stageb3_results.jsonl" if CAPTURE else "stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl")
+RUNS = D / ("stageb4_runs" if B4 else "stageb3_runs" if CAPTURE else "stageb2_runs" if AMBIENT else "stageb_runs")
 AMBIENT_PKGS = ["requests", "numpy", "pandas", "pyyaml", "pydantic", "aiohttp", "httpx", "click", "rich", "attrs", "jinja2", "toml", "typing-extensions",
                 "pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
-BUDGET_TOTAL, BUDGET_RUN, SEED = (15.0 if os.environ.get("CAPTURE") == "1" else 18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
+BUDGET_TOTAL, BUDGET_RUN, SEED = (18.0 if os.environ.get("B4") == "1" else 15.0 if os.environ.get("CAPTURE") == "1" else 18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
 TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep"]
 
 
@@ -150,7 +151,12 @@ def run_one(c, idx):
             except (ValueError, OSError) as e:
                 rec["recipe_scoped_error"] = str(e)[:100]
         # E_freeze: control built from the agent's exact packages
-        fl = [l for l in freeze.splitlines() if l and not l.startswith("-e") and " @ " not in l and not l.lower().startswith(("pip==", "setuptools==", "wheel=="))]
+        if B4:   # fuller capture (frozen in STAGE_B4_PREREG.md): keep setuptools/wheel, drop pip, editable/direct-URL entries and the project's OWN distribution
+            own = re.sub(r"[-_.]+", "-", str(envsetup._project_name(repo) or "")).lower()
+            fl = [l for l in freeze.splitlines() if l and not l.startswith("-e") and " @ " not in l and not l.lower().startswith("pip==")
+                  and not (own and re.sub(r"[-_.]+", "-", re.split(r"[=<>!~ \[]", l, maxsplit=1)[0]).lower() == own)]
+        else:
+            fl = [l for l in freeze.splitlines() if l and not l.startswith("-e") and " @ " not in l and not l.lower().startswith(("pip==", "setuptools==", "wheel=="))]
         (repo / ".agentvow-freeze.txt").write_text("\n".join(fl) + "\n")
         frec = {"schema": recipe_mod.SCHEMA, "setup": ["pip install -r .agentvow-freeze.txt"], "test": "pytest -q " + " ".join(c["target_files"]), "env": rcp.env if rcp else {}}
         (repo / ".agentvow-freeze-recipe.json").write_text(json.dumps(frec))
@@ -180,11 +186,13 @@ def main(limit=40):
     for i, c in enumerate(order):
         if (c["repo"], c["pr"]) in done or n >= limit:
             continue
-        if spent >= BUDGET_TOTAL:
+        if spent + (BUDGET_RUN if CAPTURE else 0) > BUDGET_TOTAL:
             print(f"budget cap reached (${spent:.2f}); stopping", flush=True); break
         if shutil.disk_usage(D).free < 2.5 * 1024**3:
             print("disk low; stopping", flush=True); break
         r = run_one(c, i)
+        if r.get("is_error") and "authenticate" in str(r.get("final", "")).lower():   # not a result: stop without recording
+            print("authentication failure; stopping without recording", flush=True); break
         spent += r.get("cost_usd") or 0
         with OUT.open("a") as fh:
             fh.write(json.dumps(r) + "\n")

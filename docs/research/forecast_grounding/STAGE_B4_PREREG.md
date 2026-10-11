@@ -1,0 +1,15 @@
+# Stage B4 (registered test of a fuller attempt-time capture) — pre-registration, 2026-10-11 (written BEFORE any B4 run)
+
+Origin: Stage B3 (`STAGE_B3_RESULTS.md`). The pre-registered B3 result was inconclusive (simple pip-freeze capture 5/11 = 45% vs reconstruction 0/11). A post-hoc, unregistered re-replay with obvious capture defects repaired reached 8/11 (73%). B4 tests that repaired capture on **fresh tasks**, with the rule fixed in advance.
+
+**Question.** On real agent-PR tasks where reconstruction from the repository failed, what fraction of valid runs (the agent's target tests pass in its own environment and fail on the baseline without its changes) can be independently reproduced from a capture of the agent's environment made at attempt time, versus reconstruction?
+**Capture (frozen now, identical to the post-hoc version):** the agent's `pip freeze` with `pip` dropped, `setuptools` and `wheel` KEPT, editable (`-e`) and direct-URL (` @ `) entries dropped, and the project's OWN distribution removed; replayed with the replay's isolation check as fixed in commit `897c87e` (a plain folder sharing a package name is not project code); environment values taken from the agent's valid recipe if any (never `HOME`/`TMPDIR`/`PATH`/`PYTHON*`); the same scoped target command in every context. No further change to the capture or the replay during the stage except for bugs, which are logged below.
+**Tasks.** The Stage B0 candidates without a reconstructable environment that B3 did not use (`stageb4_select.py`, seed 2030, 175-candidate pool, at most 2 per repository, up to 24, 20 repositories). Same agent (Claude Code, installed default), S0 sandbox, empty virtualenv, prompt C1P, one run per task.
+**Contexts (same frozen patch):** E_repo (zero-config reconstruction), E_capture (the fuller capture), E_recipe_scoped (secondary).
+**Primary outcome.** Among valid runs: E_capture and E_repo reproduction rates with Wilson 95% intervals, paired counts. **Rule:** the hypothesis is *supported* if E_capture >= 70% AND E_capture exceeds E_repo by >= 30 points; *not supported* if E_capture <= E_repo + 10 points or E_capture < 50%; otherwise inconclusive. **Minimum:** fewer than 10 valid runs is reported as underpowered and no reading is drawn.
+**Secondary:** agent success and triviality rates; classification of each capture failure from saved records; recipe vocabulary rejections; cost.
+**Budget.** Hard cap $18; a run is not started if spent + $1.5 would exceed the cap (B3 overshot because the check was made before each run with no allowance). Authentication failures stop the run without recording.
+**Known limits stated in advance.** Capture is pip-freeze only (no system packages, services, generated files); the tasks are selected as ones reconstruction failed on, so E_repo near 0 is expected by construction; one model; one run per task; reconstruction tasks, not natural bug reports; third-party code (snapshots stay local); the capture and replay fixes were chosen after seeing B3, which is why this test uses fresh tasks.
+
+## Deviation log
+(none yet)
