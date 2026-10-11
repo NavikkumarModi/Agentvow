@@ -12,4 +12,4 @@ Origin: Stage B3 (`STAGE_B3_RESULTS.md`). The pre-registered B3 result was incon
 **Known limits stated in advance.** Capture is pip-freeze only (no system packages, services, generated files); the tasks are selected as ones reconstruction failed on, so E_repo near 0 is expected by construction; one model; one run per task; reconstruction tasks, not natural bug reports; third-party code (snapshots stay local); the capture and replay fixes were chosen after seeing B3, which is why this test uses fresh tasks.
 
 ## Deviation log
-(none yet)
+- 2026-10-11: the first launch stopped at once with an authentication failure and recorded nothing; relaunched after re-login. The run stopped at 22 attempted tasks by the budget rule ($16.88 of $18).
