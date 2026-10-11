@@ -20,15 +20,16 @@ import run_pilot as rp  # noqa: E402
 import sandboxed_claude as sc  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
-B4 = os.environ.get("B4") == "1"   # Stage B4: registered test of the FULLER capture (STAGE_B4_PREREG.md); implies CAPTURE
+B5 = os.environ.get("B5") == "1"   # Stage B5: larger registered test, same capture and replay as B4 (STAGE_B5_PREREG.md)
+B4 = os.environ.get("B4") == "1" or B5   # Stage B4: registered test of the FULLER capture (STAGE_B4_PREREG.md); implies CAPTURE
 CAPTURE = os.environ.get("CAPTURE") == "1" or B4   # Stage B3: tasks where reconstruction failed; capture vs reconstruction (STAGE_B3_PREREG.md)
 AMBIENT = os.environ.get("AMBIENT") == "1"   # Stage B2: the agent's virtualenv is preloaded with common packages (STAGE_B2_PREREG.md)
-VALID = D / ("stageb4_tasks.jsonl" if B4 else "stageb3_tasks.jsonl" if CAPTURE else "stageb_validated.jsonl")
-OUT = D / ("stageb4_results.jsonl" if B4 else "stageb3_results.jsonl" if CAPTURE else "stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl")
-RUNS = D / ("stageb4_runs" if B4 else "stageb3_runs" if CAPTURE else "stageb2_runs" if AMBIENT else "stageb_runs")
+VALID = D / ("stageb5_tasks.jsonl" if B5 else "stageb4_tasks.jsonl" if B4 else "stageb3_tasks.jsonl" if CAPTURE else "stageb_validated.jsonl")
+OUT = D / ("stageb5_results.jsonl" if B5 else "stageb4_results.jsonl" if B4 else "stageb3_results.jsonl" if CAPTURE else "stageb2_results.jsonl" if AMBIENT else "stageb_results.jsonl")
+RUNS = D / ("stageb5_runs" if B5 else "stageb4_runs" if B4 else "stageb3_runs" if CAPTURE else "stageb2_runs" if AMBIENT else "stageb_runs")
 AMBIENT_PKGS = ["requests", "numpy", "pandas", "pyyaml", "pydantic", "aiohttp", "httpx", "click", "rich", "attrs", "jinja2", "toml", "typing-extensions",
                 "pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
-BUDGET_TOTAL, BUDGET_RUN, SEED = (18.0 if os.environ.get("B4") == "1" else 15.0 if os.environ.get("CAPTURE") == "1" else 18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
+BUDGET_TOTAL, BUDGET_RUN, SEED = (32.0 if os.environ.get("B5") == "1" else 18.0 if os.environ.get("B4") == "1" else 15.0 if os.environ.get("CAPTURE") == "1" else 18.0 if os.environ.get("AMBIENT") == "1" else 45.0), 1.5, 2028
 TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep"]
 
 
