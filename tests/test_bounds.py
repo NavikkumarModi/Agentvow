@@ -30,3 +30,13 @@ class Bounds(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EnvLimitSetting(unittest.TestCase):
+    def test_env_size_limit_is_configurable_and_defaults_to_700mb(self):
+        import subprocess, sys
+        code = "from agentvow import envsetup; print(envsetup.MAX_VENV)"
+        base = {**os.environ}; base.pop("AGENTVOW_MAX_ENV_MB", None)
+        a = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=base).stdout.strip()
+        b = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env={**base, "AGENTVOW_MAX_ENV_MB": "3000"}).stdout.strip()
+        self.assertEqual((int(a), int(b)), (700 * 1024**2, 3000 * 1024**2))

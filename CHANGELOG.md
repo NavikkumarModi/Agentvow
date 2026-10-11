@@ -8,6 +8,7 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Studies and honest limits in `docs/research/`.
 
 ### Unreleased
+- The replay environment size guard (default 700 MB) can be raised with `AGENTVOW_MAX_ENV_MB`; found by Stage B5, where it turned heavy but legitimate captured environments into "missing dependency" results (4 of 18 valid runs).
 - A recipe that declares `HOME`/`TMPDIR` is still rejected (a redirected HOME could point tools at agent-planted config) but the message now says why and that the replay already supplies an empty, writable HOME and TMPDIR; agent instructions say so. Found by Stage B2: 2 of 32 agents redirected HOME to work around their own sandbox.
 - Recipe replay installs `pytest` (the runner only) when the recipe's test command uses it but does not declare it, and states that in the verdict (`meta.runner_supplied`); found by Stage B2, where 11 of 17 failed recipe replays were an omitted runner.
 - `agentvow demo` and VS Code command "Try the demo"; second adversarial review fixes (see docs/SECURITY_MODEL.md).

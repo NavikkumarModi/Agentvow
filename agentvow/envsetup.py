@@ -17,7 +17,7 @@ from . import runner
 EXTRAS = ("test", "tests", "testing", "dev", "develop")
 REQ_FILES = ("requirements.txt", "requirements-dev.txt", "requirements_dev.txt", "requirements-test.txt", "requirements_test.txt",
              "dev-requirements.txt", "test-requirements.txt", "tests/requirements.txt")
-MAX_VENV = 700 * 1024**2
+MAX_VENV = int(float(os.environ.get("AGENTVOW_MAX_ENV_MB") or 700) * 1024**2)   # disk guard for a replay environment; raise it for projects with heavy pinned dependencies
 MIN_FREE = 2.5 * 1024**3
 
 

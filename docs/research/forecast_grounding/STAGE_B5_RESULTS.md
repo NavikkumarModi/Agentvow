@@ -25,3 +25,13 @@ Paired (repo, capture): both 3, only capture 6, neither 9. Descriptive pool of B
 - Registered, with enough valid runs for a reading: **capture 50% vs reconstruction 17%, inconclusive against the bar**. Across B3, B4 and B5 the capture has reproduced about half of valid results that reconstruction largely could not, and no registered stage has cleared the 70% bar.
 - A material part of the shortfall appears to be a replay guard and not the capture. That is a hypothesis; it is tested post-hoc below, not by this registered stage.
 - Limits unchanged: pip-freeze capture only, one model, reconstruction tasks, tasks selected as ones reconstruction failed on, third-party code.
+
+## Post-hoc: the size guard (2026-10-11; NOT registered; no agent; saved patches; `stageb3_recapture.py stageb5 3 ...`)
+Hypothesis from the failure analysis: the 5 "missing dependency" capture failures were the replay's own 700 MB environment guard. The limit is now a documented setting (`AGENTVOW_MAX_ENV_MB`, default 700, test added). First attempt: I set the limit inside the re-run script only, which does not reach the replay subprocess, so nothing changed (a mistake of mine, not a result). Corrected re-run of the six runs that had failed on a missing dependency or an unexplained import, limit 3 GB:
+| run | registered capture | with the size limit raised |
+|---|---|---|
+| agent-lightning#148, #160, cartography#1622, levanter#1064 | inconclusive (missing dependency) | **pass** |
+| cartography#1820 | inconclusive (missing dependency) | **fail** (the tests now run and fail) |
+| sqlmesh#5078 | inconclusive (`No module named pytest`) | inconclusive (`SQLMESH_VERSION` import, the same pattern as B3) |
+**So the guard caused 4 of the 5 "missing dependency" failures.** Capture reproduces **13/18 (72%, 95% CI 49-88)** against reconstruction 3/18 (17%) once the guard is raised; this clears the numbers of the registered bar (>= 70%, >= +30 points) but **is post-hoc and does not replace the registered, inconclusive result (9/18)**. The guard exists to protect disk; the lesson for the instrument is that a fixed 700 MB limit turns heavy-but-legitimate environments into false "missing dependency" verdicts, so the verdict text should say "environment too heavy" instead (a product defect, not yet fixed).
+Remaining capture failures (5): dspy#8478 (no result), onefilellm#65 and #66 (tests fail), cartography#1820 (tests fail), sqlmesh#5078 (symbol missing, likely a generated version file).
