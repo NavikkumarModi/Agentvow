@@ -31,3 +31,15 @@ At least three of the six therefore look like limits of this **crude capture and
 - On tasks where reconstructing the environment from the repository failed, **recording what the agent actually installed made 5 of 11 non-trivial results independently reproducible that were otherwise not**, with a crude pip-freeze capture and no system packages, services or generated files. That is directionally consistent with the hypothesis in `GAP_ANALYSIS_VOLUME.md` but **does not meet the pre-registered bar** (>= 70%).
 - Whether a fuller capture (container snapshot, installed project handled correctly, build tools kept) reaches the bar is untested; the failures that could be classified point to the capture and the guards rather than to irreducible hidden state, but that is a hypothesis for a next, pre-registered step.
 - Limits: N = 11 valid runs from 19 attempts; budget overshoot; one model; one run per task; reconstruction tasks, not natural bug reports; 5 attempts excluded as trivial and 3 as not solved.
+
+## Post-hoc: a fuller capture (2026-10-11; NOT registered; no agent; saved patches; `stageb3_recapture.py`)
+Purpose: separate "this capture is crude" from "capture cannot work". Changes, made after seeing the primary result: (1) the replay's isolation check no longer treats a plain folder that shares a name with an installed package as project code (`sshpilot` has a `packaging/` folder of build scripts; a real instrument false positive, now unit-tested); (2) the capture keeps `setuptools` and `wheel` (B3's filter dropped them); (3) the project's own distribution is removed from the captured list so it cannot shadow the patched source. Editable and direct-URL entries are still dropped.
+| run | B3 capture | fuller capture |
+|---|---|---|
+| sshpilot#630, #244 | inconclusive (isolation guard) | **pass** |
+| RAGEN#112 | inconclusive (`pkg_resources`) | **pass** |
+| UltraPlot#325, serena#167, AGI-Alpha-Agent#740, open-webui-dev-toolkit#174, python-statemachine#533 | pass | pass |
+| sqlmesh#4713, #4712 | inconclusive (`SQLMESH_VERSION` import) | inconclusive (unchanged) |
+| bellows#693 | inconclusive (collection error) | inconclusive (unchanged) |
+**Fuller capture: 8/11 (73%)**, against 0/11 for reconstruction: it clears both numbers in the pre-registered bar (>= 70%, >= 30-point lead), but the bar was registered for the simple capture and the improvements were chosen after seeing the failures, so **this does not count as the registered result**; it is evidence for a next, pre-registered test. The three remaining failures: the two sqlmesh runs import a symbol the replayed source lacks (a guess, unverified: the project may generate a gitignored version file that a `git diff` does not carry); bellows fails at collection (not examined).
+Reading: a pip-freeze capture with its obvious defects repaired reproduces 8 of 11 non-trivial agent results that reconstruction from the repository could not reproduce at all. Still a weak proxy (no system packages, services, generated files), 11 runs, one model.

@@ -261,6 +261,18 @@ def _require_sandbox():
         raise RuntimeError(f"running tests needs a sandbox ({why}); refusing to run repository code unsandboxed")
 
 
+def _importable_here(repo: Path, name: str) -> bool:
+    """A name counts as importable project code only if a module file, a regular package, or a directory holding Python files exists under the project roots; a plain folder that merely
+    shares a name with an installed distribution (for example `packaging/` holding build scripts) must not trip the isolation check (found by Stage B3)."""
+    for base in (repo, repo / "src", repo / "lib"):
+        if (base / f"{name}.py").is_file() or (base / name / "__init__.py").is_file():
+            return True
+        d = base / name
+        if d.is_dir() and any(d.glob("*.py")):
+            return True
+    return False
+
+
 def isolation_problem(repo: Path, argv: list, env: dict, scratch: Path | None = None):
     """The tests must import the project from THIS worktree. An editable install of another checkout would make the base run test the head's code
     (hiding every regression). Returns a description of the problem, or None."""
@@ -268,7 +280,7 @@ def isolation_problem(repo: Path, argv: list, env: dict, scratch: Path | None = 
     if not py:
         return None
     skip = ("test", "tests", "conftest", "setup", "docs", "doc", "examples", "scripts", "benchmarks", "tools")
-    names = sorted(n for n in repo_local_names(repo) if n.isidentifier() and not n.startswith(skip) and not n.startswith("_"))[:6]
+    names = sorted(n for n in repo_local_names(repo) if n.isidentifier() and not n.startswith(skip) and not n.startswith("_") and _importable_here(repo, n))[:6]
     if not names:
         return None
     code = "import importlib.util,sys\nfor n in sys.argv[1:]:\n    s = importlib.util.find_spec(n)\n    print(n + '\\t' + str(getattr(s, 'origin', None) or ''))\n"

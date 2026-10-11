@@ -83,3 +83,17 @@ class LinuxHidesTheUsersFiles(unittest.TestCase):
         r = subprocess.run(runner.wrap([py, "-c", "import sys; print('ok', sys.prefix)"], self.repo, self.scratch, env={"PATH": os.environ["PATH"]}),
                            capture_output=True, text=True, timeout=60, cwd=self.repo)
         self.assertIn("ok", r.stdout, r.stdout + r.stderr)
+
+
+class IsolationNames(unittest.TestCase):
+    def test_a_plain_folder_named_like_an_installed_package_is_not_project_code(self):
+        import tempfile
+        from agentvow import runner
+        with tempfile.TemporaryDirectory() as d:
+            r = Path(d)
+            (r / "packaging").mkdir(); (r / "packaging" / "build.sh").write_text("echo x\n")
+            (r / "realpkg").mkdir(); (r / "realpkg" / "__init__.py").write_text("")
+            (r / "onefile.py").write_text("")
+            self.assertFalse(runner._importable_here(r, "packaging"))
+            self.assertTrue(runner._importable_here(r, "realpkg"))
+            self.assertTrue(runner._importable_here(r, "onefile"))
