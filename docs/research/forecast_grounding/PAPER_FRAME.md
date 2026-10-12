@@ -63,3 +63,6 @@ Verdict: **not defensible as written**; defensible after the edits above as a fe
 
 ## 9. Prior-art audit
 See `PRIOR_ART_2026-10-10.md`: abstract-level checks done, full-text claims from an external write-up carried as unverified, patent gate still open.
+
+## 10. Capture line (B3-B6, 2026-10-12)
+Stages B3 (inconclusive), B4 (underpowered), B5 (inconclusive; post-hoc size-guard finding) and **B6 (registered, unfiltered cohort, supported: capture 20/22 = 91% vs reconstruction 12/22 = 55%)** are a separate result from the path 1 measurement paper and change what the paper can say: the recipe vs repository-only comparison stays a bounded negative/feasibility finding, while an attempt-time capture of the agent's environment is a positive, registered result on a random task sample. Whether to fold it into the same paper or write a second one is an owner decision. Limits: pip-freeze capture only, one model, 22 valid runs, reproducibility is not correctness. See `STAGE_B3..B6_RESULTS.md`.
