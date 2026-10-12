@@ -331,3 +331,26 @@ class HomeGuidance(unittest.TestCase):
             self.assertIn("already runs the tests with an empty, writable HOME", str(cm.exception))
         with self.assertRaises(recipe.RecipeError):   # other blocked names keep the general message
             recipe.parse({"setup": [], "test": "pytest -q", "env": {"PATH": "/x"}})
+
+
+class GuardAbort(unittest.TestCase):
+    def test_a_resource_guard_abort_is_reported_as_such_and_runs_no_tests(self):
+        import io
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = mkrepo(d, "import unittest\nclass T(unittest.TestCase):\n    def test_f(self):\n        pass\n")
+            p = Path(d) / "rec.json"; p.write_text(json.dumps({"setup": [], "test": "python -m unittest discover -s tests -p 'test_*.py' -t ."}))
+            old = sys.stdin, sys.stdout, sys.stderr
+            sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out; sys.stderr = io.StringIO()
+            try:
+                with mock.patch.object(recipe, "build_env", return_value=(sys.executable, ["setup: environment too heavy"], "environment too heavy")):
+                    cli.main(["check", "--repo", str(r), "--recipe", str(p), "--base", "HEAD~1", "--json"])
+            finally:
+                sys.stdin, sys.stdout, sys.stderr = old
+            o = json.loads(out.getvalue())
+            f = [x for x in o["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertEqual(f["verdict"], "UNKNOWN", f)
+            self.assertIn("could not be built (environment too heavy)", o["scope"])
+            self.assertIn("AGENTVOW_MAX_ENV_MB", o["scope"])
+            self.assertNotIn("missing dependency", json.dumps(o))

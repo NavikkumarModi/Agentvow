@@ -405,7 +405,11 @@ def main(argv=None) -> int:
             a.python, a._recipe, a._recipe_notes = py, rec, notes
             if aborted or not py:
                 print(f"agentvow: recipe environment incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
-            if not py:   # no environment at all: fail closed (never fall back to the host interpreter)
+            if aborted and py:   # a resource guard stopped the install: the environment is PARTIAL, so tests run in it would report misleading "missing dependency" results
+                a.run_tests = False
+                a._recipe = None
+                a._env_aborted = str(aborted)
+            elif not py:   # no environment at all: fail closed (never fall back to the host interpreter)
                 a.run_tests = False
                 a._recipe = None
                 a._recipe_rejected = ("; ".join(notes) or "environment could not be built")[:80]
@@ -420,6 +424,9 @@ def main(argv=None) -> int:
             a.python = py
             if aborted or not py:
                 print(f"agentvow: automatic environment setup incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
+            if aborted and py:   # partial environment (a resource guard stopped the install): do not run tests in it
+                a.run_tests = False
+                a._env_aborted = str(aborted)
             d = _run(a, repo, base, base_how, text)
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)
@@ -459,6 +466,9 @@ def _run(a, repo, base, base_how, text):
         d.scope += f"; tests were replayed from the agent's own declared recipe (sha {a._recipe.sha256})" + (f"; setup problems: {'; '.join(a._recipe_notes)[:160]}" if a._recipe_notes else "")
     if getattr(a, "_recipe_rejected", None):
         d.scope += f"; the agent's recipe was rejected ({a._recipe_rejected}), so nothing was replayed"
+    if getattr(a, "_env_aborted", None):
+        d.scope += (f"; the replay environment could not be built ({a._env_aborted}), so no tests were run; this says nothing about the claim. "
+                    "If the environment is simply large, raise the limit with AGENTVOW_MAX_ENV_MB (default 700)")
     if a.markdown:
         md = render_markdown(d)
         if a.markdown == "-":
