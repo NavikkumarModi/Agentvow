@@ -14,6 +14,7 @@ pip install agentvow                    # from PyPI; or from a checkout: pip ins
 agentvow doctor --repo /path/to/project       # checks your setup and runs the whole hook path end to end
 echo "I changed X. All 12 tests pass. Nothing else depends on it." | agentvow check --repo /path/to/project
 agentvow check --repo . --transcript msg.txt --run-tests --python venv/bin/python   # also run the tests (sandboxed, macOS/Linux)
+agentvow check --repo . --transcript msg.txt --run-tests --changed-coverage           # also say how many changed source lines the tests actually ran
 agentvow check --repo . --transcript msg.txt --ci --html report.html                # also read CI results; write a visual report
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
@@ -81,4 +82,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 273 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 279 Python tests, 32 node tests -->

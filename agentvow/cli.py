@@ -12,7 +12,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import ci, reality, runner
+from . import changedcov, ci, reality, runner
 from .decision import Decision, Finding, check, render
 from . import __version__, adapters, envsetup
 from .report import render_html, render_markdown, to_dict
@@ -43,8 +43,32 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
             name, argv, sub = spec[:3]
             opts = spec[3] if len(spec) > 3 else {}   # {"env_extra": {...}, "meta": {...}} (agent-declared recipe)
             b = runner.run_tests(tmp / "base", argv, timeout=timeout, write=False, suite=name, subdir=sub, env_extra=opts.get("env_extra"), prepare=opts.get("prepare"), pythonpath_rel=opts.get("pythonpath_rel"))
-            h = runner.run_tests(tmp / "head", argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
+            cov_rc = cov_df = None
+            run_argv = argv
+            h_cov = None
+            if opts.get("coverage"):   # changed-line coverage: run the head tests under coverage (an empty rc file: the project's own coverage config is never loaded)
+                if subprocess.run([argv[0], "-c", "import coverage"], capture_output=True).returncode != 0:
+                    h_cov = {"available": False, "reason": "coverage is not installed in the test environment"}
+                else:
+                    cov_rc, cov_df = tmp / "empty.rc", tmp / "head" / ".agentvow" / "cov"
+                    cov_rc.write_text("[run]\n"); cov_df.parent.mkdir(parents=True, exist_ok=True)
+                    wrapped = changedcov.coverage_argv(argv, str(cov_rc), str(cov_df))
+                    if wrapped is None:
+                        h_cov = {"available": False, "reason": "the test command is not `python -m pytest|unittest`"}
+                    else:
+                        run_argv = wrapped
+            h = runner.run_tests(tmp / "head", run_argv, timeout=timeout, baseline_failed=b["failed_ids"], baseline_passed=b["passed_ids"],
                                  write=False, suite=name, subdir=sub, base_repo=tmp / "base", env_extra=opts.get("env_extra"), prepare=opts.get("prepare"), pythonpath_rel=opts.get("pythonpath_rel"))
+            if opts.get("coverage"):
+                if h_cov is None and cov_df is not None:
+                    cov = changedcov.export_json(argv[0], str(cov_rc), str(cov_df), str(tmp / "cov.json"), tmp / "head", wrap=lambda a_: runner.wrap(a_, tmp / "head", scratch=tmp, env=os.environ))
+                    changed = {}
+                    for f in reality.changed_files(repo, base):
+                        if changedcov.is_source(f) and (tmp / "head" / f).is_file():
+                            bt = subprocess.run(["git", "-C", str(tmp / "base"), "show", f"HEAD:{f}"], capture_output=True, text=True)
+                            changed[f] = changedcov.added_lines(bt.stdout if bt.returncode == 0 else "", (tmp / "head" / f).read_text(errors="replace"))
+                    h_cov = changedcov.measure(changed, cov, tmp / "head")
+                h["changed_line_coverage"] = h_cov
             if opts.get("meta"):
                 h.update(opts["meta"])
                 h["executed_test_files"] = runner.executed_test_files(list(h.get("passed_ids", [])) + list(h.get("failed_ids", [])), tmp / "head")
@@ -58,6 +82,14 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
         for name in ("base", "head"):
             subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _ensure_coverage(py: str, venv_root: Path) -> None:
+    """Install `coverage` into an environment Agentvow itself built (never into a user-supplied one), with the same guards as every other install."""
+    if subprocess.run([py, "-c", "import coverage"], capture_output=True).returncode == 0:
+        return
+    home = venv_root / "home"
+    envsetup._pip(venv_root / "venv", home / "proj" if (home / "proj").is_dir() else home, home, ["install", "-q", "coverage"], 300, envsetup.MAX_VENV, envsetup.MIN_FREE)
 
 
 def _write_sealed(repo: Path, d) -> None:
@@ -337,6 +369,8 @@ def main(argv=None) -> int:
     c.add_argument("--hook", action="store_true",
                    help="Claude Code Stop-hook mode: read the hook JSON on stdin, check the final message, print a systemMessage; never blocks")
     c.add_argument("--json", action="store_true")
+    c.add_argument("--changed-coverage", action="store_true",
+                   help="with --run-tests: also report how many of the changed executable source lines the tests actually ran (installs `coverage` in an environment Agentvow builds; verdicts are not affected)")
     c.add_argument("--run-tests", action="store_true",
                    help="run the tests at --base and HEAD in temporary worktrees (network denied, macOS sandbox)")
     c.add_argument("--python", default=None, help="python used to run tests. Default: the project's own .venv/venv/env if present, else the interpreter running agentvow")
@@ -403,6 +437,8 @@ def main(argv=None) -> int:
         try:
             py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home")
             a.python, a._recipe, a._recipe_notes = py, rec, notes
+            if py and not aborted and getattr(a, "changed_coverage", False):
+                _ensure_coverage(py, venv_root)
             if aborted or not py:
                 print(f"agentvow: recipe environment incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
             if aborted and py:   # a resource guard stopped the install: the environment is PARTIAL, so tests run in it would report misleading "missing dependency" results
@@ -422,6 +458,8 @@ def main(argv=None) -> int:
         try:
             py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
             a.python = py
+            if py and not aborted and getattr(a, "changed_coverage", False):
+                _ensure_coverage(py, venv_root)
             if aborted or not py:
                 print(f"agentvow: automatic environment setup incomplete ({'; '.join(notes)[:300]})", file=sys.stderr)
             if aborted and py:   # partial environment (a resource guard stopped the install): do not run tests in it
@@ -445,7 +483,7 @@ def _run(a, repo, base, base_how, text):
             targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
         elif targv[1] == "unittest" and "-v" not in targv:
             targv.append("-v")
-        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe", "runner_supplied": rec.runner_supplied}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "coverage": getattr(a, "changed_coverage", False), "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe", "runner_supplied": rec.runner_supplied}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []
@@ -457,7 +495,7 @@ def _run(a, repo, base, base_how, text):
                 name, sub, cmd = (f"suite{i + 1}" if len(specs) > 1 else "tests"), "", spec
             if ".." in Path(sub).parts or Path(sub).is_absolute():
                 raise SystemExit(f"--test-cmd subdir must be inside the repo: {sub}")
-            suites.append((name, cmd.format(py=a.python).split(), sub))
+            suites.append((name, cmd.format(py=a.python).split(), sub, {"coverage": getattr(a, "changed_coverage", False)}))
         collect_test_evidence(repo, base, suites, a.test_timeout)
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)

@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import claims as C
-from . import api_diff
+from . import api_diff, changedcov
 from . import reality as R
 
 REVIEW = "REVIEW REQUIRED"
@@ -189,6 +189,21 @@ def _runner_meta(runs) -> dict:
 
 
 def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
+    f = _tests_core(c, evidence, snap, changed, repo)
+    cc = next((e.changed_cov for e in evidence if getattr(e, "changed_cov", None) and e.freshness == "VALID" and e.independence["mechanism"] == "separate"), None)
+    if cc and cc.get("available"):
+        s = changedcov.sentence(cc)
+        f.meta = {**f.meta, "changed_line_coverage": {k: cc[k] for k in ("executed", "executable", "not_run", "not_loaded")}}
+        if s:
+            f.why += " " + s
+        if cc["not_run"] or cc["not_loaded"]:   # informational: never changes the verdict, but the person is told what no test ran
+            f.unknowns = [*f.unknowns, "some changed source lines were not executed by any test Agentvow could run" if cc["not_run"] else "a changed source file was never loaded by the tests"]
+    elif cc and not cc.get("available"):
+        f.meta = {**f.meta, "changed_line_coverage": {"available": False, "reason": cc.get("reason", "")}}
+    return f
+
+
+def _tests_core(c, evidence, snap, changed=(), repo=None) -> Finding:
     valid = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "separate"]
     runs = [e for e in valid if e.counts]
     agent_only = [e for e in evidence if e.freshness == "VALID" and e.independence["mechanism"] == "same"]
