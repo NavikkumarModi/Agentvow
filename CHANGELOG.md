@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased (after 0.2.0)
+- `--evidence-pack`: one report section with three separate dimensions (execution receipt; reproducibility from the captured environment AND from the project's own setup, with an explanation when they disagree; changed-line coverage naming the lines no test ran). Informational; verdicts unchanged. See docs/EVIDENCE_PACK.md.
+
 ## 0.2.0 (2026-10-13)
 New since 0.1.0: independent replay of agent-declared recipes and of captured environments, changed-line coverage, session audit, and the fixes found by the real-repository studies in `docs/research/forecast_grounding/`. Still not a safety verdict; see `docs/SECURITY_MODEL.md`.
 - Capture at claim time: `agentvow capture` records the Python packages of the agent's environment (signed, bound to the exact commit and working tree); `check --from-capsule` and the hook's `--capture --background-tests` replay the tests in a clean environment built from them, with support basis `captured_environment`; fails closed when no capsule matches the state. Based on the Stage B6 result (see docs/CAPSULES.md).

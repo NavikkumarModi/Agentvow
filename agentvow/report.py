@@ -142,6 +142,9 @@ def render_html(d: Decision, title: str = "Agentvow report") -> str:
              '<div><h3>It would NOT mean</h3><ul>'
              + "".join(f"<li>verified: {_e(_cut(f.claim, 60))}</li>" for f in unknown[:4] + bad[:4])
              + "<li>that anything outside the checks listed here is safe</li><li>permission to deploy or make unrelated changes</li></ul></div></div>")
+    if getattr(d, "pack", None):
+        from . import pack as _pack
+        o.append(_pack.render_html(d.pack, _e))
     o.append(f'<footer>Checked commit <code>{_e(d.commit[:10])}</code>{" (including uncommitted changes)" if d.dirty else ""}. Scope: {_e(d.scope)}. '
              "Agentvow informs your decision; it does not approve, reject or merge anything.</footer></main></body></html>")
     return "".join(o)
@@ -194,5 +197,8 @@ def render_markdown(d: Decision) -> str:
         o += ["No checkable claims were found, so nothing was verified.", ""]
     if d.unexamined:
         o += [f"_{d.unexamined} other statement\\(s\\) in the agent's message were not examined._", ""]
+    if getattr(d, "pack", None):
+        from . import pack as _pack
+        o += _pack.render_markdown(d.pack, _md)
     o += [f"_Scope: {_md(d.scope)}. Agentvow informs your decision; it does not approve, reject or merge anything._"]
     return "\n".join(o)

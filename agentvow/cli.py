@@ -18,7 +18,7 @@ from . import __version__, adapters, envsetup
 from .report import render_html, render_markdown, to_dict
 
 
-def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 600) -> None:
+def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 600, return_records: bool = False):
     """Run each suite at base and at the current state in throwaway worktrees; the user's tree is never touched.
 
     suites: list of (name, argv, subdir). Uncommitted work is overlaid onto the HEAD worktree so the tests see exactly
@@ -27,6 +27,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
     head, base_sha = git("rev-parse", "HEAD"), git("rev-parse", "--verify", "--end-of-options", base + "^{commit}")
     subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), "worktree", "prune"], capture_output=True)   # leftovers of a killed earlier run
     tmp = Path(tempfile.mkdtemp(prefix="agentvow_"))
+    recs: list = []
     try:
         for name, sha in (("base", base_sha), ("head", head)):
             git("worktree", "add", "--detach", str(tmp / name), sha)
@@ -77,11 +78,15 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
                 h["scoped"] = {"files": tf, "passed": per(h.get("passed_ids", [])), "failed": per(h.get("failed_ids", []))}
                 if str(h.get("summary", "")).startswith("missing dependency"):   # the environment came ONLY from the declaration: say so
                     h["summary"] = re.sub(r"\(pass --python.*\)$", "(the agent's declared recipe does not provide it, so the declared preconditions were insufficient)", h["summary"])
+            if return_records:   # an additional context for the evidence pack: nothing is written as evidence
+                recs.append(h)
+                continue
             reality.safe_write(repo, Path(".agentvow") / "evidence" / f"testrun_{head[:10]}_{i}.json", json.dumps(reality.sign_record(h)))
     finally:
         for name in ("base", "head"):
             subprocess.run(["git", *reality.safe_prefix(repo), "-C", str(repo), "worktree", "remove", "--force", str(tmp / name)], capture_output=True)
         shutil.rmtree(tmp, ignore_errors=True)
+    return recs if return_records else None
 
 
 def _ensure_coverage(py: str, venv_root: Path) -> None:
@@ -408,6 +413,9 @@ def main(argv=None) -> int:
     c.add_argument("--hook", action="store_true",
                    help="Claude Code Stop-hook mode: read the hook JSON on stdin, check the final message, print a systemMessage; never blocks")
     c.add_argument("--json", action="store_true")
+    c.add_argument("--evidence-pack", action="store_true",
+                   help="run the tests, measure changed-line coverage, replay from the captured environment when a capsule exists AND from the project's own setup, and add an Evidence pack "
+                        "section (receipt, reproducibility, coverage) to the report; informational, verdicts are unchanged")
     c.add_argument("--from-capsule", action="store_true",
                    help="with --run-tests: replay the tests in a clean environment built from the packages captured by `agentvow capture` for this exact state (fails closed when there is none)")
     c.add_argument("--changed-coverage", action="store_true",
@@ -468,6 +476,13 @@ def main(argv=None) -> int:
     repo = Path(a.repo).resolve()
     dirty = reality.snapshot(repo).dirty if (repo / ".git").exists() else False
     base, base_how = (a.base, "given") if a.base else (reality.default_base(repo, dirty) if (repo / ".git").exists() else ("HEAD~1", "assumed"))
+    if getattr(a, "evidence_pack", False):
+        a.run_tests = True
+        a.changed_coverage = True
+        if not a.recipe and capsule_mod.load(repo):
+            a.from_capsule = True
+        elif not a.recipe and a.setup == "none":
+            a.setup = "auto"
     if getattr(a, "from_capsule", False) and not a.recipe:
         cap = capsule_mod.load(repo)
         if cap is None:   # fail closed: no capsule for THIS exact state means no capture-based replay (never fall back to another environment silently)
@@ -568,6 +583,12 @@ def _run(a, repo, base, base_how, text):
         collect_test_evidence(repo, base, suites, a.test_timeout)
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
+    if getattr(a, "evidence_pack", False) and a.run_tests:
+        from . import pack as pack_mod
+        try:
+            d.pack = pack_mod.build(a, repo, base, d, collect_test_evidence)
+        except Exception as e:   # the pack is additional information; a failure here must never change or hide the verdict
+            d.scope += f"; the evidence pack could not be built ({type(e).__name__})"
     d.scope += f"; base: {base_how}"
     if getattr(a, "_capsule", None):
         cap = a._capsule

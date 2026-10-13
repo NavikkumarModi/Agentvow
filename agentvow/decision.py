@@ -41,6 +41,7 @@ class Decision:
     evidence: list
     unexamined: int = 0
     tests_touched: list = field(default_factory=list)
+    pack: dict | None = None   # evidence pack (pack.py): three separate evidence dimensions; informational
 
 
 def _reality(repo: Path, base: str, changed_override=None):
@@ -352,6 +353,9 @@ def render(d: Decision) -> str:
     if d.unexamined:
         lines.append(f"Not examined: {d.unexamined} other statement(s) in the agent's message were not checked by Agentvow.")
         lines.append("")
+    if getattr(d, "pack", None):
+        from . import pack as _pack
+        lines += _pack.render_text(d.pack)
     lines += [f"Scope of this check: {_t(d.scope)}.",
               "This tool informs your decision; it does not approve, reject or merge anything."]
     return "\n".join(lines)

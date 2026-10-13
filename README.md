@@ -19,6 +19,7 @@ agentvow doctor --repo /path/to/project       # checks your setup and runs the w
 echo "I changed X. All 12 tests pass. Nothing else depends on it." | agentvow check --repo /path/to/project
 agentvow check --repo . --transcript msg.txt --run-tests --python venv/bin/python   # also run the tests (sandboxed, macOS/Linux)
 agentvow check --repo . --transcript msg.txt --run-tests --changed-coverage           # also say how many changed source lines the tests actually ran
+agentvow check --repo . --transcript msg.txt --evidence-pack --html report.html   # receipt + reproducibility (captured vs project setup) + changed-line coverage (docs/EVIDENCE_PACK.md)
 agentvow capture --repo . && agentvow check --repo . --transcript msg.txt --run-tests --from-capsule   # replay from the packages captured when the agent ran its tests (docs/CAPSULES.md)
 agentvow check --repo . --transcript msg.txt --ci --html report.html                # also read CI results; write a visual report
 ```
@@ -87,4 +88,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 285 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 289 Python tests, 32 node tests -->
