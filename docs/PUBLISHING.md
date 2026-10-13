@@ -39,3 +39,6 @@ Trusted publishing: no token is stored anywhere.
 
 ## Status (2026-10-09)
 PyPI `agentvow` 0.1.0 and Marketplace `NavikkumarModi.agentvow` 0.1.0 are published and verified by installing each from its registry into a clean environment.
+
+## Status (2026-10-13): 0.2.0
+PyPI `agentvow` 0.2.0 published (GitHub release v0.2.0, trusted publishing) and verified by installing it from the registry into a clean environment (version, `demo`, `capture`, `check --from-capsule --changed-coverage`, `doctor`). CI green on ubuntu and macos for the release commit; 38/38 validation checks. The extension `dist/agentvow-0.2.0.vsix` is attached to the GitHub release; the Marketplace upload needs the publisher's login (`npx @vscode/vsce publish --packagePath dist/agentvow-0.2.0.vsix` after `vsce login NavikkumarModi`, or upload the file at marketplace.visualstudio.com/manage).
