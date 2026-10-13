@@ -11,7 +11,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import changedcov, envsetup
+from . import capsule as capsule_mod, changedcov, envsetup, manifest
 
 LIMITS = ("Python packages and the interpreter version are all that a captured environment covers (no system packages, services, generated files or secrets); "
           "a test run that reproduces is not a correct change; a line that ran is not a line that was checked.")
@@ -96,7 +96,11 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
         nat = primary
     contexts = [c for c in (cap, nat) if c]
     code, reading = explain(cap, nat)
-    return {"version": 1,
+    try:
+        man = manifest.build(Path(repo), list(d.changed), capsule_mod.load(Path(repo)), ".".join(map(str, sys.version_info[:3])), {"darwin": "Darwin", "linux": "Linux"}.get(sys.platform, sys.platform))
+    except Exception as ex:   # additional information only
+        man = {"items": [], "scanned": 0, "caveat": f"the manifest could not be built ({type(ex).__name__})"}
+    return {"version": 1, "manifest": man,
             "receipt": {"commit": d.commit, "dirty": d.dirty, "base": base, "command": " ".join(a.test_cmd[0].split()[1:]) if getattr(a, "test_cmd", None) else "python -m pytest -q",
                         "replay_python": ".".join(map(str, sys.version_info[:3])), "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "valid_for": "this exact commit and working tree; any later edit makes it stale"},
@@ -124,6 +128,9 @@ def render_text(p: dict) -> list:
             o.append(f"   - not run: {it['file']} lines {it['lines']}" + (f"  e.g. {it['snippets'][0]}" if it["snippets"] else ""))
         for f in cv["not_loaded"][:4]:
             o.append(f"   - never loaded by the tests: {f}")
+    if p.get("manifest"):
+        o += [""] + manifest.render_text(p["manifest"])
+        o.pop()
     o += ["", f"Limits: {p['limits']}", ""]
     return o
 
@@ -144,6 +151,8 @@ def render_markdown(p: dict, esc) -> list:
         o += [f"- never loaded by the tests: `{esc(f)}`" for f in cv["not_loaded"][:4]]
     else:
         o.append(f"**3. Changed-line coverage.** Not available ({esc(cv['reason'])}).")
+    if p.get("manifest"):
+        o += manifest.render_markdown(p["manifest"], esc)
     o += ["", f"_Limits: {esc(p['limits'], 400)}_", ""]
     return o
 
@@ -162,4 +171,4 @@ def render_html(p: dict, e) -> str:
             f"<div class=\"q\"><div><b>1 · Execution receipt</b><code>{e(r['command'])}</code> on <code>{e(r['commit'])[:10]}</code>{' + uncommitted changes' if r['dirty'] else ''}; valid for {e(r['valid_for'])}."
             f"<table>{rows}</table></div>"
             f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}</div>"
-            f"<div><b>3 · Changed-line coverage</b>{cov}</div></div><p><small>Limits: {e(p['limits'])}</small></p>")
+            f"<div><b>3 · Changed-line coverage</b>{cov}</div>" + (manifest.render_html(p["manifest"], e) if p.get("manifest") else "") + "</div><p><small>Limits: {e(p['limits'])}</small></p>")

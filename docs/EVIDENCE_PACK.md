@@ -1,6 +1,6 @@
 # Evidence pack
 
-`agentvow check --run-tests --evidence-pack` (it turns on the test run and changed-line coverage for you) adds one section to the report with **three separate dimensions of evidence**. They are never combined into a score or a badge, and the pack changes no verdict.
+`agentvow check --run-tests --evidence-pack` (it turns on the test run and changed-line coverage for you) adds one section to the report with **three separate dimensions of evidence plus a record of what the replay did not recreate**. They are never combined into a score or a badge, and the pack changes no verdict.
 
 1. **Execution receipt.** What ran (the test command), on which exact state (commit, plus uncommitted changes if any), compared with which base, and that the receipt is valid only for that state: any later edit makes it stale.
 2. **Reproducibility.** The same tests are run in up to two clean sandboxes: one built from the packages **captured when the agent ran its tests** (needs `agentvow capture`, see `docs/CAPSULES.md`) and one built **from the project's own declarations** (the zero-config setup). The pack states whether the result reproduces in both, in one only, or in neither, and when the two disagree it says what was observed, for example "reproduces from the captured packages but NOT from the project's own setup (missing dependency: six): someone who clones the repository may not be able to reproduce it". Without a capsule only the project-native context runs and the pack says the captured replay is missing.
@@ -12,6 +12,8 @@
 agentvow capture --repo .                                   # right after the agent's tests
 agentvow check --repo . --transcript msg.txt --evidence-pack --html report.html
 ```
+
+4. **Not reproduced by this replay (a record, not evidence and not a judgement).** Where the repository's tests and changed code *reference* things a replay does not recreate, by name only: environment variables read (names, never values; "required" when read with `os.environ["X"]`), external programs the tests invoke (`subprocess`, `shutil.which`), network use (network libraries and non-local URLs: the replay has no network), service and environment files present (`docker-compose.yml`, `Dockerfile`, `.env.example`), git-ignored files that exist on this machine but not in a fresh clone (generated fixtures, local data, caches), and a Python or operating-system difference between capture and replay. Static analysis only: nothing is executed, a reference is not proof a test needs the item, and an empty list is not proof that nothing is missing. It never changes a verdict.
 
 **What it does not do:** it does not run a second claim check (the verdict comes from the primary replay as before), does not cover system packages, services, generated files or secrets, and a pass in both contexts is not a correct change. It informs a person; it never approves, rejects or merges. A failure while building the pack is reported in the scope line and never hides or changes the verdict.
 **Cost:** two environment builds and two test runs instead of one.

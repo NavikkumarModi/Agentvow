@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased (after 0.2.0)
+- Evidence pack item 4, "Not reproduced by this replay": a static, names-only record of environment variables, external programs, network use, service files and git-ignored files the tests reference and a replay does not recreate, plus Python/OS differences between capture and replay (recorded, not judged; never changes a verdict).
 - `--hook --evidence-pack`: the Stop hook captures the agent's environment and the detached background run adds the evidence pack to the result (both contexts, or the project-native one alone when no environment can be captured). Never blocks.
 - `--evidence-pack`: one report section with three separate dimensions (execution receipt; reproducibility from the captured environment AND from the project's own setup, with an explanation when they disagree; changed-line coverage naming the lines no test ran). Informational; verdicts unchanged. See docs/EVIDENCE_PACK.md.
 
