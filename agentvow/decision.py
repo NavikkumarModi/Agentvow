@@ -184,7 +184,7 @@ def _ci_config_changed(changed) -> list:
 
 
 def _runner_meta(runs) -> dict:
-    sup = sorted({e.runner_supplied for e in runs if getattr(e, "runner_supplied", "") and e.basis == "recipe"})
+    sup = sorted({e.runner_supplied for e in runs if getattr(e, "runner_supplied", "") and e.basis in ("recipe", "capsule")})
     return {"runner_supplied": ", ".join(sup)} if sup else {}
 
 
@@ -228,7 +228,7 @@ def _tests_core(c, evidence, snap, changed=(), repo=None) -> Finding:
                            evidence=[e.raw_reference for e in good])
     if runs:
         f = _from_runs(c, runs)
-        rec_runs = [e for e in runs if e.basis == "recipe" and e.executed_files is not None]
+        rec_runs = [e for e in runs if e.basis in ("recipe", "capsule") and e.executed_files is not None]
         if rec_runs and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             ran = set().union(*[set(e.executed_files) for e in rec_runs])
             defined = [x for x in changed if re.fullmatch(r"(?:.*/)?(?:test_[^/]*|[^/]*_test)\.py", x) and (repo is None or (Path(repo) / x).is_file())]
@@ -246,7 +246,11 @@ def _tests_core(c, evidence, snap, changed=(), repo=None) -> Finding:
                            f"{e.counts.get('failed', 0) + e.counts.get('errors', 0)} other test(s) in the replay fail, and they fail without the change too, so 'all tests pass' is not shown. "
                            "Basis: the AGENT's own declared recipe; this does not show the repository reproduces it from its own setup instructions.",
                            evidence=f.evidence, attention=False, meta={"support_basis": "agent_recipe", "scope": "changed_tests", **_runner_meta(rec_runs)})
-        if any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
+        if any(e.basis == "capsule" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
+            f.why += (" Basis: the environment CAPTURED when the agent ran its tests (its installed Python packages, replayed in a clean sandbox): the result is reproducible from that captured "
+                      "state. This does not show the repository declares those packages, does not cover system packages, services, generated files or secrets, and reproducibility is not correctness.")
+            f.meta = {**f.meta, "support_basis": "captured_environment", **_runner_meta(runs)}
+        elif any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
                       "this does not show the repository reproduces it from its own setup instructions.")
             f.meta = {**f.meta, "support_basis": "agent_recipe", **_runner_meta(runs)}

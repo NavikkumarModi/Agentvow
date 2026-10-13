@@ -189,7 +189,7 @@ def _uses_pytest(recipe) -> bool:
     return "pytest" in t[:2] or (t[:1] == ["-m"] and t[1:2] == ["pytest"])
 
 
-def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int = 300):
+def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int = 300, extra_files: dict | None = None):
     """Clean venv + ONLY the declared setup steps (sandboxed pip, size/disk guards from envsetup). -> (python path or None, notes, aborted)."""
     import subprocess, sys
     repo, venv, home = Path(repo).resolve(), Path(venv).resolve(), Path(home).resolve()
@@ -197,6 +197,8 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
     proj = home / "proj"
     if not proj.exists() and not envsetup._copy_project(repo, proj):
         return None, ["project too large to copy for installation"], "too large"
+    for name, body in (extra_files or {}).items():   # files the replay needs inside its private copy of the project (never written to the user's repository)
+        (proj / name).write_text(body)
     r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
     if r.returncode:
         return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None

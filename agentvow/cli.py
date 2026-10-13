@@ -12,7 +12,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import changedcov, ci, reality, runner
+from . import capsule as capsule_mod, changedcov, ci, reality, runner
 from .decision import Decision, Finding, check, render
 from . import __version__, adapters, envsetup
 from .report import render_html, render_markdown, to_dict
@@ -105,13 +105,31 @@ def _write_sealed(repo: Path, d) -> None:
     return obj["run_id"]
 
 
-def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a) -> None:
+def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int) -> str:
+    """Replay the head and base tests in a clean environment built from the captured packages. -> '' on success or a reason (nothing was run)."""
+    from . import recipe as recipe_mod
+    rec, files = capsule_mod.to_recipe(cap, ["-m", "pytest", "-q"])
+    venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
+    try:
+        py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home", extra_files=files)
+        if not py or aborted:
+            return "the environment could not be built" + (f" ({aborted})" if aborted else "")
+        targv = [*rec.test, "-rA", "-p", "no:cacheprovider"]
+        meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied,
+                "capsule_python": cap["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))}
+        collect_test_evidence(repo, base, [("tests", [py, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "meta": meta})], timeout)
+        return ""
+    finally:
+        shutil.rmtree(venv_root, ignore_errors=True)
+
+
+def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a, from_capsule: bool = False) -> None:
     """Run the tests AFTER the hook has returned (they can take minutes; agents give hooks about a minute): a detached process updates the result."""
     spool = Path(tempfile.mkdtemp(prefix="agentvow_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
     cmd = reality.isolated_argv(sys.executable, "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
-                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []))
+                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []), *(["--from-capsule"] if from_capsule else []))
     subprocess.Popen(cmd, cwd=tempfile.gettempdir(), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
@@ -138,10 +156,17 @@ def run_finish_turn(a) -> int:
                 if time.time() > deadline:
                     return 0
                 time.sleep(2)
-        py = a.python or envsetup.default_python(repo)
-        collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
+        note = " Includes a test run that finished after the agent stopped."
+        if getattr(a, "from_capsule", False):
+            cap = capsule_mod.load(repo)
+            why = _collect_from_capsule(repo, a.base, cap, a.test_timeout) if cap else "no capsule exists for this exact state (it changed after the agent stopped)"
+            note = (" Includes a test run in a clean environment built from the packages captured when the agent stopped." if not why else
+                    f" The capture-based test run was not made: {why}. Nothing was verified by test execution.")
+        else:
+            py = a.python or envsetup.default_python(repo)
+            collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         d = check(repo, a.base, text, None, "unknown", changed_override=turn_changed)
-        d.scope += " Includes a test run that finished after the agent stopped."
+        d.scope += note
         cur = reality.read_sealed_result(repo / ".agentvow" / "last")[0]
         if cur and cur.get("run_id") == a.run_id:   # still this turn's result: a newer turn must not be overwritten by a slow run
             _write_sealed(repo, d)
@@ -203,7 +228,13 @@ def run_hook(a) -> int:
         run_id = _write_sealed(repo, d)
         reality.save_turn_state(repo)
         if a.background_tests and not a.run_tests and not loop:
-            _spawn_finish(repo, base, text, turn_changed, run_id, a)
+            captured = False
+            if getattr(a, "capture", False):   # record the agent's packages NOW, while its environment is as it left it, and replay from that later
+                try:
+                    captured = capsule_mod.capture(repo, a.python)[0] is not None
+                except Exception:
+                    captured = False
+            _spawn_finish(repo, base, text, turn_changed, run_id, a, from_capsule=captured)
     except Exception as e:
         msg = f"Agentvow could not check this turn ({type(e).__name__}: {e}). Nothing was verified."
         try:   # a crash is not a verdict: replace any older sealed result so a stale all-clear is not left on display
@@ -336,6 +367,10 @@ def main(argv=None) -> int:
         ft.add_argument(flag, required=True)
     ft.add_argument("--python", default=None)
     ft.add_argument("--test-timeout", type=int, default=600)
+    cp = sub.add_parser("capture", help="record the Python packages of the agent's environment for the current state, so a later check can replay from them")
+    cp.add_argument("--repo", default=".")
+    cp.add_argument("--python", default=None, help="the interpreter the agent used (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
+    ft.add_argument("--from-capsule", action="store_true")
     au = sub.add_parser("audit-env", help="compare what an agent session installed/exported with what the repository and the recipe declare")
     au.add_argument("--repo", default=".")
     au.add_argument("--session", required=True, help="Claude Code session .jsonl or Copilot CLI events.jsonl")
@@ -363,12 +398,15 @@ def main(argv=None) -> int:
     c.add_argument("--ci-sha", help="commit to read CI results for (default: HEAD); use the PR head SHA in pull_request workflows")
     c.add_argument("--new-test-failures", choices=["unknown", "review"], default="unknown",
                    help="failing tests that this change added or changed have no baseline: unknown (default, conservative) or review (raise REVIEW REQUIRED; can alert on network-dependent new tests)")
+    c.add_argument("--capture", action="store_true", help="with --hook --background-tests: record the agent's Python packages when it stops and run the background tests in a clean environment built from them")
     c.add_argument("--background-tests", action="store_true", help="with --hook: after the hook returns, run the tests in the background and update the result when they finish")
     c.add_argument("--feedback-to-agent", action="store_true",
                    help="hook mode, opt-in: when a claim is CONTRADICTED, ask the agent (once) to revise its answer (decision=block + reason). Off by default: the hook otherwise never blocks")
     c.add_argument("--hook", action="store_true",
                    help="Claude Code Stop-hook mode: read the hook JSON on stdin, check the final message, print a systemMessage; never blocks")
     c.add_argument("--json", action="store_true")
+    c.add_argument("--from-capsule", action="store_true",
+                   help="with --run-tests: replay the tests in a clean environment built from the packages captured by `agentvow capture` for this exact state (fails closed when there is none)")
     c.add_argument("--changed-coverage", action="store_true",
                    help="with --run-tests: also report how many of the changed executable source lines the tests actually ran (installs `coverage` in an environment Agentvow builds; verdicts are not affected)")
     c.add_argument("--run-tests", action="store_true",
@@ -399,6 +437,10 @@ def main(argv=None) -> int:
         res = audit_mod.audit(cmds, Path(a.repo).resolve(), rec, trunc)
         print(json.dumps({"commands": res.commands_seen, "truncated": res.truncated, "findings": [vars(f) for f in res.findings], "undeclared": len(res.undeclared)}) if a.json else audit_mod.render(res))
         return 1 if res.undeclared else 0
+    if a.cmd == "capture":
+        rec, msg = capsule_mod.capture(Path(a.repo), a.python)
+        print(("capsule written: " if rec else "no capsule: ") + msg)
+        return 0 if rec else 2
     if a.cmd == "finish-turn":
         return run_finish_turn(a)
     if a.cmd == "demo":
@@ -423,6 +465,18 @@ def main(argv=None) -> int:
     repo = Path(a.repo).resolve()
     dirty = reality.snapshot(repo).dirty if (repo / ".git").exists() else False
     base, base_how = (a.base, "given") if a.base else (reality.default_base(repo, dirty) if (repo / ".git").exists() else ("HEAD~1", "assumed"))
+    if getattr(a, "from_capsule", False) and not a.recipe:
+        cap = capsule_mod.load(repo)
+        if cap is None:   # fail closed: no capsule for THIS exact state means no capture-based replay (never fall back to another environment silently)
+            a.run_tests = False
+            a._capsule_missing = True
+            return _run(a, repo, base, base_how, text)
+        spec = (a.test_cmd[0].split() if a.test_cmd else [])
+        targv = spec[1:] if spec and spec[0] == "{py}" and len(spec) > 2 and spec[1] == "-m" and spec[2] in ("pytest", "unittest") else ["-m", "pytest", "-q"]
+        rec, files = capsule_mod.to_recipe(cap, targv)
+        a._capsule = cap
+        a.run_tests = True
+        return _run_recipe(a, repo, base, base_how, text, rec, files)
     if a.recipe:
         from . import recipe as recipe_mod
         try:
@@ -433,9 +487,19 @@ def main(argv=None) -> int:
             a._recipe_rejected = str(e)[:80]
             return _run(a, repo, base, base_how, text)
         a.run_tests = True
+        return _run_recipe(a, repo, base, base_how, text, rec, None)
+    if a.run_tests and a.setup == "auto":
+        return _run_auto(a, repo, base, base_how, text)
+    return _run(a, repo, base, base_how, text)
+
+
+def _run_recipe(a, repo, base, base_how, text, rec, extra_files):
+    """Replay from a recipe (the agent's declaration) or from a capsule (the agent's captured packages): clean environment, then the tests."""
+    from . import recipe as recipe_mod
+    if True:
         venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
         try:
-            py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home")
+            py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home", extra_files=extra_files)
             a.python, a._recipe, a._recipe_notes = py, rec, notes
             if py and not aborted and getattr(a, "changed_coverage", False):
                 _ensure_coverage(py, venv_root)
@@ -453,7 +517,10 @@ def main(argv=None) -> int:
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)
         return d
-    if a.run_tests and a.setup == "auto":
+
+
+def _run_auto(a, repo, base, base_how, text):
+    if True:
         venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
         try:
             py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
@@ -469,7 +536,6 @@ def main(argv=None) -> int:
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)
         return d
-    return _run(a, repo, base, base_how, text)
 
 
 def _run(a, repo, base, base_how, text):
@@ -483,7 +549,7 @@ def _run(a, repo, base, base_how, text):
             targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
         elif targv[1] == "unittest" and "-v" not in targv:
             targv.append("-v")
-        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "coverage": getattr(a, "changed_coverage", False), "meta": {"recipe_sha256": rec.sha256, "declared_by": "agent recipe", "runner_supplied": rec.runner_supplied}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "coverage": getattr(a, "changed_coverage", False), "meta": {"recipe_sha256": rec.sha256, "declared_by": "captured environment" if getattr(a, "_capsule", None) else "agent recipe", "runner_supplied": rec.runner_supplied, **({"capsule_python": a._capsule["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))} if getattr(a, "_capsule", None) else {})}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []
@@ -500,8 +566,14 @@ def _run(a, repo, base, base_how, text):
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
     d.scope += f"; base: {base_how}"
-    if getattr(a, "_recipe", None):
+    if getattr(a, "_capsule", None):
+        cap = a._capsule
+        d.scope += (f"; tests were replayed in a clean environment built from the {len(cap['packages'])} Python package(s) captured when the agent ran its tests (Python {cap['python_version']} then, "
+                    f"{'.'.join(map(str, sys.version_info[:2]))} now; not captured: system packages, services, generated files, secrets)")
+    elif getattr(a, "_recipe", None):
         d.scope += f"; tests were replayed from the agent's own declared recipe (sha {a._recipe.sha256})" + (f"; setup problems: {'; '.join(a._recipe_notes)[:160]}" if a._recipe_notes else "")
+    if getattr(a, "_capsule_missing", False):
+        d.scope += "; no environment capsule exists for this exact state (run `agentvow capture` right after the agent's tests, before changing anything), so no capture-based replay was made"
     if getattr(a, "_recipe_rejected", None):
         d.scope += f"; the agent's recipe was rejected ({a._recipe_rejected}), so nothing was replayed"
     if getattr(a, "_env_aborted", None):

@@ -8,6 +8,7 @@ First feature-complete prototype. Not a safety verdict; see `docs/SECURITY_MODEL
 - Studies and honest limits in `docs/research/`.
 
 ### Unreleased
+- Capture at claim time: `agentvow capture` records the Python packages of the agent's environment (signed, bound to the exact commit and working tree); `check --from-capsule` and the hook's `--capture --background-tests` replay the tests in a clean environment built from them, with support basis `captured_environment`; fails closed when no capsule matches the state. Based on the Stage B6 result (see docs/CAPSULES.md).
 - `--changed-coverage`: with `--run-tests`, the report says how many of the changed executable source lines the tests actually ran, and names the lines and files that no test reached (measured with `coverage` under an empty rc file inside the sandbox; informational, never changes a verdict). Motivated by a post-hoc study where about half of evidence-closed agent patches had changed lines no test ran.
 - When a resource guard (size, disk, timeout) stops an environment install, no tests are run in the partial environment; the result says the environment could not be built and why, instead of a misleading "missing dependency".
 - The replay environment size guard (default 700 MB) can be raised with `AGENTVOW_MAX_ENV_MB`; found by Stage B5, where it turned heavy but legitimate captured environments into "missing dependency" results (4 of 18 valid runs).
