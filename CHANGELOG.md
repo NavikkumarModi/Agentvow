@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased (after 0.2.0)
+- `--hook --evidence-pack`: the Stop hook captures the agent's environment and the detached background run adds the evidence pack to the result (both contexts, or the project-native one alone when no environment can be captured). Never blocks.
 - `--evidence-pack`: one report section with three separate dimensions (execution receipt; reproducibility from the captured environment AND from the project's own setup, with an explanation when they disagree; changed-line coverage naming the lines no test ran). Informational; verdicts unchanged. See docs/EVIDENCE_PACK.md.
 
 ## 0.2.0 (2026-10-13)

@@ -130,13 +130,28 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, covera
         shutil.rmtree(venv_root, ignore_errors=True)
 
 
-def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a, from_capsule: bool = False) -> None:   # also passes --changed-coverage
+def _collect_native(repo: Path, base: str, timeout: int, coverage: bool) -> str:
+    """Replay in an environment Agentvow builds from the project's own declarations (the zero-config setup), with optional changed-line coverage. -> '' or the reason nothing ran."""
+    venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
+    try:
+        py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
+        if not py or aborted:
+            return "the environment could not be built" + (f" ({aborted})" if aborted else "")
+        if coverage:
+            _ensure_coverage(py, venv_root)
+        collect_test_evidence(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"coverage": coverage})], timeout)
+        return ""
+    finally:
+        shutil.rmtree(venv_root, ignore_errors=True)
+
+
+def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a, from_capsule: bool = False) -> None:   # also passes --changed-coverage, --evidence-pack
     """Run the tests AFTER the hook has returned (they can take minutes; agents give hooks about a minute): a detached process updates the result."""
     spool = Path(tempfile.mkdtemp(prefix="agentvow_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
     cmd = reality.isolated_argv(sys.executable, "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
-                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []), *(["--from-capsule"] if from_capsule else []), *(["--changed-coverage"] if getattr(a, "changed_coverage", False) else []))
+                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []), *(["--from-capsule"] if from_capsule else []), *(["--changed-coverage"] if getattr(a, "changed_coverage", False) else []), *(["--evidence-pack"] if getattr(a, "evidence_pack", False) else []))
     subprocess.Popen(cmd, cwd=tempfile.gettempdir(), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
@@ -164,15 +179,27 @@ def run_finish_turn(a) -> int:
                     return 0
                 time.sleep(2)
         note = " Includes a test run that finished after the agent stopped."
+        pack_on = getattr(a, "evidence_pack", False)
+        cov = getattr(a, "changed_coverage", False) or pack_on
         if getattr(a, "from_capsule", False):
             cap = capsule_mod.load(repo)
-            why = _collect_from_capsule(repo, a.base, cap, a.test_timeout, getattr(a, "changed_coverage", False)) if cap else "no capsule exists for this exact state (it changed after the agent stopped)"
+            why = _collect_from_capsule(repo, a.base, cap, a.test_timeout, cov) if cap else "no capsule exists for this exact state (it changed after the agent stopped)"
             note = (" Includes a test run in a clean environment built from the packages captured when the agent stopped." if not why else
                     f" The capture-based test run was not made: {why}. Nothing was verified by test execution.")
+        elif pack_on:   # no capsule: the project's own setup is the only context, and the pack says the captured replay is missing
+            why = _collect_native(repo, a.base, a.test_timeout, cov)
+            note = (" Includes a test run in an environment built from the project's own setup, after the agent stopped." if not why else
+                    f" The test run was not made: {why}. Nothing was verified by test execution.")
         else:
             py = a.python or envsetup.default_python(repo)
             collect_test_evidence(repo, a.base, [("tests", f"{py} -m pytest -q -rA -p no:cacheprovider".split(), "")], a.test_timeout)
         d = check(repo, a.base, text, None, "unknown", changed_override=turn_changed)
+        if pack_on:
+            from . import pack as pack_mod
+            try:
+                d.pack = pack_mod.build(a, repo, a.base, d, collect_test_evidence)
+            except Exception as e:   # additional information only: never hide or change the verdict
+                note += f" The evidence pack could not be built ({type(e).__name__})."
         d.scope += note
         cur = reality.read_sealed_result(repo / ".agentvow" / "last")[0]
         if cur and cur.get("run_id") == a.run_id:   # still this turn's result: a newer turn must not be overwritten by a slow run
@@ -234,9 +261,10 @@ def run_hook(a) -> int:
         msg = render(d)
         run_id = _write_sealed(repo, d)
         reality.save_turn_state(repo)
-        if a.background_tests and not a.run_tests and not loop:
+        pack_flag = getattr(a, "evidence_pack", False)
+        if (a.background_tests or pack_flag) and not a.run_tests and not loop:
             captured = False
-            if getattr(a, "capture", False):   # record the agent's packages NOW, while its environment is as it left it, and replay from that later
+            if getattr(a, "capture", False) or pack_flag:   # record the agent's packages NOW, while its environment is as it left it, and replay from that later
                 try:
                     captured = capsule_mod.capture(repo, a.python)[0] is not None
                 except Exception:
@@ -379,6 +407,7 @@ def main(argv=None) -> int:
     cp.add_argument("--python", default=None, help="the interpreter the agent used (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
     ft.add_argument("--from-capsule", action="store_true")
     ft.add_argument("--changed-coverage", action="store_true")
+    ft.add_argument("--evidence-pack", action="store_true")
     au = sub.add_parser("audit-env", help="compare what an agent session installed/exported with what the repository and the recipe declare")
     au.add_argument("--repo", default=".")
     au.add_argument("--session", required=True, help="Claude Code session .jsonl or Copilot CLI events.jsonl")
