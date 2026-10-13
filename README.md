@@ -48,7 +48,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | Where | How | Status |
 |---|---|---|
 | **GitHub Copilot in VS Code** (agent chat, Copilot CLI engine) | `.github/hooks/agentvow.json` (extension command *Agentvow: Add the agent hook*) | **Verified on a real run:** Copilot ran the hook, its payload and session file (`events.jsonl`) are parsed, the result is sealed and detected by the extension. Hooks are a Preview feature |
-| **Claude Code** | Stop hook `agentvow check --hook` | Session format and payload verified |
+| **Claude Code** | Stop hook `agentvow check --hook` (settings: `{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "agentvow check --hook --evidence-pack"}]}]}}` in `.claude/settings.json`) | **Verified on real runs** (Claude Code 2.1.263, `claude -p`): payload and transcript parsed, result sealed, never blocks; the `--evidence-pack` background run (capture, both replay contexts, changed-line coverage) verified on one toy project |
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
 | Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report | Shell step tested locally; not run on GitHub |
