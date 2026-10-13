@@ -6,6 +6,10 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 
 **Status: 0.2.0 (prototype).** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
 
+![An agent says it added retries to fetch() and that all tests pass. Agentvow records the packages of the agent's environment, replays the tests in a clean sandbox built from them, and reports the claim supported with the basis stated, while also saying that 6 of the 11 changed source lines were run by the tests and naming the lines that were not.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo.gif?raw=true)
+
+*Recorded from [examples/demo_capture.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_capture.py) on the released package: a real virtualenv with pytest, a real commit, a real `agentvow capture`, a real sandboxed replay and a real changed-line coverage measurement. Staged for the recording, not faked: the pacing and simulated typing of the two commands, the "agent" scene (a pre-made commit stands in for a live agent), and the line wrapping of the report text so it fits the terminal. Note what the report does and does not say: the tests pass and the result reproduces from the captured packages, but nearly half of the changed lines were never run by any test, which is exactly what a person would want to know before trusting "all tests pass".*
+
 > **Name:** Agentvow (an agent's claims are vows; this checks them). It was developed under the working name AgentMirror; the name was changed because that name, and its Python module, belong to an unrelated PyPI project.
 
 ## Quick start

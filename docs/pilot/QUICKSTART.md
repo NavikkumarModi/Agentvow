@@ -2,10 +2,10 @@
 
 You need Python 3.10+, git, and a Python project with pytest tests, on macOS or Linux. Everything stays on your machine.
 
-**1. Install the pinned build**
+**1. Install the release**
 ```bash
-python3 -m venv ~/.agentvow-pilot && ~/.agentvow-pilot/bin/pip install "git+https://github.com/NavikkumarModi/Agentvow@d582b05423ab15439f120ba37bbe496103028a7b"
-~/.agentvow-pilot/bin/agentvow --version
+python3 -m venv ~/.agentvow-pilot && ~/.agentvow-pilot/bin/pip install "agentvow==0.2.0"
+~/.agentvow-pilot/bin/agentvow --version   # agentvow 0.2.0
 ```
 **2. Check your setup**
 ```bash
