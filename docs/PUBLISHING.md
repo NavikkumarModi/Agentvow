@@ -1,4 +1,4 @@
-# Publishing Agentvow 0.1.0
+# Publishing Agentvow (0.1.0 first release; 0.2.0 follows the same steps)
 
 Everything that can be prepared without your accounts is done and verified: the sdist and wheel build and pass `twine check`, the sdist installs in a clean virtualenv and runs, the extension packages without warnings, the GitHub environment `pypi` exists, and the release workflow is in place. Three things need *you*, because they are logins I cannot enter.
 
