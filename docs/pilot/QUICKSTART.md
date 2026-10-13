@@ -4,7 +4,7 @@ You need Python 3.10+, git, and a Python project with pytest tests, on macOS or 
 
 **1. Install the pinned build**
 ```bash
-python3 -m venv ~/.agentvow-pilot && ~/.agentvow-pilot/bin/pip install "git+https://github.com/NavikkumarModi/Agentvow@c21160bc06b8600456bd0c2231a50acaec1652ec"
+python3 -m venv ~/.agentvow-pilot && ~/.agentvow-pilot/bin/pip install "git+https://github.com/NavikkumarModi/Agentvow@d582b05423ab15439f120ba37bbe496103028a7b"
 ~/.agentvow-pilot/bin/agentvow --version
 ```
 **2. Check your setup**
