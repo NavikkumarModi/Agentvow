@@ -69,3 +69,28 @@ class EndToEnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Unavailable(unittest.TestCase):
+    def test_a_missing_coverage_module_is_said_not_silently_skipped(self):
+        import io
+        with tempfile.TemporaryDirectory() as d:
+            os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+            r = Path(d) / "r"; (r / "tests").mkdir(parents=True)
+            g = lambda *x: subprocess.run(["git", "-C", str(r), *x], check=True, capture_output=True)
+            g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+            (r / "lib.py").write_text("def f():\n    return 1\n"); (r / "tests" / "__init__.py").write_text("")
+            (r / "tests" / "test_a.py").write_text("import unittest, lib\nclass T(unittest.TestCase):\n    def test_f(self):\n        self.assertIn(lib.f(), (1, 2))\n")
+            g("add", "."); g("commit", "-qm", "base")
+            (r / "lib.py").write_text("def f():\n    return 2\n"); g("commit", "-qam", "change")
+            probe = subprocess.run([sys.executable, "-c", "import coverage"], capture_output=True)
+            if probe.returncode == 0:
+                self.skipTest("coverage is installed in this interpreter")
+            old = sys.stdin, sys.stdout, sys.stderr; sys.stdin = io.StringIO("All tests pass."); out = io.StringIO(); sys.stdout = out; sys.stderr = io.StringIO()
+            try:
+                cli.main(["check", "--repo", str(r), "--base", "HEAD~1", "--run-tests", "--changed-coverage", "--python", sys.executable,
+                          "--test-cmd", "{py} -m unittest discover -s tests -t .", "--json"])
+            finally:
+                sys.stdin, sys.stdout, sys.stderr = old
+            f = [x for x in json.loads(out.getvalue())["findings"] if x["kind"] == "tests_pass"][0]
+            self.assertIn("Changed-line coverage was requested but is unavailable", f["why"], f)

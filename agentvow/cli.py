@@ -105,7 +105,7 @@ def _write_sealed(repo: Path, d) -> None:
     return obj["run_id"]
 
 
-def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int) -> str:
+def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, coverage: bool = False) -> str:
     """Replay the head and base tests in a clean environment built from the captured packages. -> '' on success or a reason (nothing was run)."""
     from . import recipe as recipe_mod
     rec, files = capsule_mod.to_recipe(cap, ["-m", "pytest", "-q"])
@@ -114,22 +114,24 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int) -> str
         py, notes, aborted = recipe_mod.build_env(repo, rec, venv_root / "venv", venv_root / "home", extra_files=files)
         if not py or aborted:
             return "the environment could not be built" + (f" ({aborted})" if aborted else "")
+        if coverage:
+            _ensure_coverage(py, venv_root)
         targv = [*rec.test, "-rA", "-p", "no:cacheprovider"]
         meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied,
                 "capsule_python": cap["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))}
-        collect_test_evidence(repo, base, [("tests", [py, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "meta": meta})], timeout)
+        collect_test_evidence(repo, base, [("tests", [py, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "coverage": coverage, "meta": meta})], timeout)
         return ""
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
 
 
-def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a, from_capsule: bool = False) -> None:
+def _spawn_finish(repo: Path, base: str, text: str, turn_changed, run_id: str, a, from_capsule: bool = False) -> None:   # also passes --changed-coverage
     """Run the tests AFTER the hook has returned (they can take minutes; agents give hooks about a minute): a detached process updates the result."""
     spool = Path(tempfile.mkdtemp(prefix="agentvow_turn_"))
     (spool / "message.txt").write_text(text, encoding="utf-8")
     (spool / "changed.json").write_text(json.dumps(turn_changed))
     cmd = reality.isolated_argv(sys.executable, "finish-turn", "--repo", str(repo), "--base", base, "--spool", str(spool), "--run-id", run_id,
-                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []), *(["--from-capsule"] if from_capsule else []))
+                                "--test-timeout", str(a.test_timeout), *(["--python", a.python] if a.python else []), *(["--from-capsule"] if from_capsule else []), *(["--changed-coverage"] if getattr(a, "changed_coverage", False) else []))
     subprocess.Popen(cmd, cwd=tempfile.gettempdir(), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
@@ -159,7 +161,7 @@ def run_finish_turn(a) -> int:
         note = " Includes a test run that finished after the agent stopped."
         if getattr(a, "from_capsule", False):
             cap = capsule_mod.load(repo)
-            why = _collect_from_capsule(repo, a.base, cap, a.test_timeout) if cap else "no capsule exists for this exact state (it changed after the agent stopped)"
+            why = _collect_from_capsule(repo, a.base, cap, a.test_timeout, getattr(a, "changed_coverage", False)) if cap else "no capsule exists for this exact state (it changed after the agent stopped)"
             note = (" Includes a test run in a clean environment built from the packages captured when the agent stopped." if not why else
                     f" The capture-based test run was not made: {why}. Nothing was verified by test execution.")
         else:
@@ -371,6 +373,7 @@ def main(argv=None) -> int:
     cp.add_argument("--repo", default=".")
     cp.add_argument("--python", default=None, help="the interpreter the agent used (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
     ft.add_argument("--from-capsule", action="store_true")
+    ft.add_argument("--changed-coverage", action="store_true")
     au = sub.add_parser("audit-env", help="compare what an agent session installed/exported with what the repository and the recipe declare")
     au.add_argument("--repo", default=".")
     au.add_argument("--session", required=True, help="Claude Code session .jsonl or Copilot CLI events.jsonl")

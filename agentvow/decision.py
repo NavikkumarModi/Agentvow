@@ -200,6 +200,7 @@ def _tests(c, evidence, snap, changed=(), repo=None) -> Finding:
             f.unknowns = [*f.unknowns, "some changed source lines were not executed by any test Agentvow could run" if cc["not_run"] else "a changed source file was never loaded by the tests"]
     elif cc and not cc.get("available"):
         f.meta = {**f.meta, "changed_line_coverage": {"available": False, "reason": cc.get("reason", "")}}
+        f.why += f" Changed-line coverage was requested but is unavailable: {cc.get('reason', 'unknown reason')}."
     return f
 
 

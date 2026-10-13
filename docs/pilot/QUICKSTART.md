@@ -15,10 +15,10 @@ cd your-project && ~/.agentvow-pilot/bin/agentvow doctor --repo .
 ```bash
 echo "I changed the code. All tests pass." | ~/.agentvow-pilot/bin/agentvow check --repo . --transcript - --run-tests --changed-coverage --python .venv/bin/python
 ```
-Use the Python of your project's environment for `--python` (the one where pytest is installed).
+Use the Python of your project's environment for `--python` (the one where pytest is installed). For the changed-line coverage part, that environment also needs `coverage` (`.venv/bin/pip install coverage`); without it the report says coverage is unavailable. (With `--setup auto` instead of `--python`, Agentvow builds its own environment and installs `coverage` itself.)
 **4. Turn on the hook (opt-in) for your agent.** For Claude Code, add to `.claude/settings.json` in your project (check with `agentvow doctor` afterwards):
 ```json
-{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "~/.agentvow-pilot/bin/agentvow check --hook --background-tests --capture"}]}]}}
+{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "~/.agentvow-pilot/bin/agentvow check --hook --background-tests --capture --changed-coverage"}]}]}}
 ```
 For GitHub Copilot in VS Code use the extension's command "Agentvow: Add the agent hook" or follow the README. To switch it off, delete the hook entry.
 **5. Work as usual.** After each agent turn Agentvow answers at once with what it can see and, a little later, updates the verdict from a sandboxed test run built from the packages your agent had installed. Open the report from `.agentvow/last/report.html` or the editor extension.
