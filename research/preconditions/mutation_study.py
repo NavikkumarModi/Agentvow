@@ -114,19 +114,23 @@ def process(stage, r, task, yield_row):
         for i in (1, 2):
             t = time.time(); b = sh(cmd, repo, 300, shell=True); secs.append(time.time() - t)
             if b.returncode != 0:
-                return {**rec, "excluded": f"baseline run {i} did not pass (rc {b.returncode}); flaky or environment-dependent"}
+                return {**rec, "excluded": f"baseline run {i} did not pass (rc {b.returncode}); flaky or environment-dependent", "baseline_output": (b.stdout + b.stderr)[-500:]}
         t0 = sum(secs) / 2; rec["baseline_s"] = round(t0, 1)
         timeout = max(10, int(5 * t0))
         # coverage of the target tests (coverage is installed for this step only)
         rc_, df = tmp / "empty.rc", repo / ".agentvow" / "cov"
         rc_.write_text("[run]\n"); df.parent.mkdir(parents=True, exist_ok=True)
-        envsetup._pip(tmp / "venv", repo, tmp / "home", ["install", "-q", "coverage"], 300, envsetup.MAX_VENV, envsetup.MIN_FREE)
+        had_coverage = subprocess.run([py, "-c", "import coverage"], capture_output=True).returncode == 0   # the captured environment may already contain it (for example through pytest-cov): then it must stay
+        if not had_coverage:
+            envsetup._pip(tmp / "venv", repo, tmp / "home", ["install", "-q", "coverage"], 300, envsetup.MAX_VENV, envsetup.MIN_FREE)
         t = time.time()
         cov_argv = changedcov.coverage_argv([py, "-m", "pytest", "-q", "-p", "no:cacheprovider", *targets], str(rc_), str(df))
         cres = runner.run_tests(repo, cov_argv, write=False, timeout=600)
         cov = changedcov.export_json(py, str(rc_), str(df), str(scratch / "cov.json"), repo, wrap=lambda a_: runner.wrap(a_, repo, scratch=scratch, env=os.environ))
         rec["coverage_s"] = round(time.time() - t, 1)
-        envsetup._pip(tmp / "venv", repo, tmp / "home", ["uninstall", "-y", "coverage"], 120, envsetup.MAX_VENV, envsetup.MIN_FREE)
+        if not had_coverage:
+            envsetup._pip(tmp / "venv", repo, tmp / "home", ["uninstall", "-y", "coverage"], 120, envsetup.MAX_VENV, envsetup.MIN_FREE)
+        rec["coverage_preinstalled"] = had_coverage
         files_cov = (cov or {}).get("files", {})
         by_rel = {}
         for k, v in files_cov.items():
@@ -172,7 +176,7 @@ def process(stage, r, task, yield_row):
             before = (repo / f).read_bytes()
             bl = sh([CR, "baseline", str(cfgp)], repo, 300)
             if bl.returncode != 0:
-                return {**rec, "excluded": f"cosmic-ray baseline failed for {f}", "mutants": []}
+                return {**rec, "excluded": f"cosmic-ray baseline failed for {f}", "mutants": [], "baseline_output": (bl.stdout + bl.stderr)[-700:]}
             remaining = RUN_SECONDS - (time.time() - t_run)
             if remaining < 30:
                 rec["time_cap_hit"] = True; break
@@ -213,7 +217,10 @@ def process(stage, r, task, yield_row):
         rec["total_s"] = round(time.time() - t_run, 1)
         return rec
     finally:
-        shutil.rmtree(tmp, ignore_errors=True); shutil.rmtree(scratch, ignore_errors=True)
+        if os.environ.get("MUT_KEEP"):   # diagnostics only: keep the working directory
+            print("kept:", tmp, scratch, flush=True)
+        else:
+            shutil.rmtree(tmp, ignore_errors=True); shutil.rmtree(scratch, ignore_errors=True)
 
 
 def main(limit=999):
@@ -227,6 +234,9 @@ def main(limit=999):
         for r in rows:
             k = (r["repo"], r["pr"])
             y = yld.get(k)
+            only = os.environ.get("MUT_ONLY")   # diagnostics only: "stageb3,fgmacedo/python-statemachine,533"
+            if only and only != f"{stage},{k[0]},{k[1]}":
+                continue
             if not (r.get("truth_in_agent_env") == "pass" and r.get("base_fails_in_agent_env")) or (stage, *k) in done or n >= limit:
                 continue
             if not y or "candidates" not in y or y["candidates"] == 0:
