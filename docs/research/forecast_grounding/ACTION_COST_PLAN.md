@@ -1,0 +1,25 @@
+# Verification action costs: audit, plan and decision gate (written 2026-10-14, BEFORE any action timing is measured)
+
+Question (owner): does verification have an economically meaningful decision problem, i.e. can choosing the order of verification actions reduce the cost of reaching the same evidence state without raising the risk of a wrong conclusion? This is a **go/no-go gate** for an adaptive-planner research direction, not a commitment to build one. Off-line, free, no agent runs. Jev-like models are out of scope.
+
+## 1. Audit of what the B6 logs contain (done before the plan)
+`data/preconditions/stageb6_results.jsonl` (40 attempts, 39 with a saved run directory): per attempt only `agent_seconds` and `cost_usd` (the AGENT's run, not verification); per replay context (`ladder`, `freeze_replay`, `recipe_replay`, `recipe_scoped_replay`) only `verdict`, `exit` and `evidence.{result, counts, summary}`. **No per-action wall-clock time, environment-build time or retry count is recorded.** The signed test-run evidence the tool writes does contain `duration_s` for the head test run, but the harness discarded it with the temporary repository; environment-build time is not recorded anywhere. The saved patches, recipes and package lists allow the replays to be repeated. Per the owner's rule, missing timings stay missing: nothing below is reconstructed from estimates.
+**Consequence (stated now): this audit by itself lands on the gate branch "instrument first".** The instrumentation is a **fresh measurement pass** (below), reported as such, not as B6 data.
+
+## 2. Instrumentation pass (a new measurement, not B6 data)
+For each of the 39 B6 attempts with saved artifacts (the 1 setup failure stays in the accounting as an unattempted case), rebuild the task (base commit + target tests + saved patch; runs that created untracked files not in the patch are listed and excluded from timing), then run **each context once**, timing the whole action by wall clock (environment build plus test run, as a policy would pay it): E_repo (zero-config ladder, scoped target command) and E_capture (the fuller capture frozen in `STAGE_B4_PREREG.md`, 3 GB limit). Record start, seconds, result, and the `duration_s` of the test run where available. One run per context per attempt; on a subset (the 8 shortest, then the 8 longest) a second run to estimate repeatability. Costs are **this machine, this day, live package indexes, no pip cache**: they are not B6's costs and they are not general. No retries are added beyond what the tool does itself.
+
+## 3. Policies and the evidence states they are credited with
+Two evidence goals, defined before any result:
+- **G1, "does the passing result reproduce independently in some clean context?"** Reached when a context returns pass (answer: yes) or when every context tried returns non-pass (answer: not shown).
+- **G2, "does the result reproduce both from the captured packages AND from the project's own setup?"** Needs both contexts; a policy that stops after one **is not credited with G2**.
+Policies: *repository-first* (try E_repo; if not pass, try E_capture), *capture-first* (E_capture; if not pass, E_repo), *always-both* (both). For each attempt the simulated cost of a policy is the sum of the measured seconds of the contexts it actually runs; the outcome it reaches is read from the measured results. Attempts are reported over **all 39 measurable attempts** (operational cost) and **separately over the 22 valid runs** (the study's comparison population); the 18 non-valid attempts (not solved, trivial, errors) are not dropped from the operational accounting. Medians, means, totals and the share of attempts where the policies' cost differs; also the share where a stopping policy reaches a different G1 answer than always-both (**a policy must never reach a different answer; if it does, it is reported as an error, not a saving**).
+
+## 4. Decision rules (fixed now)
+- **Proceed to a pre-registered adaptive-ordering study** if: timings are observed for at least 80% of the 39 attempts in both contexts, AND on G1 capture-first (or the best conditional order) lowers the **median seconds per attempt** by at least 25% against repository-first with **no difference in the G1 answer**, AND the saving does not depend on a G2-type evidence requirement.
+- **Stop pursuing adaptive ordering for now** if the best conditional order saves under 10% of median seconds, or the saving appears only when weaker evidence is accepted.
+- **Otherwise: inconclusive**; say which measurement would settle it.
+Limits fixed in advance: this cannot show better defect detection or fewer harmful approvals (B6 has no real-regression ground truth); costs are not general; the action space is two contexts, so even a "proceed" says only that ordering matters at that scale, not that a learned policy would beat a rule.
+
+## 5. Deliverable
+`research/preconditions/b6_action_costs.py` (measurement), `research/preconditions/analyze_action_costs.py` (policy simulation), results appended below, and a one-line go / instrument-more / stop recommendation.
