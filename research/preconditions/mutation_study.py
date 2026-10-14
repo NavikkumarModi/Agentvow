@@ -124,7 +124,7 @@ def process(stage, r, task, yield_row):
         t = time.time()
         cov_argv = changedcov.coverage_argv([py, "-m", "pytest", "-q", "-p", "no:cacheprovider", *targets], str(rc_), str(df))
         cres = runner.run_tests(repo, cov_argv, write=False, timeout=600)
-        cov = changedcov.export_json(py, str(rc_), str(df), str(tmp / "cov.json"), repo, wrap=lambda a_: runner.wrap(a_, repo, scratch=scratch, env=os.environ))
+        cov = changedcov.export_json(py, str(rc_), str(df), str(scratch / "cov.json"), repo, wrap=lambda a_: runner.wrap(a_, repo, scratch=scratch, env=os.environ))
         rec["coverage_s"] = round(time.time() - t, 1)
         envsetup._pip(tmp / "venv", repo, tmp / "home", ["uninstall", "-y", "coverage"], 120, envsetup.MAX_VENV, envsetup.MIN_FREE)
         files_cov = (cov or {}).get("files", {})
