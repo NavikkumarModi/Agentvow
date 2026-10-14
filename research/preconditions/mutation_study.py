@@ -52,6 +52,21 @@ def added_by_file(patch):
     return {f: s for f, s in out.items() if f.endswith(".py") and not TESTY.search(f)}
 
 
+def stmt_line(path, line):
+    """First line of the innermost statement that contains `line` (falls back to the line itself)."""
+    import ast
+    try:
+        tree = ast.parse(Path(path).read_text(errors="replace"))
+    except (SyntaxError, ValueError, OSError):
+        return line
+    best = None
+    for n in ast.walk(tree):
+        if isinstance(n, ast.stmt) and n.lineno <= line <= (n.end_lineno or n.lineno):
+            if best is None or (n.end_lineno - n.lineno) < (best.end_lineno - best.lineno) or ((n.end_lineno - n.lineno) == (best.end_lineno - best.lineno) and n.lineno >= best.lineno):
+                best = n
+    return best.lineno if best else line
+
+
 def family(op):
     return op.split("/")[-1].split("_")[0]
 
@@ -126,7 +141,12 @@ def process(stage, r, task, yield_row):
         t = time.time()
         cov_argv = changedcov.coverage_argv([py, "-m", "pytest", "-q", "-p", "no:cacheprovider", *targets], str(rc_), str(df))
         cres = runner.run_tests(repo, cov_argv, write=False, timeout=600)
-        cov = changedcov.export_json(py, str(rc_), str(df), str(scratch / "cov.json"), repo, wrap=lambda a_: runner.wrap(a_, repo, scratch=scratch, env=os.environ))
+        ex = sh(runner.wrap([py, "-m", "coverage", "json", "--rcfile", str(rc_), "--data-file", str(df), "-o", str(scratch / "cov.json")], repo, scratch=scratch, env=os.environ), repo, 120)
+        try:
+            cov = json.loads((scratch / "cov.json").read_text())
+        except (OSError, ValueError):
+            cov = None
+            rec["coverage_export_error"] = (ex.stdout + ex.stderr)[-300:]
         rec["coverage_s"] = round(time.time() - t, 1)
         if not had_coverage:
             envsetup._pip(tmp / "venv", repo, tmp / "home", ["uninstall", "-y", "coverage"], 120, envsetup.MAX_VENV, envsetup.MIN_FREE)
@@ -140,6 +160,7 @@ def process(stage, r, task, yield_row):
                 by_rel[k] = v
         if cres.get("result") != "pass" or cov is None:
             rec["coverage_note"] = f"coverage run {cres.get('result')}; executed-line labels unavailable"
+            rec["coverage_run_summary"] = str(cres.get("summary"))[:300]
         # enumerate and sample
         cands = []
         dbs = {}
@@ -198,7 +219,9 @@ def process(stage, r, task, yield_row):
                 to, wo = str(wr.get("test_outcome")).lower(), str(wr.get("worker_outcome")).lower()
                 outcome = "timeout" if "timeout" in wo or "timeout" in to else ("incompetent" if "incompetent" in to else ("killed" if "killed" in to else ("survived" if "survived" in to else f"other:{wo}/{to}")))
                 v = by_rel.get(f)
-                results.append({**c, "outcome": outcome, "executed": bool(v) and c["line"] in v.get("executed_lines", []), "executable": bool(v) and (c["line"] in v.get("executed_lines", []) or c["line"] in v.get("missing_lines", []))})
+                sl = stmt_line(repo / f, c["line"])   # coverage records a statement by its FIRST line: map the mutated line to its enclosing statement
+                ex_l, mi_l = (v.get("executed_lines", []), v.get("missing_lines", [])) if v else ([], [])
+                results.append({**c, "outcome": outcome, "stmt_line": sl, "executed": bool(v) and sl in ex_l, "executable": bool(v) and (sl in ex_l or sl in mi_l), "line_executed_raw": bool(v) and c["line"] in ex_l})
         rec["mutation_s"] = round(time.time() - t_mut, 1)
         # survivor diffs (for review): apply on a copy, diff, restore
         for m in results:
