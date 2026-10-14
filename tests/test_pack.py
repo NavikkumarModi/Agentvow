@@ -26,11 +26,13 @@ class Render(unittest.TestCase):
         return {"version": 1, "receipt": {"commit": "a" * 40, "dirty": True, "base": "HEAD~1", "command": "python -m pytest -q", "replay_python": "3.13.5", "created": "x", "valid_for": "this exact commit"},
                 "contexts": [ctx("captured environment", "pass", basis="capsule"), ctx("project-native setup", "inconclusive", "missing dependency: six\x1b[31m")],
                 "reproducibility": {"code": "captured_only", "text": "Reproduces from the captured packages but NOT from the project's own setup"},
+                "timing": {"kind": "edited_after", "text": "The last test run the agent made (pytest) was on an earlier state: 1 file(s) were edited after it: lib.py."},
                 "coverage": {"available": True, "executed": 2, "executable": 3, "not_run": [{"file": "lib.py", "lines": "5", "snippets": ["5: return 3"]}], "not_loaded": ["other.py"]}, "limits": pack.LIMITS}
 
     def test_text_markdown_and_html_carry_the_three_dimensions_and_strip_control_characters(self):
         p = self.sample()
         txt = "\n".join(pack.render_text(p))
+        self.assertIn("Timing: The last test run the agent made", txt); self.assertIn("edited after it: lib.py", "\n".join(pack.render_markdown(p, lambda x, n=200: str(x)[:n])))
         self.assertIn("1. Execution receipt", txt); self.assertIn("2. Reproducibility", txt); self.assertIn("3. Changed-line coverage: 2 of 3", txt)
         self.assertIn("never loaded by the tests: other.py", txt)
         md = "\n".join(pack.render_markdown(p, lambda x, n=200: str(x)[:n]))

@@ -60,6 +60,7 @@ Copilot keeps only `decision`/`reason` from a hook's output, so **a hook cannot 
 - `@agentvow` in the chat: prints the last sealed verdict as its own message (not part of Copilot's reply);
 - `agentvow agent-instructions --write .github/copilot-instructions.md`: tells the chat agent to run the check itself and show its output (works through the model; the agent chooses the draft it checks, so the independent hook remains the check that does not depend on the agent);
 - `agentvow check --hook --feedback-to-agent` (opt-in): asks the agent, once, to revise an answer with a contradicted claim (the only mode in which the hook can block);
+- `agentvow post-test-hook` (opt-in, Claude Code `PostToolUse` on `Bash`): captures the environment right after the agent runs its tests, so the pack can say whether files were edited after the last test run (docs/CAPSULES.md).
 - `agentvow check --hook --evidence-pack` (opt-in): after the agent stops, a background run captures its environment, replays the tests in the captured environment and in the project's own setup, measures changed-line coverage and updates the result with an Evidence pack (docs/EVIDENCE_PACK.md).
 - `agentvow check --hook --background-tests` (opt-in): the hook answers at once with what it can see, then runs your tests in the background (sandboxed, macOS/Linux) and updates the verdict when they finish, so slow suites do not hit the agent's hook timeout. Changes are counted since the previous check in the repository (not since your last commit), so earlier uncommitted work is not blamed on the agent.
 - **experimental, off by default:** a `UserPromptSubmit` hook (`agentvow prompt-hook`) that tells the agent the last verdict on your next prompt. In one live session the first delivery coincided with a Copilot chat that stalled (cause unproven).
@@ -89,4 +90,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 296 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 300 Python tests, 32 node tests -->

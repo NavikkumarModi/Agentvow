@@ -210,6 +210,21 @@ def run_finish_turn(a) -> int:
         shutil.rmtree(spool, ignore_errors=True)
 
 
+def run_post_test_hook(a) -> int:
+    """PostToolUse hook (Claude Code `Bash` tool): when the command the agent just ran looks like a test run, capture the environment NOW, so the capsule describes the state at the test run
+    and not only at the stop. Silent and fast; never blocks and never prints a decision; any problem is swallowed (the Stop hook still captures)."""
+    try:
+        payload = json.loads(sys.stdin.read(1_000_000) or "{}")
+        tool = str(payload.get("tool_name") or payload.get("toolName") or "")
+        cmd = (payload.get("tool_input") or payload.get("toolInput") or {}).get("command", "") if isinstance(payload.get("tool_input") or payload.get("toolInput"), dict) else ""
+        repo = Path(str(payload.get("cwd") or ".")).resolve()
+        if tool.lower() in ("bash", "shell", "run_shell_command") and capsule_mod.looks_like_test_command(str(cmd)) and (repo / ".git").exists():
+            capsule_mod.capture(repo, a.python, source="post-test", command=str(cmd))
+    except Exception:
+        pass
+    return 0
+
+
 def run_hook(a) -> int:
     """Stop/agentStop hook for any agent (Claude Code, VS Code/Copilot, Copilot CLI/cloud agent, Codex, Cursor, Gemini...).
 
@@ -402,6 +417,8 @@ def main(argv=None) -> int:
         ft.add_argument(flag, required=True)
     ft.add_argument("--python", default=None)
     ft.add_argument("--test-timeout", type=int, default=600)
+    pt = sub.add_parser("post-test-hook", help="PostToolUse hook: capture the environment right after the agent runs a test command (see docs/CAPSULES.md)")
+    pt.add_argument("--python", default=None, help="the interpreter the agent uses (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
     cp = sub.add_parser("capture", help="record the Python packages of the agent's environment for the current state, so a later check can replay from them")
     cp.add_argument("--repo", default=".")
     cp.add_argument("--python", default=None, help="the interpreter the agent used (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
@@ -477,6 +494,8 @@ def main(argv=None) -> int:
         res = audit_mod.audit(cmds, Path(a.repo).resolve(), rec, trunc)
         print(json.dumps({"commands": res.commands_seen, "truncated": res.truncated, "findings": [vars(f) for f in res.findings], "undeclared": len(res.undeclared)}) if a.json else audit_mod.render(res))
         return 1 if res.undeclared else 0
+    if a.cmd == "post-test-hook":
+        return run_post_test_hook(a)
     if a.cmd == "capture":
         rec, msg = capsule_mod.capture(Path(a.repo), a.python)
         print(("capsule written: " if rec else "no capsule: ") + msg)

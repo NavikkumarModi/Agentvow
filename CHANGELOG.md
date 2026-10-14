@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased (after 0.2.0)
+- `agentvow post-test-hook` (Claude Code PostToolUse on `Bash`): captures the environment right after the agent runs a test command; the Evidence pack gains a Timing line (last test run on the final state / files edited after it and packages changed / only a stop-time capture exists). Capsules now carry their source and the files that differed from HEAD.
 - Evidence pack item 4, "Not reproduced by this replay": a static, names-only record of environment variables, external programs, network use, service files and git-ignored files the tests reference and a replay does not recreate, plus Python/OS differences between capture and replay (recorded, not judged; never changes a verdict).
 - `--hook --evidence-pack`: the Stop hook captures the agent's environment and the detached background run adds the evidence pack to the result (both contexts, or the project-native one alone when no environment can be captured). Never blocks.
 - `--evidence-pack`: one report section with three separate dimensions (execution receipt; reproducibility from the captured environment AND from the project's own setup, with an explanation when they disagree; changed-line coverage naming the lines no test ran). Informational; verdicts unchanged. See docs/EVIDENCE_PACK.md.

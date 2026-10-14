@@ -90,3 +90,61 @@ class EndToEnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTimeCapture(unittest.TestCase):
+    def test_which_commands_count_as_test_runs(self):
+        for cmd, want in (("cd x && .venv/bin/python -m pytest -q", True), ("pip install pytest", False), ("make test", True), ("ls", False), ("FOO=1 uv run pytest tests/", True),
+                          ("echo pytest", False), ("python manage.py test app", True), (".venv/bin/pytest -x", True), ("cat tests/test_x.py | grep pytest", False), ("", False)):
+            self.assertEqual(capsule.looks_like_test_command(cmd), want, cmd)
+
+    def _setup(self, d):
+        os.environ["AGENTVOW_HOME"] = str(Path(d) / "home")
+        r = mkrepo(d)
+        subprocess.run([sys.executable, "-m", "venv", str(r / ".venv")], check=True, capture_output=True)
+        return r
+
+    def _hook(self, r, cmd, tool="Bash"):
+        payload = json.dumps({"tool_name": tool, "tool_input": {"command": cmd}, "cwd": str(r), "hook_event_name": "PostToolUse"})
+        from agentvow import reality
+        return subprocess.run(reality.isolated_argv(sys.executable, "post-test-hook"), input=payload, capture_output=True, text=True, timeout=120, env={**os.environ})
+
+    def test_the_post_tool_hook_captures_only_after_a_test_command_and_is_silent(self):
+        with tempfile.TemporaryDirectory() as d:
+            r = self._setup(d)
+            p = self._hook(r, "ls -la")
+            self.assertEqual((p.returncode, p.stdout), (0, ""))
+            self.assertEqual(capsule.history(r), [])
+            p = self._hook(r, ".venv/bin/python -m pytest -q")
+            self.assertEqual((p.returncode, p.stdout), (0, ""))
+            h = capsule.history(r)
+            self.assertEqual([x["source"] for x in h], ["post-test"])
+            self.assertIn("pytest", h[0]["command"])
+            self.assertEqual(self._hook(r, "pytest", tool="Read").returncode, 0)   # a different tool is ignored
+            self.assertEqual(len(capsule.history(r)), 1)
+            self.assertEqual(self._hook(r, "pytest", tool="Bash").returncode, 0)
+            p = subprocess.run([sys.executable, "-m", "agentvow.cli", "post-test-hook"], input="not json", capture_output=True, text=True, timeout=60)
+            self.assertEqual((p.returncode, p.stdout), (0, ""))   # garbage input never errors
+
+    def test_timing_says_what_happened_after_the_last_test_run(self):
+        with tempfile.TemporaryDirectory() as d:
+            r = self._setup(d)
+            self.assertEqual(capsule.timing(r, None)["kind"], "stop_only")
+            self._hook(r, ".venv/bin/python -m pytest -q")
+            (r / "tests" / "test_a.py").write_text("import lib\n\ndef test_f():\n    assert True\n")   # edit AFTER the last test run
+            t = capsule.timing(r, None)
+            self.assertEqual(t["kind"], "edited_after", t)
+            self.assertIn("tests/test_a.py", t["edited"])
+            self.assertIn("1 file(s) were edited after it", t["text"])
+            (r / "tests" / "test_a.py").write_text("import lib\n\ndef test_f():\n    assert lib.f() in (1, 2)\n")   # back to the tested content
+            self.assertEqual(capsule.timing(r, None)["kind"], "same_state")
+            self._hook(r, "pytest -q")
+            self.assertEqual(capsule.timing(r, None)["kind"], "same_state")
+
+    def test_a_stop_time_capsule_only_is_reported_as_such(self):
+        with tempfile.TemporaryDirectory() as d:
+            r = self._setup(d)
+            rec, _ = capsule.capture(r)   # source "stop"
+            t = capsule.timing(r, rec)
+            self.assertEqual(t["kind"], "stop_only")
+            self.assertIn("not at its last test run", t["text"])

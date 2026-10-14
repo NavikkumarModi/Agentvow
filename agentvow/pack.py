@@ -100,7 +100,11 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
         man = manifest.build(Path(repo), list(d.changed), capsule_mod.load(Path(repo)), ".".join(map(str, sys.version_info[:3])), {"darwin": "Darwin", "linux": "Linux"}.get(sys.platform, sys.platform))
     except Exception as ex:   # additional information only
         man = {"items": [], "scanned": 0, "caveat": f"the manifest could not be built ({type(ex).__name__})"}
-    return {"version": 1, "manifest": man,
+    try:
+        tim = capsule_mod.timing(Path(repo), capsule_mod.load(Path(repo)))
+    except Exception:
+        tim = None
+    return {"version": 1, "manifest": man, "timing": tim,
             "receipt": {"commit": d.commit, "dirty": d.dirty, "base": base, "command": " ".join(a.test_cmd[0].split()[1:]) if getattr(a, "test_cmd", None) else "python -m pytest -q",
                         "replay_python": ".".join(map(str, sys.version_info[:3])), "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "valid_for": "this exact commit and working tree; any later edit makes it stale"},
@@ -117,7 +121,10 @@ def render_text(p: dict) -> list:
         o.append(f"   - {c['name']}: {c['result']}" + (f" ({cn.get('passed', 0)} passed, {cn.get('failed', 0)} failed)" if cn else "") + (f" - {c['summary']}" if c["result"] != "pass" and c["summary"] else ""))
     if not p["contexts"]:
         o.append("   - no test run produced usable evidence")
-    o += ["", f"2. Reproducibility: {p['reproducibility']['text']}", ""]
+    o += ["", f"2. Reproducibility: {p['reproducibility']['text']}"]
+    if p.get("timing"):
+        o.append(f"   Timing: {_t(p['timing']['text'])}")
+    o.append("")
     cv = p["coverage"]
     if not cv["available"]:
         o.append(f"3. Changed-line coverage: not available ({cv['reason']}).")
@@ -143,7 +150,10 @@ def render_markdown(p: dict, esc) -> list:
         for c in p["contexts"]:
             o.append(f"| {esc(c['name'])} | **{esc(c['result'])}** | {esc(c['summary'], 120) if c['result'] != 'pass' else ''} |")
         o.append("")
-    o += [f"**2. Reproducibility.** {esc(p['reproducibility']['text'], 500)}", ""]
+    o += [f"**2. Reproducibility.** {esc(p['reproducibility']['text'], 500)}"]
+    if p.get("timing"):
+        o.append(f"_Timing: {esc(p['timing']['text'], 500)}_")
+    o.append("")
     cv = p["coverage"]
     if cv["available"]:
         o.append(f"**3. Changed-line coverage.** {cv['executed']} of {cv['executable']} changed executable source lines were run by the tests.")
@@ -170,5 +180,5 @@ def render_html(p: dict, e) -> str:
     return (f"<h2>Evidence pack</h2><p>Three separate dimensions, not a score.</p>"
             f"<div class=\"q\"><div><b>1 · Execution receipt</b><code>{e(r['command'])}</code> on <code>{e(r['commit'])[:10]}</code>{' + uncommitted changes' if r['dirty'] else ''}; valid for {e(r['valid_for'])}."
             f"<table>{rows}</table></div>"
-            f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}</div>"
+            f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}" + (f"<br><small>Timing: {e(p['timing']['text'])}</small>" if p.get("timing") else "") + "</div>"
             f"<div><b>3 · Changed-line coverage</b>{cov}</div>" + (manifest.render_html(p["manifest"], e) if p.get("manifest") else "") + "</div><p><small>Limits: {e(p['limits'])}</small></p>")

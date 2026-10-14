@@ -49,7 +49,22 @@ def _run(argv: list, repo: Path, timeout: int = 60) -> subprocess.CompletedProce
         shutil.rmtree(scratch, ignore_errors=True)
 
 
-def capture(repo: Path, python: str | None = None):
+_SEG = re.compile(r"^\s*(?:\w+=\S*\s+)*(?:(?:uv|poetry|pipenv|pdm|hatch)\s+run\s+)?(?:\S*/)?(?:python[0-9.]*\s+-m\s+)?(?:pytest|py\.test|unittest|tox|nox)(?=$|\s)"
+                  r"|^\s*(?:\w+=\S*\s+)*(?:\S*/)?python[0-9.]*\s+\S*manage\.py\s+test\b|^\s*make\s+(?:test|tests|check)\b")
+
+
+def looks_like_test_command(cmd: str) -> bool:
+    """Does a shell command line run a test suite? Each `;`, `&&`, `||`, `|` or newline separated segment is checked at its START (so `pip install pytest` is not a test run); text only,
+    never executed. A false positive costs one extra capture."""
+    return any(_SEG.search(seg) for seg in re.split(r"&&|\|\||;|\||\n", (cmd or "")[:2000]))
+
+
+def _clean(x: str, n: int = 160) -> str:
+    import unicodedata
+    return " ".join("".join(ch for ch in str(x) if unicodedata.category(ch) not in ("Cc", "Cf") or ch == " ").split())[:n]
+
+
+def capture(repo: Path, python: str | None = None, source: str = "stop", command: str = ""):
     """-> (capsule record or None, message). Writes .agentvow/capsules/<commit>_<tree>.json when it succeeds. The target interpreter is run inside the platform sandbox."""
     repo = Path(repo).resolve()
     py, why = resolve_python(repo, python)
@@ -82,27 +97,67 @@ def capture(repo: Path, python: str | None = None):
         keep.append(line)
     snap = reality.snapshot(repo)
     pv = ver.stdout.split()
-    rec = {"schema": SCHEMA, "commit": snap.commit, "tree": snap.tree, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    files = {f: reality._file_hash(repo / f) if (repo / f).is_file() else None for f in reality.changed_files(repo, "HEAD")[:400]}   # what differed from HEAD when this was taken
+    rec = {"schema": SCHEMA, "source": source, "command": _clean(command), "files": files,
+           "commit": snap.commit, "tree": snap.tree, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "python_version": pv[0] if pv else "", "platform": pv[1] if len(pv) > 1 else "", "packages": keep, "dropped": dropped, "env_values_recorded": False}
-    path = Path(".agentvow") / "capsules" / f"{snap.commit[:10]}_{(snap.tree or 'clean')[:8]}.json"
+    path = Path(".agentvow") / "capsules" / f"{snap.commit[:10]}_{(snap.tree or 'clean')[:8]}_{source}.json"
     reality.safe_write(repo, path, json.dumps(reality.sign_record(rec)))
     return rec, f"captured {len(keep)} package(s), Python {rec['python_version']}"
 
 
-def load(repo: Path):
-    """The capsule for the repository's CURRENT state (same commit and working-tree hash), or None. Unsigned, forged or stale capsules are ignored."""
-    repo = Path(repo).resolve()
-    snap = reality.snapshot(repo)
-    path = repo / ".agentvow" / "capsules" / f"{snap.commit[:10]}_{(snap.tree or 'clean')[:8]}.json"
+def _read(path: Path):
     try:
         if path.is_symlink() or not path.is_file():
             return None
         rec = json.loads(path.read_text())
     except (OSError, ValueError):
         return None
-    if rec.get("schema") != SCHEMA or not reality.verify_record(rec) or rec.get("commit") != snap.commit or (rec.get("tree") or "") != (snap.tree or ""):
-        return None
-    return rec
+    return rec if rec.get("schema") == SCHEMA and reality.verify_record(rec) else None
+
+
+def history(repo: Path) -> list:
+    """Every valid (signed) capsule recorded for the CURRENT commit, newest first. Forged or unsigned files are ignored."""
+    repo = Path(repo).resolve()
+    snap = reality.snapshot(repo)
+    d = repo / ".agentvow" / "capsules"
+    recs = [r for r in (_read(p) for p in sorted(d.glob(f"{snap.commit[:10]}_*.json"))) if r and r.get("commit") == snap.commit] if d.is_dir() else []
+    return sorted(recs, key=lambda r: r.get("created_at", ""), reverse=True)
+
+
+def load(repo: Path):
+    """The capsule for the repository's CURRENT state (same commit and working-tree hash), or None. Unsigned, forged or stale capsules are ignored. When both a test-time and a stop-time
+    capsule exist for the state, the one taken at the test run is preferred."""
+    snap = reality.snapshot(Path(repo).resolve())
+    match = [r for r in history(repo) if (r.get("tree") or "") == (snap.tree or "")]
+    match.sort(key=lambda r: (r.get("source") != "post-test", r.get("created_at", "")))
+    return match[0] if match else None
+
+
+def timing(repo: Path, final: dict | None) -> dict:
+    """How the capture relates to the agent's last test run. kind: 'same_state' (the last test-time capture is of the final state), 'edited_after' (files changed after it; they are
+    listed, and so are packages added or removed since), 'stop_only' (no test-time capture exists: edits after the agent's last test run cannot be ruled out)."""
+    repo = Path(repo).resolve()
+    tests = [r for r in history(repo) if r.get("source") == "post-test"]
+    if not tests:
+        return {"kind": "stop_only", "text": "The environment was captured when the agent stopped, not at its last test run, so edits made after the agent last ran its tests cannot be ruled out."
+                if final else "No environment was captured at a test run."}
+    last = tests[0]
+    snap = reality.snapshot(repo)
+    when = last.get("created_at", "")
+    cmd = _clean(last.get("command", ""), 80)
+    if (last.get("tree") or "") == (snap.tree or ""):
+        return {"kind": "same_state", "last_test_at": when, "command": cmd, "text": f"The last test run the agent made ({cmd or 'a test command'}, {when}) was on the final state: nothing was edited after it."}
+    now = {f: reality._file_hash(repo / f) if (repo / f).is_file() else None for f in reality.changed_files(repo, "HEAD")[:400]}
+    old = last.get("files") or {}
+    edited = sorted(f for f in set(now) | set(old) if now.get(f) != old.get(f))
+    add = rem = []
+    if final and final is not last:
+        a, b = set(last.get("packages", [])), set(final.get("packages", []))
+        add, rem = sorted(b - a), sorted(a - b)
+    text = (f"The last test run the agent made ({cmd or 'a test command'}, {when}) was on an earlier state: {len(edited)} file(s) were edited after it: " + (", ".join(_clean(f, 60) for f in edited[:6]) or "(state differs outside the listed files)")
+            + ("; " + f"{len(add)} package(s) added and {len(rem)} removed after it" if add or rem else "") + ". The replay below is of the final state.")
+    return {"kind": "edited_after", "last_test_at": when, "command": cmd, "edited": [_clean(f, 80) for f in edited[:20]], "packages_added": add[:10], "packages_removed": rem[:10], "text": text}
 
 
 def to_recipe(cap: dict, test_argv: list):
