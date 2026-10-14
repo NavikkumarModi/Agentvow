@@ -1,5 +1,5 @@
 """Yield pre-count for MUTATION_STUDY_PREREG.md: how many candidate mutants does cosmic-ray enumerate on the lines the agent's patch added, for each rebuildable valid B6 run?
-Counts only: no test is run and no outcome is read. Usage: python3 research/preconditions/mutation_yield_count.py -> data/preconditions/mutation_yield.jsonl"""
+Counts only: no test is run and no outcome is read. Usage: python3 research/preconditions/mutation_yield_count.py [stageb6|stageb5|stageb4|stageb3] -> data/preconditions/mutation_yield[_<stage>].jsonl"""
 import json
 import os
 import re
@@ -16,7 +16,8 @@ os.environ["B6"] = "1"
 import stageb_run as sb  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
-OUT = D / "mutation_yield.jsonl"
+STAGE = sys.argv[1] if len(sys.argv) > 1 else "stageb6"
+OUT = D / ("mutation_yield.jsonl" if STAGE == "stageb6" else f"mutation_yield_{STAGE}.jsonl")
 CR = "/tmp/mutvenv/bin/cosmic-ray"
 TESTY = re.compile(r"(^|/)(tests?|testing)(/|$)|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 
@@ -40,8 +41,8 @@ def added(patch):
 
 
 def main():
-    rows = [json.loads(l) for l in (D / "stageb6_results.jsonl").read_text().splitlines() if l.strip()]
-    tasks = {(j["repo"], j["pr"]): j for j in map(json.loads, (D / "stageb6_tasks.jsonl").read_text().splitlines())}
+    rows = [json.loads(l) for l in (D / f"{STAGE}_results.jsonl").read_text().splitlines() if l.strip()]
+    tasks = {(j["repo"], j["pr"]): j for j in map(json.loads, (D / f"{STAGE}_tasks.jsonl").read_text().splitlines())}
     done = {(j["repo"], j["pr"]) for j in map(json.loads, OUT.read_text().splitlines())} if OUT.exists() else set()
     for r in rows:
         k = (r["repo"], r["pr"])
