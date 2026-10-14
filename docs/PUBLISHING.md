@@ -42,3 +42,6 @@ PyPI `agentvow` 0.1.0 and Marketplace `NavikkumarModi.agentvow` 0.1.0 are publis
 
 ## Status (2026-10-13): 0.2.0
 PyPI `agentvow` 0.2.0 published (GitHub release v0.2.0, trusted publishing) and verified by installing it from the registry into a clean environment (version, `demo`, `capture`, `check --from-capsule --changed-coverage`, `doctor`). CI green on ubuntu and macos for the release commit; 38/38 validation checks. The extension `dist/agentvow-0.2.0.vsix` is attached to the GitHub release; the Marketplace upload needs the publisher's login (`npx @vscode/vsce publish --packagePath dist/agentvow-0.2.0.vsix` after `vsce login NavikkumarModi`, or upload the file at marketplace.visualstudio.com/manage).
+
+## Status (2026-10-14): 0.2.1
+PyPI `agentvow` 0.2.1 published (GitHub release v0.2.1, trusted publishing) and verified by installing it from the registry into a clean environment (version, `demo`, `post-test-hook`, `check --evidence-pack` showing the Timing line, coverage and the not-reproduced manifest, `doctor`). CI green on ubuntu and macos for the release commit; 38/38 validation checks. The extension `dist/agentvow-0.2.1.vsix` is attached to the GitHub release; it has no functional change from 0.2.0 (the version was kept in step), so the Marketplace upload is optional.
