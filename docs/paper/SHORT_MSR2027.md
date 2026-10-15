@@ -56,3 +56,8 @@ Task identifiers, prompts, analysis scripts and the open-source replay tool are 
 2. Anonymise: remove the tool name, repository URL, author-identifying text from the artifact and from third-person citations of the owner's own prior work; the public GitHub repository carries the author's name.
 3. Convert to the IEEE LaTeX template and fit 4 pages (drop section 4 detail or the recipe row if needed).
 4. Owner reads and approves every claim; no submission is made by the assistant.
+
+## Status 2026-10-15 (after the conversion)
+* IEEE LaTeX version: `docs/paper/msr2027/main.tex` and the compiled `main.pdf` (3 pages including references; limit 4 + 1; no author, tool name or repository name; PDF metadata empty). The markdown above is the source text and may differ in minor wording.
+* Anonymised artifact: built by `scripts/build_anon_artifact.py` into `data/anon_artifact/` and `data/anon_artifact.zip` (git-ignored): renamed tool, tests (298 passed, 2 skipped in a clean environment), study scripts, task list, per-task outcome summary; the analysis script reproduces 20/22 vs 12/22 from the summary. It has NOT been uploaded anywhere; hosting (for example an anonymising mirror) is the owner's decision.
+* Still the owner's: read and approve the claims, host the artifact, submit by the deadline (verify the live call).
