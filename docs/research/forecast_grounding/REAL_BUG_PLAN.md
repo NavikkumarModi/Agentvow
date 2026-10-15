@@ -1,6 +1,6 @@
 # Real-bug replay: plan and feasibility stage
 
-Status: feasibility stage only. Written 2026-10-15 before any run. The confirmatory protocol is NOT frozen here; it is frozen only after the feasibility results, and only if the stop rule below is not triggered.
+Status: CLOSED 2026-10-15 after two failed feasibility screens (sections 5 to 7); summary in MUTATION_BOUNDED_RESULT.md. Original status: feasibility stage only. Written 2026-10-15 before any run. The confirmatory protocol is NOT frozen here; it is frozen only after the feasibility results, and only if the stop rule below is not triggered.
 
 ## 1. Question and a design problem that changes the primary outcome
 
