@@ -27,3 +27,35 @@ Runs: network off, same sandbox as the earlier studies, suite cap 300 s, environ
 ## 4. Stop rule (set now)
 
 Feasible instance = environment built, suite runs on both trees with a finished baseline, and fixed-source baseline has at least 1 passing test. Proceed to a frozen confirmatory protocol only if there are at least 30 feasible instances in at least 5 projects, with no project above 40% of them. Otherwise stop and report the bounded mutation result. If the shortfall is only the missing 3.7/3.8 interpreters, ask the user before downloading one rather than stopping.
+
+## 5. Feasibility results (2026-10-15)
+
+Sample: 65 bugs (seeded; PySnooper has only 3). Harness: `research/preconditions/realbug_feasibility.py`; records in `data/preconditions/realbug_feasibility.jsonl`. Interpreter: Python 3.11 only. One harness bug was found and fixed during the run: BugsInPy's youtube-dl metadata writes `fixed_commit_id ="..."` with a space, which my parser rejected, so its 6 bugs were re-run after the fix (the first 6 records were discarded). Nothing else was changed after seeing results.
+
+| Project | Bugs screened | Feasible by the section 4 definition | Pinned requirements failed to install on 3.11 |
+|---|---|---|---|
+| PySnooper | 3 | 0 | 0 (code fails to import on 3.11: `collections.Mapping`) |
+| black | 6 | 0 | 6 |
+| cookiecutter | 4 | 0 | 4 |
+| fastapi | 6 | 0 | 6 |
+| httpie | 5 | 0 | 5 |
+| luigi | 6 | 0 | 6 |
+| sanic | 5 | 0 | 5 |
+| scrapy | 6 | 0 | 6 |
+| thefuck | 6 | 0 | 3 |
+| tornado | 6 | 1 | 0 |
+| tqdm | 6 | 0 | 6 |
+| youtube-dl | 6 | 6 | 0 |
+| Total | 65 | 7 | 47 |
+
+Stop rule (at least 30 feasible instances in at least 5 projects, none above 40%): NOT met. 7 feasible instances in 2 projects; youtube-dl is 6 of the 7 (86%).
+
+Quality of the 7: all are weak. Their fixed-source baselines still contain many failing tests (youtube-dl 43-54 failures of about 1,300-2,200, mostly network-dependent; youtube-dl bug 41 fails 330 of 406; tornado bug 15 has 86 failures and 465 errors). Under the plan's own rule for already-failing suites these would be reported separately, so the usable count is lower still.
+
+Causes of the other 58: pinned requirements that do not install on 3.11 (47), code that does not import on 3.11 (PySnooper, thefuck, 3 tornado bugs), two tornado suites that exceed the 300 s cap, and luigi tests that need to bind a local socket, which the network-off sandbox forbids (a harness limitation, separate from the interpreter).
+
+Detection check (allowed in this stage): among the 7 feasible instances no test fails on the buggy source and passes on the fixed source (0 of 7), consistent with the by-construction argument in section 1.
+
+Reading: the shortfall is mostly the missing 3.7/3.8 interpreters, but that is an inference. The 47 failed installs were not diagnosed individually, and the luigi socket problem would remain on an old interpreter. Whether the study is feasible on era-appropriate interpreters is untested.
+
+Decision needed from the user: download Python 3.7 and 3.8 (for example via `uv python install`, standalone builds from GitHub, a few hundred MB), re-run this same screen, and apply the same stop rule; or stop here and publish the bounded mutation result. No coverage-vs-detection analysis has been run.
