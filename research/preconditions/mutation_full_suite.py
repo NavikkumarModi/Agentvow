@@ -63,11 +63,13 @@ def process(stage, repo_name, pr, survivors, task, run_dir):
         if not py or aborted:
             return [{"note": f"environment not built ({aborted})", "survivor": s} for s in survivors]
         pp = ":".join([f"{repo}/src", str(repo), *[str(repo / x) for x in rcp.local_roots]])
-        inner = ["env", f"HOME={scratch}/h", f"TMPDIR={scratch}/t", "PYTHONDONTWRITEBYTECODE=1", f"PYTHONPATH={pp}", py, "-m", "pytest", "-q", "--tb=no", "-rfE", "-p", "no:cacheprovider"]
+        inner = ["env", f"HOME={scratch}/h", f"TMPDIR={scratch}/t", "PYTHONDONTWRITEBYTECODE=1", f"PYTHONPATH={pp}", py, "-m", "pytest", "-q", "--tb=no", "-rfE", "--continue-on-collection-errors", "-p", "no:cacheprovider"]
         cmd = shlex.join(runner.wrap(inner, repo, scratch))
         b1 = run_suite(cmd, repo, SUITE_LIMIT + 60)
         if b1["timeout"] or b1["seconds"] > SUITE_LIMIT:
             return [{"note": f"full suite too slow ({b1['seconds']} s > {SUITE_LIMIT} s)", "survivor": s, "baseline_s": b1["seconds"]} for s in survivors]
+        if b1["rc"] not in (0, 1):
+            return [{"note": f"full suite did not run tests at baseline (pytest exit code {b1['rc']})", "survivor": s, "baseline_s": b1["seconds"]} for s in survivors]
         b2 = run_suite(cmd, repo, SUITE_LIMIT + 60)
         base_failed = b1["failed"] | b2["failed"]
         res = []
