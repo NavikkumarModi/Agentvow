@@ -59,3 +59,14 @@ Detection check (allowed in this stage): among the 7 feasible instances no test 
 Reading: the shortfall is mostly the missing 3.7/3.8 interpreters, but that is an inference. The 47 failed installs were not diagnosed individually, and the luigi socket problem would remain on an old interpreter. Whether the study is feasible on era-appropriate interpreters is untested.
 
 Decision needed from the user: download Python 3.7 and 3.8 (for example via `uv python install`, standalone builds from GitHub, a few hundred MB), re-run this same screen, and apply the same stop rule; or stop here and publish the bounded mutation result. No coverage-vs-detection analysis has been run.
+
+## 6. Second feasibility screen: era interpreters (frozen 2026-10-15, before it is run)
+
+Authorised by the user in chat after section 5. Scope frozen here:
+
+- Same 65 bug instances (same seed and sample), same eligibility, same section 4 stop rule, unchanged. Feasibility only: no coverage, no coverage-vs-detection association.
+- Interpreter chosen by the Python version declared in the bug's BugsInPy metadata, not by outcome. Each bug is run once, on one interpreter.
+- Availability finding (made before the run): `uv` (0.13.1) provides Python 3.8.20 for this machine (Apple silicon) but has no download for 3.6 or 3.7 (no arm64 macOS build; no x86_64 build offered either). So bugs declaring 3.8.x run on 3.8.20 (matching). Bugs declaring 3.6.x or 3.7.x (cookiecutter, httpie, thefuck, tornado, youtube-dl) cannot run on their declared interpreter. They are run on 3.8.20 as a substitution decided now, and are reported separately as "substituted".
+- The stop rule is evaluated twice and both are reported: (a) matching-interpreter instances only; (b) matching plus substituted. The decision to continue requires (a) or (b) to meet the rule; if only (b) does, that is stated as weaker evidence.
+- Sandbox unchanged: network off, no relaxation for luigi's local sockets. Luigi instances that need a bound socket are counted as a sandbox limitation, not made feasible.
+- Python 3.11 results (section 5) stay as reported; the new results are reported separately.

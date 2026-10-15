@@ -17,7 +17,9 @@ from agentvow import runner  # noqa: E402
 
 META = ROOT / "data" / "bip_meta" / "BugsInPy" / "projects"
 CLONES = ROOT / "data" / "bip_clones"
-OUT = ROOT / "data" / "preconditions" / "realbug_feasibility.jsonl"
+ERA = len(sys.argv) > 2 and sys.argv[2] == "era"
+OUT = ROOT / "data" / "preconditions" / ("realbug_feasibility_era.jsonl" if ERA else "realbug_feasibility.jsonl")
+PY38 = "/Users/navikkumarmodi/.local/share/uv/python/cpython-3.8-macos-aarch64-none/bin/python3.8"
 PROJECTS = ["PySnooper", "black", "cookiecutter", "fastapi", "httpie", "luigi", "sanic", "scrapy", "thefuck", "tornado", "tqdm", "youtube-dl"]
 PY = "/opt/homebrew/bin/python3.11"
 SEED = 20261015
@@ -110,10 +112,15 @@ def process(project, bug):
                 continue
         venv = tmp / "venv"
         t = time.time()
-        r = sh([PY, "-m", "venv", str(venv)], timeout=120)
+        PYX = PY
+        if ERA:
+            PYX = PY38
+            rec["era_interpreter"] = "3.8.20"
+            rec["interpreter_match"] = (bi.get("python_version") or "").startswith("3.8")
+        r = sh([PYX, "-m", "venv", str(venv)], timeout=120)
         py = str(venv / "bin" / "python")
         ins = sh([py, "-m", "pip", "install", "-q", "--disable-pip-version-check", "pytest", *(["-r", str(req)] if req.exists() and req.read_text().strip() else [])], wt, BUILD_CAP)
-        rec["env"] = {"python": "3.11", "install_rc": ins.returncode, "seconds": round(time.time() - t, 1), "err": ins.stderr[-300:] if ins.returncode else ""}
+        rec["env"] = {"python": "3.8.20" if ERA else "3.11", "install_rc": ins.returncode, "seconds": round(time.time() - t, 1), "err": ins.stderr[-300:] if ins.returncode else ""}
         if ins.returncode:
             # one retry without the pinned file, to separate "pins unusable" from "project unusable"
             ins2 = sh([py, "-m", "pip", "install", "-q", "--disable-pip-version-check", "pytest"], wt, 300)
