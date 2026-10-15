@@ -70,3 +70,36 @@ Authorised by the user in chat after section 5. Scope frozen here:
 - The stop rule is evaluated twice and both are reported: (a) matching-interpreter instances only; (b) matching plus substituted. The decision to continue requires (a) or (b) to meet the rule; if only (b) does, that is stated as weaker evidence.
 - Sandbox unchanged: network off, no relaxation for luigi's local sockets. Luigi instances that need a bound socket are counted as a sandbox limitation, not made feasible.
 - Python 3.11 results (section 5) stay as reported; the new results are reported separately.
+
+## 7. Second feasibility screen results (era interpreter, 2026-10-15)
+
+Same 65 bugs, run as frozen in section 6 (Python 3.8.20). Records: `data/preconditions/realbug_feasibility_era.jsonl`. Python 3.11 results (section 5) are separate and unchanged.
+
+| Project | Screened | Interpreter | Feasible | Pinned install failed |
+|---|---|---|---|---|
+| PySnooper | 3 | matching (3.8) | 0 | 0 (suite errors at collection) |
+| black | 6 | matching | 0 | 6 |
+| fastapi | 6 | matching | 0 | 6 |
+| luigi | 6 | matching | 0 | 6 |
+| sanic | 5 | matching | 0 | 5 |
+| scrapy | 6 | matching | 0 | 6 |
+| tqdm | 6 | matching | 0 | 6 |
+| cookiecutter | 4 | substituted (declared 3.6) | 0 | 4 |
+| httpie | 5 | substituted (declared 3.7) | 0 | 5 |
+| thefuck | 6 | substituted (declared 3.7) | 6 | 0 |
+| tornado | 6 | substituted (declared 3.7) | 4 | 0 |
+| youtube-dl | 6 | substituted (declared 3.7) | 6 | 0 |
+
+Stop rule, evaluated both ways as frozen:
+- (a) Interpreter-matching instances only: 0 feasible in 0 projects. Not met.
+- (b) Matching plus substituted: 16 feasible in 3 projects (thefuck 6, youtube-dl 6, tornado 4; each over the 40% limit's spirit, with youtube-dl and thefuck at 37.5% each, tornado 25%). Fewer than the 30 instances and fewer than the 5 projects required. Not met.
+
+The rule is not met under either reading, so by the pre-committed rule the benchmark expansion stops here.
+
+What blocked the 7 matching projects (45 of 65 bugs have a failed pinned install): this is mainly platform and wheel problems, not interpreter age. Examples from the install logs: `cryptography` fails to build (black), a Windows-only pin `pywin32==227` (scrapy), `pkg-resources==0.0.0` which cannot be installed (tqdm), and "metadata-generation-failed" (luigi, sanic), plus build-dependency failures (fastapi). The harness installs the whole pinned file at once, so one unusable line fails the bug. The 16 feasible instances are the projects whose pins install cleanly. Their quality caveat from section 5 carries over (fixed-source baselines with many failing tests); the usable count after the plan's separate reporting of already-failing suites is lower.
+
+Luigi: its tests that need a local socket fail inside the network-off sandbox. The sandbox was not relaxed. Luigi was also blocked earlier by its pinned install, so the socket limitation has not yet been the deciding factor for any instance.
+
+Not done and not applied after the fact: a per-line best-effort install (skip unusable pins, record which) might recover some of the 45. That would change the environment recipe after seeing these results, so it would have to be a new stage, written into this plan with its own stop rule before it is run. It would also make instances less faithful to the historical environment, because the skipped pins differ from the originals.
+
+Conclusion: the pre-committed rule stops the real-bug benchmark expansion. The bounded mutation result stands as the finding. No coverage-versus-detection analysis was run.
