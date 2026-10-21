@@ -1,3 +1,5 @@
+> **Status 2026-10-21: the owner dropped the pilot.** This file is kept for reference only; the product plan (`docs/product/PRODUCT_PLAN_2026-10.md`) validates without recruited participants. `QUICKSTART.md` remains a user-facing setup guide.
+
 # Pilot protocol (pre-registered before any participant, 2026-10-13)
 
 **Purpose.** Learn whether developers who already use coding agents find Agentvow's output (verdict classes with plain-language reasons, UNKNOWN, changed-line coverage, capture-based replay) understandable and worth acting on, and where it gets in the way. It is a usability and feasibility pilot, **not a study of effectiveness**: no inference, no rates reported as results.

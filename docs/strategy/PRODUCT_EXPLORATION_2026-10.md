@@ -11,7 +11,7 @@ Direction under exploration (VISION update, section 8): an independent clean-roo
 | Replay changes a decision | no run shows a CONTRADICTED caught through capture; `scripts/planted_faults.py` exists from earlier work | without it, the study measures replayability only |
 | Second agent | test-time capture verified live on Claude Code only; a Copilot output format exists | one model family everywhere |
 | Beyond Python packages | out of scope by design (system packages, services, generated files, secrets) | caps how many claims can be closed; the not-reproduced manifest names what was skipped |
-| Real users | pilot kit written; no participants | whether people act on UNKNOWN is untested |
+| Real users | pilot kit written; the owner dropped the pilot on 2026-10-21 (see the product plan) | whether people act on UNKNOWN is untested |
 
 ## 2. Ranked ways to close them (evidence value against cost; none needs a new agent run unless stated)
 1. **E3, strong reconstruction baseline** (highest value). Add CI-config and Dockerfile-derived setup as a further replay context, pre-register, and re-replay the 22 valid B6 runs. Cost: engineering plus replay only. Answers the main objection; the result may shrink the 91-vs-55 gap, and that is a finding either way.

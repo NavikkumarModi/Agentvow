@@ -1,3 +1,5 @@
+> **Status 2026-10-21: the owner dropped the pilot.** This file is kept for reference only; the product plan (`docs/product/PRODUCT_PLAN_2026-10.md`) validates without recruited participants. `QUICKSTART.md` remains a user-facing setup guide.
+
 # Feedback diary and end survey (share only what you are comfortable sharing; no code, no repository names)
 
 ## Diary: one entry for each agent turn where Agentvow said something you noticed
