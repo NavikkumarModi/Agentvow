@@ -40,13 +40,15 @@ def _native_context(a, repo: Path, base: str, collect) -> dict:
     try:
         py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
         steps = [_t(" ".join(x))[:100] for x in (rec.setup if rec else [])]
+        extra = {"steps": steps, "env_names": sorted(rec.env)[:12] if rec else [], "setup_notes": [_t(n)[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4],
+                 "inputs": baseline.input_files(repo)}
         if not py or aborted:
             why = f"the environment could not be built ({aborted})" if aborted else ("; ".join(notes)[:160] or "the environment could not be built")
-            return {"name": "project-native setup", "basis": "native", "available": True, "result": "not built", "counts": {}, "summary": _t(why), "steps": steps}
+            return {"name": "project-native setup", "basis": "native", "available": True, "result": "not built", "counts": {}, "summary": _t(why), **extra}
         recs = collect(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots})], a.test_timeout, return_records=True)
         h = recs[0] if recs else {}
         summ = re.sub(r"\(pass --python.*\)$", "(the repository's own files do not provide it)", str(h.get("summary", "")))   # this environment was built by Agentvow, so --python is not the advice
-        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(summ)[:240], "steps": steps}
+        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(summ)[:240], **extra}
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
 
@@ -106,7 +108,7 @@ def state_line(st: dict) -> str:
         t += f", {st['n_untracked']} of them new untracked file(s) ({', '.join(st['untracked'])}{', ...' if st['n_untracked'] > len(st['untracked']) else ''})"
     t += "."
     if st["n_symlinks"]:
-        t += f" {st['n_symlinks']} symbolic link(s) were not copied ({', '.join(st['symlinks_skipped'])}): a replay never follows a link out of the repository."
+        t += f" {st['n_symlinks']} uncommitted symbolic link(s) were not copied ({', '.join(st['symlinks_skipped'])}): a replay never follows a link out of the repository."
     return t + " Git-ignored files are not included (item 4 below lists those the tests may read)."
 
 
@@ -119,6 +121,9 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
         nat = _native_context(a, repo, base, collect)
     elif primary:
         nat = primary
+    if nat and nat.get("inputs") is not None:
+        changed = set(getattr(d, "changed", []) or [])
+        nat["inputs_changed"] = [f for f in nat.pop("inputs") if f in changed][:8]
     contexts = [c for c in (cap, nat) if c]
     code, reading = explain(cap, nat)
     try:
@@ -152,8 +157,13 @@ def render_text(p: dict) -> list:
     for c in p["contexts"]:
         cn = c["counts"]
         o.append(f"   - {c['name']}: {c['result']}" + (f" ({cn.get('passed', 0)} passed, {cn.get('failed', 0)} failed)" if cn else "") + (f" - {c['summary']}" if c["result"] != "pass" and c["summary"] else ""))
-        if c.get("steps"):
-            o.append("     built from the repository's own files with: " + "; ".join("pip install " + x for x in c["steps"][:6]) + (" ..." if len(c["steps"]) > 6 else ""))
+        if c.get("steps") or c.get("env_names"):
+            o.append("     built from the repository's own files with: " + "; ".join("pip install " + x for x in c.get("steps", [])[:6]) + (" ..." if len(c.get("steps", [])) > 6 else "")
+                     + (f"; environment values set from CI: {', '.join(c['env_names'])}" if c.get("env_names") else ""))
+        for n in c.get("setup_notes", []):
+            o.append(f"     note: {n}")
+        if c.get("inputs_changed"):
+            o.append(f"     these files, which the replay read to decide what to install, were changed in this change: {', '.join(c['inputs_changed'])}")
     if not p["contexts"]:
         o.append("   - no test run produced usable evidence")
     o += ["", f"2. Reproducibility: {p['reproducibility']['text']}"]

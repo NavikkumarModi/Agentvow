@@ -22,11 +22,12 @@ class Advice(unittest.TestCase):
         self.assertIn("uvicorn, numpy", n["text"])
         self.assertIn("repository's own files", n["text"])
         self.assertIn("other context reproduced", n["text"])
+        self.assertIn("likely difference", n["text"])   # not stated as certain
         c = advice.step(ctx(CAP, "inconclusive", s))
         self.assertIn("captured packages do not include uvicorn, numpy", c["text"])
         self.assertIn("agentvow capture", c["text"])
         r = advice.step(ctx("the agent's declared recipe", "inconclusive", s))
-        self.assertIn("declared recipe does not install", r["text"])
+        self.assertIn("declared recipe did not provide", r["text"])
 
     def test_own_package_is_a_layout_problem_not_an_install_problem(self):
         n = advice.step(ctx(CAP, "inconclusive", "missing dependency in Agentvow's environment: localstack (x)"), own="localstack")
@@ -111,3 +112,28 @@ class IgnoredCaution(unittest.TestCase):
         cautious = advice.step(f, ignored=["fixtures/generated.json", "local.cfg"])
         self.assertIn("git-ignored files exist", cautious["text"])
         self.assertIn("fixtures/generated.json", cautious["text"])
+
+
+class Honesty(unittest.TestCase):
+    def test_a_failed_install_step_is_named_next_to_the_missing_package(self):
+        c = dict(ctx("project-native setup", "inconclusive", "missing dependency in Agentvow's environment: six (x)"), setup_notes=["setup `pip install -r requirements.txt` failed: no matching distribution"])
+        t = advice.step(c)["text"]
+        self.assertIn("an install step failed", t)
+        self.assertIn("An install step did fail here", t)
+        self.assertIn("requirements.txt", t)
+
+    def test_failure_text_does_not_claim_it_is_usually_a_result_and_handles_zero_count(self):
+        t = advice.step(ctx("project-native setup", "fail", "exit 1", {"passed": 3, "failed": 0, "errors": 0}))["text"]
+        self.assertNotIn("0 failed", t)
+        self.assertNotIn("usually", t)
+        self.assertIn("did not pass", t)
+        self.assertIn("can also fail for lack of files or settings", t)
+
+    def test_pack_names_install_inputs_the_change_touched_and_ci_env(self):
+        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["pip install ."], env_names=["FOO"], inputs_changed=[".github/workflows/ci.yml"], setup_notes=["x left out"])
+        p = {"version": 1, "manifest": None, "timing": None, "receipt": {"commit": "abc", "dirty": False, "base": "main", "command": "c", "replay_python": "3", "created": "t", "valid_for": "v"},
+             "contexts": [c], "reproducibility": {"code": "single", "text": "r", "next_steps": []}, "coverage": {"available": False, "reason": "n/a"}, "limits": "l"}
+        txt = "\n".join(pack.render_text(p))
+        self.assertIn("environment values set from CI: FOO", txt)
+        self.assertIn("were changed in this change: .github/workflows/ci.yml", txt)
+        self.assertIn("note: x left out", txt)

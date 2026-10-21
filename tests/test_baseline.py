@@ -89,7 +89,7 @@ class Derive(unittest.TestCase):
         d = self.mk({"pyproject.toml": "[project]\nname='x'\n[project.optional-dependencies]\ndev=['q']\n", "requirements.txt": "z", ".github/workflows/ci.yml": WF,
                      "Dockerfile": "FROM python:3.11\nRUN pip install numpy==1.26.4\n", "requirements-extra.txt": "y", "requirements-docs.txt": "d"})
         setup, env, notes = baseline.derive(d)
-        self.assertEqual(setup[:2], ["pip install .[dev]", "pip install -r requirements.txt"])
+        self.assertEqual(setup[:3], ["pip install .", "pip install .[dev]", "pip install -r requirements.txt"])   # base install first, so a failing extra cannot leave the project uninstalled
         self.assertIn("pip install httpx respx", setup)
         self.assertIn("pip install numpy==1.26.4", setup)
         self.assertEqual(setup[-1], "pip install -r requirements-extra.txt")   # docs requirements excluded
@@ -104,6 +104,92 @@ class Derive(unittest.TestCase):
         setup, env, notes = baseline.derive(self.mk(files))
         self.assertLessEqual(len(setup), recipe.MAX_STEPS)
         recipe.parse({"schema": recipe.SCHEMA, "setup": setup, "test": "python -m pytest -q"})
+
+
+CI_ONE_LINER = """jobs:
+  t:
+    steps:
+      - run: pip install -e .[test] && pytest -q
+      - run: pip install winonly
+        if: runner.os == 'Windows'
+      - run: pip install neverrun
+        if: false
+      - name: quoted
+        "run": pip install quotedkey
+      - run: pip install linuxonly
+        if: runner.os == 'Linux'
+"""
+
+
+class Hardening(unittest.TestCase):
+    def mk(self, files):
+        d = Path(tempfile.mkdtemp())
+        for n, t in files.items():
+            p = d / n
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(t)
+        return d
+
+    def test_compound_line_conditions_and_quoted_keys(self):
+        setup, env, notes = baseline.ci_setup({"ci.yml": CI_ONE_LINER}, {})
+        self.assertEqual(setup, ["pip install -e '.[test]'", "pip install quotedkey", "pip install linuxonly"])   # `a && pytest` split; Windows-only and `if: false` steps skipped
+
+    def test_flow_style_is_refused_not_silently_dropped(self):
+        for text in ("jobs:\n  t:\n    steps:\n      - {run: pip install x}\n", "jobs:\n  t:\n    env: {A: b}\n    steps: []\n"):
+            with self.assertRaises(ValueError):
+                baseline.parse_workflow(text)
+        setup, env, notes = baseline.ci_setup({"f.yml": "jobs:\n  t:\n    steps:\n      - {run: pip install x}\n"}, {})
+        self.assertEqual(setup, [])
+        self.assertTrue(any("not read" in n for n in notes))
+
+    def test_proxy_and_certificate_env_values_are_dropped(self):
+        wf = "env:\n  HTTPS_PROXY: http://evil\n  SSL_CERT_FILE: /x\n  GOOD: 1\njobs:\n  t:\n    steps:\n      - run: pytest -q\n"
+        setup, env, notes = baseline.ci_setup({"f.yml": wf}, {})
+        self.assertEqual(env, {"GOOD": "1"})
+
+    def test_requirements_files_with_index_urls_vcs_or_outside_includes_are_not_installed(self):
+        d = self.mk({"requirements.txt": "six==1.16.0\n--index-url http://evil/simple\n", "requirements-extra.txt": "-e git+https://x/y.git#egg=y\n",
+                     "requirements-dev.txt": "-r ../outside.txt\n", "requirements-test.txt": "-r requirements-base.txt\n", "requirements-base.txt": "evil @ https://x/e.whl\n",
+                     "requirements-ok.txt": "six==1.16.0\n"})
+        setup, env, notes = baseline.derive(d)
+        self.assertEqual(setup, ["pip install -r requirements-ok.txt"])
+        self.assertEqual(sum("left out" in n for n in notes), 5)
+        self.assertEqual(baseline.requirements_problem(d, "requirements-ok.txt"), None)
+
+    def test_symlinked_requirements_file_is_refused(self):
+        d = self.mk({"real.txt": "six\n"})
+        (d / "requirements-link.txt").symlink_to(d / "real.txt")
+        self.assertIn("symbolic link", baseline.requirements_problem(d, "requirements-link.txt"))
+        self.assertEqual(baseline.derive(d)[0], [])
+
+    def test_line_installing_the_projects_own_name_is_left_out_with_pep503_folding(self):
+        d = self.mk({"pyproject.toml": "[project]\nname = 'my.pkg'\n", "Dockerfile": "RUN pip install my-pkg==1.0 && pip install six\n"})
+        setup, env, notes = baseline.derive(d)
+        self.assertNotIn("pip install my-pkg==1.0", setup)
+        self.assertIn("pip install six", setup)
+        self.assertTrue(any("project's own name" in n for n in notes))
+
+    def test_input_files_lists_what_was_read(self):
+        d = self.mk({"pyproject.toml": "[project]\nname='x'\n", ".github/workflows/ci.yml": "jobs: {}\n", "Dockerfile": "FROM x\n", "requirements-extra.txt": "a"})
+        self.assertEqual(set(baseline.input_files(d)), {"pyproject.toml", ".github/workflows/ci.yml", "Dockerfile", "requirements-extra.txt"})
+
+
+class HookSafety(unittest.TestCase):
+    def test_collect_native_never_raises_out_of_the_hook_worker(self):
+        from unittest import mock
+        from agentvow import cli
+        with mock.patch.object(baseline, "prepare", side_effect=OSError("disk")):
+            why = cli._collect_native(Path(tempfile.mkdtemp()), "HEAD", 5, False)
+        self.assertIn("could not be built", why)
+        self.assertIn("OSError", why)
+
+    def test_project_name_comes_from_poetry_setup_cfg_or_setup_py(self):
+        from agentvow import envsetup
+        for files, want in (({"pyproject.toml": "[tool.poetry]\nname = 'pp'\n"}, "pp"), ({"setup.cfg": "[metadata]\nname = sc\n"}, "sc"), ({"setup.py": "setup(name='sp', version='1')"}, "sp")):
+            d = Path(tempfile.mkdtemp())
+            for n, t in files.items():
+                (d / n).write_text(t)
+            self.assertEqual(envsetup._project_name(d), want)
 
 
 if __name__ == "__main__":

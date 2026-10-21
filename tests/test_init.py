@@ -80,24 +80,93 @@ class Init(unittest.TestCase):
         self.assertFalse((d / ".claude").exists())
         self.assertIn("--yes", err)
 
-    def test_older_agentvow_stop_hook_is_replaced_not_duplicated(self):
+    def test_existing_agentvow_hook_with_other_command_is_left_alone_unless_forced(self):
         d = self.repo()
         (d / ".claude").mkdir()
-        old = {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "/old/agentvow check --hook"}]}]}}
+        old = {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "/old/agentvow check --hook --python .venv/bin/python", "timeout": 5}]}]}}
         (d / ".claude" / "settings.local.json").write_text(json.dumps(old))
-        run("--repo", str(d), "--yes", "--no-verify")
+        code, out, _ = run("--repo", str(d), "--yes", "--no-verify")
         s = json.loads((d / ".claude" / "settings.local.json").read_text())
-        cmds = [h["command"] for g in s["hooks"]["Stop"] for h in g["hooks"]]
-        self.assertEqual(cmds, [f"{PREFIX} check --hook --evidence-pack"])   # an older Agentvow Stop hook is replaced, so the check does not run twice
-
-    def test_replaces_own_entry_with_a_different_path(self):
-        d = self.repo()
-        (d / ".claude").mkdir()
-        old = {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "/old/agentvow check --hook --evidence-pack", "timeout": 5}]}]}}
-        (d / ".claude" / "settings.local.json").write_text(json.dumps(old))
-        run("--repo", str(d), "--yes", "--no-verify")
+        self.assertEqual([h["command"] for g in s["hooks"]["Stop"] for h in g["hooks"]], ["/old/agentvow check --hook --python .venv/bin/python"])   # customised flags kept
+        self.assertIn("left unchanged", out)
+        self.assertIn("PostToolUse", s["hooks"])   # the other hook was still added
+        run("--repo", str(d), "--yes", "--no-verify", "--force")
         s = json.loads((d / ".claude" / "settings.local.json").read_text())
         self.assertEqual([h["command"] for g in s["hooks"]["Stop"] for h in g["hooks"]], [f"{PREFIX} check --hook --evidence-pack"])
+
+    def test_force_replaces_only_our_command_not_other_hooks_in_the_same_group(self):
+        d = self.repo()
+        (d / ".claude").mkdir()
+        grp = {"hooks": [{"type": "command", "command": "notify-me.sh"}, {"type": "command", "command": "/old/agentvow check --hook"}]}
+        (d / ".claude" / "settings.local.json").write_text(json.dumps({"hooks": {"Stop": [grp]}}))
+        code, out, _ = run("--repo", str(d), "--yes", "--no-verify", "--force")
+        s = json.loads((d / ".claude" / "settings.local.json").read_text())
+        cmds = [h["command"] for g in s["hooks"]["Stop"] for h in g["hooks"]]
+        self.assertEqual(cmds, ["notify-me.sh", f"{PREFIX} check --hook --evidence-pack"])
+        self.assertIn("replaced `/old/agentvow check --hook`", out)
+        run("--repo", str(d), "--remove", "--yes")
+        s = json.loads((d / ".claude" / "settings.local.json").read_text())
+        self.assertEqual([h["command"] for g in s["hooks"]["Stop"] for h in g["hooks"]], ["notify-me.sh"])
+
+    def test_lookalike_commands_are_not_ours(self):
+        self.assertFalse(init._ours("my-agentvow-linter check --hook-x", "Stop"))
+        self.assertFalse(init._ours("echo agentvow check --hook", "Stop"))
+        self.assertTrue(init._ours("/a/b/agentvow check --hook --evidence-pack", "Stop"))
+        self.assertTrue(init._ours("/usr/bin/python3 -I -m agentvow check --hook", "Stop"))
+        self.assertTrue(init._ours("agentvow post-test-hook", "PostToolUse"))
+        self.assertFalse(init._ours("agentvow post-test-hook", "Stop"))
+
+    def test_fallback_prefix_is_isolated(self):
+        with mock.patch.object(init.shutil, "which", return_value=None), mock.patch.object(init.Path, "is_file", return_value=False):
+            self.assertIn(" -I -m agentvow", init.command_prefix())
+
+    def test_symlinked_target_folder_or_file_is_refused(self):
+        d = self.repo()
+        victim = Path(tempfile.mkdtemp()) / "victim"
+        victim.mkdir()
+        (d / ".claude").symlink_to(victim)
+        code, out, err = run("--repo", str(d), "--yes", "--no-verify")
+        self.assertEqual(code, 3)
+        self.assertIn("symbolic link", err)
+        self.assertEqual(list(victim.iterdir()), [])
+        (d / ".claude").unlink()
+        (d / ".claude").mkdir()
+        (d / ".claude" / "settings.local.json").symlink_to(victim / "x.json")
+        self.assertEqual(run("--repo", str(d), "--yes", "--no-verify")[0], 3)
+
+    def test_planted_predictable_temp_name_is_never_written_through(self):
+        d = self.repo()
+        (d / ".claude").mkdir()
+        victim = Path(tempfile.mkdtemp()) / "zshrc"
+        victim.write_text("keep me")
+        (d / ".claude" / "settings.local.json.agentvow-tmp").symlink_to(victim)
+        run("--repo", str(d), "--yes", "--no-verify")
+        self.assertEqual(victim.read_text(), "keep me")
+        self.assertTrue((d / ".claude" / "settings.local.json").is_file())
+
+    def test_file_mode_is_kept_and_text_is_not_escaped(self):
+        import os, stat
+        d = self.repo()
+        (d / ".claude").mkdir()
+        f = d / ".claude" / "settings.local.json"
+        f.write_text(json.dumps({"note": "caf\u00e9"}, ensure_ascii=False), encoding="utf-8")
+        os.chmod(f, 0o600)
+        run("--repo", str(d), "--yes", "--no-verify")
+        self.assertEqual(stat.S_IMODE(f.stat().st_mode), 0o600)
+        self.assertIn("café", f.read_text(encoding="utf-8"))
+
+    def test_worktree_where_dot_git_is_a_file_gets_the_exclude_entry(self):
+        d = self.repo()
+        subprocess.run(["git", "-C", str(d), "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "x"], check=True)
+        wt = Path(tempfile.mkdtemp()) / "wt"
+        subprocess.run(["git", "-C", str(d), "worktree", "add", "-q", "--detach", str(wt)], check=True)
+        self.assertTrue((wt / ".git").is_file())
+        (wt / ".venv" / "bin").mkdir(parents=True); (wt / ".venv" / "bin" / "python").write_text("")
+        code, out, _ = run("--repo", str(wt), "--yes", "--no-verify")
+        self.assertEqual(code, 0, out)
+        ex = Path(subprocess.run(["git", "-C", str(wt), "rev-parse", "--git-path", "info/exclude"], capture_output=True, text=True).stdout.strip())
+        ex = ex if ex.is_absolute() else wt / ex
+        self.assertIn(".agentvow/", ex.read_text())
 
     def test_remove_only_our_entries(self):
         d = self.repo()

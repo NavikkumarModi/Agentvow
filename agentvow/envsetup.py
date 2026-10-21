@@ -5,6 +5,7 @@ recorded. Installs run under `sandbox-exec` (network allowed, writes limited to 
 guards, because installs execute third-party build code and can be huge: a live size watchdog, a free-disk floor, a timeout, no pip cache.
 """
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -129,10 +130,30 @@ def uninstall_project_dists(venv: Path, proj: Path, home: Path, name, max_venv: 
 
 
 def _project_name(repo: Path):
+    """The project's distribution name from pyproject ([project] or [tool.poetry]), setup.cfg or a literal `name=` in setup.py; None when none says."""
+    repo = Path(repo)
     try:
-        return tomllib.loads((repo / "pyproject.toml").read_text()).get("project", {}).get("name")
+        d = tomllib.loads((repo / "pyproject.toml").read_text())
+        n = d.get("project", {}).get("name") or d.get("tool", {}).get("poetry", {}).get("name")
+        if n:
+            return n
     except Exception:
-        return None
+        pass
+    try:
+        import configparser
+        cp = configparser.ConfigParser(interpolation=None)
+        cp.read_string((repo / "setup.cfg").read_text())
+        if cp.has_option("metadata", "name"):
+            return cp.get("metadata", "name").strip()
+    except Exception:
+        pass
+    try:
+        m = re.search(r"""\bname\s*=\s*['"]([A-Za-z0-9][A-Za-z0-9._-]*)['"]""", (repo / "setup.py").read_text())
+        if m:
+            return m.group(1)
+    except Exception:
+        pass
+    return None
 
 
 def _copy_project(repo: Path, dest: Path, limit: int = 500 * 1024**2) -> bool:

@@ -8,6 +8,7 @@ recipe. Anything not understood (matrix expressions, secrets, services, shell tr
 The workflow reader below is a deliberately small subset of YAML (jobs, steps, `run:` scalars and block scalars, `env:` mappings): the tool has no dependencies. It is tested against
 PyYAML on real workflow files (tests/test_baseline.py and docs/EVIDENCE_PACK.md)."""
 import configparser
+import os
 import re
 import shlex
 import tomllib
@@ -21,6 +22,7 @@ _SKIP_PIP = re.compile(r"^(pip|setuptools|wheel|build|virtualenv|tox|nox|coverag
 _ENVPFX = re.compile(r"^([A-Z][A-Z0-9_]*)=([A-Za-z0-9_./:,+-]*)\s+")
 _RUNNER = re.compile(r"^(?:uv run|poetry run|pipenv run|pdm run|hatch run|python3? -m )\s*(?:--\S+\s+)*")
 _SYNC = re.compile(r"^(uv sync|poetry install|pdm install|pipenv install|hatch env)\b")
+_BLOCKED_CI_ENV = re.compile(r"^(HTTPS?_PROXY|ALL_PROXY|NO_PROXY|SSL_CERT_FILE|SSL_CERT_DIR|REQUESTS_CA_BUNDLE|CURL_CA_BUNDLE|NODE_EXTRA_CA_CERTS)$", re.I)
 _SHELL_SPLIT = re.compile(r"\s*(?:&&|;|\|\|)\s*")
 
 
@@ -77,11 +79,14 @@ def parse_workflow(text: str):
     if re.search(r"(^|\s)[&*][A-Za-z_]", text) and re.search(r"^\s*[A-Za-z_-]+:\s*[&*]", text, re.M):
         raise ValueError("anchors or aliases")
     lines = [ln for ln in text.splitlines() if not ln.lstrip().startswith("#")]   # full-line comments (shell comments inside a run block are ignored later anyway)
+    for ln in lines:   # flow style is outside the supported subset: refuse the file rather than silently drop its steps
+        if re.match(r"^\s*-\s*\{", ln) or re.match(r"^\s*[\"']?(env|steps|jobs)[\"']?\s*:\s*[\[{]", ln):
+            raise ValueError("flow-style YAML")
     top_env, jobs = {}, []
     i = 0
     while i < len(lines):
         ln = lines[i]
-        m = re.match(r"^(env|jobs):\s*(.*)$", ln)
+        m = re.match(r"^[\"']?(env|jobs)[\"']?:\s*(.*)$", ln)
         if m and _ind(ln) == 0:
             blk, j = _block(lines, i, 0)
             if m.group(1) == "env":
@@ -101,7 +106,7 @@ def _parse_jobs(blk: list):
     ji = _ind(nz[0])
     jobs, i = [], 0
     while i < len(blk):
-        m = re.match(r"^([A-Za-z0-9_.-]+):\s*$", blk[i].strip()) if _ind(blk[i]) == ji else None
+        m = re.match(r"^[\"']?([A-Za-z0-9_.-]+)[\"']?:\s*$", blk[i].strip()) if _ind(blk[i]) == ji else None
         if not m:
             i += 1
             continue
@@ -116,10 +121,13 @@ def _parse_job(body: list):
     if not nz:
         return {}, []
     bi = _ind(nz[0])
-    env, steps, i = {}, [], 0
+    env, steps, i, cond = {}, [], 0, None
     while i < len(body):
         ln = body[i]
-        m = re.match(r"^(env|steps):\s*$", ln.strip()) if _ind(ln) == bi else None
+        mi = re.match(r"^if:\s*(.*)$", ln.strip()) if _ind(ln) == bi else None
+        if mi:
+            cond = _unquote(mi.group(1))
+        m = re.match(r"^[\"']?(env|steps)[\"']?:\s*$", ln.strip()) if _ind(ln) == bi else None
         if not m:
             i += 1
             continue
@@ -129,7 +137,19 @@ def _parse_job(body: list):
         else:
             steps = _parse_steps(blk)
         i = j
+    if _skipped_by_condition(cond):
+        return env, []
     return env, steps
+
+
+def _skipped_by_condition(cond) -> bool:
+    """A job or step that only runs on another operating system, or never (`if: false`), is not part of a Linux/macOS replay."""
+    if cond is None:
+        return False
+    c = str(cond).strip().lower()
+    if c in ("false", "0", "${{ false }}"):
+        return True
+    return bool(re.search(r"windows|win32|\bmacos\b|darwin", c)) and not re.search(r"linux|ubuntu", c)
 
 
 def _parse_steps(blk: list):
@@ -147,19 +167,23 @@ def _parse_steps(blk: list):
     out = []
     for it in items:
         k = si + 2
-        step, i = {"run": None, "env": {}}, 0
+        step, i = {"run": None, "env": {}, "if": None}, 0
         while i < len(it):
             ln = it[i]
-            m = re.match(r"^(run|env):\s*(.*)$", ln.strip()) if _ind(ln) == k else None
+            m = re.match(r"^[\"']?(run|env|if)[\"']?:\s*(.*)$", ln.strip()) if _ind(ln) == k else None
             if not m:
                 i += 1
                 continue
-            if m.group(1) == "run":
+            if m.group(1) == "if":
+                step["if"] = _unquote(m.group(2))
+                i += 1
+            elif m.group(1) == "run":
                 step["run"], i = _scalar(it, i, k, m.group(2))
             else:
                 blk2, i = _block(it, i, k)
                 step["env"] = _mapping(blk2)
-        out.append(step)
+        if not _skipped_by_condition(step.get("if")):
+            out.append(step)
     return out
 
 
@@ -177,8 +201,12 @@ def _norm_test(ln: str):
 def _lines(run: str):
     for ln in re.sub(r"\\\n\s*", " ", run).splitlines():
         ln = ln.strip()
-        if ln and not ln.startswith("#"):
-            yield ln
+        if not ln or ln.startswith("#"):
+            continue
+        for part in _SHELL_SPLIT.split(ln):   # `pip install -e .[test] && pytest` is two commands
+            part = part.strip()
+            if part:
+                yield part
 
 
 def _pip_args(line: str):
@@ -324,7 +352,7 @@ def ci_setup(workflows: dict, texts: dict):
                 continue
             if unsupported:
                 notes.append(f"{name}:{jname}: skipped {len(unsupported)} line(s) with expressions, e.g. {unsupported[0]!r}")
-            return list(dict.fromkeys(setup)), {k: v for k, v in env.items() if k.isupper()}, notes
+            return list(dict.fromkeys(setup)), {k: v for k, v in env.items() if k.isupper() and not _BLOCKED_CI_ENV.match(k)}, notes
     notes.append("no workflow job with a pytest/unittest command")
     return [], {}, notes
 
@@ -365,12 +393,77 @@ def _read(p: Path) -> str:
         return ""
 
 
+_REQ_OPTION = re.compile(r"^\s*(-i\b|--index-url|--extra-index-url|--no-index|-f\b|--find-links|--trusted-host|--proxy|--cert|--client-cert|--pre\b|--global-option|--install-option|--config-settings|-C\b|--use-feature)", re.I)
+
+
+def requirements_problem(repo: Path, rel: str, depth: int = 0, seen: set | None = None):
+    """-> why a requirements file (and the files it includes) must not be installed by a replay, or None. A repository controls these files, so index and URL options, VCS and
+    direct-URL requirements, absolute or parent-directory includes and symbolic links are refused; plain pinned names are the only thing a replay installs from them."""
+    repo = Path(repo).resolve()
+    seen = seen if seen is not None else set()
+    f = repo / rel
+    if rel in seen or depth > 4:
+        return None
+    seen.add(rel)
+    if f.is_symlink():
+        return f"{rel} is a symbolic link"
+    try:
+        if not str(f.resolve()).startswith(str(repo) + os.sep):
+            return f"{rel} lies outside the repository"
+        if not f.is_file():
+            return None
+        lines = f.read_text(errors="replace").splitlines()
+    except OSError:
+        return None
+    for raw in lines:
+        ln = re.sub(r"\s+#.*$", "", raw).strip()
+        if not ln or ln.startswith("#"):
+            continue
+        if _REQ_OPTION.match(ln):
+            return f"{rel} contains the option `{ln.split()[0]}`"
+        m = re.match(r"^(?:-r|--requirement|-c|--constraint)[ =]*(\S+)", ln)
+        if m:
+            inc = m.group(1)
+            if inc.startswith("/") or ".." in Path(inc).parts or "://" in inc:
+                return f"{rel} includes `{inc}`, outside the repository"
+            sub = str((Path(rel).parent / inc).as_posix()).lstrip("./") if str(Path(rel).parent) != "." else inc
+            why = requirements_problem(repo, sub, depth + 1, seen)
+            if why:
+                return why
+            continue
+        m = re.match(r"^(?:-e|--editable)[ =]*(\S+)", ln)
+        if m:
+            tgt = m.group(1)
+            if "://" in tgt or tgt.startswith(("git+", "hg+", "svn+", "bzr+", "/")) or ".." in Path(tgt).parts:
+                return f"{rel} has an editable requirement from `{tgt[:40]}`"
+            continue
+        if " @ " in ln or "://" in ln or ln.startswith(("/", "file:")):
+            return f"{rel} has a direct-URL or path requirement"
+    return None
+
+
+def input_files(repo: Path) -> list:
+    """The repository files this baseline reads to decide what to install (relative paths), for the pack's note on which of them the change touched."""
+    repo = Path(repo)
+    out = [n for n in ("pyproject.toml", "setup.py", "setup.cfg", "tox.ini", "Makefile") if (repo / n).is_file()]
+    out += [str(f.relative_to(repo)) for f in sorted((repo / ".github" / "workflows").glob("*.y*ml"))] if (repo / ".github" / "workflows").is_dir() else []
+    out += [str(f.relative_to(repo)) for f in sorted(list(repo.glob("Dockerfile*")) + list(repo.glob("*/Dockerfile*")) + list(repo.glob("docker/*/Dockerfile*"))) if f.is_file()]
+    out += [f for f in envsetup.REQ_FILES if (repo / f).is_file()] + other_requirements(repo)
+    return out
+
+
+def _args_names(args: list) -> list:
+    return [a for a in args if not a.startswith("-") and a not in (".",) and "/" not in a and not a.startswith(".")]
+
+
 def derive(repo: Path):
     """-> (setup lines, env dict, notes) for a checkout. Every setup line is accepted by the recipe validator; refused ones are dropped and noted."""
     repo = Path(repo)
     notes, setup, env = [], [], {}
     extras = envsetup.detect_extras(repo)
     if (repo / "pyproject.toml").exists() or (repo / "setup.py").exists():
+        if extras:
+            setup.append("pip install .")   # first without extras: if an extra cannot be installed the project and its base dependencies still are (the ladder did the same by retrying)
         setup.append("pip install " + (".[" + ",".join(extras) + "]" if extras else "."))
     if envsetup.detect_groups(repo):
         notes.append("dependency groups present; not installed (outside the recipe vocabulary)")
@@ -394,12 +487,21 @@ def derive(repo: Path):
         notes.append(f"Dockerfile(s) supplied {len(docker)} pip line(s)")
     setup += docker + [f"pip install -r {f}" for f in other_requirements(repo)]
     good = []
+    own = re.sub(r"[-_.]+", "-", str(envsetup._project_name(repo) or "")).lower()
     for s in dict.fromkeys(setup):
         try:
-            recipe_mod.parse({"schema": recipe_mod.SCHEMA, "setup": [s], "test": "python -m pytest -q", "env": {}})
-            good.append(s)
+            args = recipe_mod.parse({"schema": recipe_mod.SCHEMA, "setup": [s], "test": "python -m pytest -q", "env": {}}).setup[0]
         except recipe_mod.RecipeError as e:
             notes.append(f"setup line refused by the validator ({str(e)[:50]}): {s[:60]}")
+            continue
+        if own and any(re.sub(r"[-_.]+", "-", re.split(r"[\[<>=!~ ]", a, maxsplit=1)[0]).lower() == own for a in _args_names(args)):
+            notes.append(f"setup line left out: it would install the project's own name ({own}), which could replace the code under test: {s[:60]}")
+            continue
+        bad = next((why for i, a in enumerate(args) if a in ("-r", "-c", "--requirement", "--constraint") and i + 1 < len(args) and (why := requirements_problem(repo, args[i + 1]))), None)
+        if bad:
+            notes.append(f"setup line left out: {bad}: {s[:60]}")
+            continue
+        good.append(s)
     if len(good) > MAX_SETUP:
         notes.append(f"{len(good) - MAX_SETUP} setup line(s) beyond the {MAX_SETUP}-step limit left out (the last ones)")
     clean_env = {}

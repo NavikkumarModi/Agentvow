@@ -57,12 +57,15 @@ def step(ctx: dict, own: str = "", other: dict | None = None, ignored: list | No
             t = (f"The captured packages do not include {pkgs}. The agent's environment may have had it from a place a pip freeze does not list (an editable or direct install, a system package, "
                  "another interpreter). Run `agentvow capture --python <the interpreter the agent used>` right after the agent's tests, or check which Python the agent ran.")
         elif recipe:
-            t = f"The agent's declared recipe does not install {pkgs}. The agent's success depended on something it did not declare."
+            t = f"The environment built from the agent's declared recipe did not provide {pkgs}: the recipe does not install it, or a step failed. The agent's success may have depended on something it did not declare."
         else:
-            t = (f"The repository's own files (setup files, the CI workflow's install steps, Dockerfiles, requirements files) do not install {pkgs}. If the project needs it, declare it "
-                 "(a requirements file or the CI install step); until then a fresh checkout cannot reproduce this result.")
+            t = (f"The environment built from the repository's own files (setup files, the CI workflow's install steps, Dockerfiles, requirements files) did not provide {pkgs}: "
+                 "either none of those files installs it, or an install step failed (see the notes). If the project needs it, declare it "
+                 "(a requirements file or the CI install step); until then a fresh checkout may not reproduce this result.")
+            if ctx.get("setup_notes"):
+                t += " An install step did fail here: " + "; ".join(ctx["setup_notes"][:2]) + "."
         if other is not None and str(other.get("result")) == "pass":
-            t += " The other context reproduced the result, so the missing package is the difference between the two."
+            t += " The other context reproduced the result, so the missing package is a likely difference between the two (versions and install order can differ too)."
         return {"context": name, "kind": kind, "text": t}
     if kind == "credential":
         return {"context": name, "kind": kind, "text": (f"The tests need {detail}, which no replay supplies (Agentvow never passes secrets). This result cannot be reproduced here: "
@@ -81,8 +84,9 @@ def step(ctx: dict, own: str = "", other: dict | None = None, ignored: list | No
         return {"context": name, "kind": kind, "text": "The command ran no tests. Check that it points at test files the project's test runner collects (the pack's receipt shows the command)."}
     if kind == "test_failure":
         c = ctx.get("counts") or {}
-        t = (f"The tests ran and {c.get('failed', 0) + c.get('errors', 0)} failed or errored. This is usually a result, not a gap in the replay: "
-             "compare it with what the agent claimed, and with the other context.")
+        n = c.get("failed", 0) + c.get("errors", 0)
+        t = (f"The tests ran and {str(n) + ' failed or errored' if n else 'did not pass'}. That is a test result, but a replay can also fail for lack of files or settings it does not have "
+             "(see the not-reproduced list in item 4): compare it with what the agent claimed, and with the other context.")
         if ignored:
             t += (f" One caution: git-ignored files exist in the agent's working tree ({', '.join(ignored[:3])}{', ...' if len(ignored) > 3 else ''}) and are not part of the replay; "
                   "if a failing test reads one of them (a generated fixture, a local data file), the failure is the replay lacking it.")

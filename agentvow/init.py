@@ -28,7 +28,7 @@ def command_prefix() -> str:
     found = shutil.which("agentvow")
     if found:
         return shlex.quote(found)
-    return f"{shlex.quote(sys.executable)} -m agentvow"
+    return f"{shlex.quote(sys.executable)} -I -m agentvow"   # -I: the repository directory is not put on the import path (a hostile repo could ship its own `agentvow`)
 
 
 def entries(prefix: str) -> dict:
@@ -38,11 +38,27 @@ def entries(prefix: str) -> dict:
     }
 
 
+def _tokens(cmd: str) -> list:
+    try:
+        return shlex.split(cmd)
+    except ValueError:
+        return []
+
+
 def _ours(cmd: str, event: str) -> bool:
-    if "agentvow" not in cmd:
+    """True only for an Agentvow command: the program is `agentvow` (any path) or `python [-I] -m agentvow`, followed by the subcommand tokens."""
+    t = _tokens(cmd)
+    if not t:
         return False
-    tail = POST if event == "PostToolUse" else STOP_OWNED
-    return all(t in cmd for t in tail)
+    if os.path.basename(t[0]) == "agentvow":
+        rest = t[1:]
+    elif len(t) >= 3 and os.path.basename(t[0]).startswith("python") and "-m" in t and t[t.index("-m") + 1:t.index("-m") + 2] == ["agentvow"]:
+        rest = t[t.index("-m") + 2:]
+    else:
+        return False
+    if event == "PostToolUse":
+        return rest[:1] == list(POST)
+    return rest[:1] == ["check"] and "--hook" in rest
 
 
 def target_path(repo: Path, shared: bool, user: bool) -> Path:
@@ -67,36 +83,53 @@ def load(path: Path):
     return d, None
 
 
-def merge(settings: dict, prefix: str):
-    """-> (new settings, changes list). Idempotent; replaces only our own entries."""
+def _owned(group, event) -> list:
+    return [h for h in (group.get("hooks", []) if isinstance(group, dict) else []) if isinstance(h, dict) and _ours(str(h.get("command", "")), event)]
+
+
+def merge(settings: dict, prefix: str, force: bool = False):
+    """-> (new settings, changes list). Idempotent. An Agentvow hook that is already set is left alone (it may carry your own flags) unless `force`; then only that one hook
+    command is replaced and every other hook, even in the same group, is kept."""
     new = json.loads(json.dumps(settings))
     hooks = new.setdefault("hooks", {})
     changes = []
     for event, entry in entries(prefix).items():
         lst = hooks.setdefault(event, [])
-        mine = [(i, g) for i, g in enumerate(lst) if isinstance(g, dict) and any(_ours(str(h.get("command", "")), event) for h in g.get("hooks", []) if isinstance(h, dict))]
-        if mine and all(g == entry for _, g in mine) and len(mine) == 1:
-            changes.append(f"{event}: already set (unchanged)")
+        have = [(g, h) for g in lst for h in _owned(g, event)]
+        want = entry["hooks"][0]
+        if have and not force:
+            same = all(h.get("command") == want["command"] for _, h in have)
+            changes.append(f"{event}: already set" + ("" if same else f" with a different command (`{have[0][1].get('command')}`); left unchanged (use --force to replace it)"))
             continue
-        for i, _ in reversed(mine):
-            del lst[i]
+        for g in list(lst):
+            if isinstance(g, dict) and _owned(g, event):
+                g["hooks"] = [h for h in g["hooks"] if not (isinstance(h, dict) and _ours(str(h.get("command", "")), event))]
+                if not g["hooks"]:
+                    lst.remove(g)
         lst.append(entry)
-        changes.append(f"{event}: {'updated' if mine else 'added'} `{entry['hooks'][0]['command']}`")
+        changes.append(f"{event}: " + (f"replaced `{have[0][1].get('command')}` with" if have else "added") + f" `{want['command']}` (other {event} hooks are kept)")
     return new, changes
 
 
 def unmerge(settings: dict):
-    """-> (new settings, changes list): remove only our entries; drop empty containers we emptied."""
+    """-> (new settings, changes list): remove only our hook commands (other hooks in the same group stay); drop containers we emptied."""
     new = json.loads(json.dumps(settings))
     hooks = new.get("hooks", {})
     changes = []
     for event in ("PostToolUse", "Stop"):
         lst = hooks.get(event, [])
-        keep = [g for g in lst if not (isinstance(g, dict) and any(_ours(str(h.get("command", "")), event) for h in g.get("hooks", []) if isinstance(h, dict)))]
-        if len(keep) != len(lst):
-            changes.append(f"{event}: removed")
-        if keep:
-            hooks[event] = keep
+        removed = 0
+        for g in list(lst):
+            if isinstance(g, dict) and _owned(g, event):
+                before = len(g["hooks"])
+                g["hooks"] = [h for h in g["hooks"] if not (isinstance(h, dict) and _ours(str(h.get("command", "")), event))]
+                removed += before - len(g["hooks"])
+                if not g["hooks"]:
+                    lst.remove(g)
+        if removed:
+            changes.append(f"{event}: removed {removed} Agentvow hook(s) (other hooks are kept)")
+        if lst:
+            hooks[event] = lst
         else:
             hooks.pop(event, None)
     if "hooks" in new and not new["hooks"]:
@@ -108,19 +141,40 @@ def has_python_env(repo: Path) -> bool:
     return bool(os.environ.get("VIRTUAL_ENV")) or any((Path(repo) / d / "bin" / "python").exists() for d in (".venv", "venv", "env"))
 
 
+def symlink_problem(path: Path, repo: Path | None = None):
+    """-> a message when the settings file, its folder or a folder above it inside the repository is a symbolic link (writing through it could land outside the intended place)."""
+    p = Path(path)
+    stop = Path(repo).resolve() if repo else None
+    for q in [p, *p.parents]:
+        if q.is_symlink():
+            return f"{q} is a symbolic link; refusing to write through it"
+        if stop is not None and q == stop:
+            break
+    return None
+
+
 def exclude_line_needed(repo: Path):
-    """-> path of the repository's local exclude file when `.agentvow/` is not yet ignored there or in .gitignore, else None. (.git/info/exclude is local; no tracked file is edited.)"""
+    """-> path of the repository's local exclude file when `.agentvow/` is not yet ignored there or in .gitignore, else None. The path comes from git itself (`rev-parse --git-path`), so
+    worktrees and submodules (where .git is a file) work; a symlinked exclude file is never written."""
+    import subprocess
     repo = Path(repo)
-    g = repo / ".git"
-    if not g.is_dir():
+    try:
+        r = subprocess.run(["git", "-C", str(repo), "rev-parse", "--git-path", "info/exclude"], capture_output=True, text=True, timeout=20)
+    except (OSError, subprocess.SubprocessError):
         return None
-    for f in (repo / ".gitignore", g / "info" / "exclude"):
+    if r.returncode != 0 or not r.stdout.strip():
+        return None
+    ex = Path(r.stdout.strip())
+    ex = ex if ex.is_absolute() else repo / ex
+    if ex.is_symlink() or ex.parent.is_symlink():
+        return None
+    for f in (repo / ".gitignore", ex):
         try:
-            if any(ln.strip().rstrip("/") in (".agentvow", "/.agentvow") for ln in f.read_text().splitlines()):
+            if any(ln.strip().rstrip("/") in (".agentvow", "/.agentvow") for ln in f.read_text(encoding="utf-8", errors="replace").splitlines()):
                 return None
         except OSError:
             pass
-    return g / "info" / "exclude"
+    return ex
 
 
 def backup(path: Path):
@@ -132,7 +186,19 @@ def backup(path: Path):
 
 
 def write_json(path: Path, data: dict) -> None:
+    """Write through a fresh, exclusively created temporary file in the same folder (never a predictable name that could be a planted link), keep the original file's permissions."""
+    import tempfile
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".agentvow-tmp")
-    tmp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-    os.replace(tmp, path)
+    mode = path.stat().st_mode & 0o777 if path.exists() else 0o600
+    fd, tmp = tempfile.mkstemp(prefix=path.name + ".", suffix=".agentvow-tmp", dir=str(path.parent))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+        os.chmod(tmp, mode)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise

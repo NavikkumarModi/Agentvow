@@ -130,6 +130,11 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, covera
         shutil.rmtree(venv_root, ignore_errors=True)
 
 
+def recipe_mod_error():
+    from . import recipe as recipe_mod
+    return recipe_mod.RecipeError
+
+
 def _collect_native(repo: Path, base: str, timeout: int, coverage: bool) -> str:
     """Replay in an environment Agentvow builds from the project's own files (setup files, CI workflow, Dockerfiles, requirements files: see baseline.py), with optional changed-line coverage. -> '' or the reason nothing ran."""
     from . import baseline
@@ -142,6 +147,8 @@ def _collect_native(repo: Path, base: str, timeout: int, coverage: bool) -> str:
             _ensure_coverage(py, venv_root)
         collect_test_evidence(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"coverage": coverage, "env_extra": rec.env, "pythonpath_rel": rec.local_roots})], timeout)
         return ""
+    except (OSError, subprocess.SubprocessError, ValueError, recipe_mod_error()) as e:   # nothing may escape the hook's background worker
+        return f"the environment could not be built ({type(e).__name__})"
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
 
@@ -324,12 +331,16 @@ def run_init(a) -> int:
         print("agentvow init: choose --user or --shared, not both", file=sys.stderr)
         return 3
     path = init_mod.target_path(repo, a.shared, a.user)
+    bad = init_mod.symlink_problem(path, None if a.user else repo)
+    if bad:
+        print(f"agentvow init: {bad}", file=sys.stderr)
+        return 3
     settings, err = init_mod.load(path)
     if err:
         print(f"agentvow init: {err}", file=sys.stderr)
         return 3
     prefix = init_mod.command_prefix()
-    new, changes = init_mod.unmerge(settings) if a.remove else init_mod.merge(settings, prefix)
+    new, changes = init_mod.unmerge(settings) if a.remove else init_mod.merge(settings, prefix, a.force)
     exclude = None if (a.remove or a.user) else init_mod.exclude_line_needed(repo)
     print(f"Target: {path}" + ("" if path.exists() else "  (does not exist yet; it will be created)"))
     for c in changes:
@@ -359,8 +370,11 @@ def run_init(a) -> int:
     if exclude:
         try:
             exclude.parent.mkdir(parents=True, exist_ok=True)
+            lead = ""
+            if exclude.exists() and exclude.stat().st_size:
+                lead = "" if exclude.read_text(encoding="utf-8", errors="replace").endswith("\n") else "\n"
             with exclude.open("a", encoding="utf-8") as f:
-                f.write(("\n" if exclude.exists() and exclude.stat().st_size and not exclude.read_text().endswith("\n") else "") + ".agentvow/\n")
+                f.write(lead + ".agentvow/\n")
         except OSError as e:
             print(f"  ! could not update {exclude} ({type(e).__name__})", file=sys.stderr)
     print(f"Written: {path}" + (f" (previous version kept as {b.name})" if b else ""))
@@ -499,7 +513,8 @@ def main(argv=None) -> int:
     ini.add_argument("--user", action="store_true", help="write ~/.claude/settings.json (all your projects)")
     ini.add_argument("--dry-run", action="store_true", help="show what would change and write nothing")
     ini.add_argument("--yes", action="store_true", help="do not ask for confirmation")
-    ini.add_argument("--remove", action="store_true", help="remove the hooks this command added (other settings are kept)")
+    ini.add_argument("--remove", action="store_true", help="remove the hooks this command added (other settings and hooks are kept)")
+    ini.add_argument("--force", action="store_true", help="replace an Agentvow hook that is already set with a different command (default: leave it as it is)")
     ini.add_argument("--no-verify", action="store_true", help="skip the end-to-end self test after writing")
     ai = sub.add_parser("agent-instructions", help="print (or write) instructions that make a chat agent run Agentvow itself and show the verdict in the chat")
     ai.add_argument("--write", metavar="PATH", help="append the block to this file (e.g. .github/copilot-instructions.md); idempotent")

@@ -17,7 +17,8 @@ import strong_baseline as sbl  # noqa: E402
 from agentvow import envsetup  # noqa: E402
 
 D = ROOT / "data" / "preconditions"
-OUT = D / "stageb6_strong.jsonl"
+PRODUCT = os.environ.get("PRODUCT") == "1"   # use the product baseline (agentvow/baseline.py) instead of the research one, only for runs whose derivation differs (stageb6_product_baseline_check.json)
+OUT = D / ("stageb6_product_replay.jsonl" if PRODUCT else "stageb6_strong.jsonl")
 envsetup.MAX_VENV = 3 * 1024**3
 
 
@@ -26,9 +27,12 @@ def main():
     tasks = {(j["repo"], j["pr"]): j for j in map(json.loads, (D / "stageb6_tasks.jsonl").read_text().splitlines())}
     valid = [r for r in rows if r.get("truth_in_agent_env") == "pass" and r.get("base_fails_in_agent_env")]
     done = {(j["repo"], j["pr"]) for j in map(json.loads, OUT.read_text().splitlines())} if OUT.exists() else set()
+    only = None
+    if PRODUCT:
+        only = {x["run"] for x in json.loads((D / "stageb6_product_baseline_check.json").read_text()) if not x["same"]}
     for r in valid:
         key = (r["repo"], r["pr"])
-        if key in done:
+        if key in done or (only is not None and f"{r['repo']}#{r['pr']}" not in only):
             continue
         if shutil.disk_usage(D).free < 3.5 * 1024**3:
             print("low disk; stopping", flush=True); return
@@ -47,7 +51,12 @@ def main():
                 if repo is None:
                     rec["strong"] = "not_rerunnable"; rec["why"] = "base checkout failed"
                 else:
-                    data, notes = sbl.derive_strong(repo, c["target_files"])
+                    if PRODUCT:
+                        from agentvow import baseline
+                        ps, pe, notes = baseline.derive(repo)
+                        data = {"schema": "agentvow-recipe/1", "setup": ps, "test": "pytest -q " + " ".join(c["target_files"]), "env": pe}
+                    else:
+                        data, notes = sbl.derive_strong(repo, c["target_files"])
                     rec["recipe_setup"] = data["setup"]; rec["env_keys"] = sorted(data["env"]); rec["notes"] = notes
                     if sb.sh(["git", "apply", "--whitespace=nowarn", str(rd / "patch.diff")], repo).returncode:
                         rec["strong"] = "not_rerunnable"; rec["why"] = "patch did not apply"

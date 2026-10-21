@@ -207,7 +207,7 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
     if own:   # a setup step that installs a distribution with the PROJECT'S OWN name could shadow the code under test with someone else's package
         for args in recipe.setup:
             for a in args:
-                if not a.startswith("-") and a != "." and not a.startswith(".") and "/" not in a and re.split(r"[\[<>=!~ ]", a, 1)[0].replace("_", "-").lower() == str(own).replace("_", "-").lower():
+                if not a.startswith("-") and a != "." and not a.startswith(".") and "/" not in a and re.sub(r"[-_.]+", "-", re.split(r"[\[<>=!~ ]", a, 1)[0]).lower() == re.sub(r"[-_.]+", "-", str(own)).lower():
                     return None, [f"setup installs a package with the project's own name ({own}); refused"], "shadowing"
     for args in recipe.setup:
         rc, out = envsetup._pip(venv, proj, home, ["install", "-q", *args], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
