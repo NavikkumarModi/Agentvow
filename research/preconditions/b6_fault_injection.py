@@ -59,7 +59,7 @@ def check(repo, base_sha, msg, recipe_path):
     try:
         o = json.loads(p.stdout)
         f = next(x for x in o["findings"] if x["kind"] == "tests_pass")
-        return {"verdict": f["verdict"], "status": o.get("status"), "detail": str(f.get("summary") or f.get("detail") or "")[:240], "exit": p.returncode}
+        return {"verdict": f["verdict"], "status": o.get("status"), "detail": str(f.get("why") or "")[:300], "exit": p.returncode}
     except (ValueError, StopIteration, KeyError):
         return {"verdict": None, "status": None, "detail": (p.stdout + p.stderr)[-200:], "exit": p.returncode}
 
