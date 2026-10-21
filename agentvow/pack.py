@@ -5,6 +5,7 @@
    disagree the pack says what was observed. A captured package list is not proof that a fresh checkout is self-sufficient.
 3. Changed-line coverage: which changed executable source lines the tests reached, and which no test reached (the lines are named; "executed" is not "asserted").
 The pack informs a person; it never approves, rejects or merges, and it adds no verdict of its own."""
+import re
 import shutil
 import sys
 import tempfile
@@ -44,7 +45,8 @@ def _native_context(a, repo: Path, base: str, collect) -> dict:
             return {"name": "project-native setup", "basis": "native", "available": True, "result": "not built", "counts": {}, "summary": _t(why), "steps": steps}
         recs = collect(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots})], a.test_timeout, return_records=True)
         h = recs[0] if recs else {}
-        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(h.get("summary", ""))[:240], "steps": steps}
+        summ = re.sub(r"\(pass --python.*\)$", "(the repository's own files do not provide it)", str(h.get("summary", "")))   # this environment was built by Agentvow, so --python is not the advice
+        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(summ)[:240], "steps": steps}
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
 
@@ -99,6 +101,11 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
     contexts = [c for c in (cap, nat) if c]
     code, reading = explain(cap, nat)
     try:
+        from . import advice, envsetup as _env
+        nxt = advice.next_steps(contexts, str(_env._project_name(Path(repo)) or ""))
+    except Exception:   # additional information only
+        nxt = []
+    try:
         man = manifest.build(Path(repo), list(d.changed), capsule_mod.load(Path(repo)), ".".join(map(str, sys.version_info[:3])), {"darwin": "Darwin", "linux": "Linux"}.get(sys.platform, sys.platform))
     except Exception as ex:   # additional information only
         man = {"items": [], "scanned": 0, "caveat": f"the manifest could not be built ({type(ex).__name__})"}
@@ -110,7 +117,7 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
             "receipt": {"commit": d.commit, "dirty": d.dirty, "base": base, "command": " ".join(a.test_cmd[0].split()[1:]) if getattr(a, "test_cmd", None) else "python -m pytest -q",
                         "replay_python": ".".join(map(str, sys.version_info[:3])), "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "valid_for": "this exact commit and working tree; any later edit makes it stale"},
-            "contexts": contexts, "reproducibility": {"code": code, "text": reading},
+            "contexts": contexts, "reproducibility": {"code": code, "text": reading, "next_steps": nxt},
             "coverage": _coverage_section(cov, Path(repo)), "limits": LIMITS}
 
 
@@ -126,6 +133,8 @@ def render_text(p: dict) -> list:
     if not p["contexts"]:
         o.append("   - no test run produced usable evidence")
     o += ["", f"2. Reproducibility: {p['reproducibility']['text']}"]
+    for n in p["reproducibility"].get("next_steps", []):
+        o.append(f"   Next step ({_t(n['context'])}): {_t(n['text'])}")
     if p.get("timing"):
         o.append(f"   Timing: {_t(p['timing']['text'])}")
     o.append("")
@@ -155,6 +164,7 @@ def render_markdown(p: dict, esc) -> list:
             o.append(f"| {esc(c['name'])} | **{esc(c['result'])}** | {esc(c['summary'], 120) if c['result'] != 'pass' else ''} |")
         o.append("")
     o += [f"**2. Reproducibility.** {esc(p['reproducibility']['text'], 500)}"]
+    o += [f"- _Next step ({esc(n['context'])}):_ {esc(n['text'], 500)}" for n in p["reproducibility"].get("next_steps", [])]
     if p.get("timing"):
         o.append(f"_Timing: {esc(p['timing']['text'], 500)}_")
     o.append("")
@@ -184,5 +194,5 @@ def render_html(p: dict, e) -> str:
     return (f"<h2>Evidence pack</h2><p>Three separate dimensions, not a score.</p>"
             f"<div class=\"q\"><div><b>1 · Execution receipt</b><code>{e(r['command'])}</code> on <code>{e(r['commit'])[:10]}</code>{' + uncommitted changes' if r['dirty'] else ''}; valid for {e(r['valid_for'])}."
             f"<table>{rows}</table></div>"
-            f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}" + (f"<br><small>Timing: {e(p['timing']['text'])}</small>" if p.get("timing") else "") + "</div>"
+            f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}" + "".join(f"<br><small>Next step ({e(n['context'])}): {e(n['text'])}</small>" for n in p["reproducibility"].get("next_steps", [])) + "" + (f"<br><small>Timing: {e(p['timing']['text'])}</small>" if p.get("timing") else "") + "</div>"
             f"<div><b>3 · Changed-line coverage</b>{cov}</div>" + (manifest.render_html(p["manifest"], e) if p.get("manifest") else "") + "</div><p><small>Limits: {e(p['limits'])}</small></p>")
