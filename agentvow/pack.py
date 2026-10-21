@@ -33,16 +33,18 @@ def _context_from_evidence(d) -> dict | None:
 
 
 def _native_context(a, repo: Path, base: str, collect) -> dict:
-    """Run the SAME tests in an environment built from the project's own declarations (zero-config ladder). Nothing is written as evidence: this is an additional context."""
+    """Run the SAME tests in an environment built from the project's own files (setup files, CI workflow, Dockerfiles, requirements files: baseline.py). Nothing is written as evidence: this is an additional context."""
+    from . import baseline
     venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
     try:
-        py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
+        py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
+        steps = [_t(" ".join(x))[:100] for x in (rec.setup if rec else [])]
         if not py or aborted:
             why = f"the environment could not be built ({aborted})" if aborted else ("; ".join(notes)[:160] or "the environment could not be built")
-            return {"name": "project-native setup", "basis": "native", "available": True, "result": "not built", "counts": {}, "summary": _t(why)}
-        recs = collect(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {})], a.test_timeout, return_records=True)
+            return {"name": "project-native setup", "basis": "native", "available": True, "result": "not built", "counts": {}, "summary": _t(why), "steps": steps}
+        recs = collect(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots})], a.test_timeout, return_records=True)
         h = recs[0] if recs else {}
-        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(h.get("summary", ""))[:240]}
+        return {"name": "project-native setup", "basis": "native", "available": True, "result": h.get("result", "unknown"), "counts": h.get("counts", {}), "summary": _t(h.get("summary", ""))[:240], "steps": steps}
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
 
@@ -119,6 +121,8 @@ def render_text(p: dict) -> list:
     for c in p["contexts"]:
         cn = c["counts"]
         o.append(f"   - {c['name']}: {c['result']}" + (f" ({cn.get('passed', 0)} passed, {cn.get('failed', 0)} failed)" if cn else "") + (f" - {c['summary']}" if c["result"] != "pass" and c["summary"] else ""))
+        if c.get("steps"):
+            o.append("     built from the repository's own files with: " + "; ".join("pip install " + x for x in c["steps"][:6]) + (" ..." if len(c["steps"]) > 6 else ""))
     if not p["contexts"]:
         o.append("   - no test run produced usable evidence")
     o += ["", f"2. Reproducibility: {p['reproducibility']['text']}"]

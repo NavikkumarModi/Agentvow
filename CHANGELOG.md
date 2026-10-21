@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased (0.3.0 in progress)
+- The evidence pack's project-native context is now built from the repository's own files, not only the zero-config ladder: setup files and requirements files, the `pip install` lines (and literal environment values) of the first CI workflow job that runs the tests, Dockerfile `pip install` lines and other requirements files (`agentvow/baseline.py`, no new dependency; a small workflow reader tested against PyYAML on 526 real workflow files: identical job and step commands in 519, 4 differ, 3 outside the supported subset). The pack lists the steps used. On the 22 valid runs of the B6 study the product's derivation is identical to the research baseline in 21 (the one difference is not among the 18 re-runnable runs that the registered comparison used). The `--setup auto` zero-config path for the primary replay is unchanged.
+
 ## 0.2.1 (2026-10-14)
 The Evidence pack and capture at test time. Same limits as 0.2.0; see `docs/EVIDENCE_PACK.md` and `docs/CAPSULES.md`.
 - `agentvow post-test-hook` (Claude Code PostToolUse on `Bash`): captures the environment right after the agent runs a test command; the Evidence pack gains a Timing line (last test run on the final state / files edited after it and packages changed / only a stop-time capture exists). Capsules now carry their source and the files that differed from HEAD.

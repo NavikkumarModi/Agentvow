@@ -131,15 +131,16 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, covera
 
 
 def _collect_native(repo: Path, base: str, timeout: int, coverage: bool) -> str:
-    """Replay in an environment Agentvow builds from the project's own declarations (the zero-config setup), with optional changed-line coverage. -> '' or the reason nothing ran."""
+    """Replay in an environment Agentvow builds from the project's own files (setup files, CI workflow, Dockerfiles, requirements files: see baseline.py), with optional changed-line coverage. -> '' or the reason nothing ran."""
+    from . import baseline
     venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
     try:
-        py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
+        py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
         if not py or aborted:
             return "the environment could not be built" + (f" ({aborted})" if aborted else "")
         if coverage:
             _ensure_coverage(py, venv_root)
-        collect_test_evidence(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"coverage": coverage})], timeout)
+        collect_test_evidence(repo, base, [("tests", [py, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider"], "", {"coverage": coverage, "env_extra": rec.env, "pythonpath_rel": rec.local_roots})], timeout)
         return ""
     finally:
         shutil.rmtree(venv_root, ignore_errors=True)
