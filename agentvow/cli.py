@@ -316,6 +316,63 @@ def instructions_block(exe: str) -> str:
             f"```bash\n{q} check --repo . --transcript - --markdown - <<'AGENTVOW_EOF' || true\n<your draft final answer>\nAGENTVOW_EOF\n```\n{INSTR_END}\n")
 
 
+def run_init(a) -> int:
+    """`agentvow init`: preview, confirm, back up, write; then an end-to-end self test. Never edits silently and never overwrites a settings file it cannot parse."""
+    from . import init as init_mod
+    repo = Path(a.repo).resolve()
+    if a.user and a.shared:
+        print("agentvow init: choose --user or --shared, not both", file=sys.stderr)
+        return 3
+    path = init_mod.target_path(repo, a.shared, a.user)
+    settings, err = init_mod.load(path)
+    if err:
+        print(f"agentvow init: {err}", file=sys.stderr)
+        return 3
+    prefix = init_mod.command_prefix()
+    new, changes = init_mod.unmerge(settings) if a.remove else init_mod.merge(settings, prefix)
+    exclude = None if (a.remove or a.user) else init_mod.exclude_line_needed(repo)
+    print(f"Target: {path}" + ("" if path.exists() else "  (does not exist yet; it will be created)"))
+    for c in changes:
+        print(f"  - {c}")
+    if exclude:
+        print(f"  - add `.agentvow/` to {exclude} (local to this clone; no tracked file changes)")
+    if not a.remove and not init_mod.has_python_env(repo):
+        print("  ! no .venv, venv or env folder and no active virtual environment: the hooks cannot record the agent's packages until the project has one (or pass --python in the hook command)")
+    if a.shared and not a.remove:
+        print("  ! .claude/settings.json is normally committed: every teammate's Claude Code would run these hooks")
+    if new == settings and not exclude:
+        print("Nothing to change.")
+        return 0
+    if a.dry_run:
+        print("Dry run: nothing was written.")
+        return 0
+    if not a.yes:
+        if not sys.stdin.isatty():
+            print("Not written: confirm with --yes (or run this in a terminal).", file=sys.stderr)
+            return 2
+        if input("Write these changes? [y/N] ").strip().lower() not in ("y", "yes"):
+            print("Not written.")
+            return 2
+    b = init_mod.backup(path) if new != settings else None
+    if new != settings:
+        init_mod.write_json(path, new)
+    if exclude:
+        try:
+            exclude.parent.mkdir(parents=True, exist_ok=True)
+            with exclude.open("a", encoding="utf-8") as f:
+                f.write(("\n" if exclude.exists() and exclude.stat().st_size and not exclude.read_text().endswith("\n") else "") + ".agentvow/\n")
+        except OSError as e:
+            print(f"  ! could not update {exclude} ({type(e).__name__})", file=sys.stderr)
+    print(f"Written: {path}" + (f" (previous version kept as {b.name})" if b else ""))
+    if a.remove or a.no_verify:
+        return 0
+    from .doctor import self_test
+    ok, detail = self_test(sys.executable)
+    print(("Self test passed: " if ok else "Self test FAILED: ") + detail)
+    print("Next: work with Claude Code as usual; run `agentvow doctor --repo .` any time. The hooks never block the agent; delete them with `agentvow init --remove`.")
+    return 0 if ok else 1
+
+
 def run_agent_instructions(a) -> int:
     exe = shutil.which("agentvow") or sys.argv[0]
     block = instructions_block(os.path.abspath(exe))
@@ -435,6 +492,15 @@ def main(argv=None) -> int:
     dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentvow-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
     d.add_argument("--repo", default=".")
+    ini = sub.add_parser("init", help="add the Claude Code hooks (capture after tests, check at stop) to a settings file, with a preview, a confirmation and a backup")
+    ini.add_argument("--repo", default=".")
+    ini.add_argument("--agent", choices=["claude"], default="claude", help="only Claude Code is supported by this command (GitHub Copilot: the VS Code extension command 'Agentvow: Add the agent hook')")
+    ini.add_argument("--shared", action="store_true", help="write .claude/settings.json (committed settings run the hooks for every teammate) instead of the personal .claude/settings.local.json")
+    ini.add_argument("--user", action="store_true", help="write ~/.claude/settings.json (all your projects)")
+    ini.add_argument("--dry-run", action="store_true", help="show what would change and write nothing")
+    ini.add_argument("--yes", action="store_true", help="do not ask for confirmation")
+    ini.add_argument("--remove", action="store_true", help="remove the hooks this command added (other settings are kept)")
+    ini.add_argument("--no-verify", action="store_true", help="skip the end-to-end self test after writing")
     ai = sub.add_parser("agent-instructions", help="print (or write) instructions that make a chat agent run Agentvow itself and show the verdict in the chat")
     ai.add_argument("--write", metavar="PATH", help="append the block to this file (e.g. .github/copilot-instructions.md); idempotent")
     ph = sub.add_parser("prompt-hook", help="UserPromptSubmit hook: hand the previous turn's sealed verdict to the agent once, as context, so it can state it in chat")
@@ -479,6 +545,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if getattr(a, "base", None) and a.base.startswith("-"):
         ap.error("--base must be a commit or branch name, not an option")
+    if a.cmd == "init":
+        return run_init(a)
     if a.cmd == "agent-instructions":
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":

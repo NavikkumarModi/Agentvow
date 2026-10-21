@@ -16,6 +16,7 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 ```bash
 pip install agentvow                    # from PyPI; or from a checkout: pip install .  (no dependencies; Python 3.10+)
 agentvow doctor --repo /path/to/project       # checks your setup and runs the whole hook path end to end
+agentvow init --repo /path/to/project         # Claude Code: add the two hooks (preview, confirmation, backup; --dry-run, --remove; see docs/CAPSULES.md)
 echo "I changed X. All 12 tests pass. Nothing else depends on it." | agentvow check --repo /path/to/project
 agentvow check --repo . --transcript msg.txt --run-tests --python venv/bin/python   # also run the tests (sandboxed, macOS/Linux)
 agentvow check --repo . --transcript msg.txt --run-tests --changed-coverage           # also say how many changed source lines the tests actually ran
@@ -48,7 +49,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | Where | How | Status |
 |---|---|---|
 | **GitHub Copilot in VS Code** (agent chat, Copilot CLI engine) | `.github/hooks/agentvow.json` (extension command *Agentvow: Add the agent hook*) | **Verified on a real run:** Copilot ran the hook, its payload and session file (`events.jsonl`) are parsed, the result is sealed and detected by the extension. Hooks are a Preview feature |
-| **Claude Code** | Stop hook `agentvow check --hook` (settings: `{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "agentvow check --hook --evidence-pack"}]}]}}` in `.claude/settings.json`) | **Verified on real runs** (Claude Code 2.1.263, `claude -p`): payload and transcript parsed, result sealed, never blocks; the `--evidence-pack` background run (capture, both replay contexts, changed-line coverage) verified on one toy project |
+| **Claude Code** | `agentvow init` writes the two hooks below after a preview and a confirmation; by hand: Stop hook `agentvow check --hook` (settings: `{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "agentvow check --hook --evidence-pack"}]}]}}` in `.claude/settings.json`) | **Verified on real runs** (Claude Code 2.1.263, `claude -p`): payload and transcript parsed, result sealed, never blocks; the `--evidence-pack` background run (capture, both replay contexts, changed-line coverage) verified on one toy project |
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
 | Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report | Shell step tested locally; not run on GitHub |
@@ -90,4 +91,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 311 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 322 Python tests, 32 node tests -->

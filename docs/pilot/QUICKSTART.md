@@ -16,7 +16,7 @@ cd your-project && ~/.agentvow-pilot/bin/agentvow doctor --repo .
 echo "I changed the code. All tests pass." | ~/.agentvow-pilot/bin/agentvow check --repo . --transcript - --run-tests --changed-coverage --python .venv/bin/python
 ```
 Use the Python of your project's environment for `--python` (the one where pytest is installed). For the changed-line coverage part, that environment also needs `coverage` (`.venv/bin/pip install coverage`); without it the report says coverage is unavailable. (With `--setup auto` instead of `--python`, Agentvow builds its own environment and installs `coverage` itself.)
-**4. Turn on the hooks (opt-in).** For Claude Code, add to `.claude/settings.json` in your project (this shape was verified on a real Claude Code 2.1.263 run; check with `agentvow doctor` afterwards). Use the absolute path to your pilot environment's `agentvow`, for example `/Users/you/.agentvow-pilot/bin/agentvow`:
+**4. Turn on the hooks (opt-in).** The short way: `agentvow init` (preview, confirmation, backup; `agentvow init --remove` undoes it). By hand: For Claude Code, add to `.claude/settings.json` in your project (this shape was verified on a real Claude Code 2.1.263 run; check with `agentvow doctor` afterwards). Use the absolute path to your pilot environment's `agentvow`, for example `/Users/you/.agentvow-pilot/bin/agentvow`:
 ```json
 {"hooks": {
   "PostToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "/Users/you/.agentvow-pilot/bin/agentvow post-test-hook", "timeout": 30}]}],
