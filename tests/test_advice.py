@@ -74,3 +74,40 @@ class Advice(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReplayState(unittest.TestCase):
+    def test_untracked_files_and_symlinks_are_reported(self):
+        import os, subprocess, tempfile
+        d = Path(tempfile.mkdtemp())
+        run = lambda *a: subprocess.run(["git", "-C", str(d), *a], capture_output=True, text=True, check=True)
+        run("init", "-q"); run("config", "user.email", "t@t"); run("config", "user.name", "t")
+        (d / "a.py").write_text("X = 1\n"); run("add", "-A"); run("commit", "-qm", "one")
+        (d / "a.py").write_text("X = 2\n")
+        (d / "helper.py").write_text("H = 1\n")
+        (d / "link.py").symlink_to("/etc/hosts")
+        (d / ".gitignore").write_text("secret.json\n"); (d / "secret.json").write_text("{}")
+        st = pack.replay_state(d)
+        self.assertEqual(st["n_untracked"], 3)   # helper.py, link.py, .gitignore (secret.json is ignored, not included)
+        self.assertIn("helper.py", st["untracked"])
+        self.assertEqual(st["symlinks_skipped"], ["link.py"])
+        line = pack.state_line(st)
+        self.assertIn("uncommitted change(s)", line)
+        self.assertIn("helper.py", line)
+        self.assertIn("never follows a link", line)
+        self.assertIn("Git-ignored files are not included", line)
+        self.assertNotIn("secret.json", line)
+
+    def test_clean_tree_says_nothing(self):
+        self.assertEqual(pack.state_line({"uncommitted": 0, "n_symlinks": 0, "n_untracked": 0, "untracked": [], "symlinks_skipped": []}), "")
+        self.assertEqual(pack.state_line(None), "")
+
+
+class IgnoredCaution(unittest.TestCase):
+    def test_failure_with_ignored_files_in_the_tree_carries_a_caution(self):
+        f = ctx("project-native setup", "fail", "exit 1; 1 failed", {"passed": 0, "failed": 1, "errors": 0})
+        plain = advice.step(f)
+        self.assertNotIn("git-ignored", plain["text"])
+        cautious = advice.step(f, ignored=["fixtures/generated.json", "local.cfg"])
+        self.assertIn("git-ignored files exist", cautious["text"])
+        self.assertIn("fixtures/generated.json", cautious["text"])

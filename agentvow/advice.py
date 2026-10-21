@@ -39,7 +39,7 @@ def classify(ctx: dict) -> tuple:
     return "other", s
 
 
-def step(ctx: dict, own: str = "", other: dict | None = None) -> dict | None:
+def step(ctx: dict, own: str = "", other: dict | None = None, ignored: list | None = None) -> dict | None:
     """One plain-language next step for a non-passing context, or None when it passed."""
     if str(ctx.get("result")) == "pass":
         return None
@@ -81,18 +81,22 @@ def step(ctx: dict, own: str = "", other: dict | None = None) -> dict | None:
         return {"context": name, "kind": kind, "text": "The command ran no tests. Check that it points at test files the project's test runner collects (the pack's receipt shows the command)."}
     if kind == "test_failure":
         c = ctx.get("counts") or {}
-        return {"context": name, "kind": kind, "text": (f"The tests ran and {c.get('failed', 0) + c.get('errors', 0)} failed or errored. This is a result, not a gap in the replay: "
-                                                       "compare it with what the agent claimed, and with the other context.")}
+        t = (f"The tests ran and {c.get('failed', 0) + c.get('errors', 0)} failed or errored. This is usually a result, not a gap in the replay: "
+             "compare it with what the agent claimed, and with the other context.")
+        if ignored:
+            t += (f" One caution: git-ignored files exist in the agent's working tree ({', '.join(ignored[:3])}{', ...' if len(ignored) > 3 else ''}) and are not part of the replay; "
+                  "if a failing test reads one of them (a generated fixture, a local data file), the failure is the replay lacking it.")
+        return {"context": name, "kind": kind, "text": t}
     if kind == "refused":
         return {"context": name, "kind": kind, "text": f"The replay refused to run this ({detail[:120]}); the tool fails closed rather than guess."}
     return {"context": name, "kind": kind, "text": f"Not reproduced ({str(ctx.get('result'))}): {detail[:140] or 'no detail recorded'}."}
 
 
-def next_steps(contexts: list, own: str = "") -> list:
+def next_steps(contexts: list, own: str = "", ignored: list | None = None) -> list:
     out = []
     for i, c in enumerate(contexts):
         other = contexts[1 - i] if len(contexts) == 2 else None
-        s = step(c, own, other)
+        s = step(c, own, other, ignored)
         if s:
             out.append(s)
     return out

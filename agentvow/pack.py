@@ -12,7 +12,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import capsule as capsule_mod, changedcov, envsetup, manifest
+from . import capsule as capsule_mod, changedcov, envsetup, manifest, reality
 
 LIMITS = ("Python packages and the interpreter version are all that a captured environment covers (no system packages, services, generated files or secrets); "
           "a test run that reproduces is not a correct change; a line that ran is not a line that was checked.")
@@ -89,6 +89,27 @@ def _coverage_section(cov: dict | None, repo: Path) -> dict:
     return {"available": True, "executed": cov["executed"], "executable": cov["executable"], "not_run": items, "not_loaded": [_t(x) for x in cov.get("not_loaded", [])]}
 
 
+def replay_state(repo: Path) -> dict:
+    """What the replay saw beyond the commit: uncommitted changes and untracked files are copied into the replay's worktree; symlinks are never followed (skipped); git-ignored files are not included."""
+    repo = Path(repo)
+    files = reality.changed_files(repo, "HEAD")
+    untracked = sorted(f for f in reality._git(repo, "ls-files", "-o", "--exclude-standard", "--", ".", ":(exclude).agentvow").splitlines() if f and not f.startswith(".agentvow/"))
+    links = sorted(f for f in files if (repo / f).is_symlink())
+    return {"uncommitted": len(files), "untracked": [_t(f) for f in untracked[:6]], "n_untracked": len(untracked), "symlinks_skipped": [_t(f) for f in links[:6]], "n_symlinks": len(links)}
+
+
+def state_line(st: dict) -> str:
+    if not st or not (st.get("uncommitted") or st.get("n_symlinks")):
+        return ""
+    t = f"The replay used the working tree as it was: {st['uncommitted']} uncommitted change(s)"
+    if st["n_untracked"]:
+        t += f", {st['n_untracked']} of them new untracked file(s) ({', '.join(st['untracked'])}{', ...' if st['n_untracked'] > len(st['untracked']) else ''})"
+    t += "."
+    if st["n_symlinks"]:
+        t += f" {st['n_symlinks']} symbolic link(s) were not copied ({', '.join(st['symlinks_skipped'])}): a replay never follows a link out of the repository."
+    return t + " Git-ignored files are not included (item 4 below lists those the tests may read)."
+
+
 def build(a, repo: Path, base: str, d, collect) -> dict:
     primary = _context_from_evidence(d)
     cov = primary.pop("changed_cov", None) if primary else None
@@ -101,14 +122,15 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
     contexts = [c for c in (cap, nat) if c]
     code, reading = explain(cap, nat)
     try:
-        from . import advice, envsetup as _env
-        nxt = advice.next_steps(contexts, str(_env._project_name(Path(repo)) or ""))
-    except Exception:   # additional information only
-        nxt = []
-    try:
         man = manifest.build(Path(repo), list(d.changed), capsule_mod.load(Path(repo)), ".".join(map(str, sys.version_info[:3])), {"darwin": "Darwin", "linux": "Linux"}.get(sys.platform, sys.platform))
     except Exception as ex:   # additional information only
         man = {"items": [], "scanned": 0, "caveat": f"the manifest could not be built ({type(ex).__name__})"}
+    try:
+        from . import advice, envsetup as _env
+        ign = next((i["names"] for i in man.get("items", []) if i.get("category", "").startswith("git-ignored")), [])
+        nxt = advice.next_steps(contexts, str(_env._project_name(Path(repo)) or ""), ign)
+    except Exception:   # additional information only
+        nxt = []
     try:
         tim = capsule_mod.timing(Path(repo), capsule_mod.load(Path(repo)))
     except Exception:
@@ -116,7 +138,7 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
     return {"version": 1, "manifest": man, "timing": tim,
             "receipt": {"commit": d.commit, "dirty": d.dirty, "base": base, "command": " ".join(a.test_cmd[0].split()[1:]) if getattr(a, "test_cmd", None) else "python -m pytest -q",
                         "replay_python": ".".join(map(str, sys.version_info[:3])), "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                        "valid_for": "this exact commit and working tree; any later edit makes it stale"},
+                        "valid_for": "this exact commit and working tree; any later edit makes it stale", "state": replay_state(repo)},
             "contexts": contexts, "reproducibility": {"code": code, "text": reading, "next_steps": nxt},
             "coverage": _coverage_section(cov, Path(repo)), "limits": LIMITS}
 
@@ -125,6 +147,8 @@ def render_text(p: dict) -> list:
     r = p["receipt"]
     o = ["EVIDENCE PACK (three separate dimensions; not a score)", "",
          f"1. Execution receipt: `{_t(r['command'])}` on commit {_t(r['commit'])[:8]}{' + uncommitted changes' if r['dirty'] else ''}, compared with {_t(r['base'])}; valid for {r['valid_for']}."]
+    if state_line(r.get("state")):
+        o.append(f"   {state_line(r['state'])}")
     for c in p["contexts"]:
         cn = c["counts"]
         o.append(f"   - {c['name']}: {c['result']}" + (f" ({cn.get('passed', 0)} passed, {cn.get('failed', 0)} failed)" if cn else "") + (f" - {c['summary']}" if c["result"] != "pass" and c["summary"] else ""))
@@ -157,7 +181,7 @@ def render_text(p: dict) -> list:
 
 def render_markdown(p: dict, esc) -> list:
     r = p["receipt"]
-    o = ["### Evidence pack", "", f"**1. Execution receipt.** `{esc(r['command'])}` on `{esc(r['commit'])[:10]}`{' plus uncommitted changes' if r['dirty'] else ''}; valid for {esc(r['valid_for'])}.", ""]
+    o = ["### Evidence pack", "", f"**1. Execution receipt.** `{esc(r['command'])}` on `{esc(r['commit'])[:10]}`{' plus uncommitted changes' if r['dirty'] else ''}; valid for {esc(r['valid_for'])}.", ""] + ([f"_{esc(state_line(r['state']), 500)}_", ""] if state_line(r.get("state")) else [])
     if p["contexts"]:
         o += ["| Context | Result | Detail |", "|---|---|---|"]
         for c in p["contexts"]:
@@ -192,7 +216,7 @@ def render_html(p: dict, e) -> str:
     else:
         cov = f"<p>Not available ({e(cv['reason'])}).</p>"
     return (f"<h2>Evidence pack</h2><p>Three separate dimensions, not a score.</p>"
-            f"<div class=\"q\"><div><b>1 · Execution receipt</b><code>{e(r['command'])}</code> on <code>{e(r['commit'])[:10]}</code>{' + uncommitted changes' if r['dirty'] else ''}; valid for {e(r['valid_for'])}."
+            f"<div class=\"q\"><div><b>1 · Execution receipt</b><code>{e(r['command'])}</code> on <code>{e(r['commit'])[:10]}</code>{' + uncommitted changes' if r['dirty'] else ''}; valid for {e(r['valid_for'])}." + (f"<br><small>{e(state_line(r['state']))}</small>" if state_line(r.get("state")) else "") +
             f"<table>{rows}</table></div>"
             f"<div><b>2 · Reproducibility</b>{e(p['reproducibility']['text'])}" + "".join(f"<br><small>Next step ({e(n['context'])}): {e(n['text'])}</small>" for n in p["reproducibility"].get("next_steps", [])) + "" + (f"<br><small>Timing: {e(p['timing']['text'])}</small>" if p.get("timing") else "") + "</div>"
             f"<div><b>3 · Changed-line coverage</b>{cov}</div>" + (manifest.render_html(p["manifest"], e) if p.get("manifest") else "") + "</div><p><small>Limits: {e(p['limits'])}</small></p>")
