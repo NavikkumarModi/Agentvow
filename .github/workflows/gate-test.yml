@@ -1,0 +1,14 @@
+# TEST ONLY (pull request to be closed, not merged): call this repository's reusable gate workflow (three jobs) in local-policy mode.
+name: gate-test
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  gate:
+    uses: ./.github/workflows/gate.yml
+    with:
+      fail-on: block
+      test-timeout: "1500"
