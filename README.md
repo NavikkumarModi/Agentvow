@@ -84,6 +84,9 @@ Running tests executes the project's code. It runs in a sandbox: macOS `sandbox-
 ## Known limits
 Python only for impact and API checks; claim extraction is rule-based (three claim types); CI job classification is by name; trivialised tests are not detected; tests that start daemons can hang under the sandbox (ends at `--test-timeout`); hooks and Copilot integration are Preview features and only the Copilot CLI engine inside VS Code has been observed live; Windows has no test sandbox (tests are refused there); the chat-injection routes go through the model; one annotator behind every hand-validated number.
 
+## Control plane service (experimental, not deployed)
+`controlplane/service/` is a self-hostable service for the gate workflow: it accepts receipts only from the exact trusted workflow (GitHub Actions identity token), asks GitHub whether the commit matches the receipt, applies the policy from the base branch, and sets the `agentvow/evidence` check. It stores receipts only and never runs your code. Status: built and tested against fakes (22 tests); never run against real GitHub, not deployed, no adversarial review yet. Setup and the list of unverified items: `docs/CONTROLPLANE_PHASE1.md`.
+
 ## Develop and validate
 ```bash
 scripts/validate_all.sh        # tests, consistency, secret scan, wheel + clean-room install, extension package, leaks (builds dist/)
