@@ -21,6 +21,9 @@ Reviewer: an independent agent instructed to falsify the service (CLAUDE.md: adv
 
 Documentation overclaims corrected: threat-model rows 1, 2, 3 and 5, the "start-up fails" statement, and a warning that branch protection must name the App as the check's source.
 
+## Follow-up after the first fixes
+The caller-chosen `service-url` was pinned: it may only select an address written into `gate.yml` (`ALLOWED_SERVICE_URLS`, exact match, checked before a token is requested). The hosted address is a placeholder until one is assigned.
+
 ## Residuals (not fixed, stated)
 * A sandbox escape inside the replay job can still forge a receipt that carries a valid token (the replay job has no token, but its output is what the upload job sends).
 * Write permission of an acknowledger is checked when the comment is processed, not again on every later evaluation.

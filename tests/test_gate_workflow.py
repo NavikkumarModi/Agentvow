@@ -77,7 +77,7 @@ class Static(unittest.TestCase):
         self.assertIn("core.hooksPath=/dev/null", run)
 
     def guard(self, **env):
-        base = {**os.environ, "EVENT": "pull_request", "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.0", "POLICY_PATH": ".agentvow/policy.json", "SERVICE_URL": ""}
+        base = {**os.environ, "EVENT": "pull_request", "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.0", "POLICY_PATH": ".agentvow/policy.json", "SERVICE_URL": "", "ALLOWED_SERVICE_URLS": "https://svc.example http://127.0.0.1:8000"}
         return subprocess.run(["bash", "-c", next(iter(steps().values()))["run"]], env={**base, **env}, capture_output=True, text=True)
 
     def test_guard(self):
@@ -93,10 +93,20 @@ class Static(unittest.TestCase):
             self.assertEqual(self.guard(VERSION=bad).returncode, 1, repr(bad))
         for bad in ("/etc/passwd", "../x", "a b", "a;b", ""):
             self.assertEqual(self.guard(POLICY_PATH=bad).returncode, 1, repr(bad))
-        for bad in ("http://evil.example", "ftp://x", "file:///etc"):
+        for bad in ("http://evil.example", "ftp://x", "file:///etc", "https://svc.example.evil.test", "https://svc.example/", "https://svc.example https://evil.test", "https://evil.test/https://svc.example", "http://127.0.0.1:80000"):
             self.assertEqual(self.guard(SERVICE_URL=bad).returncode, 1, bad)
         for ok in ("https://svc.example", "http://127.0.0.1:8000"):
             self.assertEqual(self.guard(SERVICE_URL=ok).returncode, 0, ok)
+
+    def test_the_shipped_allow_list_is_hard_coded_exact_and_has_no_test_addresses(self):
+        text = (ROOT / ".github" / "workflows" / "gate.yml").read_text()
+        import re as _re
+        m = _re.search(r'^  ALLOWED_SERVICE_URLS: "([^"]*)"', text, _re.M)
+        self.assertIsNotNone(m)
+        for u in m.group(1).split():
+            self.assertTrue(u.startswith("https://") and "127.0.0.1" not in u and "localhost" not in u, u)
+        up = steps("upload")["Post the receipt to the control plane"]["run"]
+        self.assertLess(up.index("ALLOWED_SERVICE_URLS"), up.index("ACTIONS_ID_TOKEN_REQUEST_URL"))   # checked before any token is requested
 
     def run_decide(self, decision, service, expected, replay="success", fail_on="block"):
         r = steps("decide")["Apply fail-on"]["run"]
@@ -160,7 +170,7 @@ class Simulation(unittest.TestCase):
         (shim / "agentvow").write_text('#!/bin/sh\nexec python3 -m agentvow.cli "$@"\n'); (shim / "agentvow").chmod(0o755)
         env = {**os.environ, "PATH": f"{shim}:{os.environ['PATH']}", "PYTHONPATH": str(ROOT), "RUNNER_TEMP": str(self.rt), "GITHUB_OUTPUT": str(self.rt / "out"), "GITHUB_STEP_SUMMARY": str(self.rt / "sum"),
                "GITHUB_WORKSPACE": str(self.work), "CLAIM": claim, "BASE_SHA": self.base_sha, "TEST_TIMEOUT": "300", "TEST_COMMAND": test_cmd, "REPO_SLUG": "o/n", "BASE_REF": "main", "POLICY_PATH": ".agentvow/policy.json",
-               "SERVICE_URL": f"http://127.0.0.1:{self.srv.server_address[1]}", "AUDIENCE": "agentvow-control-plane", "FAIL_ON": fail_on, "AGENTVOW_HOME": str(self.t / "home")}
+               "SERVICE_URL": f"http://127.0.0.1:{self.srv.server_address[1]}", "ALLOWED_SERVICE_URLS": f"http://127.0.0.1:{self.srv.server_address[1]}", "AUDIENCE": "agentvow-control-plane", "FAIL_ON": fail_on, "AGENTVOW_HOME": str(self.t / "home")}
         (self.rt / "out").write_text(""); (self.rt / "sum").write_text("")
         run = lambda step, extra=None: subprocess.run(["bash", "-c", step["run"]], cwd=self.rt, env={**env, **(extra or {})}, capture_output=True, text=True)   # every step runs from the neutral runner temp directory
         S, U, D = steps("replay"), steps("upload"), steps("decide"); res = {}

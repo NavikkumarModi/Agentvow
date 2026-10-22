@@ -16,7 +16,7 @@ jobs:
       fail-on: block        # block | needs_acknowledgement | never
       # service-url: https://...   # the control plane; empty = local policy evaluation only (free tier)
 ```
-Inputs are validated before anything runs: the event must be `pull_request`, `push` or `workflow_dispatch`; `test-timeout` a whole number; `agentvow-version` an exact version of digits and dots; `policy-path` a plain relative path; `service-url` https (or localhost for tests).
+Inputs are validated before anything runs: the event must be `pull_request`, `push` or `workflow_dispatch`; `test-timeout` a whole number; `agentvow-version` an exact version of digits and dots; `policy-path` a plain relative path; `service-url` must be one of the addresses written into the workflow file itself (`ALLOWED_SERVICE_URLS`, exact match). The caller's workflow comes from the pull request, so it cannot be allowed to name a server; to self-host, copy the workflow, put your address there and make your service trust your copy's `job_workflow_ref`. The hosted address is not assigned yet, so nothing uploads from the shipped file until it is.
 
 **Policy file** (`agentvow policy init` prints the default): a contradiction always blocks and cannot be acknowledged; UNKNOWN, a capture supplied as a file (not authenticated), and a missing measurement behind a configured coverage floor each need a named person's acknowledgement by default; optional minimum changed-line coverage and required reproducibility. **If the policy cannot be read from the base branch the gate blocks** (it does not fall back to a weaker default); if the base branch simply has no policy file the default applies. A pull request that edits the policy file is judged by the old policy.
 
