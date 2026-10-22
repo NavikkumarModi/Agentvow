@@ -46,7 +46,7 @@ PyPI `agentvow` 0.2.0 published (GitHub release v0.2.0, trusted publishing) and 
 ## Status (2026-10-14): 0.2.1
 PyPI `agentvow` 0.2.1 published (GitHub release v0.2.1, trusted publishing) and verified by installing it from the registry into a clean environment (version, `demo`, `post-test-hook`, `check --evidence-pack` showing the Timing line, coverage and the not-reproduced manifest, `doctor`). CI green on ubuntu and macos for the release commit; 38/38 validation checks. The extension `dist/agentvow-0.2.1.vsix` is attached to the GitHub release; it has no functional change from 0.2.0 (the version was kept in step), so the Marketplace upload is optional.
 
-## Status (2026-10-21): 0.3.0 release candidate, NOT published
+## Status (2026-10-22): 0.3.0 release commit prepared; the GitHub release (which uploads to PyPI) is the remaining step and has NOT been made
 Version 0.3.0 is prepared (version bump, changelog, `docs/RELEASE_NOTES_0.3.0.md`, `dist/agentvow-0.3.0-py3-none-any.whl` and `dist/agentvow-0.3.0.vsix` built by `scripts/validate_all.sh`) but nothing has been uploaded or tagged. To publish, follow sections 1 and 2 with the 0.3.0 files after reviewing the release notes: `gh release create v0.3.0 --repo NavikkumarModi/Agentvow --title "Agentvow 0.3.0" --notes-file docs/RELEASE_NOTES_0.3.0.md` (triggers the trusted-publishing workflow). The extension has no functional change from 0.2.0 (the version is kept in step), so its Marketplace upload is optional.
 
 ### Publish review of the 0.3.0 candidate (2026-10-22), before any upload

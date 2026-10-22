@@ -4,7 +4,7 @@
 
 When a coding agent says "all tests pass" or "nothing else depends on this", Agentvow checks that against the repository and tells you what it could confirm, what it contradicted, and what it could not check. It runs **outside** the agent (an agent must not grade itself), uses no LLM, and never approves, rejects or merges anything.
 
-**Status: 0.3.0 release candidate (prototype); the latest published release is 0.2.1, so `agentvow init` below needs 0.3.0.** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
+**Status: 0.3.0 (prototype).** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
 
 ![An agent says it added retries to fetch() and that all tests pass. Agentvow records the packages of the agent's environment, replays the tests in a clean sandbox built from them, and reports the claim supported with the basis stated, while also saying that 6 of the 11 changed source lines were run by the tests and naming the lines that were not.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo.gif?raw=true)
 

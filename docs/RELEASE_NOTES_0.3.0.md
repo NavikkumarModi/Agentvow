@@ -1,4 +1,4 @@
-# Agentvow 0.3.0 (release candidate; not published)
+# Agentvow 0.3.0
 
 Agentvow checks what a coding agent says it did against what it can independently observe. It informs you; it never approves, rejects or merges, and no language model decides a verdict. Still a prototype, not a safety verdict.
 
