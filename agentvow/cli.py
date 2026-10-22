@@ -512,12 +512,20 @@ def main(argv=None) -> int:
     rc.add_argument("--repo-slug", required=True, help="owner/name as the CI runner knows it")
     rc.add_argument("--repo", default=".")
     rc.add_argument("--base", default="")
+    rc.add_argument("--pr", type=int, default=None, help="pull request number (optional)")
     rc.add_argument("-o", "--output", default="-")
     po = sub.add_parser("policy", help="evaluate a receipt under a policy (allow / block / needs_acknowledgement), or print the default policy")
     po.add_argument("action", choices=["evaluate", "init"])
     po.add_argument("--policy", default=None, help="policy file (agentvow-policy/1). In CI take it from the BASE branch, never from the pull request")
     po.add_argument("--receipt", default=None)
     po.add_argument("--ack", action="append", default=[], help="acknowledgement file (agentvow-ack/1); only counts for exactly this receipt and a listed acknowledger")
+    pr_ = sub.add_parser("pilot-report", help="a mechanical evidence report over a directory of receipts (counts, decisions under a policy, reproducibility, coverage, what could not be recreated); no claim about defects prevented")
+    pr_.add_argument("--receipts", required=True, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
+    pr_.add_argument("--acks", default=None, help="directory of acknowledgement JSON files")
+    pr_.add_argument("--policy", default=None)
+    pr_.add_argument("--title", default="Agent pull request evidence report")
+    pr_.add_argument("--example", action="store_true", help="label the report as built from synthetic data")
+    pr_.add_argument("-o", "--output", default="-")
     ini = sub.add_parser("init", help="add the Claude Code hooks (capture after tests, check at stop) to a settings file, with a preview, a confirmation and a backup")
     ini.add_argument("--repo", default=".")
     ini.add_argument("--agent", choices=["claude"], default="claude", help="only Claude Code is supported by this command (GitHub Copilot: the VS Code extension command 'Agentvow: Add the agent hook')")
@@ -576,6 +584,23 @@ def main(argv=None) -> int:
         ap.error("--base must be a commit or branch name, not an option")
     if a.cmd == "init":
         return run_init(a)
+    if a.cmd == "pilot-report":
+        from . import pilot_report as pr_mod
+        try:
+            rcpts, bad = pr_mod.load(a.receipts)
+            acks = pr_mod.load_acks(a.acks) if a.acks else []
+            pol = json.loads(Path(a.policy).read_text(encoding="utf-8")) if a.policy else None
+        except (OSError, ValueError) as e:
+            print(f"agentvow pilot-report: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+            return 3
+        s = pr_mod.summarize(rcpts, pol, acks)
+        s["invalid"] = bad
+        text = pr_mod.render_markdown(s, a.title, a.example) + (f"\n_{bad} file(s) in the receipts directory were not valid receipts and were skipped._\n" if bad else "")
+        if a.output == "-":
+            print(text)
+        else:
+            Path(a.output).write_text(text, encoding="utf-8")
+        return 0
     if a.cmd == "receipt":
         from . import policy as policy_mod
         try:
@@ -584,7 +609,7 @@ def main(argv=None) -> int:
         except (OSError, ValueError, reality.CollectorError) as e:
             print(f"agentvow receipt: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
             return 3
-        out = json.dumps(policy_mod.build_receipt(dec, a.repo_slug, tree, a.base), indent=2) + "\n"
+        out = json.dumps(policy_mod.build_receipt(dec, a.repo_slug, tree, a.base, a.pr), indent=2) + "\n"
         if a.output == "-":
             print(out, end="")
         else:

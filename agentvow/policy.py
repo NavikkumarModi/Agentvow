@@ -29,7 +29,7 @@ def sha(obj) -> str:
     return hashlib.sha256(canon(obj)).hexdigest()
 
 
-def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "") -> dict:
+def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: int | None = None) -> dict:
     """From the JSON that `agentvow check --json` prints. `repo` is `owner/name` as the caller (the CI runner) knows it."""
     claims = []
     for f in decision.get("findings", []):
@@ -41,7 +41,7 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "") -> d
     pack = decision.get("pack") or {}
     cov = pack.get("coverage") or {}
     return {"schema": RECEIPT, "tool_version": __version__, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "repo": repo, "commit": decision.get("commit", ""),
-            "git_tree": git_tree, "base": base, "status": decision.get("status", ""), "claims": claims, "unexamined": int(decision.get("unexamined") or 0),
+            "git_tree": git_tree, "base": base, "pr": pr if isinstance(pr, int) and pr > 0 else None, "status": decision.get("status", ""), "claims": claims, "unexamined": int(decision.get("unexamined") or 0),
             "reproducibility": (pack.get("reproducibility") or {}).get("code", ""),
             "contexts": [{"name": str(c.get("name", ""))[:60], "result": str(c.get("result", ""))[:20], "passed": (c.get("counts") or {}).get("passed"), "failed": (c.get("counts") or {}).get("failed"),
                           "dropped_pins": len(c.get("dropped_pins") or [])} for c in pack.get("contexts", [])],

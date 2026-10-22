@@ -104,6 +104,7 @@ jobs:
           TEST_TIMEOUT: ${{ inputs.test-timeout }}
           TEST_COMMAND: ${{ inputs.test-command }}
           REPO_SLUG: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set +e
           mkdir -p "$RUNNER_TEMP/gate"
@@ -115,7 +116,7 @@ jobs:
             agentvow check --repo . ${BASE_SHA:+--base "$BASE_SHA"} --transcript "$RUNNER_TEMP/gate/claim.txt" --evidence-pack --test-timeout "$TEST_TIMEOUT" "${ARGS[@]}" --json > "$RUNNER_TEMP/gate/decision.json"
           echo "check_exit=$?" >> "$GITHUB_OUTPUT"
           env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL -u ACTIONS_RUNTIME_TOKEN -u ACTIONS_RUNTIME_URL -u GITHUB_TOKEN \
-            agentvow receipt --decision "$RUNNER_TEMP/gate/decision.json" --repo-slug "$REPO_SLUG" --repo . ${BASE_SHA:+--base "$BASE_SHA"} -o "$RUNNER_TEMP/gate/receipt.json"
+            agentvow receipt --decision "$RUNNER_TEMP/gate/decision.json" --repo-slug "$REPO_SLUG" --repo . ${BASE_SHA:+--base "$BASE_SHA"} ${PR_NUMBER:+--pr "$PR_NUMBER"} -o "$RUNNER_TEMP/gate/receipt.json"
           echo "receipt_exit=$?" >> "$GITHUB_OUTPUT"
       - name: Evaluate the policy from the base branch
         id: policy
