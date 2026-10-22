@@ -45,6 +45,8 @@ class Recipe:
     notes: str = ""
     sha256: str = ""
     runner_supplied: str = ""   # set by build_env: the test runner (pytest) Agentvow installed because the recipe used it but did not declare it
+    drop_unavailable: bool = False   # captured environments only: a pinned package pip cannot install on THIS platform is left out (and reported) instead of aborting the whole `-r` install
+    dropped_pins: list = field(default_factory=list)   # set by build_env: the pins left out because of drop_unavailable, e.g. ["pymsalruntime==0.20.6"]
 
 
 def _rel_path_ok(s: str) -> bool:
@@ -189,6 +191,15 @@ def _uses_pytest(recipe) -> bool:
     return "pytest" in t[:2] or (t[:1] == ["-m"] and t[1:2] == ["pytest"])
 
 
+_UNAVAILABLE = re.compile(r"(?:No matching distribution found for|Could not find a version that satisfies the requirement|Could not find a version that satisfies the requirement )\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
+
+
+def _unavailable_pin(out: str):
+    """The package pip says it cannot find a distribution for (a pin with no wheel for this platform or Python), or None."""
+    m = _UNAVAILABLE.search(out)
+    return m.group(1) if m else None
+
+
 def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int = 300, extra_files: dict | None = None):
     """Clean venv + ONLY the declared setup steps (sandboxed pip, size/disk guards from envsetup). -> (python path or None, notes, aborted)."""
     import subprocess, sys
@@ -214,6 +225,25 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
         if rc == 125:
             notes.append(f"setup `pip install {' '.join(args)}`: {out}")
             return str(venv / "bin/python"), notes, out
+        tries = 0
+        while rc and rc != 125 and recipe.drop_unavailable and len(args) == 2 and args[0] == "-r" and tries < 8:
+            pin = _unavailable_pin(str(out))
+            reqf = proj / args[1]
+            if not pin or not reqf.is_file():
+                break
+            kept, gone = [], []
+            for ln in reqf.read_text().splitlines():
+                (gone if re.split(r"[=<>!~ \[;]", ln.strip(), maxsplit=1)[0].replace("_", "-").lower() == pin.replace("_", "-").lower() else kept).append(ln)
+            if not gone:
+                break
+            reqf.write_text("\n".join(kept) + "\n")
+            recipe.dropped_pins += [g.strip() for g in gone]
+            notes.append(f"pinned package left out because pip could not install it on this platform: {gone[0].strip()}")
+            tries += 1
+            rc, out = envsetup._pip(venv, proj, home, ["install", "-q", *args], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
+            if rc == 125:
+                notes.append(f"setup `pip install {' '.join(args)}`: {out}")
+                return str(venv / "bin/python"), notes, out
         if rc:
             notes.append(f"setup `pip install {' '.join(args)}` failed: " + " ".join(str(out).split())[-140:])
     for args in recipe.setup:   # directories INSIDE the repository that the recipe installs from (monorepo sub-packages): their sources must stay importable from each worktree

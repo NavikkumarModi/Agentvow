@@ -30,7 +30,7 @@ def _context_from_evidence(d) -> dict | None:
     e = runs[-1]
     name = {"capsule": "captured environment", "recipe": "the agent's declared recipe"}.get(e.basis, "project-native setup")
     result, _, summary = str(e.detail).partition(": ")
-    return {"name": name, "basis": e.basis or "native", "available": True, "result": result or "unknown", "counts": dict(e.counts), "summary": _t(summary)[:240], "changed_cov": e.changed_cov}
+    return {"name": name, "basis": e.basis or "native", "available": True, "result": result or "unknown", "counts": dict(e.counts), "summary": _t(summary)[:240], "changed_cov": e.changed_cov, "dropped_pins": [_t(x)[:80] for x in (getattr(e, "dropped_pins", None) or [])][:8]}
 
 
 def _native_context(a, repo: Path, base: str, collect) -> dict:
@@ -160,6 +160,8 @@ def render_text(p: dict) -> list:
         if c.get("steps") or c.get("env_names"):
             o.append("     built from the repository's own files with: " + "; ".join("pip install " + x for x in c.get("steps", [])[:6]) + (" ..." if len(c.get("steps", [])) > 6 else "")
                      + (f"; environment values set from CI: {', '.join(c['env_names'])}" if c.get("env_names") else ""))
+        if c.get("dropped_pins"):
+            o.append(f"     {len(c['dropped_pins'])} pinned package(s) could not be installed on this platform and were left out: {', '.join(c['dropped_pins'][:4])}")
         for n in c.get("setup_notes", []):
             o.append(f"     note: {n}")
         if c.get("inputs_changed"):
@@ -197,6 +199,7 @@ def render_markdown(p: dict, esc) -> list:
         for c in p["contexts"]:
             o.append(f"| {esc(c['name'])} | **{esc(c['result'])}** | {esc(c['summary'], 120) if c['result'] != 'pass' else ''} |")
         o.append("")
+        o += [f"_{esc(c['name'])}: {len(c['dropped_pins'])} pinned package(s) could not be installed on this platform and were left out: {esc(', '.join(c['dropped_pins'][:4]))}._" for c in p["contexts"] if c.get("dropped_pins")]
     o += [f"**2. Reproducibility.** {esc(p['reproducibility']['text'], 500)}"]
     o += [f"- _Next step ({esc(n['context'])}):_ {esc(n['text'], 500)}" for n in p["reproducibility"].get("next_steps", [])]
     if p.get("timing"):
@@ -217,7 +220,7 @@ def render_markdown(p: dict, esc) -> list:
 
 def render_html(p: dict, e) -> str:
     r = p["receipt"]
-    rows = "".join(f"<tr><td>{e(c['name'])}</td><td><b>{e(c['result'])}</b></td><td>{e(c['summary']) if c['result'] != 'pass' else ''}</td></tr>" for c in p["contexts"]) or "<tr><td colspan=3>no usable test run</td></tr>"
+    rows = "".join(f"<tr><td>{e(c['name'])}</td><td><b>{e(c['result'])}</b></td><td>{e(c['summary']) if c['result'] != 'pass' else ''}{(' (' + str(len(c['dropped_pins'])) + ' pinned package(s) could not be installed on this platform and were left out: ' + e(', '.join(c['dropped_pins'][:4])) + ')') if c.get('dropped_pins') else ''}</td></tr>" for c in p["contexts"]) or "<tr><td colspan=3>no usable test run</td></tr>"
     cv = p["coverage"]
     if cv["available"]:
         cov = (f"<p><b>{cv['executed']} of {cv['executable']}</b> changed executable source lines were run by the tests.</p><ul>"

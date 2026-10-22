@@ -10,7 +10,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-SRC, DATA, OUT = Path("/src"), Path("/data"), Path("/out/stageb6_linux.jsonl")
+SRC, DATA, OUT = Path("/src"), Path("/data"), Path(os.environ.get("OUTFILE", "/out/stageb6_linux.jsonl"))
+ONLY = os.environ.get("ONLY")   # "owner/name#pr" to run one task (a check of a fix)
 os.environ["AGENTVOW_MAX_ENV_MB"] = "3072"
 sys.path.insert(0, str(SRC))
 
@@ -52,7 +53,7 @@ def main():
     envsetup.MAX_VENV = 3 * 1024**3
     for r in valid:
         key = (r["repo"], r["pr"])
-        if key in done:
+        if key in done or (ONLY and f"{r['repo']}#{r['pr']}" != ONLY):
             continue
         c = tasks[key]
         rd = DATA / "stageb6_runs" / f"{r['repo'].replace('/', '_')}_{r['pr']}"

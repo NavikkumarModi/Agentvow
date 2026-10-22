@@ -165,5 +165,5 @@ def to_recipe(cap: dict, test_argv: list):
     from .recipe import Recipe
     body = "\n".join(cap["packages"]) + "\n"
     sha = hashlib.sha256(json.dumps({k: cap[k] for k in ("commit", "tree", "packages", "python_version")}, sort_keys=True).encode()).hexdigest()
-    rec = Recipe(setup=[["-r", REQS]], test=list(test_argv), env={}, sha256=sha)
+    rec = Recipe(setup=[["-r", REQS]], test=list(test_argv), env={}, sha256=sha, drop_unavailable=True)
     return rec, {REQS: body}

@@ -252,6 +252,11 @@ def _tests_core(c, evidence, snap, changed=(), repo=None) -> Finding:
             f.why += (" Basis: the environment CAPTURED when the agent ran its tests (its installed Python packages, replayed in a clean sandbox): the result is reproducible from that captured "
                       "state. This does not show the repository declares those packages, does not cover system packages, services, generated files or secrets, and reproducibility is not correctness.")
             f.meta = {**f.meta, "support_basis": "captured_environment", **_runner_meta(runs)}
+            dp = sorted({p for e in runs if e.basis == "capsule" for p in (getattr(e, "dropped_pins", None) or [])})
+            if dp:
+                f.meta["dropped_pins"] = dp
+                f.why += (f" {len(dp)} pinned package(s) could not be installed on this platform and were left out of the replay ({', '.join(dp[:4])}{', ...' if len(dp) > 4 else ''}); "
+                          "the result holds without them, which is not the agent's exact environment.")
         elif any(e.basis == "recipe" for e in runs) and f.verdict in ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED"):
             f.why += (" Basis: the AGENT's own declared recipe (conditioned support): the result holds under the conditions the agent declared; "
                       "this does not show the repository reproduces it from its own setup instructions.")

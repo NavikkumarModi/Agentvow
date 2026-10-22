@@ -44,6 +44,10 @@ def step(ctx: dict, own: str = "", other: dict | None = None, ignored: list | No
     if str(ctx.get("result")) == "pass":
         return None
     name = ctx.get("name", "a context")
+    if ctx.get("dropped_pins"):
+        pins = ", ".join(ctx["dropped_pins"][:3])
+        return {"context": name, "kind": "uninstallable_pin", "text": (f"A pinned package could not be installed on this platform ({pins}: pip found no distribution for this operating system or Python), so the replay ran without it. "
+                                                                          "If the tests need it, the failure is that gap and not the change: replay on the platform the capture came from, or check whether the tests really need it.")}
     kind, detail = classify(ctx)
     captured = "captured" in name
     recipe = "recipe" in name

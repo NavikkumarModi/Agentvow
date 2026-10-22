@@ -122,7 +122,7 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, covera
         if coverage:
             _ensure_coverage(py, venv_root)
         targv = [*rec.test, "-rA", "-p", "no:cacheprovider"]
-        meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied,
+        meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied, "dropped_pins": list(rec.dropped_pins),
                 "capsule_python": cap["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))}
         collect_test_evidence(repo, base, [("tests", [py, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "coverage": coverage, "meta": meta})], timeout)
         return ""
