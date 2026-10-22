@@ -12,10 +12,11 @@ import hashlib
 import json
 import re
 import shlex
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import envsetup
+from . import envsetup, runner
 
 SCHEMA = "agentvow-recipe/1"
 KEYS = {"schema", "python", "setup", "prepare", "test", "env", "notes"}
@@ -220,7 +221,11 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
             for a in args:
                 if not a.startswith("-") and a != "." and not a.startswith(".") and "/" not in a and re.sub(r"[-_.]+", "-", re.split(r"[\[<>=!~ ]", a, 1)[0]).lower() == re.sub(r"[-_.]+", "-", str(own)).lower():
                     return None, [f"setup installs a package with the project's own name ({own}); refused"], "shadowing"
+    t_start = time.time()
     for args in recipe.setup:
+        if time.time() - t_start > envsetup.BUILD_BUDGET:   # a repository chooses its install steps: an overall wall-clock cap, not only a per-step one
+            notes.append(f"the install steps used more than the overall budget of {envsetup.BUILD_BUDGET} s (AGENTVOW_BUILD_BUDGET); stopped before `pip install {' '.join(args)}`")
+            return str(venv / "bin/python"), notes, "timeout"
         rc, out = envsetup._pip(venv, proj, home, ["install", "-q", *args], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
         if rc == 125:
             notes.append(f"setup `pip install {' '.join(args)}`: {out}")
@@ -253,7 +258,7 @@ def build_env(repo: Path, recipe: Recipe, venv: Path, home: Path, timeout: int =
                 if rel != "." and rel not in recipe.local_roots:
                     recipe.local_roots.append(rel)
     envsetup.uninstall_project_dists(venv, proj, home, envsetup._project_name(proj), envsetup.MAX_VENV, envsetup.MIN_FREE)   # the project and any monorepo sub-packages
-    if _uses_pytest(recipe) and subprocess.run([str(venv / "bin/python"), "-I", "-c", "import pytest"], capture_output=True).returncode:
+    if _uses_pytest(recipe) and runner.probe(venv / "bin/python", "import pytest").returncode:
         # the declared command runs pytest but nothing declared installs it (typically preinstalled in the agent's own environment). Supply ONLY the runner, and say so.
         rc, out = envsetup._pip(venv, proj, home, ["install", "-q", "pytest"], timeout, envsetup.MAX_VENV, envsetup.MIN_FREE)
         if rc == 0:

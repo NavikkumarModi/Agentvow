@@ -230,6 +230,17 @@ def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = Fa
     return [*_bwrap_prefix(paths, network, argv, env), *argv]
 
 
+def probe(py, code: str, *args: str, timeout: int = 60) -> subprocess.CompletedProcess:
+    """Run `python -I -s -c code args` of an interpreter that may belong to a REPOSITORY-CONTROLLED environment (a venv whose site-packages a package install could have written to) INSIDE the sandbox,
+    from a fresh empty directory, with a minimal environment (no tokens, no credentials). Never run such an interpreter unsandboxed or from the checkout: a planted `coverage.py` or a `.pth` file would execute."""
+    scratch = Path(tempfile.mkdtemp(prefix="am", dir=scratch_base())).resolve()
+    try:
+        env = {"PATH": os.environ.get("PATH", ""), "HOME": str(scratch), "TMPDIR": str(scratch), "PYTHONDONTWRITEBYTECODE": "1"}
+        return subprocess.run(wrap([str(py), "-I", "-s", "-c", code, *args], scratch, scratch, env=env), cwd=scratch, env=env, capture_output=True, text=True, timeout=timeout)
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 _SANDBOX_OK: dict = {}
 
 

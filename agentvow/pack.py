@@ -15,7 +15,8 @@ from pathlib import Path
 from . import capsule as capsule_mod, changedcov, envsetup, manifest, reality
 
 LIMITS = ("Python packages and the interpreter version are all that a captured environment covers (no system packages, services, generated files or secrets); "
-          "a test run that reproduces is not a correct change; a line that ran is not a line that was checked.")
+          "a test run that reproduces is not a correct change; a line that ran is not a line that was checked; and the output and exit code of a test run are written by the code under test, "
+          "so for a pull request from someone you do not trust this pack is evidence to weigh, not verification.")
 
 
 def _t(x) -> str:
@@ -40,7 +41,7 @@ def _native_context(a, repo: Path, base: str, collect) -> dict:
     try:
         py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
         steps = [_t(" ".join(x))[:100] for x in (rec.setup if rec else [])]
-        extra = {"steps": steps, "env_names": sorted(rec.env)[:12] if rec else [], "setup_notes": [_t(n)[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4],
+        extra = {"steps": steps, "env_names": sorted(f"{k}={str(v)[:40]}" for k, v in rec.env.items())[:12] if rec else [], "setup_notes": [_t(n)[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4],
                  "inputs": baseline.input_files(repo)}
         if not py or aborted:
             why = f"the environment could not be built ({aborted})" if aborted else ("; ".join(notes)[:160] or "the environment could not be built")

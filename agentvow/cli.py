@@ -48,7 +48,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
             run_argv = argv
             h_cov = None
             if opts.get("coverage"):   # changed-line coverage: run the head tests under coverage (an empty rc file: the project's own coverage config is never loaded)
-                if subprocess.run([argv[0], "-c", "import coverage"], capture_output=True).returncode != 0:
+                if runner.probe(argv[0], "import coverage").returncode != 0:
                     h_cov = {"available": False, "reason": "coverage is not installed in the test environment"}
                 else:
                     cov_rc, cov_df = tmp / "empty.rc", tmp / "head" / ".agentvow" / "cov"
@@ -91,7 +91,7 @@ def collect_test_evidence(repo: Path, base: str, suites: list, timeout: int = 60
 
 def _ensure_coverage(py: str, venv_root: Path) -> None:
     """Install `coverage` into an environment Agentvow itself built (never into a user-supplied one), with the same guards as every other install."""
-    if subprocess.run([py, "-c", "import coverage"], capture_output=True).returncode == 0:
+    if runner.probe(py, "import coverage").returncode == 0:
         return
     home = venv_root / "home"
     envsetup._pip(venv_root / "venv", home / "proj" if (home / "proj").is_dir() else home, home, ["install", "-q", "coverage"], 300, envsetup.MAX_VENV, envsetup.MIN_FREE)
@@ -675,9 +675,12 @@ def _run_auto(a, repo, base, base_how, text):
         try:
             if getattr(a, "evidence_pack", False):   # the pack's project-native context is built from the repository's own files (baseline.py), here as in the hook path
                 from . import baseline
-                py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
+                try:
+                    py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
+                except (OSError, subprocess.SubprocessError, ValueError, recipe_mod_error()) as e:   # an unbuildable environment is a result ("could not be built"), not a tool error
+                    py, rec, notes, aborted = None, None, [f"environment setup raised {type(e).__name__}"], None
                 a._native = rec
-                a._native_info = {"steps": [" ".join(x)[:100] for x in (rec.setup if rec else [])], "env_names": sorted(rec.env)[:12] if rec else [],
+                a._native_info = {"steps": [" ".join(x)[:100] for x in (rec.setup if rec else [])], "env_names": sorted(f"{k}={str(v)[:40]}" for k, v in rec.env.items())[:12] if rec else [],
                                   "setup_notes": [n[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4], "inputs": baseline.input_files(repo)}
             else:
                 py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
@@ -689,6 +692,9 @@ def _run_auto(a, repo, base, base_how, text):
             if aborted and py:   # partial environment (a resource guard stopped the install): do not run tests in it
                 a.run_tests = False
                 a._env_aborted = str(aborted)
+            elif not py and getattr(a, "evidence_pack", False):   # no environment at all: fail closed, never test in the host interpreter
+                a.run_tests = False
+                a._env_aborted = ("; ".join(notes) or "no environment")[:80]
             d = _run(a, repo, base, base_how, text)
         finally:
             shutil.rmtree(venv_root, ignore_errors=True)

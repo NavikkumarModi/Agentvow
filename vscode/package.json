@@ -2,7 +2,7 @@
   "name": "agentvow",
   "displayName": "Agentvow",
   "description": "Check what a coding agent says it did against what is actually in your repository, before you approve.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "NavikkumarModi",
   "license": "MIT",
   "engines": {

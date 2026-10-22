@@ -130,22 +130,22 @@ class Honesty(unittest.TestCase):
         self.assertIn("can also fail for lack of files or settings", t)
 
     def test_pack_names_install_inputs_the_change_touched_and_ci_env(self):
-        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["pip install ."], env_names=["FOO"], inputs_changed=[".github/workflows/ci.yml"], setup_notes=["x left out"])
+        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["pip install ."], env_names=["FOO=bar"], inputs_changed=[".github/workflows/ci.yml"], setup_notes=["x left out"])
         p = {"version": 1, "manifest": None, "timing": None, "receipt": {"commit": "abc", "dirty": False, "base": "main", "command": "c", "replay_python": "3", "created": "t", "valid_for": "v"},
              "contexts": [c], "reproducibility": {"code": "single", "text": "r", "next_steps": []}, "coverage": {"available": False, "reason": "n/a"}, "limits": "l"}
         txt = "\n".join(pack.render_text(p))
-        self.assertIn("environment values set from CI: FOO", txt)
+        self.assertIn("environment values set from CI: FOO=bar", txt)
         self.assertIn("were changed in this change: .github/workflows/ci.yml", txt)
         self.assertIn("note: x left out", txt)
 
 
 class MarkdownContext(unittest.TestCase):
     def test_markdown_carries_the_install_steps_notes_and_touched_inputs(self):
-        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["."], env_names=["FOO"], inputs_changed=["Dockerfile"], setup_notes=["x left out"])
+        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["."], env_names=["FOO=bar"], inputs_changed=["Dockerfile"], setup_notes=["x left out"])
         p = {"version": 1, "manifest": None, "timing": None, "receipt": {"commit": "abc", "dirty": False, "base": "main", "command": "c", "replay_python": "3", "created": "t", "valid_for": "v"},
              "contexts": [c], "reproducibility": {"code": "single", "text": "r", "next_steps": []}, "coverage": {"available": False, "reason": "n/a"}, "limits": "l"}
         md = "\n".join(pack.render_markdown(p, lambda x, n=None: str(x)))
         self.assertIn("built from the repository's own files with: pip install .", md)
-        self.assertIn("environment values set from CI: FOO", md)
+        self.assertIn("environment values set from CI: FOO=bar", md)
         self.assertIn("note: x left out", md)
         self.assertIn("were changed in this change: Dockerfile", md)

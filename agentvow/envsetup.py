@@ -20,6 +20,7 @@ REQ_FILES = ("requirements.txt", "requirements-dev.txt", "requirements_dev.txt",
              "dev-requirements.txt", "test-requirements.txt", "tests/requirements.txt")
 MAX_VENV = int(float(os.environ.get("AGENTVOW_MAX_ENV_MB") or 700) * 1024**2)   # disk guard for a replay environment; raise it for projects with heavy pinned dependencies
 MIN_FREE = 2.5 * 1024**3
+BUILD_BUDGET = int(float(os.environ.get("AGENTVOW_BUILD_BUDGET") or 900))   # overall seconds for all install steps of one environment (each step also has its own timeout)
 
 
 def dir_size(p: Path) -> int:
@@ -113,7 +114,7 @@ _DIRECT_URL_SNIPPET = (
 def installed_from(venv: Path, proj: Path) -> list:
     """Distributions installed in `venv` from a local path inside the throwaway project copy `proj` (the project itself AND any sub-packages of a monorepo)."""
     import json
-    p = subprocess.run([str(Path(venv) / "bin" / "python"), "-I", "-c", _DIRECT_URL_SNIPPET, str(Path(proj).resolve())], capture_output=True, text=True, timeout=60)
+    p = runner.probe(Path(venv) / "bin" / "python", _DIRECT_URL_SNIPPET, str(Path(proj).resolve()))
     try:
         return json.loads(p.stdout or "[]") if p.returncode == 0 else []
     except ValueError:
@@ -195,7 +196,11 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
         steps.append((["install", "-q", "--group", g], f"dependency group {g}"))
     steps += [(["install", "-q", "-r", f], f) for f in REQ_FILES if (proj / f).exists()]
     steps.append((["install", "-q", "pytest"], "pytest"))
+    t_start = time.time()
     for args, label in steps:
+        if time.time() - t_start > BUILD_BUDGET:
+            notes.append(f"the install steps used more than the overall budget of {BUILD_BUDGET} s (AGENTVOW_BUILD_BUDGET); stopped before {label}")
+            return str(venv / "bin/python"), notes, "timeout"
         rc, out = _pip(venv, proj, home, args, timeout, max_venv, min_free)
         if rc == 125:
             notes.append(f"{label}: {out}")

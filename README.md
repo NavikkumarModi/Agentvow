@@ -68,7 +68,7 @@ Copilot keeps only `decision`/`reason` from a hook's output, so **a hook cannot 
 Details and a step-by-step live test: `docs/LIVE_TESTING.md`.
 
 ## Install the VS Code extension
-From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.3.0.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
+From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.3.1.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
 Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
 ## Safety in one paragraph
@@ -91,4 +91,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 370 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 381 Python tests, 32 node tests -->

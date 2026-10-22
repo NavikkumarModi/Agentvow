@@ -22,16 +22,32 @@ inputs:
     required: false
     default: "true"
   run-tests:
-    description: "Also replay the repository's tests in a clean sandbox (bubblewrap on Linux) in an environment built from the repository's own files (setup files, CI workflow install steps, Dockerfiles, requirements files), measure changed-line coverage, and add the evidence pack to the summary and comment. This RUNS THE PULL REQUEST'S CODE (sandboxed, network denied for the tests, network allowed for the installs): use it on pull_request, never on pull_request_target, and only where you would run the project's tests anyway."
+    description: "Also replay the repository's tests in a clean sandbox (bubblewrap on Linux) in an environment built from the repository's own files (setup files, CI workflow install steps, Dockerfiles, requirements files), measure changed-line coverage, and add the evidence pack to the summary and comment. This RUNS THE PULL REQUEST'S CODE: the installs and the tests run sandboxed (no tokens or secrets are passed in; network allowed for installs, denied for tests), but a package install runs code chosen by the pull request, and the test output and exit code are written by that code, so a pack is evidence to weigh, not verification. The action refuses to run this on events other than pull_request, push and workflow_dispatch (for example pull_request_target), and on a self-hosted runner for a fork pull request. Use it only where you would run the project's tests anyway."
     required: false
     default: "false"
   test-timeout:
-    description: "Seconds allowed for each test run when run-tests is true"
+    description: "Seconds allowed for each test run when run-tests is true (a whole number)"
     required: false
     default: "900"
+  artifact-name:
+    description: "Name of the uploaded report artifact (give each job of a matrix its own name; the report lists file names and environment variable names, so it is as readable as your repository)"
+    required: false
+    default: "agentvow-report"
 runs:
   using: "composite"
   steps:
+    - name: Refuse to run the pull request's code in an unsafe place
+      if: ${{ inputs.run-tests == 'true' }}
+      shell: bash
+      env:
+        EVENT: ${{ github.event_name }}
+        RUNNER_ENV: ${{ runner.environment }}
+        IS_FORK: ${{ github.event.pull_request.head.repo.fork }}
+        TEST_TIMEOUT: ${{ inputs.test-timeout }}
+      run: |
+        case "$EVENT" in pull_request|push|workflow_dispatch) ;; *) echo "run-tests runs the pull request's code and is refused on the '$EVENT' event (use pull_request, push or workflow_dispatch)."; exit 1;; esac
+        if [ "$RUNNER_ENV" != "github-hosted" ] && [ "$IS_FORK" = "true" ]; then echo "run-tests is refused for a fork pull request on a self-hosted runner."; exit 1; fi
+        case "$TEST_TIMEOUT" in ''|*[!0-9]*) echo "test-timeout must be a whole number of seconds."; exit 1;; esac
     - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: "3.12"
@@ -39,11 +55,12 @@ runs:
       shell: bash
       run: python -m pip install --quiet "${{ github.action_path }}"
     - name: Linux sandbox prerequisites (bubblewrap, user namespaces)
-      if: ${{ inputs.run-tests == 'true' && runner.os == 'Linux' }}
+      if: ${{ inputs.run-tests == 'true' && runner.os == 'Linux' && runner.environment == 'github-hosted' }}
       shell: bash
       run: |
+        # GitHub-hosted runners only: this installs bubblewrap and relaxes the runner image's AppArmor restriction on unprivileged user namespaces for this job's VM. On a self-hosted runner install bubblewrap yourself and decide that setting yourself.
         sudo apt-get update -qq && sudo apt-get install -y -qq bubblewrap
-        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || echo "could not change the AppArmor setting; the sandbox may be unavailable"
     - name: Check the claim against the repository
       id: check
       shell: bash
@@ -62,17 +79,17 @@ runs:
         mkdir -p "$RUNNER_TEMP/agentvow"
         if [ -n "$CLAIM_INPUT" ]; then printf '%s' "$CLAIM_INPUT" > "$RUNNER_TEMP/agentvow/claim.txt"; else printf '%s' "$PR_BODY" > "$RUNNER_TEMP/agentvow/claim.txt"; fi
         BASE="${BASE_INPUT:-$BASE_SHA}"
-        PACK=""
-        if [ "$RUN_TESTS" = "true" ]; then PACK="--evidence-pack --test-timeout ${TEST_TIMEOUT:-900}"; fi
+        PACK=()
+        if [ "$RUN_TESTS" = "true" ]; then PACK=(--evidence-pack --test-timeout "${TEST_TIMEOUT:-900}"); fi
         agentvow check --repo . ${BASE:+--base "$BASE"} --transcript "$RUNNER_TEMP/agentvow/claim.txt" \
-          --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} $PACK \
+          --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} "${PACK[@]}" \
           --html "$RUNNER_TEMP/agentvow/report.html" --markdown "$RUNNER_TEMP/agentvow/summary.md" > /dev/null
         echo "code=$?" >> "$GITHUB_OUTPUT"
         cat "$RUNNER_TEMP/agentvow/summary.md" >> "$GITHUB_STEP_SUMMARY"
         echo "report=$RUNNER_TEMP/agentvow/report.html" >> "$GITHUB_OUTPUT"
     - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
-        name: agentvow-report
+        name: ${{ inputs.artifact-name }}
         path: ${{ runner.temp }}/agentvow/report.html
     - name: Post or update the pull request comment
       if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
