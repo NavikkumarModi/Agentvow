@@ -122,7 +122,7 @@ def _collect_from_capsule(repo: Path, base: str, cap: dict, timeout: int, covera
         if coverage:
             _ensure_coverage(py, venv_root)
         targv = [*rec.test, "-rA", "-p", "no:cacheprovider"]
-        meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied, "dropped_pins": list(rec.dropped_pins),
+        meta = {"recipe_sha256": rec.sha256, "declared_by": "captured environment", "runner_supplied": rec.runner_supplied, "dropped_pins": list(rec.dropped_pins), "capture_source": cap.get("capture_source", "local"),
                 "capsule_python": cap["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))}
         collect_test_evidence(repo, base, [("tests", [py, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "coverage": coverage, "meta": meta})], timeout)
         return ""
@@ -494,6 +494,7 @@ def main(argv=None) -> int:
     cp = sub.add_parser("capture", help="record the Python packages of the agent's environment for the current state, so a later check can replay from them")
     cp.add_argument("--repo", default=".")
     cp.add_argument("--python", default=None, help="the interpreter the agent used (default: the project's .venv/venv/env or the active VIRTUAL_ENV)")
+    cp.add_argument("--export", metavar="FILE", default=None, help="also write a portable, unsigned capture bundle (agentvow-capture/1) bound to the content hash of the working tree, for a separate verifier (`check --from-capture`)")
     ft.add_argument("--from-capsule", action="store_true")
     ft.add_argument("--changed-coverage", action="store_true")
     ft.add_argument("--evidence-pack", action="store_true")
@@ -506,6 +507,17 @@ def main(argv=None) -> int:
     dm.add_argument("--path", default=os.path.join(tempfile.gettempdir(), "agentvow-demo"))
     d = sub.add_parser("doctor", help="check the installation and run the hook path end to end")
     d.add_argument("--repo", default=".")
+    rc = sub.add_parser("receipt", help="turn the JSON of `check --json` into a minimal, shareable receipt (no source, no free text, no environment values) bound to the content hash of the files")
+    rc.add_argument("--decision", required=True, help="file with the JSON printed by `agentvow check --json` (or .agentvow/last/decision.json)")
+    rc.add_argument("--repo-slug", required=True, help="owner/name as the CI runner knows it")
+    rc.add_argument("--repo", default=".")
+    rc.add_argument("--base", default="")
+    rc.add_argument("-o", "--output", default="-")
+    po = sub.add_parser("policy", help="evaluate a receipt under a policy (allow / block / needs_acknowledgement), or print the default policy")
+    po.add_argument("action", choices=["evaluate", "init"])
+    po.add_argument("--policy", default=None, help="policy file (agentvow-policy/1). In CI take it from the BASE branch, never from the pull request")
+    po.add_argument("--receipt", default=None)
+    po.add_argument("--ack", action="append", default=[], help="acknowledgement file (agentvow-ack/1); only counts for exactly this receipt and a listed acknowledger")
     ini = sub.add_parser("init", help="add the Claude Code hooks (capture after tests, check at stop) to a settings file, with a preview, a confirmation and a backup")
     ini.add_argument("--repo", default=".")
     ini.add_argument("--agent", choices=["claude"], default="claude", help="only Claude Code is supported by this command (GitHub Copilot: the VS Code extension command 'Agentvow: Add the agent hook')")
@@ -544,6 +556,8 @@ def main(argv=None) -> int:
     c.add_argument("--evidence-pack", action="store_true",
                    help="run the tests, measure changed-line coverage, replay from the captured environment when a capsule exists AND from the project's own setup, and add an Evidence pack "
                         "section (receipt, reproducibility, coverage) to the report; informational, verdicts are unchanged")
+    c.add_argument("--from-capture", metavar="FILE", default=None,
+                   help="with --run-tests: replay the tests in a clean environment built from a portable capture bundle (made by `capture --export`, NOT authenticated). It is accepted only if its content hash equals this checkout's; otherwise nothing is replayed")
     c.add_argument("--from-capsule", action="store_true",
                    help="with --run-tests: replay the tests in a clean environment built from the packages captured by `agentvow capture` for this exact state (fails closed when there is none)")
     c.add_argument("--changed-coverage", action="store_true",
@@ -562,6 +576,35 @@ def main(argv=None) -> int:
         ap.error("--base must be a commit or branch name, not an option")
     if a.cmd == "init":
         return run_init(a)
+    if a.cmd == "receipt":
+        from . import policy as policy_mod
+        try:
+            dec = json.loads(Path(a.decision).read_text(encoding="utf-8"))
+            tree = reality.git_tree_hash(Path(a.repo).resolve())
+        except (OSError, ValueError, reality.CollectorError) as e:
+            print(f"agentvow receipt: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+            return 3
+        out = json.dumps(policy_mod.build_receipt(dec, a.repo_slug, tree, a.base), indent=2) + "\n"
+        if a.output == "-":
+            print(out, end="")
+        else:
+            Path(a.output).write_text(out, encoding="utf-8")
+        return 0
+    if a.cmd == "policy":
+        from . import policy as policy_mod
+        if a.action == "init":
+            print(json.dumps(policy_mod.DEFAULT_POLICY, indent=2))
+            return 0
+        try:
+            rcpt = json.loads(Path(a.receipt).read_text(encoding="utf-8"))
+            pol = json.loads(Path(a.policy).read_text(encoding="utf-8")) if a.policy else None
+            acks = [json.loads(Path(f).read_text(encoding="utf-8")) for f in a.ack]
+        except (OSError, ValueError, TypeError) as e:
+            print(f"agentvow policy: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+            return 3
+        res = policy_mod.evaluate(rcpt, pol, acks)
+        print(json.dumps(res, indent=2))
+        return {"allow": 0, "block": 1, "needs_acknowledgement": 2}[res["decision"]]
     if a.cmd == "agent-instructions":
         return run_agent_instructions(a)
     if a.cmd == "prompt-hook":
@@ -583,6 +626,14 @@ def main(argv=None) -> int:
     if a.cmd == "capture":
         rec, msg = capsule_mod.capture(Path(a.repo), a.python)
         print(("capsule written: " if rec else "no capsule: ") + msg)
+        if rec and a.export:
+            from . import bundle as bundle_mod
+            tgt = Path(a.export)
+            if tgt.is_symlink():
+                print(f"refusing to write through a symlink: {tgt}", file=sys.stderr)
+                return 3
+            tgt.write_text(json.dumps(bundle_mod.export(rec), indent=2) + "\n", encoding="utf-8")
+            print(f"capture bundle written: {tgt} (unsigned; bound to content hash {rec['git_tree'][:12]})")
         return 0 if rec else 2
     if a.cmd == "finish-turn":
         return run_finish_turn(a)
@@ -615,6 +666,20 @@ def main(argv=None) -> int:
             a.from_capsule = True
         elif not a.recipe and a.setup == "none":
             a.setup = "auto"
+    if getattr(a, "from_capture", None) and not a.recipe:
+        from . import bundle as bundle_mod
+        b, why = bundle_mod.load(a.from_capture)
+        cap, why2 = bundle_mod.bind(repo, b) if b else (None, why)
+        if cap is None:   # fail closed: a missing, malformed or mismatched bundle never falls back to another environment
+            a.run_tests = False
+            a._capture_refused = why2
+            return _run(a, repo, base, base_how, text)
+        spec = (a.test_cmd[0].split() if a.test_cmd else [])
+        targv = spec[1:] if spec and spec[0] == "{py}" and len(spec) > 2 and spec[1] == "-m" and spec[2] in ("pytest", "unittest") else ["-m", "pytest", "-q"]
+        rec, files = capsule_mod.to_recipe(cap, targv)
+        a._capsule = cap
+        a.run_tests = True
+        return _run_recipe(a, repo, base, base_how, text, rec, files)
     if getattr(a, "from_capsule", False) and not a.recipe:
         cap = capsule_mod.load(repo)
         if cap is None:   # fail closed: no capsule for THIS exact state means no capture-based replay (never fall back to another environment silently)
@@ -712,7 +777,7 @@ def _run(a, repo, base, base_how, text):
             targv += [x for x in ("-rA", "-p", "no:cacheprovider") if x not in targv] if "-rA" not in targv else []
         elif targv[1] == "unittest" and "-v" not in targv:
             targv.append("-v")
-        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "coverage": getattr(a, "changed_coverage", False), "meta": {"recipe_sha256": rec.sha256, "declared_by": "captured environment" if getattr(a, "_capsule", None) else "agent recipe", "runner_supplied": rec.runner_supplied, **({"capsule_python": a._capsule["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3]))} if getattr(a, "_capsule", None) else {})}})], a.test_timeout)
+        collect_test_evidence(repo, base, [("tests", [a.python, *targv], "", {"env_extra": rec.env, "pythonpath_rel": rec.local_roots, "prepare": [[a.python, *p] for p in rec.prepare], "coverage": getattr(a, "changed_coverage", False), "meta": {"recipe_sha256": rec.sha256, "declared_by": "captured environment" if getattr(a, "_capsule", None) else "agent recipe", "runner_supplied": rec.runner_supplied, **({"capsule_python": a._capsule["python_version"], "replay_python": ".".join(map(str, sys.version_info[:3])), "dropped_pins": list(rec.dropped_pins), "capture_source": a._capsule.get("capture_source", "local")} if getattr(a, "_capsule", None) else {})}})], a.test_timeout)
     elif a.run_tests:
         specs = a.test_cmd or ["{py} -m pytest -q -rA -p no:cacheprovider"]
         suites = []
@@ -743,6 +808,8 @@ def _run(a, repo, base, base_how, text):
                     f"{'.'.join(map(str, sys.version_info[:2]))} now; not captured: system packages, services, generated files, secrets)")
     elif getattr(a, "_recipe", None):
         d.scope += f"; tests were replayed from the agent's own declared recipe (sha {a._recipe.sha256})" + (f"; setup problems: {'; '.join(a._recipe_notes)[:160]}" if a._recipe_notes else "")
+    if getattr(a, "_capture_refused", None):
+        d.scope += f"; the capture bundle was not used and no capture-based replay was made: {a._capture_refused}"
     if getattr(a, "_capsule_missing", False):
         d.scope += "; no environment capsule exists for this exact state (run `agentvow capture` right after the agent's tests, before changing anything), so no capture-based replay was made"
     if getattr(a, "_recipe_rejected", None):

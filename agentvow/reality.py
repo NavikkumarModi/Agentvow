@@ -200,6 +200,24 @@ def file_hashes(repo: Path) -> dict:
     return out
 
 
+def git_tree_hash(repo: Path) -> str:
+    """The git tree object hash the working tree would have if everything not ignored were committed as it is (tracked changes and untracked non-ignored files; `.agentvow/` excluded).
+    For a clean checkout it equals `git rev-parse HEAD^{tree}`. A content address that anyone with the same files can recompute, with no key: the binding of a portable capture.
+    Nothing is written to the repository: a temporary index and a temporary object directory are used, with the repository's objects as a read-only alternate."""
+    import tempfile
+    repo = Path(repo).resolve()
+    objdir = Path(_git(repo, "rev-parse", "--path-format=absolute", "--git-path", "objects"))
+    with tempfile.TemporaryDirectory(prefix="avtree_") as t:
+        env = {**os.environ, "GIT_INDEX_FILE": str(Path(t) / "index"), "GIT_OBJECT_DIRECTORY": str(Path(t) / "obj"), "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(objdir)}
+        (Path(t) / "obj").mkdir()
+        base = ["git", *safe_prefix(repo), "-C", str(repo)]
+        for cmd in (["read-tree", "HEAD"], ["add", "-A", "--", "."], ["rm", "-r", "--cached", "--ignore-unmatch", "-q", "--", ".agentvow"], ["write-tree"]):   # .agentvow/ out of the index (an exclude pathspec errors when it is also git-ignored)
+            r = subprocess.run([*base, *cmd], capture_output=True, text=True, env=env, timeout=120)
+            if r.returncode:
+                raise CollectorError(f"git {' '.join(cmd)} failed: {r.stderr.strip()[:120]}")
+        return r.stdout.strip()
+
+
 def snapshot(repo: Path) -> Snapshot:
     commit = _git(repo, "rev-parse", "HEAD")
     dirty = bool(_git(repo, "status", "--porcelain", "--", ".", ":(exclude).agentvow"))
@@ -306,6 +324,7 @@ class Evidence:
     runner_supplied: str = ""  # recipe runs: the test runner Agentvow itself installed because the recipe used but did not declare it
     changed_cov: dict | None = None  # changed-line coverage measured during the head run (changedcov.py); None = not requested
     dropped_pins: list | None = None  # captured-environment runs: pinned packages pip could not install on this platform and the replay left out
+    capture_source: str = ""  # captured-environment runs: "bundle" when the capture was a portable, unauthenticated file (content-bound), else "local"/""
 
 
 def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
@@ -328,7 +347,7 @@ def load_prior_evidence(repo: Path, snap: Snapshot) -> list[Evidence]:
         out.append(Evidence(f.stem, "prior_verification", "work-harvester", commit, h, fresh,
                             _INDEP_TOOL if trusted else _INDEP_AGENT,
                             str(f.relative_to(repo)), f'{rec.get("result", "?")}: {rec.get("summary", "")}', rec.get("suite", ""), rec.get("counts", {}),
-                            rec.get("scoped"), rec.get("executed_test_files"), "recipe" if rec.get("declared_by") == "agent recipe" else "capsule" if rec.get("declared_by") == "captured environment" else "", str(rec.get("runner_supplied") or ""), rec.get("changed_line_coverage"), rec.get("dropped_pins") or None))
+                            rec.get("scoped"), rec.get("executed_test_files"), "recipe" if rec.get("declared_by") == "agent recipe" else "capsule" if rec.get("declared_by") == "captured environment" else "", str(rec.get("runner_supplied") or ""), rec.get("changed_line_coverage"), rec.get("dropped_pins") or None, str(rec.get("capture_source") or "")))
     return out
 
 

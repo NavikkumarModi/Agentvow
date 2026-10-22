@@ -252,6 +252,10 @@ def _tests_core(c, evidence, snap, changed=(), repo=None) -> Finding:
             f.why += (" Basis: the environment CAPTURED when the agent ran its tests (its installed Python packages, replayed in a clean sandbox): the result is reproducible from that captured "
                       "state. This does not show the repository declares those packages, does not cover system packages, services, generated files or secrets, and reproducibility is not correctness.")
             f.meta = {**f.meta, "support_basis": "captured_environment", **_runner_meta(runs)}
+            if any(e.basis == "capsule" and getattr(e, "capture_source", "") == "bundle" for e in runs):
+                f.meta["capture_authenticated"] = False
+                f.why += (" The capture was supplied as a file and is NOT authenticated: Agentvow checked that it was made for exactly these files (same content hash) and replayed it itself; "
+                          "a false package list could only make the replay run other packages, and the result stated here is the replay's own.")
             dp = sorted({p for e in runs if e.basis == "capsule" for p in (getattr(e, "dropped_pins", None) or [])})
             if dp:
                 f.meta["dropped_pins"] = dp

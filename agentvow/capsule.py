@@ -99,7 +99,7 @@ def capture(repo: Path, python: str | None = None, source: str = "stop", command
     pv = ver.stdout.split()
     files = {f: reality._file_hash(repo / f) if (repo / f).is_file() else None for f in reality.changed_files(repo, "HEAD")[:400]}   # what differed from HEAD when this was taken
     rec = {"schema": SCHEMA, "source": source, "command": _clean(command), "files": files,
-           "commit": snap.commit, "tree": snap.tree, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+           "commit": snap.commit, "tree": snap.tree, "git_tree": reality.git_tree_hash(repo), "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "python_version": pv[0] if pv else "", "platform": pv[1] if len(pv) > 1 else "", "packages": keep, "dropped": dropped, "env_values_recorded": False}
     path = Path(".agentvow") / "capsules" / f"{snap.commit[:10]}_{(snap.tree or 'clean')[:8]}_{source}.json"
     reality.safe_write(repo, path, json.dumps(reality.sign_record(rec)))
