@@ -17,7 +17,7 @@ def synthetic():
     for i in range(40):
         verdict, repro, cov = plan[i % len(plan)]
         r = {"schema": policy.RECEIPT, "tool_version": "x", "created_at": f"2026-11-{1 + (i * 28) // 40:02d}T10:{i:02d}:00+00:00", "repo": "example-org/example-service", "commit": f"{i:040x}", "git_tree": f"{i + 1000:040x}",
-             "base": "main", "pr": 100 + i, "status": "x", "claims": [{"kind": "tests_pass", "verdict": verdict, "basis": "", "capture_authenticated": i % 9 != 0, "dropped_pins": 0, "changed_lines": None}],
+             "base": "main", "pr": 100 + i, "status": "x", "claims": [{"kind": "tests_pass", "verdict": verdict, "basis": "", "capture_source": "bundle" if i % 9 == 0 else "", "dropped_pins": 0, "changed_lines": None}],
              "unexamined": 0, "reproducibility": repro, "contexts": [], "coverage": {"executed": cov[0], "executable": cov[1]} if cov[1] else None,
              "not_reproduced": ["environment variables"] + (["network use"] if i % 3 == 0 else []) + (["external programs the tests invoke"] if i % 5 == 0 else [])}
         out.append(r)

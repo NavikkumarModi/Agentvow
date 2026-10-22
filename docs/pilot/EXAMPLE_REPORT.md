@@ -8,8 +8,8 @@ Repository: example-org/example-service. Period: 2026-11-01 to 2026-11-28. Recei
 
 | Decision | Changes |
 |---|---|
-| allow | 13 |
-| needs_acknowledgement | 21 |
+| allow | 10 |
+| needs_acknowledgement | 24 |
 | block | 6 |
 
 Needs-acknowledgement changes that a named person then acknowledged: 0.
@@ -52,16 +52,17 @@ Median fraction of changed executable lines run by the tests: **40%** over 33 re
 
 | Week | allow | needs_acknowledgement | block |
 |---|---|---|---|
-| 2026-W44 | 1 | 1 | 0 |
+| 2026-W44 | 0 | 2 | 0 |
 | 2026-W45 | 3 | 5 | 2 |
-| 2026-W46 | 3 | 6 | 1 |
+| 2026-W46 | 2 | 7 | 1 |
 | 2026-W47 | 4 | 4 | 2 |
-| 2026-W48 | 2 | 5 | 1 |
+| 2026-W48 | 1 | 6 | 1 |
 
 ## Changes that were not simply allowed
 
 | Commit | PR | Decision | Rules |
 |---|---|---|---|
+| `0000000000` | 100 | needs_acknowledgement | unauthenticated_capture |
 | `0000000000` | 101 | needs_acknowledgement | min_changed_line_coverage |
 | `0000000000` | 102 | needs_acknowledgement | unknown |
 | `0000000000` | 103 | needs_acknowledgement | unknown |
@@ -74,6 +75,7 @@ Median fraction of changed executable lines run by the tests: **40%** over 33 re
 | `0000000000` | 114 | needs_acknowledgement | unknown |
 | `0000000000` | 115 | needs_acknowledgement | unknown |
 | `0000000000` | 116 | block | contradicted |
+| `0000000000` | 118 | needs_acknowledgement | unauthenticated_capture |
 | `0000000000` | 119 | needs_acknowledgement | min_changed_line_coverage |
 | `0000000000` | 120 | needs_acknowledgement | unknown |
 | `0000000000` | 121 | needs_acknowledgement | unknown |
@@ -85,8 +87,6 @@ Median fraction of changed executable lines run by the tests: **40%** over 33 re
 | `0000000000` | 131 | needs_acknowledgement | min_changed_line_coverage |
 | `0000000000` | 132 | needs_acknowledgement | unknown |
 | `0000000000` | 133 | needs_acknowledgement | unknown |
-| `0000000000` | 134 | block | contradicted |
-| `0000000000` | 137 | needs_acknowledgement | min_changed_line_coverage |
 
 ## What we recommend
 

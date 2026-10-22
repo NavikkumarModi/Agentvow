@@ -2,8 +2,10 @@
 
 Why unsigned: the local capsule is signed with a key that lives in the user's Agentvow home and must never leave it. A separate verifier (a CI runner, a service) cannot check that signature, and
 sharing the key would defeat it. What a verifier needs instead is (1) that the bundle was made for THIS state: it recomputes the git tree hash of its own checkout and refuses to replay on any
-difference; (2) to replay it itself, in its own sandbox: the verifier's result is the evidence, and the report says the bundle was supplied, not authenticated. A false bundle can only make the
-verifier replay other plain-pinned packages (sandboxed, the same exposure class as any recipe); it cannot make a result "supported" for a state it was not made for."""
+difference; (2) to replay it itself, in its own sandbox: the verifier's result is the evidence, and the report says the bundle was supplied, not authenticated. What a bundle author CAN
+do: choose which PyPI packages the verifier installs for this tree (any name, exact versions): installs run code in the sandbox, and a hostile test plugin could change test results. So the
+verifier's result is as trustworthy as whoever made the bundle, which is why it is labelled "not authenticated" and why the default policy asks a person to acknowledge it. What it cannot do:
+make a result "supported" for files it was not made for (the content hash is recomputed here)."""
 import hashlib
 import json
 import re
@@ -13,7 +15,7 @@ from . import reality
 
 SCHEMA = "agentvow-capture/1"
 KEYS = {"schema", "created_at", "source", "command", "python_version", "platform", "packages", "packages_sha256", "git_tree", "commit", "env_values_recorded"}
-_PIN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*(\[[A-Za-z0-9,._-]+\])?==[A-Za-z0-9._+!*-]+")
+_PIN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*(\[[A-Za-z0-9,._-]+\])?==[A-Za-z0-9._+!-]+")   # an exact version: no wildcard
 _HEX = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 MAX_PACKAGES, MAX_BYTES = 3000, 1_000_000
 

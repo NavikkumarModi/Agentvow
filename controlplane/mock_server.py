@@ -25,6 +25,12 @@ def _b64(x: bytes) -> str:
     return base64.urlsafe_b64encode(x).rstrip(b"=").decode()
 
 
+def _cell(v) -> str:
+    """CSV cell safe against spreadsheet formula injection."""
+    t = str(v)
+    return "'" + t if t[:1] in ("=", "+", "-", "@", "\t", "\r") else t
+
+
 def _unb64(s: str) -> bytes:
     return base64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
 
@@ -66,7 +72,7 @@ class Store:
     def __init__(self):
         self.db = sqlite3.connect(":memory:", check_same_thread=False)
         self.lock = threading.Lock()
-        self.db.executescript("""create table receipts(id text, repo text, commit_sha text, body text, received real);
+        self.db.executescript("""create table receipts(id text, repo text, commit_sha text, body text, received real, run_order integer);
                                  create table policies(repo text primary key, body text);
                                  create table acks(receipt_sha text, by text, note text, at real);""")
 
@@ -78,9 +84,14 @@ class Store:
 
 
 class App:
-    def __init__(self, auth, oracle, store=None, trusted_workflows=("agentvow/gate-workflow",), admin_token="admin"):
+    def __init__(self, auth, oracle, store=None, trusted_workflows=(), admin_token="admin", audience="agentvow-control-plane", events=("pull_request", "push", "workflow_dispatch")):
+        """`trusted_workflows`: the EXACT `job_workflow_ref` values accepted, each with its pinned ref (for example
+        "OWNER/REPO/.github/workflows/gate.yml@refs/tags/v0.4.0"); none by default, so nothing is accepted until configured."""
         self.auth, self.oracle, self.store = auth, oracle, store or Store()
-        self.trusted, self.admin_token = tuple(trusted_workflows), admin_token
+        self.trusted, self.admin_token, self.audience, self.events = frozenset(trusted_workflows), admin_token, audience, frozenset(events)
+
+    def _is_admin(self, headers) -> bool:
+        return hmac.compare_digest(str(headers.get("Authorization", "")), f"Bearer {self.admin_token}")
 
     # ---- helpers
     def _claims(self, headers):
@@ -111,7 +122,7 @@ class App:
         if route == ("POST", "/v1/receipts"):
             return self.post_receipt(headers, data)
         if route == ("PUT", "/v1/policy"):
-            if headers.get("Authorization") != f"Bearer {self.admin_token}":
+            if not self._is_admin(headers):
                 return 401, {"error": "admin token required"}
             bad = policy_mod.validate_policy(data.get("policy"))
             if bad or not isinstance(data.get("repo"), str):
@@ -130,19 +141,23 @@ class App:
         c = self._claims(headers)
         if not c:
             return 401, {"error": "a valid, unexpired runner token is required"}
-        if not isinstance(r, dict) or r.get("schema") != policy_mod.RECEIPT or not isinstance(r.get("repo"), str) or not isinstance(r.get("commit"), str):
-            return 422, {"error": "not an agentvow-receipt/1"}
+        bad = policy_mod.validate_receipt(r)
+        if bad:
+            return 422, {"error": f"malformed receipt: {bad}"}
         if c.get("repository") != r["repo"]:
             return 403, {"error": "the token is for another repository than the receipt claims"}
-        wf = str(c.get("job_workflow_ref", ""))
-        if not any(wf.startswith(t) for t in self.trusted):
-            return 403, {"error": "receipts are accepted only from the trusted gate workflow (job_workflow_ref)"}
+        if str(c.get("job_workflow_ref", "")) not in self.trusted:
+            return 403, {"error": "receipts are accepted only from the exact trusted gate workflow at its pinned ref (job_workflow_ref)"}
+        if c.get("aud") != self.audience:
+            return 403, {"error": "the token was issued for another audience"}
+        if c.get("event_name") not in self.events:
+            return 403, {"error": "the token comes from an event the service does not accept"}
         tree = self.oracle.tree_of(r["repo"], r["commit"])
         if tree is None or tree != r.get("git_tree"):
             return 422, {"error": "the receipt's content hash does not match the commit as GitHub has it"}
         rsha = policy_mod.sha(r)
         if not self.store.q("select 1 from receipts where id=?", rsha):
-            self.store.q("insert into receipts values(?,?,?,?,?)", rsha, r["repo"], r["commit"], json.dumps(r), time.time())
+            self.store.q("insert into receipts values(?,?,?,?,?,?)", rsha, r["repo"], r["commit"], json.dumps(r), time.time(), int(c.get("run_id") or 0) * 1000 + int(c.get("run_attempt") or 0))
         return 200, {"id": rsha, "decision": self._decide(r)}
 
     def post_ack(self, headers, d):
@@ -160,7 +175,7 @@ class App:
         return 200, {"decision": self._decide(r)}
 
     def get_check(self, qs):
-        rows = self.store.q("select body from receipts where repo=? and commit_sha=? order by received desc limit 1", qs.get("repo"), qs.get("commit"))
+        rows = self.store.q("select body from receipts where repo=? and commit_sha=? order by run_order desc, received desc limit 1", qs.get("repo"), qs.get("commit"))
         if not rows:
             return 200, {"conclusion": "action_required", "decision": "needs_acknowledgement", "reasons": [{"rule": "no_receipt", "outcome": "needs_acknowledgement", "acknowledged_by": None,
                                                                                                           "text": "No receipt was uploaded for this commit, so nothing was checked."}]}
@@ -168,7 +183,7 @@ class App:
         return 200, {"conclusion": d["conclusion"], "decision": d["decision"], "reasons": d["reasons"], "receipt_sha": d["receipt_sha"], "policy_sha": d["policy_sha"]}
 
     def get_audit(self, headers, qs):
-        if headers.get("Authorization") != f"Bearer {self.admin_token}":
+        if not self._is_admin(headers):
             return 401, {"error": "admin token required"}
         out = []
         for rid, body, got in self.store.q("select id, body, received from receipts where repo=? order by received", qs.get("repo")):
@@ -180,7 +195,7 @@ class App:
             buf = io.StringIO(); w = csv.writer(buf)
             w.writerow(["receipt_sha", "commit", "git_tree", "decision", "acknowledged_by", "reproducibility", "not_reproduced"])
             for x in out:
-                w.writerow([x["receipt_sha"], x["commit"], x["git_tree"], x["decision"], ";".join(x["acknowledged_by"]), x["reproducibility"], ";".join(x["not_reproduced"])])
+                w.writerow([_cell(v) for v in (x["receipt_sha"], x["commit"], x["git_tree"], x["decision"], ";".join(x["acknowledged_by"]), x["reproducibility"], ";".join(x["not_reproduced"]))])
             return 200, {"csv": buf.getvalue()}
         return 200, {"repo": qs.get("repo"), "records": out}
 

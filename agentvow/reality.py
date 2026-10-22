@@ -208,9 +208,12 @@ def git_tree_hash(repo: Path) -> str:
     repo = Path(repo).resolve()
     objdir = Path(_git(repo, "rev-parse", "--path-format=absolute", "--git-path", "objects"))
     with tempfile.TemporaryDirectory(prefix="avtree_") as t:
-        env = {**os.environ, "GIT_INDEX_FILE": str(Path(t) / "index"), "GIT_OBJECT_DIRECTORY": str(Path(t) / "obj"), "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(objdir)}
+        # a pinned, clean configuration, so identical files give the same hash on any machine: no system or global git config (autocrlf, excludes, attributes), file modes on, no case folding
+        env = {**os.environ, "GIT_INDEX_FILE": str(Path(t) / "index"), "GIT_OBJECT_DIRECTORY": str(Path(t) / "obj"), "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(objdir),
+               "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
         (Path(t) / "obj").mkdir()
-        base = ["git", *safe_prefix(repo), "-C", str(repo)]
+        base = ["git", *safe_prefix(repo), "-c", "core.autocrlf=false", "-c", "core.fileMode=true", "-c", "core.excludesFile=", "-c", "core.attributesFile=", "-c", "core.safecrlf=false",
+                "-c", "core.ignoreCase=false", "-c", "core.symlinks=true", "-c", "core.fsmonitor=false", "-C", str(repo)]
         for cmd in (["read-tree", "HEAD"], ["add", "-A", "--", "."], ["rm", "-r", "--cached", "--ignore-unmatch", "-q", "--", ".agentvow"], ["write-tree"]):   # .agentvow/ out of the index (an exclude pathspec errors when it is also git-ignored)
             r = subprocess.run([*base, *cmd], capture_output=True, text=True, env=env, timeout=120)
             if r.returncode:

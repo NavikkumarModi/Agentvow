@@ -8,7 +8,7 @@ import make_example_pilot_report as ex  # noqa: E402
 
 
 def rcpt(i, verdict="SUPPORTED_BY_PRIOR_EVIDENCE", repro="both", cov=(4, 4), created="2026-11-03T10:00:00+00:00", pr=None, commit=None):
-    return {"schema": policy.RECEIPT, "created_at": created, "repo": "o/n", "commit": commit or f"{i:040x}", "git_tree": "b" * 40, "pr": pr, "claims": [{"kind": "tests_pass", "verdict": verdict, "capture_authenticated": True}],
+    return {"schema": policy.RECEIPT, "created_at": created, "repo": "o/n", "commit": commit or f"{i:040x}", "git_tree": "b" * 40, "base": "", "pr": pr, "claims": [{"kind": "tests_pass", "verdict": verdict, "capture_source": ""}],
             "reproducibility": repro, "coverage": {"executed": cov[0], "executable": cov[1]} if cov else None, "not_reproduced": ["environment variables"]}
 
 
@@ -45,6 +45,23 @@ class Report(unittest.TestCase):
         for banned in ("bugs caught", "defects prevented:", "time saved:", "ROI"):
             self.assertNotIn(banned, md)
         self.assertIn("Receipts counted (latest per commit): **3**", md)
+
+    def test_hostile_receipts_are_skipped_and_hostile_strings_do_not_break_the_markdown(self):
+        d = Path(tempfile.mkdtemp())
+        evil = rcpt(1); evil["repo"] = "o/n|x\n| fake | row |"; evil["not_reproduced"] = ["a|b\n# heading", "@everyone <img src=x onerror=1>", "`code`"]
+        (d / "ok.json").write_text(json.dumps(evil))
+        (d / "claims1.json").write_text(json.dumps({**rcpt(2), "claims": [1]}))
+        (d / "huge.json").write_text(" " * 130_000 + json.dumps(rcpt(3)))
+        (d / "deep.json").write_text("[" * 5000 + "]" * 5000)
+        (d / "real.json").write_text(json.dumps(rcpt(4)))
+        (d / "link.json").symlink_to(d / "real.json")
+        rs, bad = pilot_report.load(d)
+        self.assertEqual((len(rs), bad), (2, 4))   # ok.json and real.json; claims:[1], oversize, deeply nested and the symlink are skipped
+        md = pilot_report.render_markdown(pilot_report.summarize(rs))
+        for leak in ("<img", "@everyone", "\n| fake | row |"):
+            self.assertNotIn(leak, md)
+        self.assertFalse(any(ln.lstrip().startswith("# heading") for ln in md.splitlines()))   # a newline in a value cannot start a heading
+        self.assertEqual(sum(1 for ln in md.splitlines() if ln.startswith("| fake")), 0)
 
     def test_empty_and_invalid_inputs(self):
         d = Path(tempfile.mkdtemp())

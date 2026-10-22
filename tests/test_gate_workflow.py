@@ -17,8 +17,12 @@ SECRET = b"sim-secret"
 TRUSTED = "trusted-owner/gate"
 
 
-def steps():
-    return {s.get("name", s.get("uses", "")): s for s in yaml.safe_load(WF.read_text())["jobs"]["gate"]["steps"]}
+def jobs():
+    return yaml.safe_load(WF.read_text())["jobs"]
+
+
+def steps(job="replay"):
+    return {s.get("name", s.get("uses", "")): s for s in jobs()[job]["steps"]}
 
 
 def online():
@@ -30,25 +34,50 @@ def online():
 
 @unittest.skipIf(yaml is None, "PyYAML not installed")
 class Static(unittest.TestCase):
-    def test_permissions_and_credentials(self):
-        d = yaml.safe_load(WF.read_text())
-        self.assertEqual(d["jobs"]["gate"]["permissions"], {"contents": "read", "id-token": "write"})
+    def test_no_job_that_runs_pull_request_code_holds_the_oidc_permission(self):
+        j = jobs()
+        self.assertEqual(j["replay"]["permissions"], {"contents": "read"})
+        self.assertEqual(j["upload"]["permissions"], {"contents": "read", "id-token": "write"})
+        self.assertEqual(j["decide"]["permissions"], {})
+        # the upload job never checks out or runs pull-request code
+        for st in j["upload"]["steps"]:
+            self.assertNotIn("actions/checkout", st.get("uses", ""))
+            self.assertNotIn("GITHUB_WORKSPACE", st.get("run", ""))
         co = next(s for k, s in steps().items() if k.startswith("actions/checkout"))
         self.assertIs(co["with"]["persist-credentials"], False)
+
+    def test_there_is_no_way_to_install_agentvow_from_the_pull_request(self):
+        d = yaml.safe_load(WF.read_text())
+        self.assertNotIn("install-from-checkout", d[True]["workflow_call"]["inputs"])   # YAML reads `on` as True
+        txt = WF.read_text()
+        self.assertNotIn("pip install .", txt)
+        self.assertIn('python -I -m pip install --quiet "agentvow==$VERSION"', txt)
+
+    def test_every_python_runs_isolated_and_from_a_neutral_directory(self):
+        import re
+        txt = WF.read_text()
+        for m in re.finditer(r"\bpython3? (?!-I)", txt):
+            ctx = txt[max(0, m.start() - 20):m.end() + 20]
+            self.assertTrue(ctx.lstrip().startswith(("python:", "#")) or "python-version" in ctx or "setup-python" in ctx, ctx)   # only the setup-python input names; every real invocation uses -I
+        for name in ("Install Agentvow (from PyPI, from a directory the pull request does not control)", "Replay the tests and build the receipt (from a neutral directory, no credential in the environment)",
+                     "Evaluate the policy from the base branch"):
+            self.assertEqual(steps()[name]["working-directory"], "${{ runner.temp }}")
 
     def test_the_check_step_removes_every_credential_before_running_agentvow(self):
         run = next(s for k, s in steps().items() if k.startswith("Replay the tests"))["run"]
         for var in ("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "ACTIONS_ID_TOKEN_REQUEST_URL", "ACTIONS_RUNTIME_TOKEN", "GITHUB_TOKEN"):
             self.assertIn(f"-u {var}", run)
-        self.assertEqual(run.count("env -u"), 2)   # both agentvow invocations
+        self.assertEqual(run.count("env -u"), 2)
 
-    def test_policy_comes_from_the_base_branch_never_the_checkout(self):
+    def test_policy_comes_from_the_base_branch_never_the_checkout_and_failing_to_read_it_blocks(self):
         run = steps()["Evaluate the policy from the base branch"]["run"]
-        self.assertIn('git show "origin/$BASE_REF:$POLICY_PATH"', run)
+        self.assertIn('show "origin/$BASE_REF:$POLICY_PATH"', run)
         self.assertNotIn("--policy .", run)
+        self.assertIn("refusing to fall back to a weaker default", run)
+        self.assertIn("core.hooksPath=/dev/null", run)
 
     def guard(self, **env):
-        base = {**os.environ, "EVENT": "pull_request", "IS_FORK": "false", "TEST_TIMEOUT": "900", "FAIL_ON": "block"}
+        base = {**os.environ, "EVENT": "pull_request", "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.0", "POLICY_PATH": ".agentvow/policy.json", "SERVICE_URL": ""}
         return subprocess.run(["bash", "-c", next(iter(steps().values()))["run"]], env={**base, **env}, capture_output=True, text=True)
 
     def test_guard(self):
@@ -60,20 +89,32 @@ class Static(unittest.TestCase):
         self.assertEqual(self.guard(FAIL_ON="always").returncode, 1)
         for ok in ("block", "needs_acknowledgement", "never"):
             self.assertEqual(self.guard(FAIL_ON=ok).returncode, 0, ok)
+        for bad in ("", "1.0 --index-url http://evil", "1.0;ls", ".1", "1.", "latest"):
+            self.assertEqual(self.guard(VERSION=bad).returncode, 1, repr(bad))
+        for bad in ("/etc/passwd", "../x", "a b", "a;b", ""):
+            self.assertEqual(self.guard(POLICY_PATH=bad).returncode, 1, repr(bad))
+        for bad in ("http://evil.example", "ftp://x", "file:///etc"):
+            self.assertEqual(self.guard(SERVICE_URL=bad).returncode, 1, bad)
+        for ok in ("https://svc.example", "http://127.0.0.1:8000"):
+            self.assertEqual(self.guard(SERVICE_URL=ok).returncode, 0, ok)
 
-    def run_apply(self, decision, service, fail_on):
-        r = steps()["Apply fail-on"]["run"]
-        return subprocess.run(["bash", "-c", r], env={**os.environ, "DECISION": decision, "SERVICE_DECISION": service, "FAIL_ON": fail_on}, capture_output=True, text=True).returncode
+    def run_decide(self, decision, service, expected, replay="success", fail_on="block"):
+        r = steps("decide")["Apply fail-on"]["run"]
+        env = {**os.environ, "DECISION": decision, "SERVICE_DECISION": service, "SERVICE_EXPECTED": expected, "REPLAY_RESULT": replay, "FAIL_ON": fail_on}
+        return subprocess.run(["bash", "-c", r], env=env, capture_output=True, text=True).returncode
 
-    def test_fail_on_uses_the_stricter_of_local_and_service(self):
-        self.assertEqual(self.run_apply("allow", "", "block"), 0)
-        self.assertEqual(self.run_apply("allow", "block", "block"), 1)    # the service is stricter
-        self.assertEqual(self.run_apply("block", "allow", "block"), 1)    # the local evaluation is stricter
-        self.assertEqual(self.run_apply("needs_acknowledgement", "", "block"), 0)
-        self.assertEqual(self.run_apply("needs_acknowledgement", "", "needs_acknowledgement"), 1)
-        self.assertEqual(self.run_apply("block", "", "never"), 0)
-        self.assertEqual(self.run_apply("allow", "error", "block"), 1)    # an error from the service fails closed
-        self.assertEqual(self.run_apply("", "", "block"), 1)              # nothing at all fails closed
+    def test_fail_on_takes_the_stricter_and_every_missing_piece_fails_closed(self):
+        self.assertEqual(self.run_decide("allow", "", "false"), 0)
+        self.assertEqual(self.run_decide("allow", "block", "true"), 1)       # the service is stricter
+        self.assertEqual(self.run_decide("block", "allow", "true"), 1)       # the local evaluation is stricter
+        self.assertEqual(self.run_decide("needs_acknowledgement", "", "false"), 0)
+        self.assertEqual(self.run_decide("needs_acknowledgement", "", "false", fail_on="needs_acknowledgement"), 1)
+        self.assertEqual(self.run_decide("block", "", "false", fail_on="never"), 0)
+        self.assertEqual(self.run_decide("allow", "error", "true"), 1)       # an error from the service
+        self.assertEqual(self.run_decide("allow", "", "true"), 1)            # the service was expected but gave nothing (the upload job failed or was skipped)
+        self.assertEqual(self.run_decide("", "allow", "true"), 1)            # the local evaluation died and the service says allow: still block
+        self.assertEqual(self.run_decide("", "", "false"), 1)                # nothing at all
+        self.assertEqual(self.run_decide("allow", "", "false", replay="failure"), 1)   # the replay job itself failed
 
 
 class OidcMock(BaseHTTPRequestHandler):
@@ -104,28 +145,31 @@ class Simulation(unittest.TestCase):
         g("add", "-A"); g("commit", "-qm", "base")
         self.base_sha = g("rev-parse", "HEAD")
 
+    WF_REF = TRUSTED + "/.github/workflows/gate.yml@refs/tags/v0.4.0"
+
     def start_services(self, trees):
-        self.app = cp.App(cp.MockAuth(SECRET), cp.Oracle(trees), trusted_workflows=(TRUSTED,))
+        self.app = cp.App(cp.MockAuth(SECRET), cp.Oracle(trees), trusted_workflows=(self.WF_REF,))
         self.srv = cp.serve(self.app)
-        OidcMock.token = cp.make_token(SECRET, {"repository": "o/n", "job_workflow_ref": TRUSTED + "/.github/workflows/gate.yml@refs/tags/v1", "exp": time.time() + 600})
+        OidcMock.token = cp.make_token(SECRET, {"repository": "o/n", "job_workflow_ref": self.WF_REF, "aud": "agentvow-control-plane", "event_name": "pull_request", "run_id": 7, "run_attempt": 1, "exp": time.time() + 600})
         self.oidc = HTTPServer(("127.0.0.1", 0), OidcMock)
         threading.Thread(target=self.oidc.serve_forever, daemon=True).start()
         self.addCleanup(self.srv.shutdown); self.addCleanup(self.oidc.shutdown)
 
     def run_steps(self, claim, fail_on="block", service=True, test_cmd="{py} -m unittest discover -s tests -t . -v"):
-        shim = self.t / "shim"; shim.mkdir()
+        shim = self.t / "shim"; shim.mkdir(exist_ok=True)
         (shim / "agentvow").write_text('#!/bin/sh\nexec python3 -m agentvow.cli "$@"\n'); (shim / "agentvow").chmod(0o755)
         env = {**os.environ, "PATH": f"{shim}:{os.environ['PATH']}", "PYTHONPATH": str(ROOT), "RUNNER_TEMP": str(self.rt), "GITHUB_OUTPUT": str(self.rt / "out"), "GITHUB_STEP_SUMMARY": str(self.rt / "sum"),
-               "CLAIM": claim, "BASE_SHA": self.base_sha, "TEST_TIMEOUT": "300", "TEST_COMMAND": test_cmd, "REPO_SLUG": "o/n", "BASE_REF": "main", "POLICY_PATH": ".agentvow/policy.json",
-               "SERVICE_URL": f"http://127.0.0.1:{self.srv.server_address[1]}", "AUDIENCE": "agentvow-control-plane", "FAIL_ON": fail_on,
-               "ACTIONS_ID_TOKEN_REQUEST_URL": f"http://127.0.0.1:{self.oidc.server_address[1]}/token?v=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-secret", "GITHUB_TOKEN": "gh-secret", "AGENTVOW_HOME": str(self.t / "home")}
+               "GITHUB_WORKSPACE": str(self.work), "CLAIM": claim, "BASE_SHA": self.base_sha, "TEST_TIMEOUT": "300", "TEST_COMMAND": test_cmd, "REPO_SLUG": "o/n", "BASE_REF": "main", "POLICY_PATH": ".agentvow/policy.json",
+               "SERVICE_URL": f"http://127.0.0.1:{self.srv.server_address[1]}", "AUDIENCE": "agentvow-control-plane", "FAIL_ON": fail_on, "AGENTVOW_HOME": str(self.t / "home")}
         (self.rt / "out").write_text(""); (self.rt / "sum").write_text("")
-        S = steps(); res = {}
-        for key, name in (("check", "Replay the tests and build the receipt (no token of any kind is passed to this step)"), ("policy", "Evaluate the policy from the base branch")):
-            res[key] = subprocess.run(["bash", "-c", S[name]["run"]], cwd=self.work, env=env, capture_output=True, text=True)
+        run = lambda step, extra=None: subprocess.run(["bash", "-c", step["run"]], cwd=self.rt, env={**env, **(extra or {})}, capture_output=True, text=True)   # every step runs from the neutral runner temp directory
+        S, U, D = steps("replay"), steps("upload"), steps("decide"); res = {}
+        res["check"] = run(S["Replay the tests and build the receipt (from a neutral directory, no credential in the environment)"], {"ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-secret", "GITHUB_TOKEN": "gh-secret"})
+        res["policy"] = run(S["Evaluate the policy from the base branch"])
+        decision = self.out("decision")
         if service:
-            res["upload"] = subprocess.run(["bash", "-c", S["Post the receipt to the control plane (only when service-url is set)"]["run"]], cwd=self.work, env=env, capture_output=True, text=True)
-        res["apply"] = subprocess.run(["bash", "-c", S["Apply fail-on"]["run"]], cwd=self.work, env={**env, "DECISION": self.out("decision"), "SERVICE_DECISION": self.out("service-decision")}, capture_output=True, text=True)
+            res["upload"] = run(U["Post the receipt to the control plane"], {"ACTIONS_ID_TOKEN_REQUEST_URL": f"http://127.0.0.1:{self.oidc.server_address[1]}/token?v=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-secret"})
+        res["apply"] = run(D["Apply fail-on"], {"DECISION": decision, "SERVICE_DECISION": self.out("service-decision"), "SERVICE_EXPECTED": "true" if service else "false", "REPLAY_RESULT": "success"})
         return res
 
     def out(self, key):
@@ -166,11 +210,31 @@ class Simulation(unittest.TestCase):
         self.assertEqual(self.out("decision"), "block", res["policy"].stdout + res["policy"].stderr)
         self.assertEqual(res["apply"].returncode, 1)
 
+    def test_a_hostile_json_py_and_pip_package_in_the_checkout_never_run(self):
+        marker = self.t / "pwned"
+        (self.work / "json.py").write_text(f"open({str(marker)!r}, 'w').write('x')\n")
+        (self.work / "pip").mkdir(); (self.work / "pip" / "__main__.py").write_text(f"open({str(marker)!r}, 'w').write('y')\n")
+        head, tree = self.commit_change("def f():\n    return 1\n\ndef g():\n    return 2\n")
+        self.start_services({("o/n", head): tree})
+        res = self.run_steps("I added g. All tests pass.")
+        self.assertFalse(marker.exists(), "pull-request code ran in a workflow step")
+        self.assertIn(self.out("service-decision"), ("allow", "needs_acknowledgement", "block"), res["upload"].stdout + res["upload"].stderr)   # the planted files may spoil the replay (inside the sandbox); they must not run in the workflow
+
     def test_a_receipt_for_a_state_the_service_cannot_match_is_not_allowed(self):
         head, tree = self.commit_change("def f():\n    return 1\n\ndef g():\n    return 2\n")
         self.start_services({("o/n", head): "0" * 40})   # GitHub's tree differs from the receipt's
         res = self.run_steps("I added g. All tests pass.")
         self.assertEqual(self.out("service-decision"), "error")
+        self.assertEqual(res["apply"].returncode, 1)
+
+    def test_an_unreadable_base_branch_blocks_instead_of_applying_a_weaker_default(self):
+        head, tree = self.commit_change("def f():\n    return 1\n\ndef g():\n    return 2\n")
+        self.start_services({("o/n", head): tree})
+        self.g("remote", "set-url", "origin", str(self.t / "does-not-exist.git"))
+        self.g("update-ref", "-d", "refs/remotes/origin/main")
+        res = self.run_steps("I added g. All tests pass.", service=False)
+        self.assertEqual(self.out("decision"), "block", res["policy"].stdout + res["policy"].stderr)
+        self.assertIn("weaker default", res["policy"].stdout)
         self.assertEqual(res["apply"].returncode, 1)
 
 

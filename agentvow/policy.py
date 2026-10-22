@@ -16,7 +16,7 @@ ACK = "agentvow-ack/1"
 OUTCOMES = ("allow", "needs_acknowledgement", "block")
 _RANK = {"allow": 0, "needs_acknowledgement": 1, "block": 2}
 DEFAULT_POLICY = {"schema": POLICY, "contradicted": "block", "unknown": "needs_acknowledgement", "supported": "allow", "no_claims": "needs_acknowledgement",
-                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "allow", "acknowledgers": []}
+                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "needs_acknowledgement", "acknowledgers": []}
 _POLICY_ENUMS = {"contradicted": ("block",), "unknown": OUTCOMES, "supported": OUTCOMES, "no_claims": OUTCOMES, "unauthenticated_capture": OUTCOMES, "require_reproducibility": (None, "both", "any")}
 _SUPPORTED = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED")
 
@@ -36,7 +36,7 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
         meta = f.get("meta") or {}
         cov = meta.get("changed_line_coverage") or {}
         claims.append({"kind": str(f.get("kind", ""))[:40], "verdict": str(f.get("verdict", ""))[:40], "basis": str(meta.get("support_basis", ""))[:40],
-                       "capture_authenticated": meta.get("capture_authenticated", True) is not False, "dropped_pins": len(meta.get("dropped_pins") or []),
+                       "capture_source": str(meta.get("capture_source", ""))[:20], "dropped_pins": len(meta.get("dropped_pins") or []),
                        "changed_lines": {"executed": cov.get("executed"), "executable": cov.get("executable")} if cov else None})
     pack = decision.get("pack") or {}
     cov = pack.get("coverage") or {}
@@ -47,6 +47,48 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
                           "dropped_pins": len(c.get("dropped_pins") or [])} for c in pack.get("contexts", [])],
             "coverage": {"executed": cov.get("executed"), "executable": cov.get("executable")} if cov.get("available") else None,
             "not_reproduced": [str(i.get("category", ""))[:80] for i in (pack.get("manifest") or {}).get("items", [])]}
+
+
+_KNOWN_VERDICTS = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED", "UNKNOWN", "CONTRADICTED")
+MAX_CLAIMS, MAX_LIST = 200, 100
+
+
+def _count(x) -> bool:
+    return x is None or (isinstance(x, int) and not isinstance(x, bool) and 0 <= x <= 10**9)
+
+
+def validate_receipt(r) -> str | None:
+    """None when the receipt is well formed, else why not. Strict about types and sizes: everything downstream (the policy, the service, the report) may assume what this accepts."""
+    if not isinstance(r, dict) or r.get("schema") != RECEIPT:
+        return f"not an {RECEIPT} receipt"
+    for k in ("repo", "commit", "git_tree"):
+        if not isinstance(r.get(k), str) or not r[k] or len(r[k]) > 200:
+            return f"{k} must be a short string"
+    cl = r.get("claims")
+    if not isinstance(cl, list) or len(cl) > MAX_CLAIMS:
+        return "claims must be a list"
+    for c in cl:
+        if not isinstance(c, dict) or not isinstance(c.get("kind", ""), str) or not isinstance(c.get("verdict"), str) or not isinstance(c.get("capture_source", ""), str):
+            return "each claim needs string kind and verdict"
+        lines = c.get("changed_lines")
+        if lines is not None and (not isinstance(lines, dict) or not _count(lines.get("executed")) or not _count(lines.get("executable"))):
+            return "changed_lines must hold non-negative whole numbers"
+        if not _count(c.get("dropped_pins", 0)):
+            return "dropped_pins must be a whole number"
+    cov = r.get("coverage")
+    if cov is not None and (not isinstance(cov, dict) or not _count(cov.get("executed")) or not _count(cov.get("executable"))):
+        return "coverage must hold non-negative whole numbers"
+    for k in ("not_reproduced",):
+        v = r.get(k, [])
+        if not isinstance(v, list) or len(v) > MAX_LIST or not all(isinstance(x, str) and len(x) <= 120 for x in v):
+            return f"{k} must be a short list of short strings"
+    if not isinstance(r.get("reproducibility", ""), str) or len(r.get("reproducibility", "")) > 40:
+        return "reproducibility must be a short string"
+    if r.get("pr") is not None and not (isinstance(r["pr"], int) and not isinstance(r["pr"], bool) and r["pr"] > 0):
+        return "pr must be a positive whole number or null"
+    if len(canon(r)) > 60_000:
+        return "receipt is too large"
+    return None
 
 
 def validate_policy(p) -> str | None:
@@ -75,9 +117,11 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
     """-> {"decision", "conclusion", "reasons", "policy_sha", "receipt_sha"}. Deterministic. Acknowledgements count only if made by a listed acknowledger for exactly this receipt."""
     pol = {**DEFAULT_POLICY, **(policy or {})}
     bad = validate_policy(pol)
-    if bad:
-        return {"decision": "block", "conclusion": "failure", "reasons": [{"rule": "policy", "outcome": "block", "text": f"The policy is invalid ({bad}); nothing was allowed.", "acknowledged_by": None}],
-                "policy_sha": "", "receipt_sha": sha(receipt)}
+    bad_r = validate_receipt(receipt)
+    if bad or bad_r:
+        why = f"The policy is invalid ({bad})" if bad else f"The receipt is malformed ({bad_r})"
+        return {"decision": "block", "conclusion": "failure", "reasons": [{"rule": "invalid_input", "outcome": "block", "text": f"{why}; nothing was allowed.", "acknowledged_by": None}],
+                "policy_sha": "" if bad else sha(pol), "receipt_sha": sha(receipt) if isinstance(receipt, (dict, list, str, int, float, type(None))) else ""}
     rsha = sha(receipt)
     ackers = {x.lower() for x in pol["acknowledgers"]}
     good = [a for a in (acks or []) if _valid_ack(a, rsha, ackers)]
@@ -93,22 +137,26 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
     if not claims:
         add("no_claims", pol["no_claims"], "The agent made no claim that could be checked, so there is nothing to confirm or refute.")
     for c in claims:
-        v = c.get("verdict", "")
-        kind = c.get("kind", "claim")
+        v = str(c.get("verdict", "")).strip().upper()
+        kind = str(c.get("kind", "claim"))[:40]
         if v == "CONTRADICTED":
             add("contradicted", pol["contradicted"], f"The check found the '{kind}' claim contradicted. A contradiction cannot be acknowledged away: change the code or correct the claim.")
         elif v in _SUPPORTED:
             add("supported", pol["supported"], f"The '{kind}' claim was supported by the replay.")
-            if c.get("capture_authenticated") is False:
-                add("unauthenticated_capture", pol["unauthenticated_capture"], "The package capture was supplied as a file and is not authenticated (it was checked against the exact files and replayed here).")
-            cl = c.get("changed_lines") or (receipt.get("coverage") or {})
+            if c.get("capture_source") == "bundle":
+                add("unauthenticated_capture", pol["unauthenticated_capture"], "The package capture was supplied as a file and is not authenticated (it was checked against the exact files and replayed here; the packages it names were chosen by whoever made it).")
+            cl = c.get("changed_lines") or receipt.get("coverage") or {}
             m = pol["min_changed_line_coverage"]
-            if m is not None and cl and cl.get("executable"):
-                frac = (cl.get("executed") or 0) / cl["executable"]
-                if frac < m:
-                    add("min_changed_line_coverage", "needs_acknowledgement", f"Only {cl.get('executed') or 0} of {cl['executable']} changed lines were run by the tests ({frac:.0%}); the policy asks for {m:.0%}.")
-        else:
+            if m is not None:
+                ex, exe = cl.get("executed"), cl.get("executable")
+                if exe is None:
+                    add("min_changed_line_coverage", "needs_acknowledgement", "The policy asks for a minimum of changed lines run by the tests, but changed-line coverage was not measured for this change.")
+                elif exe > 0 and (ex or 0) / exe < m:
+                    add("min_changed_line_coverage", "needs_acknowledgement", f"Only {ex or 0} of {exe} changed lines were run by the tests ({(ex or 0) / exe:.0%}); the policy asks for {m:.0%}.")
+        elif v == "UNKNOWN":
             add("unknown", pol["unknown"], f"The '{kind}' claim could not be confirmed or refuted (UNKNOWN): the evidence was missing or the replay could not run.")
+        else:
+            add("unrecognized_verdict", "block", f"The '{kind}' claim has a verdict this version does not recognise ({str(c.get('verdict'))[:30]!r}); nothing was allowed.")
     req = pol["require_reproducibility"]
     if req and claims:
         code = receipt.get("reproducibility", "")

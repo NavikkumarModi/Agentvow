@@ -45,6 +45,20 @@ class TreeHash(unittest.TestCase):
         self.assertEqual(h, g("rev-parse", "HEAD^{tree}"))
 
 
+class HashPortability(unittest.TestCase):
+    def test_the_same_files_hash_the_same_whatever_the_machine_and_user_git_config(self):
+        d, g = repo_with_change()
+        (d / "run.sh").write_text("#!/bin/sh\necho hi\n"); (d / "run.sh").chmod(0o755)
+        (d / "crlf.txt").write_bytes(b"a\r\nb\r\n")
+        want = reality.git_tree_hash(d)
+        home = Path(tempfile.mkdtemp())
+        (home / ".gitconfig").write_text("[core]\n  autocrlf = true\n  fileMode = false\n  excludesFile = " + str(home / "ign") + "\n[user]\n  name = x\n")
+        (home / "ign").write_text("new.py\ncrlf.txt\n")
+        (d / ".git" / "config").write_text((d / ".git" / "config").read_text() + "[core]\n  autocrlf = input\n  fileMode = false\n")
+        with mock.patch.dict(os.environ, {"HOME": str(home), "XDG_CONFIG_HOME": str(home)}):
+            self.assertEqual(reality.git_tree_hash(d), want)
+
+
 class Bundle(unittest.TestCase):
     def test_export_has_no_signature_no_env_values_and_validates(self):
         d, g = repo_with_change()
@@ -60,7 +74,7 @@ class Bundle(unittest.TestCase):
         b = make_bundle(d)
         for mutate, frag in ((lambda x: x.update(extra=1), "unexpected keys"), (lambda x: x["packages"].append("evil @ https://x/e.whl"), "plain"),
                              (lambda x: x["packages"].append("a==1; rm -rf /"), "plain"), (lambda x: x.update(git_tree="zz"), "git object"),
-                             (lambda x: x.update(env_values_recorded=True), "environment values"), (lambda x: x.update(packages_sha256="0" * 64), "hash"),
+                             (lambda x: x["packages"].append("six==1.*"), "plain"), (lambda x: x.update(env_values_recorded=True), "environment values"), (lambda x: x.update(packages_sha256="0" * 64), "hash"),
                              (lambda x: x.update(python_version="3.x; ls"), "python_version"), (lambda x: x.update(schema="agentvow-capture/9"), "schema")):
             c = json.loads(json.dumps(b)); mutate(c)
             self.assertIn(frag, bundle.validate(c) or "", frag)

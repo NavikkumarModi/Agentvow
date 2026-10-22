@@ -67,8 +67,10 @@ class Evaluate(unittest.TestCase):
 
     def test_policy_can_block_unknown_and_unauthenticated_capture_and_low_coverage(self):
         self.assertEqual(policy.evaluate(with_verdict("UNKNOWN"), {"schema": policy.POLICY, "unknown": "block"})["decision"], "block")
-        r = with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE", capture_authenticated=False)
-        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "unauthenticated_capture": "needs_acknowledgement"})["decision"], "needs_acknowledgement")
+        r = with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE", capture_source="bundle")
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY})["decision"], "needs_acknowledgement")   # the default asks a person
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "unauthenticated_capture": "allow"})["decision"], "allow")
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "unauthenticated_capture": "block"})["decision"], "block")
         self.assertEqual(policy.evaluate(receipt(), {"schema": policy.POLICY, "min_changed_line_coverage": 0.9})["decision"], "needs_acknowledgement")   # 3 of 4 = 75%
         self.assertEqual(policy.evaluate(receipt(), {"schema": policy.POLICY, "min_changed_line_coverage": 0.5})["decision"], "allow")
 
@@ -88,6 +90,44 @@ class Evaluate(unittest.TestCase):
     def test_evaluation_is_deterministic(self):
         r = receipt()
         self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY}), policy.evaluate(r, {"schema": policy.POLICY}))
+
+
+class Hostile(unittest.TestCase):
+    def test_malformed_receipts_block_and_never_raise(self):
+        base = receipt()
+        for bad in ({**base, "claims": [1]}, {**base, "claims": "abc"}, {**base, "claims": [{"verdict": "SUPPORTED_BY_PRIOR_EVIDENCE", "kind": "x", "changed_lines": {"executed": 1, "executable": "5"}}]},
+                    {**base, "coverage": {"executed": -1, "executable": 3}}, {**base, "not_reproduced": [1]}, {**base, "pr": True}, {**base, "repo": ""}, {**base, "claims": [{"kind": "x"}] * 500}, [], "x", None, 7):
+            res = policy.evaluate(bad)
+            self.assertEqual(res["decision"], "block", bad if not isinstance(bad, dict) else list(bad))
+            self.assertEqual(res["reasons"][0]["rule"], "invalid_input")
+        self.assertIsNone(policy.validate_receipt(base))
+
+    def test_unrecognised_or_oddly_cased_verdicts_never_become_acknowledgeable(self):
+        pol = {"schema": policy.POLICY, "acknowledgers": ["bob"]}
+        for v in ("contradicted", " CONTRADICTED ", "Contradicted"):
+            r = with_verdict(v)
+            res = policy.evaluate(r, pol, [ack(r, "BOB")])
+            self.assertEqual(res["decision"], "block", v)
+        r = with_verdict("MAYBE")
+        res = policy.evaluate(r, pol, [ack(r, "bob")])
+        self.assertEqual((res["decision"], res["reasons"][0]["rule"]), ("block", "unrecognized_verdict"))
+
+    def test_a_coverage_floor_never_passes_silently_when_coverage_was_not_measured(self):
+        floor = {"schema": policy.POLICY, "min_changed_line_coverage": 0.9}
+        for cl in (None, {"executed": None, "executable": None}):
+            r = with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE")
+            r["claims"][0]["changed_lines"] = cl
+            r["coverage"] = None
+            res = policy.evaluate(r, floor)
+            self.assertEqual(res["decision"], "needs_acknowledgement", cl)
+            self.assertIn("not measured", " ".join(x["text"] for x in res["reasons"]))
+        r = with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE")
+        r["claims"][0]["changed_lines"] = {"executed": 0, "executable": 0}
+        self.assertEqual(policy.evaluate(r, floor)["decision"], "allow")   # nothing executable changed (for example docs only): nothing to cover
+
+    def test_receipts_record_where_a_capture_came_from(self):
+        self.assertEqual(with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE", capture_source="bundle")["claims"][0]["capture_source"], "bundle")
+        self.assertEqual(with_verdict("SUPPORTED_BY_PRIOR_EVIDENCE")["claims"][0]["capture_source"], "")   # no capture at all is not "authenticated"
 
 
 class Cli(unittest.TestCase):

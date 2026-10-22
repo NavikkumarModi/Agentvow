@@ -18,11 +18,14 @@ def load(dirpath) -> tuple:
     out, bad = [], 0
     for f in sorted(Path(dirpath).glob("*.json")):
         try:
+            if f.is_symlink() or f.stat().st_size > 120_000:
+                bad += 1
+                continue
             r = json.loads(f.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except (OSError, ValueError, RecursionError):
             bad += 1
             continue
-        if isinstance(r, dict) and r.get("schema") == policy_mod.RECEIPT and isinstance(r.get("claims"), list) and isinstance(r.get("commit"), str):
+        if policy_mod.validate_receipt(r) is None:
             out.append(r)
         else:
             bad += 1
@@ -50,6 +53,12 @@ def _week(ts: str) -> str:
         return "unknown"
 
 
+def _md(x, n: int = 80) -> str:
+    """Text from a receipt placed into a markdown table: no pipes, line breaks, HTML or @mentions."""
+    t = " ".join(str(x).split())[:n]
+    return t.replace("|", "/").replace("<", "‹").replace(">", "›").replace("@", "＠").replace("`", "'")
+
+
 def summarize(receipts: list, policy: dict | None = None, acks: list | None = None) -> dict:
     # the latest receipt per commit is the one that counts (earlier ones stay in the audit trail but are not double counted)
     latest = {}
@@ -66,18 +75,18 @@ def summarize(receipts: list, policy: dict | None = None, acks: list | None = No
         weeks.setdefault(_week(r.get("created_at", "")), Counter())[d] += 1
         for c in r["claims"]:
             verdicts[c.get("verdict", "?")] += 1
-            if c.get("capture_authenticated") is False:
+            if c.get("capture_source") == "bundle":
                 unauth += 1
         repro[r.get("reproducibility") or "none"] += 1
         for k in r.get("not_reproduced") or []:
-            cats[k] += 1
+            cats[str(k)[:120]] += 1
         cv = r.get("coverage") or {}
         if cv.get("executable"):
             covs.append((cv.get("executed") or 0) / cv["executable"])
         if d != "allow":
             attention.append({"commit": r.get("commit", "")[:10], "pr": r.get("pr"), "decision": d, "rules": sorted({x["rule"] for x in ev["reasons"] if x["outcome"] != "allow"})})
     n = len(rs)
-    return {"receipts": n, "invalid": 0, "repo": sorted({r.get("repo") for r in rs})[:3], "first": min((r.get("created_at", "") for r in rs), default=""), "last": max((r.get("created_at", "") for r in rs), default=""),
+    return {"receipts": n, "invalid": 0, "repo": sorted({_md(r.get("repo"), 100) for r in rs})[:3], "first": _md(min((str(r.get("created_at", "")) for r in rs), default=""), 30), "last": _md(max((str(r.get("created_at", "")) for r in rs), default=""), 30),
             "prs": len({r.get("pr") for r in rs if r.get("pr")}), "decisions": dict(dec), "acknowledged": acked, "verdicts": dict(verdicts), "reproducibility": dict(repro), "categories": cats.most_common(8),
             "coverage": {"n": len(covs), "median": round(statistics.median(covs), 3) if covs else None, "below_half": sum(1 for c in covs if c < 0.5)},
             "unauthenticated_captures": unauth, "weeks": {k: dict(v) for k, v in sorted(weeks.items())}, "attention": attention[:25], "policy_given": policy is not None}
@@ -123,12 +132,12 @@ def render_markdown(s: dict, title: str = "Agent pull request evidence report", 
         o += ["## How much of the changed code the tests ran", "", (f"Median fraction of changed executable lines run by the tests: **{c['median']:.0%}** over {c['n']} receipts with coverage data; "
                                                                       f"{c['below_half']} had fewer than half of the changed lines run." if c["n"] else "No receipt had changed-line coverage data."), ""]
         if s["categories"]:
-            o += ["## What the replay could not recreate (named, not judged)", "", "| Category | Receipts |", "|---|---|"] + [f"| {k} | {v} |" for k, v in s["categories"]] + [""]
+            o += ["## What the replay could not recreate (named, not judged)", "", "| Category | Receipts |", "|---|---|"] + [f"| {k} | {v} |" for k, v in [(_md(k), v) for k, v in s["categories"]]] + [""]
         if s["unauthenticated_captures"]:
             o += [f"{s['unauthenticated_captures']} claim(s) used a capture supplied as a file (checked against the exact files and replayed, but not authenticated).", ""]
         if len(s["weeks"]) > 1:
             o += ["## By week", "", "| Week | allow | needs_acknowledgement | block |", "|---|---|---|---|"] + [f"| {w} | {d.get('allow', 0)} | {d.get('needs_acknowledgement', 0)} | {d.get('block', 0)} |" for w, d in s["weeks"].items()] + [""]
         if s["attention"]:
-            o += ["## Changes that were not simply allowed", "", "| Commit | PR | Decision | Rules |", "|---|---|---|---|"] + [f"| `{a['commit']}` | {a['pr'] or ''} | {a['decision']} | {', '.join(a['rules'])} |" for a in s["attention"]] + [""]
+            o += ["## Changes that were not simply allowed", "", "| Commit | PR | Decision | Rules |", "|---|---|---|---|"] + [f"| `{_md(a['commit'], 10)}` | {a['pr'] or ''} | {a['decision']} | {_md(', '.join(a['rules']), 120)} |" for a in s["attention"]] + [""]
     o += ["## What we recommend", ""] + [f"- {x}" for x in recommendations(s)] + ["", "## Limits of this report", "", LIMITS, ""]
     return "\n".join(o)

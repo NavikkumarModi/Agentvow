@@ -6,7 +6,7 @@ from agentvow import policy  # noqa: E402
 from controlplane import mock_server as cp  # noqa: E402
 
 SECRET = b"test-secret"
-WF = "agentvow/gate-workflow/.github/workflows/gate.yml@refs/tags/v1"
+WF = "owner/repo/.github/workflows/gate.yml@refs/tags/v0.4.0"
 TREE = "b" * 40
 COMMIT = "a" * 40
 
@@ -17,12 +17,12 @@ def receipt(verdict="SUPPORTED_BY_PRIOR_EVIDENCE", repo="o/n", commit=COMMIT, tr
 
 
 def tok(**c):
-    return "Bearer " + cp.make_token(SECRET, {"repository": "o/n", "job_workflow_ref": WF, "exp": time.time() + 600, **c})
+    return "Bearer " + cp.make_token(SECRET, {"repository": "o/n", "job_workflow_ref": WF, "aud": "agentvow-control-plane", "event_name": "pull_request", "run_id": 1, "run_attempt": 1, "exp": time.time() + 600, **c})
 
 
 class Mock(unittest.TestCase):
     def setUp(self):
-        self.app = cp.App(cp.MockAuth(SECRET), cp.Oracle({("o/n", COMMIT): TREE}))
+        self.app = cp.App(cp.MockAuth(SECRET), cp.Oracle({("o/n", COMMIT): TREE}), trusted_workflows=(WF,))
         self.app.handle("PUT", "/v1/policy", {"Authorization": "Bearer admin"}, json.dumps({"repo": "o/n", "policy": {"schema": policy.POLICY, "acknowledgers": ["alice"]}}).encode())
 
     def post(self, r, auth=None):
@@ -47,6 +47,12 @@ class Mock(unittest.TestCase):
     def test_token_for_another_repository_or_an_untrusted_workflow_is_refused(self):
         self.assertEqual(self.post(receipt(), tok(repository="evil/repo"))[0], 403)
         self.assertEqual(self.post(receipt(), tok(job_workflow_ref="o/n/.github/workflows/mine.yml@refs/heads/pr-branch"))[0], 403)   # a pull request's own workflow cannot post receipts
+        self.assertEqual(self.post(receipt(), tok(job_workflow_ref="owner/repo/.github/workflows/gate.yml@refs/heads/evil"))[0], 403)   # the right file at an unpinned ref
+        self.assertEqual(self.post(receipt(), tok(job_workflow_ref=WF + "-evil"))[0], 403)   # a look-alike: exact match, not a prefix
+        self.assertEqual(self.post(receipt(), tok(aud="someone-else"))[0], 403)
+        self.assertEqual(self.post(receipt(), tok(event_name="pull_request_target"))[0], 403)
+        empty = cp.App(cp.MockAuth(SECRET), cp.Oracle({("o/n", COMMIT): TREE}))   # nothing is trusted until configured
+        self.assertEqual(empty.handle("POST", "/v1/receipts", {"Authorization": tok()}, json.dumps(receipt()).encode())[0], 403)
 
     def test_a_receipt_whose_content_hash_does_not_match_the_commit_is_refused(self):
         self.assertEqual(self.post(receipt(tree="c" * 40))[0], 422)
@@ -95,6 +101,21 @@ class Mock(unittest.TestCase):
         self.assertEqual(self.app.handle("POST", "/v1/receipts", {"Authorization": tok()}, b"x" * (cp.MAX_BODY + 1))[0], 413)
         self.assertEqual(self.app.handle("POST", "/v1/receipts", {"Authorization": tok()}, b"{not json")[0], 400)
         self.assertEqual(self.app.handle("PUT", "/v1/policy", {"Authorization": "Bearer admin"}, json.dumps({"repo": "o/n", "policy": {"schema": policy.POLICY, "contradicted": "allow"}}).encode())[0], 422)
+
+    def test_malformed_receipts_are_refused_before_storage_and_cannot_break_the_audit(self):
+        for bad in ({**receipt(), "claims": [1]}, {**receipt(), "claims": "abc"}, {**receipt(), "coverage": {"executed": "5", "executable": 1}}, {**receipt(), "not_reproduced": [1]}):
+            self.assertEqual(self.post(bad)[0], 422)
+        self.post(receipt("UNKNOWN"))
+        self.assertEqual(self.app.handle("GET", "/v1/audit?repo=o/n", {"Authorization": "Bearer admin"})[0], 200)
+
+    def test_the_latest_run_wins_by_run_order_not_by_arrival_and_csv_cells_are_formula_safe(self):
+        self.post(receipt("CONTRADICTED"), tok(run_id=5))
+        self.post(receipt("SUPPORTED_BY_PRIOR_EVIDENCE"), tok(run_id=3))   # an OLDER run arriving later does not override the newer run's block
+        self.assertEqual(self.check()["conclusion"], "failure")
+        r = receipt("UNKNOWN"); r["not_reproduced"] = ["=HYPERLINK(1)"]
+        self.post(r, tok(run_id=9))
+        _, c = self.app.handle("GET", "/v1/audit?repo=o/n&format=csv", {"Authorization": "Bearer admin"})
+        self.assertIn("'=HYPERLINK(1)", c["csv"])
 
     def test_it_works_over_http(self):
         srv = cp.serve(self.app)
