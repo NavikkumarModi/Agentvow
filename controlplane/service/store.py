@@ -16,6 +16,8 @@ create table if not exists acks(repo text not null, receipt_id text not null, by
 create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
+create table if not exists repo_ids(repo text primary key, repo_id text not null);
+create table if not exists deliveries(id text primary key, at real not null);
 create table if not exists usage(repo text not null, month text not null, n integer not null, bytes integer not null, primary key(repo, month));
 """
 
@@ -32,13 +34,40 @@ class Store:
         with self.lock:
             return self.db.execute(sql, a).fetchall()
 
-    # ---- receipts
-    def add_receipt(self, repo, rid, commit, pr, body: dict, run_order: int) -> bool:
-        """-> True when new, False when this exact receipt was already stored."""
-        raw = json.dumps(body, sort_keys=True)
+    # ---- identity of a repository (names can be renamed or recycled; the numeric id cannot)
+    def bind_repo_id(self, repo, repo_id) -> bool:
+        """-> True when `repo` is new or already bound to this id; False when the name now belongs to a different repository."""
         with self.lock:
-            cur = self.db.execute("insert or ignore into receipts values(?,?,?,?,?,?,?)", (rid, repo, commit, pr, raw, time.time(), run_order))
-            return cur.rowcount == 1
+            self.db.execute("insert or ignore into repo_ids values(?,?)", (repo, str(repo_id)))
+            return self.db.execute("select repo_id from repo_ids where repo=?", (repo,)).fetchone()[0] == str(repo_id)
+
+    # ---- receipts
+    def add_receipt(self, repo, rid, commit, pr, body: dict, run_order: int, max_receipts: int = 10**9, max_bytes: int = 10**12) -> str:
+        """Store and count in ONE step. -> "added", "duplicate" (same receipt again: only its run order can move forward, nothing is counted) or "over" (the month's allowance is used up;
+        nothing is stored or counted)."""
+        raw = json.dumps(body, sort_keys=True)
+        m = time.strftime("%Y-%m")
+        with self.lock:
+            if self.db.execute("select 1 from receipts where repo=? and id=?", (repo, rid)).fetchone():
+                self.db.execute("update receipts set run_order = max(run_order, ?) where repo=? and id=?", (run_order, repo, rid))
+                return "duplicate"
+            n, b = self.db.execute("select coalesce(sum(n),0), coalesce(sum(bytes),0) from usage where repo=? and month=?", (repo, m)).fetchone()
+            if n + 1 > max_receipts or b + len(raw) > max_bytes:
+                return "over"
+            self.db.execute("begin")
+            try:
+                self.db.execute("insert into receipts values(?,?,?,?,?,?,?)", (rid, repo, commit, pr, raw, time.time(), run_order))
+                self.db.execute("insert into usage values(?,?,1,?) on conflict(repo, month) do update set n = n + 1, bytes = bytes + excluded.bytes", (repo, m, len(raw)))
+                self.db.execute("commit")
+            except BaseException:
+                self.db.execute("rollback")
+                raise
+            return "added"
+
+    def seen_delivery(self, delivery_id: str) -> bool:
+        """-> True when this webhook delivery id was already processed (a replayed delivery); records it otherwise."""
+        with self.lock:
+            return self.db.execute("insert or ignore into deliveries values(?,?)", (str(delivery_id)[:80], time.time())).rowcount == 0
 
     def latest_receipt(self, repo, commit):
         r = self.q("select id, body from receipts where repo=? and commit_sha=? order by run_order desc, received desc limit 1", repo, commit)
@@ -75,7 +104,9 @@ class Store:
         r = self.q("select plan, until from plans where repo=?", repo)
         return r[0][0] if r and (r[0][1] is None or r[0][1] > time.time()) else "free"
 
-    def issue_key(self, repo) -> str:
+    def issue_key(self, repo, rotate: bool = False) -> str:
+        if not rotate and self.q("select 1 from keys where repo=?", repo):
+            raise ValueError("a key already exists for this repository; rotate it explicitly")
         key = "avk_" + secrets.token_urlsafe(32)
         self.q("insert or replace into keys values(?,?)", repo, hashlib.sha256(key.encode()).hexdigest())
         return key
@@ -83,13 +114,6 @@ class Store:
     def key_ok(self, repo, presented: str) -> bool:
         r = self.q("select key_hash from keys where repo=?", repo)
         return bool(r) and hmac.compare_digest(r[0][0], hashlib.sha256(str(presented).encode()).hexdigest())
-
-    def count_usage(self, repo, nbytes) -> tuple:
-        """-> (receipts this month, bytes this month) after adding one."""
-        m = time.strftime("%Y-%m")
-        self.q("insert into usage values(?,?,1,?) on conflict(repo, month) do update set n = n + 1, bytes = bytes + excluded.bytes", repo, m, nbytes)
-        n, b = self.q("select n, bytes from usage where repo=? and month=?", repo, m)[0]
-        return n, b
 
     def usage(self, repo):
         r = self.q("select n, bytes from usage where repo=? and month=?", repo, time.strftime("%Y-%m"))
@@ -100,4 +124,5 @@ class Store:
         with self.lock:
             n = self.db.execute("delete from receipts where received < ?", (cutoff,)).rowcount
             self.db.execute("delete from acks where at < ?", (cutoff,))
+            self.db.execute("delete from deliveries where at < ?", (cutoff,))
             return n

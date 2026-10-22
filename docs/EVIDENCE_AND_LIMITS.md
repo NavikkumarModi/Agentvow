@@ -18,5 +18,5 @@ Running tests executes the project's code. It runs in a sandbox: macOS `sandbox-
 
 ## Status of newer parts
 * Gate workflow and receipts (`docs/GATE_WORKFLOW.md`): verified once on GitHub on a pull request of this repository; the real OIDC upload path is not yet verified.
-* Control plane service (`docs/CONTROLPLANE_PHASE1.md`): built and tested against fakes only; never run against real GitHub, not deployed, adversarial review in progress.
+* Control plane service (`docs/CONTROLPLANE_PHASE1.md`): built, reviewed once adversarially (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes only; never run against real GitHub, not deployed.
 * Capture vs repository-only reconstruction: a feasibility result on small samples (`docs/paper/SHORT_MSR2027.md`), not a general claim.

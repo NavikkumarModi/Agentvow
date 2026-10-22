@@ -168,7 +168,7 @@ class Simulation(unittest.TestCase):
         res["policy"] = run(S["Evaluate the policy from the base branch"])
         decision = self.out("decision")
         if service:
-            res["upload"] = run(U["Post the receipt to the control plane"], {"ACTIONS_ID_TOKEN_REQUEST_URL": f"http://127.0.0.1:{self.oidc.server_address[1]}/token?v=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-secret"})
+            res["upload"] = run(U["Post the receipt to the control plane"], {"ACTIONS_ID_TOKEN_REQUEST_URL": f"http://127.0.0.1:{self.oidc.server_address[1]}/token?v=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-secret", "EXPECTED_SHA": self.out("receipt-sha")})
         res["apply"] = run(D["Apply fail-on"], {"DECISION": decision, "SERVICE_DECISION": self.out("service-decision"), "SERVICE_EXPECTED": "true" if service else "false", "REPLAY_RESULT": "success"})
         return res
 

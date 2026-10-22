@@ -60,6 +60,7 @@ jobs:
       contents: read
     outputs:
       decision: ${{ steps.policy.outputs.decision }}
+      receipt-sha: ${{ steps.policy.outputs.receipt-sha }}
     steps:
       - name: Refuse to run the pull request's code in an unsafe place
         shell: bash
@@ -149,6 +150,7 @@ jobs:
           DEC=$(python3 -I -c "import json,sys;d=json.load(open(sys.argv[1]))['decision'];print(d if d in ('allow','needs_acknowledgement','block') else 'block')" "$GATE/result.json" 2> /dev/null)
           [ -n "$DEC" ] || block "The policy evaluation produced no usable result; treating as block."
           echo "decision=$DEC" >> "$GITHUB_OUTPUT"
+          echo "receipt-sha=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json")" >> "$GITHUB_OUTPUT"
           python3 -I - "$GATE/result.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
           import json, re, sys
           clean = lambda s: re.sub(r"[^\w .,;:()'/%+-]", "", str(s))[:200]
@@ -187,11 +189,16 @@ jobs:
         env:
           SERVICE_URL: ${{ inputs.service-url }}
           AUDIENCE: ${{ inputs.audience }}
+          EXPECTED_SHA: ${{ needs.replay.outputs.receipt-sha }}
         run: |
           set +e
           GATE="$RUNNER_TEMP/gate"
+          # The receipt about to be sent must be byte-identical to the one the replay job produced (passed as a job output, not through the artifact store), and the token is requested for THAT receipt:
+          # audience "<audience>:<sha256 of the receipt>". A token that leaks to another server can then only be replayed with this same receipt.
+          RSHA=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json" 2> /dev/null)
+          if [ -z "$RSHA" ] || [ "$RSHA" != "$EXPECTED_SHA" ]; then echo "The receipt changed between the replay job and the upload job; not sending it."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
           if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "No OIDC token is available: the calling job needs 'permissions: id-token: write'."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
-          TOKEN=$(curl -sS --max-time 20 -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" --get --data-urlencode "audience=$AUDIENCE" "$ACTIONS_ID_TOKEN_REQUEST_URL" | python3 -I -c "import json,sys;print(json.load(sys.stdin)['value'])")
+          TOKEN=$(curl -sS --max-time 20 -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" --get --data-urlencode "audience=$AUDIENCE:$RSHA" "$ACTIONS_ID_TOKEN_REQUEST_URL" | python3 -I -c "import json,sys;print(json.load(sys.stdin)['value'])")
           if [ -z "$TOKEN" ]; then echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
           echo "::add-mask::$TOKEN"
           RESP=$(curl -sS --max-time 30 -X POST "$SERVICE_URL/v1/receipts" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary "@$GATE/receipt.json")

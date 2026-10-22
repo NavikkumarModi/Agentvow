@@ -2,7 +2,7 @@
 
 `.github/workflows/gate.yml` is a reusable workflow for pull requests, in three jobs so that **no job that runs the pull request's code holds a credential**:
 - **replay** (`permissions: contents: read`): refuses unsafe inputs and events, checks out the exact head with no stored credentials, installs Agentvow **from PyPI at an exact version** (there is deliberately no way to install it from the pull request's own checkout), installs bubblewrap, runs `agentvow check --evidence-pack` and `agentvow receipt` from a neutral directory with every credential-like variable removed, reads the policy **from the base branch**, evaluates it, writes the job summary and uploads the receipt and the evaluation as an artifact.
-- **upload** (only when `service-url` is set; the only job with `id-token: write`): downloads the artifact and posts the receipt to the control plane with a GitHub OIDC token. It never checks out or runs pull-request code.
+- **upload** (only when `service-url` is set; the only job with `id-token: write`): downloads the artifact and posts the receipt to the control plane with a GitHub OIDC token requested for that exact receipt (audience `<audience>:<sha256 of the receipt>`; the receipt hash also travels from the replay job as a job output, and a changed file is not sent). It never checks out or runs pull-request code.
 - **decide** (no permissions): applies `fail-on` to the stricter of the local and the service decision. Any missing piece counts as block: an empty or failed local evaluation, a failed replay job, an expected service answer that did not arrive, an error from the service.
 
 ```yaml

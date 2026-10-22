@@ -48,15 +48,16 @@ class Report(unittest.TestCase):
 
     def test_hostile_receipts_are_skipped_and_hostile_strings_do_not_break_the_markdown(self):
         d = Path(tempfile.mkdtemp())
-        evil = rcpt(1); evil["repo"] = "o/n|x\n| fake | row |"; evil["not_reproduced"] = ["a|b\n# heading", "@everyone <img src=x onerror=1>", "`code`"]
+        evil = rcpt(1); evil["not_reproduced"] = ["a|b\n# heading", "@everyone <img src=x onerror=1>", "`code`"]
         (d / "ok.json").write_text(json.dumps(evil))
+        (d / "badrepo.json").write_text(json.dumps({**rcpt(5), "repo": "o/n|x\n| fake | row |"}))   # a hostile repository name no longer validates as a receipt
         (d / "claims1.json").write_text(json.dumps({**rcpt(2), "claims": [1]}))
         (d / "huge.json").write_text(" " * 130_000 + json.dumps(rcpt(3)))
         (d / "deep.json").write_text("[" * 5000 + "]" * 5000)
         (d / "real.json").write_text(json.dumps(rcpt(4)))
         (d / "link.json").symlink_to(d / "real.json")
         rs, bad = pilot_report.load(d)
-        self.assertEqual((len(rs), bad), (2, 4))   # ok.json and real.json; claims:[1], oversize, deeply nested and the symlink are skipped
+        self.assertEqual((len(rs), bad), (2, 5))   # ok.json and real.json; the hostile repository name, claims:[1], oversize, deeply nested and the symlink are skipped
         md = pilot_report.render_markdown(pilot_report.summarize(rs))
         for leak in ("<img", "@everyone", "\n| fake | row |"):
             self.assertNotIn(leak, md)

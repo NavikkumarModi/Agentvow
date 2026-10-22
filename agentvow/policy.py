@@ -5,6 +5,7 @@ found, the changed-line coverage, and the NAMES of the categories the replay cou
 A **policy** (`agentvow-policy/1`) turns a receipt into allow / block / needs_acknowledgement, with reasons in plain language. A contradiction can never be acknowledged away; an UNKNOWN or a
 missing proof can be, by a named person, for exactly one receipt. In CI the policy file must come from the BASE branch, never from the pull request being judged (a pull request could weaken its own policy)."""
 import hashlib
+import re
 import json
 from datetime import datetime, timezone
 
@@ -64,6 +65,10 @@ def validate_receipt(r) -> str | None:
     for k in ("repo", "commit", "git_tree"):
         if not isinstance(r.get(k), str) or not r[k] or len(r[k]) > 200:
             return f"{k} must be a short string"
+    if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", r["commit"]) or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", r["git_tree"]):
+        return "commit and git_tree must be full hexadecimal object ids"
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}", r["repo"]) or ".." in r["repo"]:
+        return "repo must look like owner/name"
     cl = r.get("claims")
     if not isinstance(cl, list) or len(cl) > MAX_CLAIMS:
         return "claims must be a list"

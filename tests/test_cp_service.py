@@ -29,7 +29,7 @@ def token(claims, key=KEY, kid="k1", alg="RS256"):
 
 
 def claims(**o):
-    c = {"iss": ISSUER, "aud": "agentvow", "exp": time.time() + 300, "repository": "o/n", "job_workflow_ref": WF, "event_name": "pull_request", "run_id": 5, "run_attempt": 1}
+    c = {"iss": ISSUER, "aud": "agentvow", "exp": time.time() + 300, "repository": "o/n", "repository_id": "99", "job_workflow_ref": WF, "event_name": "pull_request", "ref": "refs/pull/7/merge", "sha": "f" * 40, "run_id": 5, "run_attempt": 1}
     c.update(o); return c
 
 
@@ -40,11 +40,15 @@ def receipt(verdict="SUPPORTED_BY_PRIOR_EVIDENCE", pr=7, **over):
 
 class FakeGH:
     def __init__(self):
-        self.tree, self.private, self.head, self.policy, self.perm = TREE, False, COMMIT, None, "write"
-        self.checks, self.comments, self.fail_policy = [], [], False
+        self.tree, self.private, self.head, self.policy, self.perm, self.author = TREE, False, COMMIT, None, "write", "bob"
+        self.checks, self.comments, self.fail_policy, self.branch_ok, self.refs = [], [], False, True, []
     def repo_info(self, repo): return {"private": self.private, "default_branch": "main"}
     def commit_tree(self, repo, sha): return self.tree
-    def pr_info(self, repo, n): return {"head_sha": self.head, "base_ref": "main", "state": "open"}
+    def pr_info(self, repo, n): return {"head_sha": self.head, "base_ref": "main", "state": "open", "user": self.author}
+    def branch_sha(self, repo, branch):
+        self.refs.append(branch)
+        if not self.branch_ok: raise GitHubError("no such branch", 404)
+        return "c" * 40
     def file_at(self, repo, path, ref):
         if self.fail_policy: raise GitHubError("boom", 500)
         return self.policy
@@ -61,9 +65,14 @@ def make(gh=None, **cfg):
     return Service(c, verifier, gh, Store()), gh
 
 
-def post(svc, r=None, tok=None, body=None):
-    r = r or receipt()
-    return svc.post_receipt({"authorization": "Bearer " + (tok or token(claims()))}, body if body is not None else json.dumps(r).encode())
+def bound(body, **c):
+    """A token issued for exactly this body (audience '<audience>:<sha256 of the body>'), as the gate workflow requests it."""
+    return token(claims(aud="agentvow:" + hashlib.sha256(body).hexdigest(), **c))
+
+
+def post(svc, r=None, tok=None, body=None, **c):
+    body = body if body is not None else json.dumps(r or receipt()).encode()
+    return svc.post_receipt({"authorization": "Bearer " + (tok or bound(body, **c))}, body)
 
 
 def hook(svc, event, payload, secret=b"s3cret"):
@@ -98,9 +107,9 @@ class Receipts(unittest.TestCase):
         self.assertEqual(post(s, tok=token(claims(), key=OTHER))[0], 401)
     def test_refusals(self):
         s, gh = make()
-        self.assertEqual(post(s, tok=token(claims(repository="o/other")))[0], 403)
-        self.assertEqual(post(s, tok=token(claims(job_workflow_ref="o/gate/.github/workflows/gate.yml@refs/heads/evil")))[0], 403)
-        self.assertEqual(post(s, tok=token(claims(event_name="schedule")))[0], 403)
+        self.assertEqual(post(s, repository="o/other")[0], 403)
+        self.assertEqual(post(s, job_workflow_ref="o/gate/.github/workflows/gate.yml@refs/heads/evil")[0], 403)
+        self.assertEqual(post(s, event_name="schedule")[0], 403)
         self.assertEqual(post(s, body=b"not json")[0], 400)
         self.assertEqual(post(s, body=b"{}")[0], 422)
         self.assertEqual(post(s, body=b"x" * 70000)[0], 413)
@@ -126,12 +135,124 @@ class Receipts(unittest.TestCase):
         s, _ = make(monthly_receipts={"free": 2, "team": 9, "business": 9})
         codes = [post(s, receipt(created_at=str(i)))[0] for i in range(3)]; self.assertEqual(codes, [200, 200, 429])
     def test_latest_run_wins_over_older(self):
-        s, gh = make(); post(s, receipt("CONTRADICTED"), tok=token(claims(run_id=9)))
-        post(s, receipt("SUPPORTED_BY_PRIOR_EVIDENCE", created_at="2"), tok=token(claims(run_id=5)))   # older run arrives later
+        s, gh = make(); post(s, receipt("CONTRADICTED"), run_id=9)
+        code, o = post(s, receipt("SUPPORTED_BY_PRIOR_EVIDENCE", created_at="2"), run_id=5)   # an older run arrives later
         self.assertEqual(s.check("o/n", COMMIT)[1]["conclusion"], "failure")
+        self.assertEqual(gh.checks[-1][4], "failure")   # FINDING C: the published check is the latest run's, not the last arrival
+        self.assertIsNotNone(o["superseded_by"])
+        post(s, receipt("CONTRADICTED"), run_id=9)   # the same receipt again must not lose its place
+        self.assertEqual(gh.checks[-1][4], "failure")
     def test_github_outage_is_502_not_success(self):
         s, gh = make(); gh.commit_tree = lambda *a: (_ for _ in ()).throw(GitHubError("down", 500))
         self.assertEqual(post(s)[0], 502); self.assertEqual(gh.checks, [])
+
+
+class Findings(unittest.TestCase):
+    """One test per reproduced finding of the adversarial review (docs/review/CONTROLPLANE_REVIEW_2026-10-22.md)."""
+    def test_A_token_is_bound_to_the_receipt_body(self):
+        s, gh = make(); real = json.dumps(receipt("UNKNOWN")).encode(); forged = json.dumps(receipt("SUPPORTED_BY_PRIOR_EVIDENCE")).encode()
+        stolen = bound(real)   # what a malicious server receives when a caller points service-url at it
+        self.assertEqual(s.post_receipt({"authorization": "Bearer " + stolen}, forged)[0], 401)
+        self.assertEqual(gh.checks, [])
+        self.assertEqual(post(s, tok=token(claims()), body=forged)[0], 401)   # a token for the plain audience no longer works either
+        self.assertEqual(s.post_receipt({"authorization": "Bearer " + stolen}, real)[0], 200)   # replaying the very same receipt is harmless
+    def test_A_token_must_name_this_pull_request_or_commit(self):
+        s, gh = make()
+        self.assertEqual(post(s, ref="refs/pull/8/merge")[0], 403)                   # a token from another pull request of the same repository
+        self.assertEqual(post(s, receipt(pr=None))[0], 403)                          # pull_request event but a receipt without a pull request
+        self.assertEqual(post(s, receipt(pr=None), event_name="push", sha="e" * 40)[0], 403)   # push token for another commit
+        self.assertEqual(post(s, receipt(pr=None), event_name="push", sha=COMMIT)[0], 200)
+        self.assertEqual(post(s, repository_id="")[0], 403)
+    def test_A_renamed_or_recycled_repository_name_is_refused(self):
+        s, gh = make(); self.assertEqual(post(s)[0], 200)
+        self.assertEqual(post(s, receipt(created_at="2"), repository_id="1234")[0], 403)
+    def test_B_policy_comes_from_the_default_branch_never_a_branch_the_author_chose(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "unknown": "block"})
+        post(s, receipt("UNKNOWN", base="lax")); self.assertEqual(gh.checks[-1][4], "failure")
+        self.assertEqual(set(gh.refs), {"main"})
+    def test_C_run_order_never_moves_backwards(self):
+        s, _ = make(); r = receipt()
+        post(s, r, run_id=9); post(s, r, run_id=3)
+        self.assertEqual(s.store.q("select run_order from receipts")[0][0], 9001)
+    def test_D_app_factory_runs_under_uvicorn_and_fails_at_startup_without_config(self):
+        import os, uvicorn
+        from unittest import mock
+        pem = KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()).decode()
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(RuntimeError): uvicorn.Config("controlplane.service.asgi:create_app", factory=True).load()   # startup, not first request
+        env = {"AGENTVOW_CP_APP_ID": "1", "AGENTVOW_CP_PRIVATE_KEY": pem, "AGENTVOW_CP_WEBHOOK_SECRET": "x", "AGENTVOW_CP_TRUSTED_WORKFLOWS": WF, "AGENTVOW_CP_AUDIENCE": "a", "AGENTVOW_CP_DB": ":memory:"}
+        with mock.patch.dict(os.environ, env, clear=True):
+            cfg = uvicorn.Config("controlplane.service.asgi:create_app", factory=True); cfg.load()
+        self.assertEqual(cfg.interface, "asgi3")   # the old lazy `app(scope, receive, send)` function was detected as asgi2 and failed every request
+    def test_F_object_ids_and_names_are_strict(self):
+        s, gh = make()
+        for bad in ("abc/../../../../pulls/1?x=", "A" * 40, "g" * 40, "a" * 39):
+            self.assertEqual(post(s, receipt(commit=bad))[0], 422)
+            self.assertEqual(post(s, receipt(git_tree=bad))[0], 422)
+        self.assertEqual(post(s, receipt(repo="o/n/../x"))[0], 422)
+        self.assertIsNone(GitHub("1", KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()), lambda *a: (500, b"")).commit_tree("o/n", "../x"))
+    def test_G1_unresolvable_default_branch_blocks_instead_of_defaulting(self):
+        s, gh = make(); gh.branch_ok = False
+        post(s); self.assertEqual(gh.checks[-1][4], "failure")
+    def test_G2_odd_policy_listing_and_odd_signature_do_not_crash(self):
+        def t(method, url, hdr, body):
+            if url.endswith("/installation"): return 200, b'{"id": 3}'
+            if "access_tokens" in url: return 201, b'{"token": "tok"}'
+            return 200, b'[{"name": "policy.json"}]'   # the path is a directory
+        gh = GitHub("12", KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()), t)
+        with self.assertRaises(GitHubError): gh.file_at("o/n", ".agentvow/policy.json", "c" * 40)
+        s, _ = make(); self.assertEqual(s.webhook({"x-hub-signature-256": "sha256=\u00e9\u00e9", "x-github-event": "ping"}, b"{}")[0], 401)
+    def test_G2_unexpected_exception_fails_closed(self):
+        s, gh = make(); s.store.acks = lambda *a: (_ for _ in ()).throw(RuntimeError("bug"))
+        self.assertEqual(post(s)[0], 500); self.assertEqual(gh.checks[-1][4], "failure")
+    def test_H_concurrent_first_publishes_make_one_check_run(self):
+        import threading
+        s, gh = make(); made = []
+        orig = gh.set_check
+        def slow(repo, sha, name, status, conclusion, title, summary, check_id=None):
+            time.sleep(0.05); made.append(check_id); return orig(repo, sha, name, status, conclusion, title, summary, check_id)
+        gh.set_check = slow
+        ts = [threading.Thread(target=post, args=(s, receipt(created_at=str(i)))) for i in range(4)]
+        [t.start() for t in ts]; [t.join() for t in ts]
+        self.assertEqual(made.count(None), 1)
+    def test_I_reopen_does_not_reset_a_finished_check(self):
+        s, gh = make(); post(s)
+        hook(s, "pull_request", {**Hooks.PR, "action": "reopened"}); self.assertEqual(gh.checks[-1][4], "success")
+    def test_J_acknowledgement_needs_the_receipt_id_and_is_not_replayable_or_self_served(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice", "bob"]}); post(s, receipt("UNKNOWN"))
+        rid = s.store.latest_receipt("o/n", COMMIT)[0]
+        c = lambda body, login="alice": {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": body, "user": {"login": login, "type": "User"}}}
+        hook(s, "issue_comment", c("/agentvow acknowledge")); self.assertEqual(gh.checks[-1][4], "action_required")      # no id: refused
+        hook(s, "issue_comment", c(f"/agentvow acknowledge {rid[:12]}", "bob")); self.assertEqual(gh.checks[-1][4], "action_required")   # bob authored the PR
+        body = json.dumps(c(f"/agentvow acknowledge {rid[:12]}")).encode()
+        sig = "sha256=" + hmac.new(b"s3cret", body, hashlib.sha256).hexdigest(); h = {"x-hub-signature-256": sig, "x-github-event": "issue_comment", "x-github-delivery": "d1"}
+        self.assertEqual(s.webhook(h, body)[1].get("decision"), "allow")
+        self.assertEqual(s.webhook(h, body)[1].get("ignored"), "delivery already processed")
+    def test_K_quota_counts_only_stored_receipts_and_refusals_do_not_burn_it(self):
+        s, gh = make(monthly_receipts={"free": 2, "team": 9, "business": 9}, per_minute=1000)
+        codes = [post(s, receipt(created_at=str(i)))[0] for i in range(6)]
+        self.assertEqual(codes, [200, 200, 429, 429, 429, 429]); self.assertEqual(s.store.usage("o/n")[0], 2)
+        self.assertEqual(post(s, receipt(created_at="0"))[0], 200)   # an already stored receipt is not counted again
+    def test_L_rate_limiter_memory_is_bounded(self):
+        from controlplane.service.core import RateLimiter
+        t = [0.0]; rl = RateLimiter(5, now=lambda: t[0], max_keys=50)
+        for i in range(500): rl.ok(f"k{i}"); t[0] += 1
+        self.assertLessEqual(len(rl.hits), 100)
+    def test_L_jwks_failure_is_not_retried_every_request(self):
+        n = []; t = [1000.0]
+        def bad(): n.append(1); raise OSError("down")
+        v = OidcVerifier("agentvow", bad, now=lambda: t[0])
+        for _ in range(5):
+            with self.assertRaises(Exception): v.verify(token(claims(exp=t[0] + 99), kid="q"))
+        self.assertEqual(len(n), 1)
+    def test_M_cli_zero_days_is_not_permanent_and_keys_are_not_silently_replaced(self):
+        import tempfile
+        from controlplane.service import cli
+        db = tempfile.mkdtemp() + "/x.db"
+        with self.assertRaises(SystemExit): cli.main(["--db", db, "set-plan", "o/n", "team", "--days", "0"])
+        self.assertEqual(cli.main(["--db", db, "issue-key", "o/n"]), 0)
+        with self.assertRaises(SystemExit): cli.main(["--db", db, "issue-key", "o/n"])
+        self.assertEqual(cli.main(["--db", db, "issue-key", "o/n", "--rotate"]), 0)
 
 
 class Hooks(unittest.TestCase):
@@ -150,7 +271,8 @@ class Hooks(unittest.TestCase):
         s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN")); return s, gh
     def test_acknowledge_flow(self):
         s, gh = self.setup_unknown(); self.assertEqual(gh.checks[-1][4], "action_required")
-        self.assertEqual(hook(s, "issue_comment", self.comment())[1].get("decision"), "allow"); self.assertEqual(gh.checks[-1][4], "success")
+        rid = s.store.latest_receipt("o/n", COMMIT)[0]
+        self.assertEqual(hook(s, "issue_comment", self.comment(body=f"/agentvow acknowledge {rid[:12]}"))[1].get("decision"), "allow"); self.assertEqual(gh.checks[-1][4], "success")
     def test_acknowledge_refusals(self):
         s, gh = self.setup_unknown()
         for c in (self.comment(login="mallory"), self.comment(typ="Bot"), self.comment(body="please /agentvow acknowledge"), self.comment(body="/agentvow acknowledge deadbeef")):
@@ -198,8 +320,10 @@ class Http(unittest.TestCase):
         with self.assertRaises(RuntimeError): build_service({})
         s, gh = make(); c = TestClient(make_app(s))
         self.assertEqual(c.get("/healthz").text, "ok")
-        self.assertEqual(c.post("/v1/receipts", content=json.dumps(receipt())).status_code, 401)
-        r = c.post("/v1/receipts", content=json.dumps(receipt()), headers={"Authorization": "Bearer " + token(claims())}); self.assertEqual(r.status_code, 200)
+        body = json.dumps(receipt()).encode()
+        self.assertEqual(c.post("/v1/receipts", content=body).status_code, 401)
+        r = c.post("/v1/receipts", content=body, headers={"Authorization": "Bearer " + bound(body)}); self.assertEqual(r.status_code, 200)
+        self.assertEqual(c.post("/v1/receipts", content=b"x" * 70000, headers={"Authorization": "Bearer x"}).status_code, 413)
         self.assertEqual(c.post("/v1/webhook", content=b"{}").status_code, 401)
         self.assertEqual(c.get("/v1/check", params={"repo": "o/n", "commit": COMMIT}).status_code, 401)
         k = s.store.issue_key("o/n")

@@ -2,6 +2,7 @@
 injected function (default: GitHub's JWKS URL) and cached; an unknown `kid` triggers at most one refresh per minute."""
 import base64
 import json
+import threading
 import time
 import urllib.request
 
@@ -31,20 +32,25 @@ class OidcVerifier:
         self.audience, self.fetch, self.issuer, self.now, self.skew = audience, jwks_fetch, issuer, now, skew
         self._keys: dict = {}
         self._fetched = 0.0
+        self._lock = threading.Lock()
 
     def _refresh(self) -> None:
+        """One fetch at a time. The time is recorded BEFORE fetching, so a failing or slow JWKS endpoint costs one attempt a minute, not one per request."""
+        self._fetched = self.now()
         keys = {}
         for k in (self.fetch() or {}).get("keys", []):
             if k.get("kty") == "RSA" and k.get("kid") and k.get("n") and k.get("e"):
                 keys[k["kid"]] = rsa.RSAPublicNumbers(int.from_bytes(_unb64(k["e"]), "big"), int.from_bytes(_unb64(k["n"]), "big")).public_key()
-        self._keys, self._fetched = keys, self.now()
+        self._keys = keys
 
     def _key(self, kid: str):
-        if kid not in self._keys and self.now() - self._fetched > 60:
-            self._refresh()
+        if kid not in self._keys:
+            with self._lock:
+                if kid not in self._keys and self.now() - self._fetched > 60:
+                    self._refresh()
         return self._keys.get(kid)
 
-    def verify(self, token: str) -> dict:
+    def verify(self, token: str, audience: str | None = None) -> dict:
         """-> claims, or raises OidcError. Checks: structure, alg RS256 only, known kid, signature, issuer, audience, expiry, not-before."""
         try:
             h, p, s = token.split(".")
@@ -62,8 +68,8 @@ class OidcVerifier:
             raise OidcError("bad signature")
         if not isinstance(claims, dict) or claims.get("iss") != self.issuer:
             raise OidcError("wrong issuer")
-        aud = claims.get("aud")
-        if not (aud == self.audience or (isinstance(aud, list) and self.audience in aud)):
+        aud, want = claims.get("aud"), audience or self.audience
+        if not (aud == want or (isinstance(aud, list) and want in aud)):
             raise OidcError("wrong audience")
         now = self.now()
         if not isinstance(claims.get("exp"), (int, float)) or claims["exp"] <= now - self.skew:

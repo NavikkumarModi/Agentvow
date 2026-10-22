@@ -2,14 +2,19 @@
 (an app JWT signed with the App's private key, exchanged for a short-lived installation token). All HTTP goes through one injectable function so tests never touch the network."""
 import base64
 import json
+import re
 import time
 import urllib.error
 import urllib.request
+
+from urllib.parse import quote
 
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
 API = "https://api.github.com"
+REPO_RE = re.compile(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}")
+SHA_RE = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 
 
 class GitHubError(Exception):
@@ -69,10 +74,14 @@ class GitHub:
         return tok["token"]
 
     def _repo_call(self, method, repo, path, body=None):
+        if not REPO_RE.fullmatch(str(repo)) or ".." in repo:
+            raise GitHubError("not a valid repository name")
         return self._call(method, f"/repos/{repo}{path}", self._install_token(repo), body)
 
     # ---- what GitHub says
     def commit_tree(self, repo: str, sha: str):
+        if not SHA_RE.fullmatch(str(sha)):
+            return None
         st, o = self._repo_call("GET", repo, f"/git/commits/{sha}")
         return o.get("tree", {}).get("sha") if st == 200 else None
 
@@ -86,20 +95,26 @@ class GitHub:
         st, o = self._repo_call("GET", repo, f"/pulls/{int(number)}")
         if st != 200:
             return None
-        return {"head_sha": o.get("head", {}).get("sha"), "base_ref": o.get("base", {}).get("ref"), "state": o.get("state")}
+        return {"head_sha": o.get("head", {}).get("sha"), "base_ref": o.get("base", {}).get("ref"), "state": o.get("state"), "user": str((o.get("user") or {}).get("login") or "")}
+
+    def branch_sha(self, repo: str, branch: str) -> str:
+        """The commit a branch points to right now. A missing branch is an ERROR, never 'no policy' (a 404 on the policy file must mean only that the file does not exist)."""
+        st, o = self._repo_call("GET", repo, f"/git/ref/heads/{quote(branch, safe='')}")
+        sha = (o.get("object") or {}).get("sha") if st == 200 and isinstance(o, dict) else None
+        if not sha or not SHA_RE.fullmatch(str(sha)):
+            raise GitHubError("the branch could not be resolved", st)
+        return sha
 
     def file_at(self, repo: str, path: str, ref: str):
         """The text of `path` at `ref` ("" is not a file), or None when it does not exist. Raises GitHubError on any other failure so a caller can fail closed."""
-        from urllib.parse import quote
         st, o = self._repo_call("GET", repo, f"/contents/{quote(path)}?ref={quote(ref, safe='')}")
         if st == 404:
             return None
-        if st != 200 or o.get("encoding") != "base64":
+        if st != 200 or not isinstance(o, dict) or o.get("type") != "file" or o.get("encoding") != "base64":
             raise GitHubError("file not readable", st)
         return base64.b64decode(o.get("content", "")).decode("utf-8", "replace")
 
     def permission(self, repo: str, login: str) -> str:
-        from urllib.parse import quote
         st, o = self._repo_call("GET", repo, f"/collaborators/{quote(login)}/permission")
         return str(o.get("permission", "none")) if st == 200 else "none"
 
