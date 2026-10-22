@@ -2,15 +2,29 @@
 
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/NavikkumarModi.agentvow)](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow) [![PyPI](https://img.shields.io/pypi/v/agentvow)](https://pypi.org/project/agentvow/) [![CI](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml/badge.svg)](https://github.com/NavikkumarModi/Agentvow/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-When a coding agent says "all tests pass" or "nothing else depends on this", Agentvow checks that against the repository and tells you what it could confirm, what it contradicted, and what it could not check. It runs **outside** the agent (an agent must not grade itself), uses no LLM, and never approves, rejects or merges anything.
+**Don't take an agent's word for it. Check the claim.**
 
-**Status: 0.4.0 (prototype).** Not a safety verdict. Python repositories; running tests needs macOS or Linux (bubblewrap). See [Known limits](#known-limits) and `docs/SECURITY_MODEL.md`.
+When a coding agent says "all tests pass" or "nothing else depends on this", Agentvow checks that against the repository, independently of the agent, and tells you in plain language what it confirmed, what it contradicted, and what it could not check. No LLM decides the result, and nothing is approved, rejected or merged for you.
 
 ![An agent says it added retries to fetch() and that all tests pass. Agentvow records the packages of the agent's environment, replays the tests in a clean sandbox built from them, and reports the claim supported with the basis stated, while also saying that 6 of the 11 changed source lines were run by the tests and naming the lines that were not.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo.gif?raw=true)
 
 *Recorded from [examples/demo_capture.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_capture.py) on the released package: a real virtualenv with pytest, a real commit, a real `agentvow capture`, a real sandboxed replay and a real changed-line coverage measurement. Staged for the recording, not faked: the pacing and simulated typing of the two commands, the "agent" scene (a pre-made commit stands in for a live agent), and the line wrapping of the report text so it fits the terminal. Note what the report does and does not say: the tests pass and the result reproduces from the captured packages, but nearly half of the changed lines were never run by any test, which is exactly what a person would want to know before trusting "all tests pass".*
 
-> **Name:** Agentvow (an agent's claims are vows; this checks them). It was developed under the working name AgentMirror; the name was changed because that name, and its Python module, belong to an unrelated PyPI project.
+## What you get
+- **Independent replay.** Tests are re-run in a clean sandbox, built from the packages the agent's own environment actually had, and compared with a build from the project's own setup (CI files, Dockerfile, requirements).
+- **Honest answers, three ways.** *Contradicted*, *supported (with the basis stated)*, or *UNKNOWN*. Missing evidence is never turned into "OK", and every UNKNOWN comes with the next step that would resolve it.
+- **Changed-line coverage.** Says how many of the changed source lines the tests really ran, and names the ones they did not.
+- **Claim checks beyond tests.** Backward compatibility (public-API diff) and downstream impact (import graph) for Python.
+- **Portable evidence.** A minimal receipt and a capture bundle that can be verified on another machine, bound to the exact files by git tree hash.
+- **Team gate.** A reusable GitHub workflow and Action publish an `agentvow/evidence` check on pull requests; policy lives on the base branch and acknowledgements are recorded by name.
+- **Where you work.** Claude Code hooks (`agentvow init`), GitHub Copilot in VS Code, the VS Code extension, the command line, GitHub Actions.
+- **Safe by construction.** Sandboxed test runs (macOS `sandbox-exec`, Linux bubblewrap), network denied, sealed results, text from agents escaped in reports.
+
+## How it works
+1. The agent works and stops (or opens a pull request).
+2. Agentvow reads its message and extracts the checkable claims by rules.
+3. It replays and measures: tests at base and head, captured-environment replay, project-native replay, changed-line coverage.
+4. You get a plain-language verdict with evidence, scope and what was not examined.
 
 ## Quick start
 ```bash
@@ -71,21 +85,11 @@ Details and a step-by-step live test: `docs/LIVE_TESTING.md`.
 From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.4.0.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
 Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
-## Safety in one paragraph
-Running tests executes the project's code. It runs in a sandbox: macOS `sandbox-exec` or Linux `bubblewrap` (`apt install bubblewrap`; on Ubuntu 24.04+ unprivileged user namespaces must be allowed, e.g. `sysctl kernel.apparmor_restrict_unprivileged_userns=0`; `agentvow doctor` tells you). Network denied, file writes only inside a throwaway worktree plus a private scratch directory, signing key and credential folders unreadable, whole process group killed on timeout; on Windows, or where no working sandbox exists, Agentvow refuses to run tests (static checks and CI reading still work; `agentvow doctor` says which). The Linux sandbox makes the whole filesystem read-only; the macOS one allows OS services by default (a review showed a Mach service could still write outside it; common helpers like `open`/`defaults`/`osascript` are blocked, which is not complete containment). Results are HMAC-sealed with a key outside the repository, which stops casual forgery and files copied from elsewhere, **but test results are only as trustworthy as the repository's own test code**: a hostile `conftest.py` can print fake pass counts. Treat a "no contradiction" on an untrusted repository accordingly. Text from agents and repositories is length-bounded, stripped of control characters and escaped in reports and in plain-text output. Full model, reviews and open weaknesses: `docs/SECURITY_MODEL.md`, `docs/research/RISKS.md`.
+## Team gate and control plane
+The gate workflow (`docs/GATE_WORKFLOW.md`) replays on the runner, builds a receipt, and applies your policy from the base branch. A self-hostable control plane service (`controlplane/service/`, in development; `docs/CONTROLPLANE_PHASE1.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
 
-## Evidence so far (and what it does not show)
-- Agent PR claims in the wild (688 public Python PRs from five agents that claim tests pass): CI test jobs could judge 33%; of those about 27% had a failing test job (clustered in a few repositories; not an agent ranking). `docs/research/CI_CLAIM_STUDY.md`
-- Local runs on unfamiliar repos with automatic setup reached a verdict for 29% of PRs; half stopped on a missing dependency. `docs/research/LOCAL_COVERAGE.md`
-- Detection on real agent PRs (pre-registered v2, 140 PRs): the suite could be run locally for 19% of PRs; among the 13 CI-failing PRs that ran, 2 real regressions were flagged as contradicted (4 with the `review` policy), none was declared fine, and 1 of 14 CI-passing controls got a false alert (a dependency-version mismatch, since guarded). Small, clustered, in-sample for the follow-up rules. `docs/research/DETECTION_V2.md`
-- Planted faults (authored by us, 15 real PRs): 26 of 30 test-detectable breaks attributed, no false alarms. The zero-config setup could not run most real PRs (see the line above for what the runnable ones showed). `docs/research/PLANTED_FAULTS.md`, `docs/research/DETECTION_STUDY.md`
-- Novelty is **not** claimed: the closest prior work (Assay, EA-Graph, backcheck and others) and what remains open are in `docs/research/NOVELTY_BOUNDARY.md`.
-
-## Known limits
-Python only for impact and API checks; claim extraction is rule-based (three claim types); CI job classification is by name; trivialised tests are not detected; tests that start daemons can hang under the sandbox (ends at `--test-timeout`); hooks and Copilot integration are Preview features and only the Copilot CLI engine inside VS Code has been observed live; Windows has no test sandbox (tests are refused there); the chat-injection routes go through the model; one annotator behind every hand-validated number.
-
-## Control plane service (experimental, not deployed)
-`controlplane/service/` is a self-hostable service for the gate workflow: it accepts receipts only from the exact trusted workflow (GitHub Actions identity token), asks GitHub whether the commit matches the receipt, applies the policy from the base branch, and sets the `agentvow/evidence` check. It stores receipts only and never runs your code. Status: built and tested against fakes (22 tests); never run against real GitHub, not deployed, no adversarial review yet. Setup and the list of unverified items: `docs/CONTROLPLANE_PHASE1.md`.
+## Evidence, scope and limits
+Agentvow 0.4.0 is a prototype for Python repositories; running tests needs macOS or Linux. A pass is evidence to weigh, not a safety verdict. Studies, measured numbers, known limits and the security model are in [docs/EVIDENCE_AND_LIMITS.md](docs/EVIDENCE_AND_LIMITS.md) and `docs/SECURITY_MODEL.md`.
 
 ## Develop and validate
 ```bash
