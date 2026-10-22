@@ -30,6 +30,10 @@ def sha(obj) -> str:
     return hashlib.sha256(canon(obj)).hexdigest()
 
 
+_KNOWN_VERDICTS = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED", "UNKNOWN", "CONTRADICTED")
+MAX_CLAIMS, MAX_LIST = 200, 100
+
+
 def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: int | None = None) -> dict:
     """From the JSON that `agentvow check --json` prints. `repo` is `owner/name` as the caller (the CI runner) knows it."""
     claims = []
@@ -39,6 +43,9 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
         claims.append({"kind": str(f.get("kind", ""))[:40], "verdict": str(f.get("verdict", ""))[:40], "basis": str(meta.get("support_basis", ""))[:40],
                        "capture_source": str(meta.get("capture_source", ""))[:20], "dropped_pins": len(meta.get("dropped_pins") or []),
                        "changed_lines": {"executed": cov.get("executed"), "executable": cov.get("executable")} if cov else None})
+    if len(claims) > MAX_CLAIMS:   # keep the worst claims; say that some were left out (as an UNKNOWN claim, which is never read as support)
+        order = {"CONTRADICTED": 0, "UNKNOWN": 1}
+        claims = sorted(claims, key=lambda c: order.get(c["verdict"], 2))[:MAX_CLAIMS - 1] + [{"kind": "truncated", "verdict": "UNKNOWN", "basis": "", "capture_source": "", "dropped_pins": 0, "changed_lines": None}]
     pack = decision.get("pack") or {}
     cov = pack.get("coverage") or {}
     return {"schema": RECEIPT, "tool_version": __version__, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "repo": repo, "commit": decision.get("commit", ""),
@@ -50,8 +57,6 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
             "not_reproduced": [str(i.get("category", ""))[:80] for i in (pack.get("manifest") or {}).get("items", [])]}
 
 
-_KNOWN_VERDICTS = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED", "UNKNOWN", "CONTRADICTED")
-MAX_CLAIMS, MAX_LIST = 200, 100
 
 
 def _count(x) -> bool:

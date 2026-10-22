@@ -1,6 +1,6 @@
 # Control plane service, phase 1
 
-Status: **built, adversarially reviewed once (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes; never run against real GitHub, never deployed.** Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
+Status: **built, adversarially reviewed twice (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes; never run against real GitHub, never deployed.** Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
 
 ## What it does
 1. `POST /v1/receipts` (called by the gate workflow's upload job): verifies the GitHub Actions OIDC token (RS256 against GitHub's keys, issuer, audience, expiry), requires the exact trusted `job_workflow_ref` and an accepted event, requires the token's repository to equal the receipt's, requires the token to have been issued for exactly this receipt (audience `<audience>:<sha256 of the body>`) and to name its pull request or commit, asks GitHub (as oracle) whether the commit's tree hash matches the receipt and whether the commit is the pull request's head, reads the policy from the repository's **default branch** through the GitHub API, evaluates with `agentvow.policy.evaluate` and sets the check run `agentvow/evidence`.
@@ -24,4 +24,4 @@ Permissions: Checks read/write, Contents read, Pull requests read, Issues write 
 * Whether GitHub accepts a required status from this App on the chosen branch protection; fork pull requests; callers without `id-token: write`.
 * Billing: plans are set by the operator by hand; no payment integration. Usage limits and rate limits are in-process.
 * No deployment, domain, TLS, backups, monitoring or privacy policy; these need the owner's accounts.
-* The fixes have had no second review. Assumptions about GitHub's token claims (`ref`, `sha`, `repository_id`, a custom audience string) are unconfirmed until a live run. Residuals: `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`.
+* A second review of the fixes found more (2-1 to 2-9 in the review record); those are fixed and have had no third review. Assumptions about GitHub's token claims (`ref`, `sha`, `repository_id`, a custom audience string) are unconfirmed until a live run. Residuals: `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`.

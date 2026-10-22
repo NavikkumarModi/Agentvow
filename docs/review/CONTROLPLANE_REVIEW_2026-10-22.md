@@ -6,7 +6,7 @@ Reviewer: an independent agent instructed to falsify the service (CLAUDE.md: adv
 |---|---|---|---|
 | A | CONFIRMED, critical | The OIDC token was not bound to the receipt; a pull request could point `service-url` at its own server, collect a valid token and replay it with a forged receipt | Token audience is `<audience>:<sha256 of the receipt>`; the service verifies it against the body. The token's `ref` (pull request) or `sha` (push) must match the receipt; `repository_id` is required and bound to the name |
 | B | CONFIRMED, critical | Policy was read from the pull request's base branch, which its author chooses; a second pull request into a weak branch turned the shared check green | Policy is read from the default branch only |
-| C | CONFIRMED, high | The check showed the last receipt to arrive, not the latest workflow run | The published result is always that of the latest run; a re-posted receipt keeps the highest run order |
+| C | CONFIRMED, high | The check showed the last receipt to arrive, not the latest workflow run | Receipts are ranked by run; a re-posted receipt keeps its highest run order. (Second review: see 2-1 below for the cross-event gap)|
 | D | CONFIRMED, high | The ASGI entry point was a plain function: every request failed under uvicorn; missing configuration failed per request, not at start-up | `create_app` factory (`uvicorn --factory`), built eagerly; test loads it through uvicorn |
 | E | PLAUSIBLE, high | The receipt passes from the replay job to the upload job through the artifact store | The replay job's output carries the receipt hash; the upload job refuses a changed file; the hash is also in the token audience. Residual: a forgery from inside the replay job itself is not prevented |
 | F | CONFIRMED, medium | `commit` and `git_tree` were not validated; a crafted value reached a GitHub API path | Full hexadecimal ids and `owner/name` are enforced in the receipt schema, in the service and in the GitHub client |
@@ -24,8 +24,26 @@ Documentation overclaims corrected: threat-model rows 1, 2, 3 and 5, the "start-
 ## Follow-up after the first fixes
 The caller-chosen `service-url` was pinned: it may only select an address written into `gate.yml` (`ALLOWED_SERVICE_URLS`, exact match, checked before a token is requested). The hosted address is a placeholder until one is assigned.
 
+## Second review (commits f9cd5dc and 64bcf7c) and its fixes
+A second independent reviewer attacked the fixes and mutation-checked the regression tests (18 killed their mutation; 7 survived, listed below and strengthened).
+
+| ID | Class | Finding | Fix |
+|---|---|---|---|
+| 2-1 | CONFIRMED, high | A later push or dispatch run (no claims, no pull request) of the same commit superseded a pull request run's CONTRADICTED receipt; with `no_claims: allow` the check turned green | Receipts record the triggering event; the check shows the WORST decision among the latest receipt of each event kind |
+| 2-2 | CONFIRMED, medium-high | Read, evaluate and publish were not one step; a slow acknowledgement published a stale `success` over a newer result | Read, decide and publish happen under one per-(repository, commit) lock |
+| 2-3 | CONFIRMED, medium | A receipt stored but not published (GitHub 5xx) left an older green check | The commit is marked dirty and re-published by `reconcile()` on every receipt and webhook and by a 60-second loop |
+| 2-4 | CONFIRMED, medium | The published check can drift from the current policy; the audit listed acknowledgements the policy does not count | `/v1/check` says it is "under the policy in force now"; the audit lists only counted acknowledgements. Not fixed: re-publishing open pull requests when the policy file changes (needs push-event subscriptions) |
+| 2-5 | CONFIRMED, medium | Webhook delivery id recorded before processing; a failed delivery's redelivery was dropped | Recorded only after success |
+| 2-6 | CONFIRMED, low-medium | `repository_id` was bound before the trust checks, so an untrusted token could claim a name; no way to undo | Bound after all trust checks and the rate limit; operator `unbind-repo` |
+| 2-7 | CONFIRMED, low | More than 200 claims made a legitimate receipt unacceptable; a undecodable policy file raised untyped errors | `build_receipt` keeps the worst claims and adds an UNKNOWN "truncated" claim; decode errors are typed |
+| 2-8 | PLAUSIBLE, medium | Branch names with a slash were percent-encoded in the ref lookup | Slashes kept; unverified against GitHub |
+| 2-9 | note | `env` context inside a called workflow is an assumption | The redundant `${{ env... }}` lines were removed; the value is read from the workflow-level `env` |
+
+Weak regression tests found by mutation and fixed: empty `repository_id`, schema-level hex strictness, the real `branch_sha` error path, acknowledgement refusals (each now fires for its own reason), an acknowledgement of another receipt, a contradiction that an acknowledgement cannot clear, and the stale-publish race.
+
 ## Residuals (not fixed, stated)
 * A sandbox escape inside the replay job can still forge a receipt that carries a valid token (the replay job has no token, but its output is what the upload job sends).
 * Write permission of an acknowledger is checked when the comment is processed, not again on every later evaluation.
 * No hash-pinned dependencies or base-image digest; no per-request read timeouts beyond uvicorn's keep-alive limit.
+* A malformed receipt (422) from a verified token cannot be attached to a check run because the commit is not trusted at that point; the gate job reports the service decision as an error, which the workflow treats as block.
 * Everything is still verified only against fakes; the claims `ref`, `sha`, `repository_id` and the audience format are assumptions about GitHub's tokens until a live run.

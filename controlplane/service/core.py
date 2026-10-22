@@ -67,7 +67,7 @@ class Service:
     def __init__(self, cfg: Config, verifier, github, store, now=time.time):
         self.cfg, self.oidc, self.gh, self.store, self.now = cfg, verifier, github, store, now
         self.limiter = RateLimiter(cfg.per_minute, now=now)
-        self.locks = [threading.Lock() for _ in range(64)]   # one publisher at a time per (repository, commit)
+        self.locks = [threading.RLock() for _ in range(64)]   # one publisher at a time per (repository, commit)
 
     # ------------------------------------------------------------------ receipts
     def post_receipt(self, headers: dict, body: bytes) -> tuple:
@@ -94,8 +94,6 @@ class Service:
         repo = r["repo"]
         if not _repo_ok(repo) or claims.get("repository") != repo:
             return 403, {"error": "the token is for another repository than the receipt claims"}
-        if not claims.get("repository_id") or not self.store.bind_repo_id(repo, claims["repository_id"]):
-            return 403, {"error": "this repository name belongs to a different repository than the one first seen"}
         if str(claims.get("job_workflow_ref", "")) not in self.cfg.trusted_workflows:
             return 403, {"error": "receipts are accepted only from the exact trusted gate workflow at its pinned ref"}
         event = claims.get("event_name")
@@ -108,6 +106,9 @@ class Service:
             return 403, {"error": "the token's commit is not the receipt's commit"}
         if not self.limiter.ok("repo:" + repo):
             return 429, {"error": "too many receipts for this repository; try again in a minute"}
+        if not claims.get("repository_id") or not self.store.bind_repo_id(repo, claims["repository_id"]):   # only after every trust check, so an untrusted token cannot claim a name
+            return 403, {"error": "this repository name belongs to a different repository than the one first seen"}
+        self.reconcile()
         try:
             info = self.gh.repo_info(repo)
             plan = self.store.plan(repo)
@@ -123,20 +124,59 @@ class Service:
             return 502, {"error": f"GitHub could not confirm the receipt ({_clean(e)})"}
         rid = P.sha(r)
         run_order = int(claims.get("run_id") or 0) * 1000 + int(claims.get("run_attempt") or 0)
-        got = self.store.add_receipt(repo, rid, r["commit"], r.get("pr"), r, run_order, self.cfg.monthly_receipts.get(plan, self.cfg.monthly_receipts["free"]), self.cfg.monthly_bytes)
+        got = self.store.add_receipt(repo, rid, r["commit"], r.get("pr"), r, run_order, self.cfg.monthly_receipts.get(plan, self.cfg.monthly_receipts["free"]), self.cfg.monthly_bytes, event)
         if got == "over":
             return self._refuse(repo, r["commit"], "This month's receipt allowance for the plan is used up.", 429)
-        # The check always shows the receipt of the LATEST workflow run for this commit, whatever order receipts arrive in.
-        latest_id, latest = self.store.latest_receipt(repo, r["commit"])
+        # The check shows the worst result among the latest receipts of each kind of run (pull_request, push, ...) for this commit: a later run of one kind never hides another kind's receipt.
         try:
-            result = self.evaluate(repo, latest, latest_id, info["default_branch"])
-            cid = self._publish(repo, r["commit"], result)
+            result, cid = self._refresh(repo, r["commit"], info["default_branch"])
         except GitHubError as e:
-            return 502, {"error": f"the receipt was stored but the check run could not be set ({_clean(e)})", "id": rid}
+            return 502, {"error": f"the receipt was stored but the check run could not be set; it will be retried ({_clean(e)})", "id": rid}
         except Exception:
+            self.store.mark_dirty(repo, r["commit"])
             self._fail_closed(repo, r["commit"])
             return 500, {"error": "internal error; the check was set to failure", "id": rid}
-        return 200, {"id": rid, "superseded_by": None if latest_id == rid else latest_id, "decision": result, "check_id": cid}
+        return 200, {"id": rid, "decision": result, "check_id": cid}
+
+    _RANK = {"allow": 0, "needs_acknowledgement": 1, "block": 2}
+
+    def decide(self, repo, commit, branch, policy=None):
+        """The combined decision for a commit, or None when there is no receipt: the worst of the latest receipt of each kind of run."""
+        rs = self.store.latest_receipts(repo, commit)
+        if not rs:
+            return None
+        policy = policy or self.policy_for(repo, branch)
+        results = [self.evaluate(repo, r, rid, branch, policy) for rid, r in rs]
+        worst = max(results, key=lambda x: self._RANK.get(x["decision"], 2))
+        out = dict(worst)
+        out["reasons"] = list(worst["reasons"]) + [x for res in results if res is not worst for x in res["reasons"]]
+        out["receipts"] = [rid for rid, _ in rs]
+        return out
+
+    def _refresh(self, repo, commit, branch, policy=None):
+        """Read the receipts, decide and publish as ONE step per (repository, commit): a slow thread can no longer publish an older result over a newer one. A failed publish is remembered and retried."""
+        with self.locks[hash((repo, commit)) % len(self.locks)]:
+            result = self.decide(repo, commit, branch, policy)
+            if result is None:
+                return None, None
+            try:
+                cid = self._publish(repo, commit, result)
+            except GitHubError:
+                self.store.mark_dirty(repo, commit)
+                raise
+            self.store.clear_dirty(repo, commit)
+            return result, cid
+
+    def reconcile(self) -> None:
+        """Re-publish check runs whose last publish failed (best effort; called on every receipt and webhook and by the background loop)."""
+        try:
+            for repo, commit in self.store.dirty():
+                try:
+                    self._refresh(repo, commit, self.gh.repo_info(repo)["default_branch"])
+                except Exception:
+                    continue
+        except Exception:
+            pass
 
     def _fail_closed(self, repo, commit):
         try:
@@ -200,15 +240,20 @@ class Service:
         except ValueError:
             return 400, {"error": "not JSON"}
         ev = str(headers.get("x-github-event", ""))
+        self.reconcile()
         try:
             if not isinstance(p, dict) or not _repo_ok((p.get("repository") or {}).get("full_name")):
                 return (200, {"ignored": ev}) if ev not in ("pull_request", "issue_comment") else (400, {"error": "unexpected payload"})
             if ev == "pull_request" and p.get("action") in ("opened", "reopened", "synchronize", "ready_for_review"):
                 return self._pr_event(p)
             if ev == "issue_comment" and p.get("action") == "created" and "pull_request" in (p.get("issue") or {}):
-                if self.store.seen_delivery(str(headers.get("x-github-delivery", "")) or hashlib.sha256(body).hexdigest()):
+                did = str(headers.get("x-github-delivery", "")) or hashlib.sha256(body).hexdigest()
+                if self.store.delivery_seen(did):
                     return 200, {"ignored": "delivery already processed"}
-                return self._comment_event(p)
+                code, obj = self._comment_event(p)
+                if code == 200:   # recorded only after success, so a redelivery of a failed one is processed
+                    self.store.record_delivery(did)
+                return code, obj
         except GitHubError as e:
             return 502, {"error": f"GitHub error ({_clean(e)})"}
         except (KeyError, TypeError, ValueError, AttributeError):
@@ -217,11 +262,11 @@ class Service:
 
     def _pr_event(self, p):
         repo, sha = p["repository"]["full_name"], str(p["pull_request"]["head"]["sha"])
-        rid, receipt = self.store.latest_receipt(repo, sha)
-        if rid:   # a receipt already exists for this commit (reopened, ready for review): show its result, never reset it to pending
-            info = self.gh.repo_info(repo)
-            return 200, {"check": self._publish(repo, sha, self.evaluate(repo, receipt, rid, info["default_branch"]))}
-        cid = self._check(repo, sha, "in_progress", None, "Agentvow: waiting for the gate", "No receipt has been posted for this commit yet. The required check stays pending until the Agentvow gate workflow runs and posts one.")
+        with self.locks[hash((repo, sha)) % len(self.locks)]:
+            if self.store.latest_receipts(repo, sha):   # a receipt already exists for this commit (reopened, ready for review): show its result, never reset it to pending
+                result, cid = self._refresh(repo, sha, self.gh.repo_info(repo)["default_branch"])
+                return 200, {"check": cid}
+            cid = self._check(repo, sha, "in_progress", None, "Agentvow: waiting for the gate", "No receipt has been posted for this commit yet. The required check stays pending until the Agentvow gate workflow runs and posts one.")
         return 200, {"pending_check": cid}
 
     def _comment_event(self, p):
@@ -238,16 +283,19 @@ class Service:
         pr = self.gh.pr_info(repo, number)
         if not pr:
             return 200, {"ignored": "pull request not found"}
-        rid, receipt = self.store.latest_receipt(repo, pr["head_sha"])
-        if not rid:
+        current = self.store.latest_receipts(repo, pr["head_sha"])
+        if not current:
             self.gh.comment(repo, number, "Agentvow: there is no receipt for the current commit of this pull request yet, so there is nothing to acknowledge.")
             return 200, {"refused": "no receipt"}
+        ids = ", ".join(f"`{x[:12]}`" for x, _ in current)
         if not m.group(1):   # an acknowledgement names the receipt the person looked at; it never lands on whatever is newest
-            self.gh.comment(repo, number, f"Agentvow: name the receipt you reviewed: `/agentvow acknowledge {rid[:12]}`.")
+            self.gh.comment(repo, number, f"Agentvow: name the receipt you reviewed: `/agentvow acknowledge <id>` with one of {ids}.")
             return 200, {"refused": "receipt id required"}
-        if not rid.startswith(m.group(1).lower()):
-            self.gh.comment(repo, number, f"Agentvow: that receipt id does not match the current one (`{rid[:12]}`). Acknowledge the current one.")
+        hits = [x for x, _ in current if x.startswith(m.group(1).lower())]
+        if len(hits) != 1:
+            self.gh.comment(repo, number, f"Agentvow: that receipt id does not match exactly one current receipt ({ids}). Acknowledge a current one.")
             return 200, {"refused": "receipt id mismatch"}
+        rid = hits[0]
         info = self.gh.repo_info(repo)
         pol, err = self.policy_for(repo, info["default_branch"])
         if err:
@@ -263,9 +311,9 @@ class Service:
         if self.gh.permission(repo, login) not in WRITE:
             self.gh.comment(repo, number, f"Agentvow: @{_clean(login, 39)} does not have write access to this repository.")
             return 200, {"refused": "no write access"}
-        self.store.add_ack(repo, rid, login, m.group(2).strip())
-        result = self.evaluate(repo, receipt, rid, info["default_branch"], (pol, None))
-        self._publish(repo, pr["head_sha"], result)
+        with self.locks[hash((repo, pr["head_sha"])) % len(self.locks)]:
+            self.store.add_ack(repo, rid, login, m.group(2).strip())
+            result, _ = self._refresh(repo, pr["head_sha"], info["default_branch"], (pol, None))
         self.gh.comment(repo, number, f"Agentvow: acknowledged by @{_clean(login, 39)} for receipt `{rid[:12]}`. Decision: **{result['decision']}**.")
         return 200, {"decision": result["decision"]}
 
@@ -277,14 +325,13 @@ class Service:
     def check(self, repo: str, commit: str, headers: dict | None = None) -> tuple:
         if headers is not None and not self._key_ok(repo, headers):   # HTTP callers need the repository's key; internal callers pass None
             return 401, {"error": "this repository's audit key is required"}
-        rid, r = self.store.latest_receipt(repo, commit)
-        if not rid:
-            return 200, {"conclusion": "action_required", "decision": "needs_acknowledgement", "reasons": [{"rule": "no_receipt", "text": "No receipt was uploaded for this commit, so nothing was checked."}]}
         try:
-            res = self.evaluate(repo, r, rid, self.gh.repo_info(repo)["default_branch"])
+            res = self.decide(repo, commit, self.gh.repo_info(repo)["default_branch"])
         except GitHubError as e:
             return 502, {"error": f"GitHub error ({_clean(e)})"}
-        return 200, {"conclusion": res["conclusion"], "decision": res["decision"], "reasons": res["reasons"], "receipt_sha": rid}
+        if res is None:
+            return 200, {"conclusion": "action_required", "decision": "needs_acknowledgement", "reasons": [{"rule": "no_receipt", "text": "No receipt was uploaded for this commit, so nothing was checked."}]}
+        return 200, {"conclusion": res["conclusion"], "decision": res["decision"], "reasons": res["reasons"], "receipts": res["receipts"], "evaluated": "under the policy in force now; the published check may reflect an earlier policy until the next receipt or webhook"}
 
     def audit(self, repo: str, headers: dict, fmt: str = "json") -> tuple:
         if not self._key_ok(repo, headers):
@@ -296,7 +343,8 @@ class Service:
             for rid, r, at in self.store.receipts(repo):
                 res = self.evaluate(repo, r, rid, branch, policy)
                 rows.append({"receipt_sha": rid, "commit": r["commit"], "git_tree": r["git_tree"], "pr": r.get("pr"), "received": at, "decision_under_current_policy": res["decision"], "reasons": [x["text"] for x in res["reasons"]],
-                             "acknowledged_by": sorted({a["by"] for a in self.store.acks(repo, rid)}), "reproducibility": r.get("reproducibility"), "not_reproduced": r.get("not_reproduced", [])})
+                             "acknowledged_by": sorted({x["acknowledged_by"] for x in res["reasons"] if x.get("acknowledged_by")}),   # only acknowledgements the current policy counts
+                              "reproducibility": r.get("reproducibility"), "not_reproduced": r.get("not_reproduced", [])})
         except GitHubError as e:
             return 502, {"error": f"GitHub error ({_clean(e)})"}
         if fmt == "csv":

@@ -1,5 +1,7 @@
 """ASGI adapter (Starlette). Run: `uvicorn controlplane.service.asgi:app`. Configuration comes from environment variables (docs/CONTROLPLANE_PHASE1.md); the app refuses to start without them."""
 import os
+import threading
+import time
 from pathlib import Path
 
 from starlette.applications import Starlette
@@ -73,4 +75,11 @@ def make_app(service: Service) -> Starlette:
 
 def create_app() -> Starlette:
     """Application factory (`uvicorn --factory controlplane.service.asgi:create_app`). Built eagerly, so a missing setting stops the process at start-up instead of failing every request."""
-    return make_app(build_service())
+    service = build_service()
+
+    def loop():
+        while True:
+            time.sleep(60)
+            service.reconcile()
+    threading.Thread(target=loop, daemon=True).start()   # retries check runs whose publish failed
+    return make_app(service)

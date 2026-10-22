@@ -75,7 +75,6 @@ jobs:
           VERSION: ${{ inputs.agentvow-version }}
           POLICY_PATH: ${{ inputs.policy-path }}
           SERVICE_URL: ${{ inputs.service-url }}
-          ALLOWED_SERVICE_URLS: ${{ env.ALLOWED_SERVICE_URLS }}
         run: |
           case "$EVENT" in pull_request|push|workflow_dispatch) ;; *) echo "The gate runs the pull request's code and is refused on the '$EVENT' event (use pull_request, push or workflow_dispatch)."; exit 1;; esac
           case "$TEST_TIMEOUT" in ''|*[!0-9]*) echo "test-timeout must be a whole number of seconds."; exit 1;; esac
@@ -196,7 +195,6 @@ jobs:
           SERVICE_URL: ${{ inputs.service-url }}
           AUDIENCE: ${{ inputs.audience }}
           EXPECTED_SHA: ${{ needs.replay.outputs.receipt-sha }}
-          ALLOWED_SERVICE_URLS: ${{ env.ALLOWED_SERVICE_URLS }}
         run: |
           set +e
           GATE="$RUNNER_TEMP/gate"

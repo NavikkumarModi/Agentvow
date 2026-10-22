@@ -99,7 +99,7 @@ class GitHub:
 
     def branch_sha(self, repo: str, branch: str) -> str:
         """The commit a branch points to right now. A missing branch is an ERROR, never 'no policy' (a 404 on the policy file must mean only that the file does not exist)."""
-        st, o = self._repo_call("GET", repo, f"/git/ref/heads/{quote(branch, safe='')}")
+        st, o = self._repo_call("GET", repo, f"/git/ref/heads/{quote(branch, safe='/')}")
         sha = (o.get("object") or {}).get("sha") if st == 200 and isinstance(o, dict) else None
         if not sha or not SHA_RE.fullmatch(str(sha)):
             raise GitHubError("the branch could not be resolved", st)
@@ -112,7 +112,10 @@ class GitHub:
             return None
         if st != 200 or not isinstance(o, dict) or o.get("type") != "file" or o.get("encoding") != "base64":
             raise GitHubError("file not readable", st)
-        return base64.b64decode(o.get("content", "")).decode("utf-8", "replace")
+        try:
+            return base64.b64decode(o.get("content", "")).decode("utf-8", "replace")
+        except ValueError:
+            raise GitHubError("file content could not be decoded", st)
 
     def permission(self, repo: str, login: str) -> str:
         st, o = self._repo_call("GET", repo, f"/collaborators/{quote(login)}/permission")

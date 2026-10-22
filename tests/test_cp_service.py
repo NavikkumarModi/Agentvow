@@ -139,7 +139,6 @@ class Receipts(unittest.TestCase):
         code, o = post(s, receipt("SUPPORTED_BY_PRIOR_EVIDENCE", created_at="2"), run_id=5)   # an older run arrives later
         self.assertEqual(s.check("o/n", COMMIT)[1]["conclusion"], "failure")
         self.assertEqual(gh.checks[-1][4], "failure")   # FINDING C: the published check is the latest run's, not the last arrival
-        self.assertIsNotNone(o["superseded_by"])
         post(s, receipt("CONTRADICTED"), run_id=9)   # the same receipt again must not lose its place
         self.assertEqual(gh.checks[-1][4], "failure")
     def test_github_outage_is_502_not_success(self):
@@ -220,7 +219,7 @@ class Findings(unittest.TestCase):
         hook(s, "pull_request", {**Hooks.PR, "action": "reopened"}); self.assertEqual(gh.checks[-1][4], "success")
     def test_J_acknowledgement_needs_the_receipt_id_and_is_not_replayable_or_self_served(self):
         s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice", "bob"]}); post(s, receipt("UNKNOWN"))
-        rid = s.store.latest_receipt("o/n", COMMIT)[0]
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
         c = lambda body, login="alice": {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": body, "user": {"login": login, "type": "User"}}}
         hook(s, "issue_comment", c("/agentvow acknowledge")); self.assertEqual(gh.checks[-1][4], "action_required")      # no id: refused
         hook(s, "issue_comment", c(f"/agentvow acknowledge {rid[:12]}", "bob")); self.assertEqual(gh.checks[-1][4], "action_required")   # bob authored the PR
@@ -255,6 +254,103 @@ class Findings(unittest.TestCase):
         self.assertEqual(cli.main(["--db", db, "issue-key", "o/n", "--rotate"]), 0)
 
 
+class SecondReview(unittest.TestCase):
+    """Regression tests for the second adversarial review (docs/review/CONTROLPLANE_REVIEW_2026-10-22.md, second round)."""
+    def test_1_a_later_push_run_cannot_hide_a_pull_request_contradiction(self):
+        s, gh = make(); post(s, receipt("CONTRADICTED"), run_id=5)
+        gh.policy = json.dumps({"schema": P.POLICY, "no_claims": "allow"})
+        push = receipt(pr=None); push["claims"] = []
+        code, o = post(s, push, event_name="push", sha=COMMIT, run_id=9)
+        self.assertEqual(code, 200); self.assertEqual(gh.checks[-1][4], "failure")
+        self.assertEqual(len(o["decision"]["receipts"]), 2)
+    def test_2_a_slow_acknowledgement_cannot_overwrite_a_newer_result(self):
+        import threading
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN"), run_id=1)
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        orig = s.decide; stale = threading.Event()
+        def slow(*a, **k):
+            r = orig(*a, **k)
+            if r and r["decision"] == "allow":   # the acknowledgement has read and decided; its (soon stale) result waits before reaching GitHub
+                stale.set(); time.sleep(0.4)
+            return r
+        s.decide = slow
+        ev = {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid[:12]}", "user": {"login": "alice", "type": "User"}}}
+        t = threading.Thread(target=hook, args=(s, "issue_comment", ev)); t.start()
+        stale.wait(2); post(s, receipt("UNKNOWN", created_at="2"), run_id=2); t.join()
+        self.assertEqual(gh.checks[-1][4], "action_required")   # run 2 is not acknowledged and must be what GitHub ends up showing
+    def test_3_a_failed_publish_is_remembered_and_retried(self):
+        s, gh = make(); post(s)
+        orig = gh.set_check; gh.set_check = lambda *a, **k: (_ for _ in ()).throw(GitHubError("503", 503))
+        self.assertEqual(post(s, receipt("CONTRADICTED", created_at="2"), run_id=9)[0], 502)
+        self.assertEqual(s.store.dirty(), [("o/n", COMMIT)])
+        gh.set_check = orig; s.reconcile()
+        self.assertEqual(gh.checks[-1][4], "failure"); self.assertEqual(s.store.dirty(), [])
+    def test_4_check_says_it_is_under_the_current_policy_and_audit_lists_only_counted_acks(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN"))
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]; s.store.add_ack("o/n", rid, "mallory", "x")   # an acknowledgement from someone the policy does not list
+        k = s.store.issue_key("o/n")
+        self.assertEqual(s.audit("o/n", {"authorization": "Bearer " + k})[1]["records"][0]["acknowledged_by"], [])
+        self.assertIn("policy in force now", s.check("o/n", COMMIT)[1]["evaluated"])
+    def test_5_a_failed_delivery_is_processed_again_on_redelivery(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN"))
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        body = json.dumps({"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid[:12]}", "user": {"login": "alice", "type": "User"}}}).encode()
+        h = {"x-hub-signature-256": "sha256=" + hmac.new(b"s3cret", body, hashlib.sha256).hexdigest(), "x-github-event": "issue_comment", "x-github-delivery": "d9"}
+        orig = gh.permission; gh.permission = lambda *a: (_ for _ in ()).throw(GitHubError("502", 502))
+        self.assertEqual(s.webhook(h, body)[0], 502)
+        gh.permission = orig
+        self.assertEqual(s.webhook(h, body)[1].get("decision"), "allow")
+    def test_6_an_untrusted_token_cannot_claim_a_repository_name(self):
+        s, gh = make()
+        self.assertEqual(post(s, repository_id="666", job_workflow_ref="evil/wf/.github/workflows/x.yml@refs/heads/main")[0], 403)
+        self.assertEqual(post(s)[0], 200)   # the real repository (id 99) is not locked out
+        s.store.unbind_repo("o/n"); self.assertTrue(s.store.bind_repo_id("o/n", "5"))
+    def test_6b_empty_or_missing_repository_id_is_refused_for_a_new_name(self):
+        s, _ = make(); self.assertEqual(post(s, repository_id="")[0], 403)
+        self.assertEqual(post(s, repository_id=None)[0], 403)
+    def test_7_many_claims_are_capped_keeping_the_worst_and_a_bad_file_does_not_crash(self):
+        d = {"status": "x", "commit": COMMIT, "unexamined": 0, "findings": [{"kind": f"k{i}", "verdict": "SUPPORTED_BY_PRIOR_EVIDENCE", "meta": {}} for i in range(300)] + [{"kind": "late", "verdict": "CONTRADICTED", "meta": {}}], "pack": {}}
+        r = P.build_receipt(d, "o/n", TREE, "main", 7)
+        self.assertIsNone(P.validate_receipt(r)); self.assertEqual(r["claims"][0]["verdict"], "CONTRADICTED"); self.assertEqual(r["claims"][-1]["verdict"], "UNKNOWN")
+        def t(method, url, hdr, body):
+            if url.endswith("/installation"): return 200, b'{"id": 3}'
+            if "access_tokens" in url: return 201, b'{"token": "tok"}'
+            return 200, b'{"type": "file", "encoding": "base64", "content": "!!!not base64"}'
+        gh = GitHub("12", KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()), t)
+        with self.assertRaises(GitHubError): gh.file_at("o/n", "p", "c" * 40)
+    def test_8_branch_names_with_slashes_are_not_encoded(self):
+        seen = []
+        def t(method, url, hdr, body):
+            seen.append(url)
+            if url.endswith("/installation"): return 200, b'{"id": 3}'
+            if "access_tokens" in url: return 201, b'{"token": "tok"}'
+            return 200, ('{"object": {"sha": "%s"}}' % ("d" * 40)).encode()
+        gh = GitHub("12", KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()), t)
+        self.assertEqual(gh.branch_sha("o/n", "release/1.x"), "d" * 40); self.assertTrue(seen[-1].endswith("/git/ref/heads/release/1.x"))
+        gh2 = GitHub("12", KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()), lambda m, u, h, b: (404, b"{}") if "/git/ref/" in u else t(m, u, h, b))
+        with self.assertRaises(GitHubError): gh2.branch_sha("o/n", "gone")   # a missing branch is an error, never 'no policy'
+    def test_hex_strictness_is_in_the_schema_itself(self):
+        for bad in ("A" * 40, "g" * 40, "a" * 39, "a/../b"):
+            self.assertIsNotNone(P.validate_receipt({**receipt(), "commit": bad})); self.assertIsNotNone(P.validate_receipt({**receipt(), "git_tree": bad}))
+        for ok in ("a" * 40, "a" * 64):
+            self.assertIsNone(P.validate_receipt({**receipt(), "commit": ok}))
+        self.assertIsNone(P.validate_receipt({**receipt(), "repo": "foo.bar/.github"})); self.assertIsNotNone(P.validate_receipt({**receipt(), "repo": "o/n/../x"}))
+    def test_every_refusal_of_an_acknowledgement_fires_for_its_own_reason(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN"))
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        c = lambda login="alice", typ="User", rid_=rid[:12]: {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid_} {login}{typ}{gh.perm}", "user": {"login": login, "type": typ}}}   # varied text: identical bodies share a delivery id here
+        self.assertEqual(hook(s, "issue_comment", c("mallory"))[1]["refused"], "not a listed acknowledger")
+        self.assertEqual(hook(s, "issue_comment", c(typ="Bot"))[1]["ignored"], "not a person")
+        self.assertEqual(hook(s, "issue_comment", c(rid_="0" * 12))[1]["refused"], "receipt id mismatch")
+        gh.perm = "read"; self.assertEqual(hook(s, "issue_comment", c())[1]["refused"], "no write access")
+        gh.perm = "write"; self.assertEqual(hook(s, "issue_comment", c())[1]["decision"], "allow")
+    def test_an_acknowledgement_of_another_receipt_does_not_count_and_cannot_clear_a_contradiction(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("CONTRADICTED"))
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        ev = {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid[:12]}", "user": {"login": "alice", "type": "User"}}}
+        hook(s, "issue_comment", ev); self.assertEqual(gh.checks[-1][4], "failure")
+
+
 class Hooks(unittest.TestCase):
     PR = {"action": "opened", "repository": {"full_name": "o/n"}, "pull_request": {"head": {"sha": COMMIT}}}
     def test_signature(self):
@@ -271,7 +367,7 @@ class Hooks(unittest.TestCase):
         s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN")); return s, gh
     def test_acknowledge_flow(self):
         s, gh = self.setup_unknown(); self.assertEqual(gh.checks[-1][4], "action_required")
-        rid = s.store.latest_receipt("o/n", COMMIT)[0]
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
         self.assertEqual(hook(s, "issue_comment", self.comment(body=f"/agentvow acknowledge {rid[:12]}"))[1].get("decision"), "allow"); self.assertEqual(gh.checks[-1][4], "success")
     def test_acknowledge_refusals(self):
         s, gh = self.setup_unknown()

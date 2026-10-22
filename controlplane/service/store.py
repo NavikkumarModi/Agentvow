@@ -9,7 +9,7 @@ import threading
 import time
 
 SCHEMA = """
-create table if not exists receipts(id text not null, repo text not null, commit_sha text not null, pr integer, body text not null, received real not null, run_order integer not null, primary key(repo, id));
+create table if not exists receipts(id text not null, repo text not null, commit_sha text not null, pr integer, body text not null, received real not null, run_order integer not null, event text not null default '', primary key(repo, id));
 create index if not exists receipts_commit on receipts(repo, commit_sha, run_order desc, received desc);
 create table if not exists checks(repo text not null, commit_sha text not null, check_id integer not null, primary key(repo, commit_sha));
 create table if not exists acks(repo text not null, receipt_id text not null, by text not null, note text, at real not null);
@@ -17,6 +17,7 @@ create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
 create table if not exists repo_ids(repo text primary key, repo_id text not null);
+create table if not exists dirty(repo text not null, commit_sha text not null, primary key(repo, commit_sha));
 create table if not exists deliveries(id text primary key, at real not null);
 create table if not exists usage(repo text not null, month text not null, n integer not null, bytes integer not null, primary key(repo, month));
 """
@@ -42,7 +43,7 @@ class Store:
             return self.db.execute("select repo_id from repo_ids where repo=?", (repo,)).fetchone()[0] == str(repo_id)
 
     # ---- receipts
-    def add_receipt(self, repo, rid, commit, pr, body: dict, run_order: int, max_receipts: int = 10**9, max_bytes: int = 10**12) -> str:
+    def add_receipt(self, repo, rid, commit, pr, body: dict, run_order: int, max_receipts: int = 10**9, max_bytes: int = 10**12, event: str = "") -> str:
         """Store and count in ONE step. -> "added", "duplicate" (same receipt again: only its run order can move forward, nothing is counted) or "over" (the month's allowance is used up;
         nothing is stored or counted)."""
         raw = json.dumps(body, sort_keys=True)
@@ -56,7 +57,7 @@ class Store:
                 return "over"
             self.db.execute("begin")
             try:
-                self.db.execute("insert into receipts values(?,?,?,?,?,?,?)", (rid, repo, commit, pr, raw, time.time(), run_order))
+                self.db.execute("insert into receipts values(?,?,?,?,?,?,?,?)", (rid, repo, commit, pr, raw, time.time(), run_order, event))
                 self.db.execute("insert into usage values(?,?,1,?) on conflict(repo, month) do update set n = n + 1, bytes = bytes + excluded.bytes", (repo, m, len(raw)))
                 self.db.execute("commit")
             except BaseException:
@@ -64,14 +65,28 @@ class Store:
                 raise
             return "added"
 
-    def seen_delivery(self, delivery_id: str) -> bool:
-        """-> True when this webhook delivery id was already processed (a replayed delivery); records it otherwise."""
-        with self.lock:
-            return self.db.execute("insert or ignore into deliveries values(?,?)", (str(delivery_id)[:80], time.time())).rowcount == 0
+    def delivery_seen(self, delivery_id: str) -> bool:
+        return bool(self.q("select 1 from deliveries where id=?", str(delivery_id)[:80]))
 
-    def latest_receipt(self, repo, commit):
-        r = self.q("select id, body from receipts where repo=? and commit_sha=? order by run_order desc, received desc limit 1", repo, commit)
-        return (r[0][0], json.loads(r[0][1])) if r else (None, None)
+    def record_delivery(self, delivery_id: str) -> None:
+        """Recorded only AFTER a delivery was handled successfully, so GitHub's redelivery of one that failed is processed, not dropped."""
+        self.q("insert or ignore into deliveries values(?,?)", str(delivery_id)[:80], time.time())
+
+    def unbind_repo(self, repo) -> None:
+        self.q("delete from repo_ids where repo=?", repo)
+
+    # ---- check runs that could not be published (retried by reconcile)
+    def mark_dirty(self, repo, commit): self.q("insert or ignore into dirty values(?,?)", repo, commit)
+    def clear_dirty(self, repo, commit): self.q("delete from dirty where repo=? and commit_sha=?", repo, commit)
+    def dirty(self): return self.q("select repo, commit_sha from dirty limit 50")
+
+    def latest_receipts(self, repo, commit):
+        """-> [(id, body)]: for each triggering event (pull_request, push, ...) the receipt of the latest run for this commit. A run of one kind never hides another kind's receipt."""
+        out, seen = [], set()
+        for rid, body, ev in self.q("select id, body, event from receipts where repo=? and commit_sha=? order by run_order desc, received desc", repo, commit):
+            if ev not in seen:
+                seen.add(ev); out.append((rid, json.loads(body)))
+        return out
 
     def receipt(self, repo, rid):
         r = self.q("select body from receipts where repo=? and id=?", repo, rid)
