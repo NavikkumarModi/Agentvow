@@ -52,7 +52,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | **Claude Code** | `agentvow init` writes the two hooks below after a preview and a confirmation; by hand: Stop hook `agentvow check --hook` (settings: `{"hooks": {"Stop": [{"hooks": [{"type": "command", "command": "agentvow check --hook --evidence-pack"}]}]}}` in `.claude/settings.json`) | **Verified on real runs** (Claude Code 2.1.263, `claude -p`): payload and transcript parsed, result sealed, never blocks; the `--evidence-pack` background run (capture, both replay contexts, changed-line coverage) verified on one toy project |
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
-| Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report | Shell step tested locally; not run on GitHub |
+| Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report; opt-in `run-tests: true` also replays the tests in the sandbox on the runner and adds the evidence pack | Run on a real pull request of this repository (docs/LIVE_TESTING.md); `run-tests` checked by the shell logic and unit tests, not yet on GitHub |
 | Anything else | paste or pipe the message; VS Code commands for clipboard/selection | Tested |
 
 ## Seeing the verdict
@@ -91,4 +91,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 364 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 370 Python tests, 32 node tests -->

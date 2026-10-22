@@ -21,6 +21,14 @@ inputs:
     description: "Post or update a pull request comment (needs pull-requests: write)"
     required: false
     default: "true"
+  run-tests:
+    description: "Also replay the repository's tests in a clean sandbox (bubblewrap on Linux) in an environment built from the repository's own files (setup files, CI workflow install steps, Dockerfiles, requirements files), measure changed-line coverage, and add the evidence pack to the summary and comment. This RUNS THE PULL REQUEST'S CODE (sandboxed, network denied for the tests, network allowed for the installs): use it on pull_request, never on pull_request_target, and only where you would run the project's tests anyway."
+    required: false
+    default: "false"
+  test-timeout:
+    description: "Seconds allowed for each test run when run-tests is true"
+    required: false
+    default: "900"
 runs:
   using: "composite"
   steps:
@@ -30,6 +38,12 @@ runs:
     - name: Install Agentvow
       shell: bash
       run: python -m pip install --quiet "${{ github.action_path }}"
+    - name: Linux sandbox prerequisites (bubblewrap, user namespaces)
+      if: ${{ inputs.run-tests == 'true' && runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        sudo apt-get update -qq && sudo apt-get install -y -qq bubblewrap
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
     - name: Check the claim against the repository
       id: check
       shell: bash
@@ -39,6 +53,8 @@ runs:
         PR_BODY: ${{ github.event.pull_request.body }}
         BASE_INPUT: ${{ inputs.base }}
         CI_WAIT: ${{ inputs.ci-wait }}
+        RUN_TESTS: ${{ inputs.run-tests }}
+        TEST_TIMEOUT: ${{ inputs.test-timeout }}
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
@@ -46,8 +62,10 @@ runs:
         mkdir -p "$RUNNER_TEMP/agentvow"
         if [ -n "$CLAIM_INPUT" ]; then printf '%s' "$CLAIM_INPUT" > "$RUNNER_TEMP/agentvow/claim.txt"; else printf '%s' "$PR_BODY" > "$RUNNER_TEMP/agentvow/claim.txt"; fi
         BASE="${BASE_INPUT:-$BASE_SHA}"
+        PACK=""
+        if [ "$RUN_TESTS" = "true" ]; then PACK="--evidence-pack --test-timeout ${TEST_TIMEOUT:-900}"; fi
         agentvow check --repo . ${BASE:+--base "$BASE"} --transcript "$RUNNER_TEMP/agentvow/claim.txt" \
-          --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} \
+          --ci --ci-wait "${CI_WAIT:-0}" ${HEAD_SHA:+--ci-sha "$HEAD_SHA"} $PACK \
           --html "$RUNNER_TEMP/agentvow/report.html" --markdown "$RUNNER_TEMP/agentvow/summary.md" > /dev/null
         echo "code=$?" >> "$GITHUB_OUTPUT"
         cat "$RUNNER_TEMP/agentvow/summary.md" >> "$GITHUB_STEP_SUMMARY"

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased (0.3.1 / 0.4.0 in progress)
+- GitHub Action: new opt-in input `run-tests` (default `false`) with `test-timeout`: replays the repository's tests in the sandbox on the runner (bubblewrap installed on Linux), in an environment built from the repository's own files, and adds the evidence pack to the summary and the comment. It runs the pull request's code (sandboxed; network denied for the tests, allowed for installs): use it on `pull_request`, never `pull_request_target`. Checked by running the action's check step locally on a fixture and by unit tests on the action file; not yet run on GitHub.
+- `check --evidence-pack` without a capture now builds its environment from the repository's own files (as the hook path already did), and its pack lists the install steps and CI environment names, notes failed or left-out steps and the files the change touched, in the text, markdown and HTML report. Before, this foreground path used only the zero-config ladder, so a dependency only the CI workflow installs came back as "missing dependency".
+
 ## 0.3.0 (2026-10-22)
 The project-native context, one-command setup and clearer UNKNOWN results. Same limits as 0.2.1 (Python repositories; capture covers Python packages only). An adversarial review of this release found and led to fixes for the items marked (review).
 - The evidence pack's project-native context is built from the repository's own files, not only the zero-config ladder: setup files and requirements files, the `pip install` lines (and literal environment values) of the first CI workflow job that runs the tests, Dockerfile `pip install` lines and other requirements files (`agentvow/baseline.py`, no new dependency). The pack lists the steps and environment names used, notes any install step that failed or was left out, and says which of the files it read were changed in this change (review). The `--setup auto` zero-config path for the primary replay is unchanged.

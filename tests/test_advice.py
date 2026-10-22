@@ -137,3 +137,15 @@ class Honesty(unittest.TestCase):
         self.assertIn("environment values set from CI: FOO", txt)
         self.assertIn("were changed in this change: .github/workflows/ci.yml", txt)
         self.assertIn("note: x left out", txt)
+
+
+class MarkdownContext(unittest.TestCase):
+    def test_markdown_carries_the_install_steps_notes_and_touched_inputs(self):
+        c = dict(ctx("project-native setup", "pass", counts={"passed": 1, "failed": 0}), steps=["."], env_names=["FOO"], inputs_changed=["Dockerfile"], setup_notes=["x left out"])
+        p = {"version": 1, "manifest": None, "timing": None, "receipt": {"commit": "abc", "dirty": False, "base": "main", "command": "c", "replay_python": "3", "created": "t", "valid_for": "v"},
+             "contexts": [c], "reproducibility": {"code": "single", "text": "r", "next_steps": []}, "coverage": {"available": False, "reason": "n/a"}, "limits": "l"}
+        md = "\n".join(pack.render_markdown(p, lambda x, n=None: str(x)))
+        self.assertIn("built from the repository's own files with: pip install .", md)
+        self.assertIn("environment values set from CI: FOO", md)
+        self.assertIn("note: x left out", md)
+        self.assertIn("were changed in this change: Dockerfile", md)

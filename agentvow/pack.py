@@ -121,6 +121,7 @@ def build(a, repo: Path, base: str, d, collect) -> dict:
         nat = _native_context(a, repo, base, collect)
     elif primary:
         nat = primary
+        nat.update(getattr(a, "_native_info", None) or {})
     if nat and nat.get("inputs") is not None:
         changed = set(getattr(d, "changed", []) or [])
         nat["inputs_changed"] = [f for f in nat.pop("inputs") if f in changed][:8]
@@ -200,6 +201,13 @@ def render_markdown(p: dict, esc) -> list:
             o.append(f"| {esc(c['name'])} | **{esc(c['result'])}** | {esc(c['summary'], 120) if c['result'] != 'pass' else ''} |")
         o.append("")
         o += [f"_{esc(c['name'])}: {len(c['dropped_pins'])} pinned package(s) could not be installed on this platform and were left out: {esc(', '.join(c['dropped_pins'][:4]))}._" for c in p["contexts"] if c.get("dropped_pins")]
+        for c in p["contexts"]:
+            if c.get("steps") or c.get("env_names"):
+                o.append(f"_{esc(c['name'])} was built from the repository's own files with: " + esc("; ".join("pip install " + x for x in c.get("steps", [])[:6]) + (f"; environment values set from CI: {', '.join(c['env_names'])}" if c.get("env_names") else ""), 300) + "._")
+            o += [f"_note: {esc(n, 200)}_" for n in c.get("setup_notes", [])]
+            if c.get("inputs_changed"):
+                o.append(f"_these files, which the replay read to decide what to install, were changed in this change: {esc(', '.join(c['inputs_changed']), 200)}_")
+        o.append("")
     o += [f"**2. Reproducibility.** {esc(p['reproducibility']['text'], 500)}"]
     o += [f"- _Next step ({esc(n['context'])}):_ {esc(n['text'], 500)}" for n in p["reproducibility"].get("next_steps", [])]
     if p.get("timing"):

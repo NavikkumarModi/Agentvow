@@ -673,7 +673,14 @@ def _run_auto(a, repo, base, base_how, text):
     if True:
         venv_root = Path(tempfile.mkdtemp(prefix="agentvow_env_"))
         try:
-            py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
+            if getattr(a, "evidence_pack", False):   # the pack's project-native context is built from the repository's own files (baseline.py), here as in the hook path
+                from . import baseline
+                py, rec, notes, aborted = baseline.prepare(repo, venv_root / "venv", venv_root / "home")
+                a._native = rec
+                a._native_info = {"steps": [" ".join(x)[:100] for x in (rec.setup if rec else [])], "env_names": sorted(rec.env)[:12] if rec else [],
+                                  "setup_notes": [n[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4], "inputs": baseline.input_files(repo)}
+            else:
+                py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
             a.python = py
             if py and not aborted and getattr(a, "changed_coverage", False):
                 _ensure_coverage(py, venv_root)
@@ -711,7 +718,9 @@ def _run(a, repo, base, base_how, text):
                 name, sub, cmd = (f"suite{i + 1}" if len(specs) > 1 else "tests"), "", spec
             if ".." in Path(sub).parts or Path(sub).is_absolute():
                 raise SystemExit(f"--test-cmd subdir must be inside the repo: {sub}")
-            suites.append((name, cmd.format(py=a.python).split(), sub, {"coverage": getattr(a, "changed_coverage", False)}))
+            nat = getattr(a, "_native", None)
+            suites.append((name, cmd.format(py=a.python).split(), sub, {"coverage": getattr(a, "changed_coverage", False),
+                                                                       **({"env_extra": nat.env, "pythonpath_rel": nat.local_roots} if nat else {})}))
         collect_test_evidence(repo, base, suites, a.test_timeout)
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
