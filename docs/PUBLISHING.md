@@ -57,5 +57,5 @@ Known and accepted at release: Claude Code only for `agentvow init`; Python only
 ### 0.3.0 published and verified (2026-10-22)
 GitHub release v0.3.0 created from commit `f98cbbb` (CI green on ubuntu and macos); the trusted-publishing workflow succeeded and PyPI `agentvow` 0.3.0 is live. Verified by installing `agentvow==0.3.0` from the registry into a clean environment: `agentvow --version` (0.3.0), `demo`, `doctor` (both hook payloads), `init --dry-run`, and a real repository run (`capture`, then `check --from-capsule --evidence-pack`) that reproduced in both contexts. `dist/agentvow-0.3.0.vsix` is attached to the release; the Marketplace upload is optional (no functional extension change) and needs the publisher's login.
 
-## Status (2026-10-22): 0.3.1 prepared, NOT published
+## Status (2026-10-22): 0.3.1 release commit prepared; the GitHub release (which uploads to PyPI) is the remaining step and has NOT been made
 Version 0.3.1 is prepared (version bump in the three files, changelog, `docs/RELEASE_NOTES_0.3.1.md`); nothing has been tagged or uploaded. The latest published release is 0.3.0. Publish steps are the same as in the 0.3.0 publish review above (changelog date and README status in one commit, CI green, `gh release create v0.3.1 ... --notes-file docs/RELEASE_NOTES_0.3.1.md`, install check from PyPI, attach `dist/agentvow-0.3.1.vsix`).
