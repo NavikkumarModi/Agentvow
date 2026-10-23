@@ -82,14 +82,14 @@ Copilot keeps only `decision`/`reason` from a hook's output, so **a hook cannot 
 Details and a step-by-step live test: `docs/LIVE_TESTING.md`.
 
 ## Install the VS Code extension
-From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.4.0.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
+From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=NavikkumarModi.agentvow): search for **Agentvow**, or run `code --install-extension NavikkumarModi.agentvow`. (From a checkout: `code --install-extension dist/agentvow-0.4.1.vsix --force`.) You also need the command-line tool (`pip install agentvow`).
 Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
 ## Team gate and control plane
 The gate workflow (`docs/GATE_WORKFLOW.md`) replays on the runner, builds a receipt, and applies your policy from the base branch. A self-hostable control plane service (`controlplane/service/`, in development, first live run on GitHub passed on 2026-10-23; `docs/CONTROLPLANE_PHASE1.md`; to try it with your own GitHub App: `docs/SETUP_GITHUB_APP.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
 
 ## Evidence, scope and limits
-Agentvow 0.4.0 is a prototype for Python repositories; running tests needs macOS or Linux. A pass is evidence to weigh, not a safety verdict. Studies, measured numbers, known limits and the security model are in [docs/EVIDENCE_AND_LIMITS.md](docs/EVIDENCE_AND_LIMITS.md) and `docs/SECURITY_MODEL.md`.
+Agentvow 0.4.1 is a prototype for Python repositories; running tests needs macOS or Linux. A pass is evidence to weigh, not a safety verdict. Studies, measured numbers, known limits and the security model are in [docs/EVIDENCE_AND_LIMITS.md](docs/EVIDENCE_AND_LIMITS.md) and `docs/SECURITY_MODEL.md`.
 
 ## Develop and validate
 ```bash
