@@ -27,6 +27,21 @@ def ack(r, by="alice"):
     return {"schema": policy.ACK, "receipt_sha": policy.sha(r), "by": by, "at": "t", "note": "ok"}
 
 
+class ReceiptCommit(unittest.TestCase):
+    def test_a_check_that_could_not_collect_still_gives_a_valid_receipt_for_the_checked_out_commit(self):
+        # found by installing 0.4.1 from PyPI: on a repository without a usable base the check reports commit "?", and 0.4.1's stricter receipt validation then made the receipt a block
+        d = Path(tempfile.mkdtemp()); g = lambda *a: subprocess.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True).stdout.strip()
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t"); (d / "a.py").write_text("x = 1\n"); g("add", "-A"); g("commit", "-qm", "base")
+        dec = json.loads(json.dumps(DECISION)); dec["commit"] = "?"
+        f = Path(tempfile.mkdtemp()) / "d.json"; f.write_text(json.dumps(dec))
+        out = io.StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(cli.main(["receipt", "--decision", str(f), "--repo-slug", "o/n", "--repo", str(d), "-o", "-"]), 0)
+        r = json.loads(out.getvalue())
+        self.assertEqual(r["commit"], g("rev-parse", "HEAD")); self.assertIsNone(policy.validate_receipt(r))
+        self.assertNotEqual(policy.evaluate(r)["reasons"][0]["rule"], "invalid_input")
+
+
 class Receipt(unittest.TestCase):
     def test_receipt_is_minimal_no_free_text_no_env_values_no_paths(self):
         r = receipt()

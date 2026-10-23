@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased (fix for a regression in 0.4.1)
+- **`agentvow receipt` on a check that could not collect**: when the check had no usable base or too little history it reports its commit as `?`; 0.4.0 put that into the receipt and 0.4.1's stricter validation then turned such a receipt into a `block` ("commit and git_tree must be full hexadecimal object ids"). The receipt now records the commit that is checked out (`git rev-parse HEAD`) when the decision's commit is not a full object id. Found by installing 0.4.1 from PyPI into a repository with a single commit; pull requests with a base (the gate's normal case) were not affected.
+
 ## 0.4.1 (2026-10-23)
 Fixes found by the first run of the control plane against real GitHub (docs/LIVE_TESTING.md) and by two adversarial reviews of it (docs/review/CONTROLPLANE_REVIEW_2026-10-22.md). No new commands.
 - **Content hash and `.agentvow/`**: `reality.git_tree_hash` removed everything under `.agentvow/` from the hash, so a repository that commits a file there (the policy was documented at `.agentvow/policy.json`) produced a receipt whose hash never matched the commit's tree, and the control plane refused every receipt. Files the commit tracks under `.agentvow/` are now content like any other; Agentvow's own untracked state there is still excluded. Hashes of repositories that do not track `.agentvow/` files are unchanged.

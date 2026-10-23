@@ -606,6 +606,11 @@ def main(argv=None) -> int:
         try:
             dec = json.loads(Path(a.decision).read_text(encoding="utf-8"))
             tree = reality.git_tree_hash(Path(a.repo).resolve())
+            if not isinstance(dec, dict):
+                raise ValueError("the decision file is not a JSON object")
+            if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", str(dec.get("commit", ""))):
+                # a check that could not collect (no base, too little history) reports its commit as "?"; the receipt is about the commit that was checked out
+                dec["commit"] = reality._git(Path(a.repo).resolve(), "rev-parse", "HEAD")
         except (OSError, ValueError, reality.CollectorError) as e:
             print(f"agentvow receipt: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
             return 3
