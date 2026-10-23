@@ -10,6 +10,8 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 
+import logging
+
 from .core import Config, Service
 from .github import GitHub
 from .oidc import OidcVerifier
@@ -45,19 +47,26 @@ def make_app(service: Service) -> Starlette:
     def lower(request):
         return {k.lower(): v for k, v in request.headers.items()}
 
+    log = logging.getLogger("agentvow.controlplane")
+
+    def answer(route, code, obj):
+        if code >= 300:   # the reason only (never a token or a receipt body): this is what a live test reads
+            log.warning("%s -> %s %s", route, code, str(obj.get("error") or obj.get("refused") or obj.get("ignored") or "")[:200])
+        return JSONResponse(obj, status_code=code)
+
     async def receipts(request):
         data = await body(request, service.cfg.max_body)
         if data is None:
             return JSONResponse({"error": "receipt too large"}, status_code=413)
         code, obj = await run_in_threadpool(service.post_receipt, lower(request), data)
-        return JSONResponse(obj, status_code=code)
+        return answer("receipts", code, obj)
 
     async def webhook(request):
         data = await body(request, 1_000_000)
         if data is None:
             return JSONResponse({"error": "payload too large"}, status_code=413)
         code, obj = await run_in_threadpool(service.webhook, lower(request), data)
-        return JSONResponse(obj, status_code=code)
+        return answer("webhook", code, obj)
 
     async def check(request):
         code, obj = await run_in_threadpool(service.check, request.query_params.get("repo", ""), request.query_params.get("commit", ""), lower(request))

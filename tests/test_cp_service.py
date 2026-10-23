@@ -351,6 +351,18 @@ class SecondReview(unittest.TestCase):
         hook(s, "issue_comment", ev); self.assertEqual(gh.checks[-1][4], "failure")
 
 
+class Smoke(unittest.TestCase):
+    def test_problems_lists_what_the_app_is_missing(self):
+        from controlplane.service import smoke
+        self.assertEqual(smoke.problems({"permissions": {"checks": "write", "contents": "read", "pull_requests": "read", "issues": "write", "metadata": "read"}, "events": ["pull_request", "issue_comment"]}), [])
+        bad = smoke.problems({"permissions": {"checks": "read", "contents": "read"}, "events": ["pull_request"]})
+        self.assertEqual(len(bad), 5); self.assertTrue(any("issue_comment" in b for b in bad))
+    def test_main_reports_config_errors_and_bad_credentials(self):
+        import io
+        from controlplane.service import smoke
+        out = io.StringIO(); self.assertEqual(smoke.main({}, out), 2); self.assertIn("CONFIG", out.getvalue())
+
+
 class Hooks(unittest.TestCase):
     PR = {"action": "opened", "repository": {"full_name": "o/n"}, "pull_request": {"head": {"sha": COMMIT}}}
     def test_signature(self):

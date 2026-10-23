@@ -86,7 +86,7 @@ From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=Navik
 Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
 ## Team gate and control plane
-The gate workflow (`docs/GATE_WORKFLOW.md`) replays on the runner, builds a receipt, and applies your policy from the base branch. A self-hostable control plane service (`controlplane/service/`, in development; `docs/CONTROLPLANE_PHASE1.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
+The gate workflow (`docs/GATE_WORKFLOW.md`) replays on the runner, builds a receipt, and applies your policy from the base branch. A self-hostable control plane service (`controlplane/service/`, in development; `docs/CONTROLPLANE_PHASE1.md`; to try it with your own GitHub App: `docs/SETUP_GITHUB_APP.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
 
 ## Evidence, scope and limits
 Agentvow 0.4.0 is a prototype for Python repositories; running tests needs macOS or Linux. A pass is evidence to weigh, not a safety verdict. Studies, measured numbers, known limits and the security model are in [docs/EVIDENCE_AND_LIMITS.md](docs/EVIDENCE_AND_LIMITS.md) and `docs/SECURITY_MODEL.md`.
@@ -98,4 +98,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 491 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 493 Python tests, 32 node tests -->
