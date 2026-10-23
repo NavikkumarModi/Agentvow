@@ -201,7 +201,7 @@ def file_hashes(repo: Path) -> dict:
 
 
 def git_tree_hash(repo: Path) -> str:
-    """The git tree object hash the working tree would have if everything not ignored were committed as it is (tracked changes and untracked non-ignored files; `.agentvow/` excluded).
+    """The git tree object hash the working tree would have if everything not ignored were committed as it is (tracked changes and untracked non-ignored files; Agentvow's own untracked state under `.agentvow/` excluded, but a `.agentvow/` file that the commit tracks, such as a policy, is content like any other).
     For a clean checkout it equals `git rev-parse HEAD^{tree}`. A content address that anyone with the same files can recompute, with no key: the binding of a portable capture.
     Nothing is written to the repository: a temporary index and a temporary object directory are used, with the repository's objects as a read-only alternate."""
     import tempfile
@@ -214,11 +214,19 @@ def git_tree_hash(repo: Path) -> str:
         (Path(t) / "obj").mkdir()
         base = ["git", *safe_prefix(repo), "-c", "core.autocrlf=false", "-c", "core.fileMode=true", "-c", "core.excludesFile=", "-c", "core.attributesFile=", "-c", "core.safecrlf=false",
                 "-c", "core.ignoreCase=false", "-c", "core.symlinks=true", "-c", "core.fsmonitor=false", "-C", str(repo)]
-        for cmd in (["read-tree", "HEAD"], ["add", "-A", "--", "."], ["rm", "-r", "--cached", "--ignore-unmatch", "-q", "--", ".agentvow"], ["write-tree"]):   # .agentvow/ out of the index (an exclude pathspec errors when it is also git-ignored)
-            r = subprocess.run([*base, *cmd], capture_output=True, text=True, env=env, timeout=120)
+        def run(*cmd, stdin=None):
+            r = subprocess.run([*base, *cmd], capture_output=True, text=True, env=env, timeout=120, input=stdin)
             if r.returncode:
                 raise CollectorError(f"git {' '.join(cmd)} failed: {r.stderr.strip()[:120]}")
-        return r.stdout.strip()
+            return r.stdout
+        run("read-tree", "HEAD")
+        run("add", "-A", "--", ".")
+        # Agentvow's own state in .agentvow/ is not part of the content, EXCEPT files the commit itself tracks (an exclude pathspec errors when the folder is also git-ignored, so paths are removed by name)
+        tracked = set(run("ls-tree", "-r", "-z", "--name-only", "HEAD", "--", ".agentvow").split("\0"))
+        extra = [f for f in run("ls-files", "-z", "--", ".agentvow").split("\0") if f and f not in tracked]
+        if extra:
+            run("rm", "--cached", "-q", "--pathspec-from-file=-", "--pathspec-file-nul", stdin="\0".join(extra))
+        return run("write-tree").strip()
 
 
 def snapshot(repo: Path) -> Snapshot:

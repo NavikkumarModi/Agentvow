@@ -25,7 +25,7 @@ def build_service(env=os.environ) -> Service:
     pem = env.get("AGENTVOW_CP_PRIVATE_KEY") or (Path(env["AGENTVOW_CP_PRIVATE_KEY_FILE"]).read_text() if env.get("AGENTVOW_CP_PRIVATE_KEY_FILE") else "")
     if not pem:
         raise RuntimeError("missing environment variable AGENTVOW_CP_PRIVATE_KEY (or AGENTVOW_CP_PRIVATE_KEY_FILE, preferred: the key is then not in the process environment)")
-    cfg = Config(trusted_workflows=frozenset(x.strip() for x in env["AGENTVOW_CP_TRUSTED_WORKFLOWS"].split(",") if x.strip()), webhook_secret=env["AGENTVOW_CP_WEBHOOK_SECRET"].encode())
+    cfg = Config(policy_path=env.get("AGENTVOW_CP_POLICY_PATH", ".agentvow/policy.json"), trusted_workflows=frozenset(x.strip() for x in env["AGENTVOW_CP_TRUSTED_WORKFLOWS"].split(",") if x.strip()), webhook_secret=env["AGENTVOW_CP_WEBHOOK_SECRET"].encode())
     return Service(cfg, OidcVerifier(env["AGENTVOW_CP_AUDIENCE"]), GitHub(env["AGENTVOW_CP_APP_ID"], pem.replace("\\n", "\n").encode()), Store(env.get("AGENTVOW_CP_DB", "/data/controlplane.db")))
 
 

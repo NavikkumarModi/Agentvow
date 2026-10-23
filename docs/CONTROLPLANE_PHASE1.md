@@ -1,6 +1,6 @@
 # Control plane service, phase 1
 
-Status: **built, adversarially reviewed twice (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes; never run against real GitHub, never deployed.** Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
+Status: **built, run once against real GitHub (`docs/LIVE_TESTING.md`, 2026-10-23: 10 acceptance tests passed after two defects were fixed; fork pull requests not tested), adversarially reviewed twice (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes; never run against real GitHub, never deployed.** Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
 
 ## What it does
 1. `POST /v1/receipts` (called by the gate workflow's upload job): verifies the GitHub Actions OIDC token (RS256 against GitHub's keys, issuer, audience, expiry), requires the exact trusted `job_workflow_ref` and an accepted event, requires the token's repository to equal the receipt's, requires the token to have been issued for exactly this receipt (audience `<audience>:<sha256 of the body>`) and to name its pull request or commit, asks GitHub (as oracle) whether the commit's tree hash matches the receipt and whether the commit is the pull request's head, reads the policy from the repository's **default branch** through the GitHub API, evaluates with `agentvow.policy.evaluate` and sets the check run `agentvow/evidence`.
@@ -11,7 +11,7 @@ Status: **built, adversarially reviewed twice (findings fixed, `docs/review/CONT
 Fail-closed rules: an unreadable or invalid base-branch policy blocks; GitHub errors return 5xx and set nothing; the conclusions used are only success, failure, action_required (never neutral or skipped, which would pass a required check); a CONTRADICTED claim cannot be acknowledged away.
 
 ## GitHub App to register (owner)
-Permissions: Checks read/write, Contents read, Pull requests read, Issues write (comments), Metadata read. Events: Pull request, Issue comment. Webhook URL `https://<host>/v1/webhook`, with a secret. Then protect the target branch with a required status check named `agentvow/evidence` and choose this App as its **source** (with source "any", a writer's own `GITHUB_TOKEN` can post a green check of that name).
+Permissions: Checks read/write, Contents read, Pull requests write, Issues write (comments), Metadata read. Events: Pull request, Issue comment. Webhook URL `https://<host>/v1/webhook`, with a secret. Then protect the target branch with a required status check named `agentvow/evidence` and choose this App as its **source** (with source "any", a writer's own `GITHUB_TOKEN` can post a green check of that name).
 
 ## Environment variables
 `AGENTVOW_CP_APP_ID`, `AGENTVOW_CP_PRIVATE_KEY_FILE` (path to the PEM; preferred) or `AGENTVOW_CP_PRIVATE_KEY` (PEM, `\n` allowed), `AGENTVOW_CP_WEBHOOK_SECRET`, `AGENTVOW_CP_AUDIENCE` (the audience the gate workflow requests), `AGENTVOW_CP_TRUSTED_WORKFLOWS` (comma-separated exact `job_workflow_ref` values), `AGENTVOW_CP_DB` (default `/data/controlplane.db`). The process refuses to start if one is missing (`uvicorn --factory`).
@@ -20,8 +20,8 @@ Permissions: Checks read/write, Contents read, Pull requests read, Issues write 
 `docker build -f controlplane/service/Dockerfile -t agentvow-controlplane .` then run with a `/data` volume and TLS in front. One process only (SQLite with an in-process lock).
 
 ## Not verified (honest list)
-* Real GitHub JWKS, the real `job_workflow_ref` claim for a reusable workflow, installation-token and check-run API behaviour, webhook payload shapes: tested only against hand-built fakes.
-* Whether GitHub accepts a required status from this App on the chosen branch protection; fork pull requests; callers without `id-token: write`.
+* **Confirmed live (2026-10-23, `docs/LIVE_TESTING.md`):** GitHub's JWKS and RS256 tokens, the claims `repository_id`, `ref`, `sha`, `event_name`, `job_workflow_ref`, a custom audience, installation tokens, check-run creation and update, webhook signatures and payloads, pull-request comments, a required status pinned to the App (a spoofed check from `GITHUB_TOKEN` did not count), a caller without `id-token: write` (run fails to start; check stays pending).
+* Still unverified: fork pull requests; a run with real concurrency or rate limits; slash-containing default branch names; macOS runners; `pull_request` events from organisations' repositories; private repositories on a paid plan.
 * Billing: plans are set by the operator by hand; no payment integration. Usage limits and rate limits are in-process.
 * No deployment, domain, TLS, backups, monitoring or privacy policy; these need the owner's accounts.
-* A second review of the fixes found more (2-1 to 2-9 in the review record); those are fixed and have had no third review. Assumptions about GitHub's token claims (`ref`, `sha`, `repository_id`, a custom audience string) are unconfirmed until a live run. Residuals: `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`.
+* A second review of the fixes found more (2-1 to 2-9 in the review record); those are fixed and have had no third review.  Residuals: `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`.

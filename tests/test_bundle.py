@@ -35,6 +35,17 @@ class TreeHash(unittest.TestCase):
         self.assertNotEqual(reality.git_tree_hash(d), h)   # any later edit changes it
 
 
+    def test_a_policy_file_the_commit_tracks_under_agentvow_is_content_but_untracked_state_is_not(self):
+        # found by the live GitHub test: a committed .agentvow/policy.json made the receipt's hash differ from the commit's tree, so the service refused every receipt
+        d, g = repo_with_change()
+        g("add", "-A"); g("commit", "-qm", "all")
+        (d / ".agentvow").mkdir(); (d / ".agentvow" / "policy.json").write_text("{}\n")
+        g("add", "-f", ".agentvow/policy.json"); g("commit", "-qm", "policy")
+        (d / ".agentvow" / "capsule.json").write_text("local state")   # untracked Agentvow state: not content
+        self.assertEqual(reality.git_tree_hash(d), g("rev-parse", "HEAD^{tree}"))
+        (d / ".agentvow" / "policy.json").write_text('{"x": 1}\n')    # a tracked file changed on disk: content
+        self.assertNotEqual(reality.git_tree_hash(d), g("rev-parse", "HEAD^{tree}"))
+
     def test_works_when_agentvow_dir_is_gitignored_or_committed_state_is_clean(self):
         d, g = repo_with_change()
         (d / ".gitignore").write_text("secret.txt\n.agentvow/\n.venv/\n")

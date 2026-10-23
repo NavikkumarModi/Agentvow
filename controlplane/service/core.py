@@ -314,7 +314,10 @@ class Service:
         with self.locks[hash((repo, pr["head_sha"])) % len(self.locks)]:
             self.store.add_ack(repo, rid, login, m.group(2).strip())
             result, _ = self._refresh(repo, pr["head_sha"], info["default_branch"], (pol, None))
-        self.gh.comment(repo, number, f"Agentvow: acknowledged by @{_clean(login, 39)} for receipt `{rid[:12]}`. Decision: **{result['decision']}**.")
+        if result["decision"] == "allow":
+            self.gh.comment(repo, number, f"Agentvow: acknowledged by @{_clean(login, 39)} for receipt `{rid[:12]}`. Decision: **allow**.")
+        else:   # the acknowledgement is recorded but does not change this decision (a contradiction, or another receipt that still needs one)
+            self.gh.comment(repo, number, f"Agentvow: acknowledgement by @{_clean(login, 39)} recorded for receipt `{rid[:12]}`, but the decision is still **{result['decision']}**: a contradiction cannot be acknowledged away, and every current receipt that needs an acknowledgement needs its own.")
         return 200, {"decision": result["decision"]}
 
     # ------------------------------------------------------------------ reading

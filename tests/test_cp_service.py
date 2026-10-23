@@ -354,13 +354,35 @@ class SecondReview(unittest.TestCase):
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke
-        self.assertEqual(smoke.problems({"permissions": {"checks": "write", "contents": "read", "pull_requests": "read", "issues": "write", "metadata": "read"}, "events": ["pull_request", "issue_comment"]}), [])
+        self.assertEqual(smoke.problems({"permissions": {"checks": "write", "contents": "read", "pull_requests": "write", "issues": "write", "metadata": "read"}, "events": ["pull_request", "issue_comment"]}), [])
         bad = smoke.problems({"permissions": {"checks": "read", "contents": "read"}, "events": ["pull_request"]})
         self.assertEqual(len(bad), 5); self.assertTrue(any("issue_comment" in b for b in bad))
     def test_main_reports_config_errors_and_bad_credentials(self):
         import io
         from controlplane.service import smoke
         out = io.StringIO(); self.assertEqual(smoke.main({}, out), 2); self.assertIn("CONFIG", out.getvalue())
+
+
+class Register(unittest.TestCase):
+    def test_manifest_flow_writes_secrets_private_and_rejects_wrong_state(self):
+        import tempfile, os, threading, urllib.request, urllib.error, stat
+        from http.server import HTTPServer
+        from controlplane.service import register_app as R
+        out = tempfile.mkdtemp() + "/x"
+        make_handler, page, state, on_app, done = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", out, "--port", "0"], convert_fn=lambda code: {"id": 7, "name": "n", "slug": "n", "html_url": "https://github.com/apps/n", "pem": "PEM", "webhook_secret": "WS"}, serve=False)
+        self.assertIn("https://t.example/v1/webhook", page); self.assertIn("pull_request", page); self.assertNotIn("WS", page)
+        srv = HTTPServer(("127.0.0.1", 0), make_handler(page, state, on_app)); port = srv.server_address[1]
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            with self.assertRaises(urllib.error.HTTPError) as e: urllib.request.urlopen(f"http://127.0.0.1:{port}/callback?code=c&state=wrong")
+            self.assertEqual(e.exception.code, 400); self.assertFalse(done)
+            body = urllib.request.urlopen(f"http://127.0.0.1:{port}/callback?code=c&state={state}").read().decode()
+        finally:
+            srv.shutdown()
+        self.assertNotIn("WS", body); self.assertNotIn("PEM", body)
+        for f in ("app.private-key.pem", "cp.env"): self.assertEqual(stat.S_IMODE(os.stat(f"{out}/{f}").st_mode), 0o600)
+        env = open(f"{out}/cp.env").read()
+        self.assertIn("AGENTVOW_CP_APP_ID=7", env); self.assertIn("u/r/.github/workflows/gate.yml@refs/tags/v1", env)
 
 
 class Hooks(unittest.TestCase):

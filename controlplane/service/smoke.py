@@ -5,7 +5,7 @@ import sys
 
 from .asgi import build_service
 
-REQUIRED_PERMISSIONS = {"checks": "write", "contents": "read", "pull_requests": "read", "issues": "write", "metadata": "read"}
+REQUIRED_PERMISSIONS = {"checks": "write", "contents": "read", "pull_requests": "write", "issues": "write", "metadata": "read"}
 REQUIRED_EVENTS = {"pull_request", "issue_comment"}
 RANK = {"read": 1, "write": 2, "admin": 3}
 

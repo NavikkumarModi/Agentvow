@@ -28,6 +28,13 @@ cloudflared tunnel --url http://localhost:8080
 It prints an address like `https://random-words.trycloudflare.com`. **Write it down**; this is `<TUNNEL>` below. It changes every time you restart cloudflared, so do not restart it during the test (if you must, see Troubleshooting).
 
 ## 3. Register the GitHub App
+**Fast path (used in the first live test): the manifest helper.** It registers the App with the right permissions and events and writes the App id, private key and webhook secret to files only you can read, without you typing or downloading any secret. With the tunnel running:
+```bash
+python -m controlplane.service.register_app --tunnel <TUNNEL> --repo <you>/agentvow-live-test --out ~/agentvow-cp
+```
+Open the address it prints in a browser where you are signed in to GitHub and press **Create GitHub App**; then install the App on the test repository only (step 4) and skip to step 5, loading `~/agentvow-cp/cp.env`. The manual route follows, for reference.
+
+### Manual route
 1. Click your profile picture (top right) → **Settings** → at the bottom of the left sidebar **Developer settings** → **GitHub Apps** → **New GitHub App**.
 2. Fill in:
 
@@ -50,8 +57,8 @@ It prints an address like `https://random-words.trycloudflare.com`. **Write it d
 |---|---|---|
 | Checks | Read and write | create and update the `agentvow/evidence` check run |
 | Contents | Read-only | read the policy file and resolve commits and branches |
-| Issues | Read and write | post the acknowledgement replies (pull-request comments go through the issues API) |
-| Pull requests | Read-only | read a pull request's head commit and author |
+| Issues | Read and write | issue comments |
+| Pull requests | **Read and write** | read a pull request's head commit and author, and post the acknowledgement replies (**found in the live test:** with Pull requests read-only, commenting on a pull request returns 403 even though Issues is write, despite GitHub's endpoint table listing "Issues or Pull requests") |
 | Metadata | Read-only | selected automatically |
 
 4. **Subscribe to events**: tick **Pull request** and **Issue comment** (the boxes appear after you grant the permissions above).
@@ -87,7 +94,7 @@ Check the webhook path: GitHub App settings → **Advanced** → **Recent Delive
 ## 6. Put the gate workflow in the test repository
 The reusable workflow lives in the test repository itself for this test (a public copy of the vendor workflow is what you would use in production). In `agentvow-live-test`:
 ```bash
-mkdir -p .github/workflows .agentvow
+mkdir -p .github/workflows
 cp <path-to-Agentvow>/.github/workflows/gate.yml .github/workflows/gate.yml
 ```
 Edit `.github/workflows/gate.yml`: change the line `ALLOWED_SERVICE_URLS: "https://controlplane.agentvow.example"` to `ALLOWED_SERVICE_URLS: "<TUNNEL>"` (no trailing slash). Create the caller `.github/workflows/agentvow-pr.yml`:
@@ -105,7 +112,7 @@ jobs:
       audience: agentvow-control-plane
       fail-on: block
 ```
-Add a policy on the default branch that lets you acknowledge, `.agentvow/policy.json`:
+Add a policy on the default branch that lets you acknowledge. **Name it `agentvow-policy.json` at the repository root, not `.agentvow/policy.json`**: with the released 0.4.0 a committed file under `.agentvow/` makes the receipt's content hash differ from the commit's tree and every receipt is refused (found in the live test; fixed in the source, ships with the next release). Pass `policy-path: agentvow-policy.json` in the caller and set `AGENTVOW_CP_POLICY_PATH=agentvow-policy.json` for the service:
 ```json
 {"schema": "agentvow-policy/1", "acknowledgers": ["<you>"]}
 ```

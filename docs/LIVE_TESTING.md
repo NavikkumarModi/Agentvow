@@ -79,3 +79,27 @@ A branch that only added `.github/workflows/gate-test.yml`, calling `./.github/w
 A throwaway repository with a `.venv` (pytest) and no Agentvow settings. `agentvow init --yes` wrote `.claude/settings.local.json` with the PostToolUse and Stop hooks and added `.agentvow/` to `.git/info/exclude`; its self test passed. `claude -p "<change f, run the tests, then add g() without running them again, say whether all tests pass>" --setting-sources project,local --permission-mode acceptEdits --allowedTools Bash Edit Write Read` ran normally (it answered that it had not re-run the tests). Observed: two capsules (`post-test`, `stop`), sealed result files at once, and about a minute later an evidence pack: captured environment pass, project-native setup pass, reproduces both, the timing line saying one file was edited after the last test run, changed-line coverage 2 of 3. `agentvow init --remove --yes` then removed both hooks and left the rest of the file. Not verified: other Claude Code versions, Windows, a settings file with hooks defined in a managed policy.
 
 Re-run after the 0.3.0 review hardening (2026-10-21, Claude Code 2.1.263, `agentvow init` from the hardened code): same shape of run in a fresh throwaway repository; `init --yes` printed that other hooks are kept, wrote `.claude/settings.local.json`, passed its self test; both capsules (`post-test`, `stop`) and the sealed result appeared, and the evidence pack followed with both contexts reproducing; `init --remove --yes` then removed both hooks.
+
+## Control plane against real GitHub (2026-10-23)
+First live run of the phase-1 service (`docs/CONTROLPLANE_PHASE1.md`, `docs/SETUP_GITHUB_APP.md`): a GitHub App registered through the manifest flow (`controlplane/service/register_app.py`), the service running locally behind a Cloudflare quick tunnel, a throwaway public repository (`NavikkumarModi/agentvow-live-test`) with a copy of `gate.yml` called as `@v1`, and the released Agentvow 0.4.0 on the runner. One pull request per test; results read from the pull requests' check runs and the service log.
+
+| # | Test | Result |
+|---|---|---|
+| 1 | Pull request "All tests pass." | **Passed** after two defects were fixed (below): `agentvow/evidence` was created by the App (pending on open), then **success** from the gate's receipt |
+| 2 | Claim "All 9 tests pass." (UNKNOWN) | check `action_required`; the acknowledgement flow worked end to end: a bare `/agentvow acknowledge` gets the receipt id back; with the id the check turned **success** |
+| 3 | Test broken (`f` returns 2), "All tests pass." | check **failure**; acknowledging it is recorded but the decision stays **block** |
+| 4 | A pull request that changes the policy file to `unknown: allow` | policy from the default branch applied; check `action_required`; the pull request's own policy ignored |
+| 5 | Caller sets `service-url` to another address | the gate refused before running or requesting any token; check stayed **pending** (fail closed) |
+| 6 | Caller without `id-token: write` | GitHub ended the run with `startup_failure`; check stayed **pending** |
+| 7 | Re-run all jobs on an approved pull request | one check run, still success |
+| 8 | Audit export with the per-repository key | receipts and decisions listed; a wrong key gave 401 |
+| 9 | Branch protection `agentvow/evidence` with the App as the required source | success pull requests `CLEAN`; failure and action_required `BLOCKED` |
+| 10 | A pull request that posts its own green `agentvow/evidence` with `GITHUB_TOKEN` (`checks: write`) | **`BLOCKED`**: with the App pinned as the source the spoofed check did not count (two checks with that name were shown, `github-actions` success and the App's `action_required`) |
+| - | Fork pull request | **not run** (needs a second account); behaviour of `id-token` for forks remains unverified |
+
+Assumptions now confirmed against real GitHub: the OIDC claims `repository_id`, `ref` (`refs/pull/N/merge`), `sha`, `event_name` and `job_workflow_ref` (`<owner>/<repo>/.github/workflows/gate.yml@refs/tags/v1` for a reusable workflow called by tag) match what the service checks; a custom audience (`<audience>:<sha256 of the receipt>`) is accepted; webhook signatures verify; check runs can be created and updated by the App and carry its name; `pull_request` and `issue_comment` payloads parse.
+
+Defects found by this run (fixed):
+1. **A committed `.agentvow/policy.json` broke the content hash** (`reality.git_tree_hash` removed all of `.agentvow/` from the hash, so the receipt's tree never matched the commit's tree and the service refused every receipt). Fixed in the source (files the commit tracks under `.agentvow/` are content), with a regression test; **the released 0.4.0 still has it**, so the test repository keeps its policy at `agentvow-policy.json` (the workflow's `policy-path` input and the service's `AGENTVOW_CP_POLICY_PATH`).
+2. **Commenting on a pull request needs the Pull requests permission at write**, not only Issues write (403 "Resource not accessible by integration" otherwise), although GitHub's endpoint table lists "Issues or Pull requests". The App, the manifest helper, the smoke check and the guides now require Pull requests write. The service's installation-token cache (50 minutes) means a permission change takes effect after a restart.
+3. The acknowledgement reply claimed "acknowledged ... Decision: block"; it now says plainly when the acknowledgement does not change the decision.
