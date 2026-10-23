@@ -49,11 +49,17 @@ needs_acknowledgement
 - unknown (needs_acknowledgement): The 'tests_pass' claim could not be confirmed or refuted (UNKNOWN):
   the evidence was missing or the replay could not run.
 ```
-**3. On a real pull request.** The gate workflow and the control plane service, run against GitHub in a throwaway repository (`docs/LIVE_TESTING.md`): a pull request whose tests are broken but whose description says "All tests pass." gets a failing, **required** `agentvow/evidence` check from the Agentvow App, and the merge button is disabled. A pull request that merely could not be confirmed waits for a named person to acknowledge it.
+**3. The gate on three agent pull requests (recording).** The steps of `gate.yml` (`check`, `receipt`, `policy evaluate`) run on three pull-request branches: the claim is true (allow), the claim is false because the change breaks a test (block), and the claim cannot be confirmed because the agent said 9 tests passed and one exists (needs acknowledgement).
+
+![Three screens, one per agent pull request. The first, "I added g(). All tests pass.", ends in allow, with the grey note that the required check passes. The second, "I simplified f(). All tests pass.", ends in block because the claim is contradicted and cannot be acknowledged away. The third, "I added h(). All 9 tests pass.", ends in needs_acknowledgement.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo_gate.gif?raw=true)
+
+*Recorded from [examples/demo_gate.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_gate.py) on the released 0.4.2 package, real commands on a throwaway project with a real virtualenv and pytest; the decisions are not scripted. Staged for the recording, not faked: the pacing and simulated typing, the three branches (pre-made commits stand in for agents, and their pull-request descriptions are the claims), the working files kept outside the repository, the commands shortened on screen (the real ones also pass `--python .venv/bin/python` and longer paths), and the grey "on GitHub" notes, which say what the required check then does (shown for real in the screenshot below and in `docs/LIVE_TESTING.md`).*
+
+**4. On a real pull request.** The gate workflow and the control plane service, run against GitHub in a throwaway repository (`docs/LIVE_TESTING.md`): a pull request whose tests are broken but whose description says "All tests pass." gets a failing, **required** `agentvow/evidence` check from the Agentvow App, and the merge button is disabled. A pull request that merely could not be confirmed waits for a named person to acknowledge it.
 
 ![A pull request with the required check agentvow/evidence failing with "Agentvow: block"; the Merge pull request button is greyed out.](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/gate-blocked-pr.png)
 
-**4. Replay from the agent's own packages** is the recording at the top of this page; the verdict view is the picture below.
+**5. Replay from the agent's own packages** is the recording at the top of this page; the verdict view is the picture further down.
 
 ## Quick start
 ```bash
