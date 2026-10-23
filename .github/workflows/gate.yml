@@ -11,7 +11,7 @@
 #       with: { fail-on: block }
 #
 # A receipt is trusted by the service only when the OIDC claim `job_workflow_ref` names THIS workflow at a pinned ref. Agentvow is installed from PyPI at an exact version (there is deliberately no way
-# to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md. Needs Agentvow 0.4.0 or later.
+# to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md. Needs Agentvow 0.4.0 or later (0.4.2 recommended).
 name: agentvow-gate
 on:
   workflow_call:
@@ -19,7 +19,7 @@ on:
       agentvow-version:
         description: "Agentvow version installed from PyPI (an exact version, digits and dots)"
         type: string
-        default: "0.4.0"
+        default: "0.4.2"
       service-url:
         description: "Control plane address; must be one of the addresses written in this workflow (ALLOWED_SERVICE_URLS). Empty: no upload; the policy is evaluated locally only"
         type: string
