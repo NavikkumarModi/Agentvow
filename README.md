@@ -16,7 +16,9 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 - **Changed-line coverage.** Says how many of the changed source lines the tests really ran, and names the ones they did not.
 - **Claim checks beyond tests.** Backward compatibility (public-API diff) and downstream impact (import graph) for Python.
 - **Portable evidence.** A minimal receipt and a capture bundle that can be verified on another machine, bound to the exact files by git tree hash.
-- **Team gate.** A reusable GitHub workflow and Action publish an `agentvow/evidence` check on pull requests; policy lives on the base branch and acknowledgements are recorded by name.
+- **Team gate.** A reusable GitHub workflow replays on the runner, builds a receipt and applies your policy from the base branch; a pull request that is contradicted cannot be merged when `agentvow/evidence` is a required check, and a person can acknowledge an UNKNOWN result by name (`/agentvow acknowledge <id>`). A self-hostable control plane service publishes that check; see below.
+- **Policy as a file.** `agentvow policy` turns a receipt into allow, needs acknowledgement or block under rules you write (contradictions always block; unauthenticated captures and unmeasured coverage can require a named acknowledger).
+- **Evidence for a team.** `agentvow pilot-report` summarises a folder of receipts mechanically (decisions, reproducibility, coverage, what could not be recreated) and states what it does not show.
 - **Where you work.** Claude Code hooks (`agentvow init`), GitHub Copilot in VS Code, the VS Code extension, the command line, GitHub Actions.
 - **Safe by construction.** Sandboxed test runs (macOS `sandbox-exec`, Linux bubblewrap), network denied, sealed results, text from agents escaped in reports.
 
@@ -25,6 +27,33 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 2. Agentvow reads its message and extracts the checkable claims by rules.
 3. It replays and measures: tests at base and head, captured-environment replay, project-native replay, changed-line coverage.
 4. You get a plain-language verdict with evidence, scope and what was not examined.
+
+## Demos (all real output)
+**1. An agent's claim, checked.** The agent says it added `g` and that 9 tests pass; Agentvow runs the tests and finds 1. It reports UNKNOWN and says why, not "OK" (output of `agentvow check` from 0.4.2, trimmed to the report):
+```text
+$ agentvow check --repo . --base HEAD~1 --transcript msg.txt --run-tests --test-cmd "{py} -m unittest discover -s tests -t ."
+STATUS: INSUFFICIENT EVIDENCE
+Checked commit 7a3f6553. Changed files: lib.py.
+
+? The agent said: "All 9 tests pass."
+   UNKNOWN: The agent reported 9 passing tests but Agentvow ran 1 test suite(s) on this exact state
+   (tests: 1 passed, 0 failed); total 1 passed, 0 failed, 0 skipped. The numbers differ, which may mean
+   the agent ran a different set or configuration.
+This tool informs your decision; it does not approve, reject or merge anything.
+```
+**2. From a verdict to a decision you can share.** A receipt keeps only verdicts, counts and category names (no source, no free text, no paths); a policy turns it into a decision:
+```text
+$ agentvow receipt --decision d.json --repo-slug you/project --repo . -o receipt.json
+$ agentvow policy evaluate --receipt receipt.json
+needs_acknowledgement
+- unknown (needs_acknowledgement): The 'tests_pass' claim could not be confirmed or refuted (UNKNOWN):
+  the evidence was missing or the replay could not run.
+```
+**3. On a real pull request.** The gate workflow and the control plane service, run against GitHub in a throwaway repository (`docs/LIVE_TESTING.md`): a pull request whose tests are broken but whose description says "All tests pass." gets a failing, **required** `agentvow/evidence` check from the Agentvow App, and the merge button is disabled. A pull request that merely could not be confirmed waits for a named person to acknowledge it.
+
+![A pull request with the required check agentvow/evidence failing with "Agentvow: block"; the Merge pull request button is greyed out.](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/gate-blocked-pr.png)
+
+**4. Replay from the agent's own packages** is the recording at the top of this page; the verdict view is the picture below.
 
 ## Quick start
 ```bash
@@ -37,6 +66,11 @@ agentvow check --repo . --transcript msg.txt --run-tests --changed-coverage     
 agentvow check --repo . --transcript msg.txt --evidence-pack --html report.html   # receipt + reproducibility (captured vs project setup) + changed-line coverage (docs/EVIDENCE_PACK.md)
 agentvow capture --repo . && agentvow check --repo . --transcript msg.txt --run-tests --from-capsule   # replay from the packages captured when the agent ran its tests (docs/CAPSULES.md)
 agentvow check --repo . --transcript msg.txt --ci --html report.html                # also read CI results; write a visual report
+# portable evidence and a team decision (docs/GATE_WORKFLOW.md):
+agentvow capture --repo . --export bundle.json && agentvow check --repo . --transcript msg.txt --from-capture bundle.json   # anyone with the same files can replay it; refused if the files differ
+agentvow check --repo . --transcript msg.txt --json > d.json && agentvow receipt --decision d.json --repo-slug you/project --repo . -o receipt.json
+agentvow policy init > policy.json && agentvow policy evaluate --receipt receipt.json --policy policy.json   # allow / needs_acknowledgement / block
+agentvow pilot-report --receipts ./receipts -o report.md                                  # a mechanical evidence report over many receipts
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
 `agentvow audit-env --session <session.jsonl> [--recipe recipe.json]` lists what an agent session installed or exported and whether the repository or recipe declares it.
@@ -67,6 +101,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
 | Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report; opt-in `run-tests: true` also replays the tests in the sandbox on the runner and adds the evidence pack | Run on a real pull request of this repository (docs/LIVE_TESTING.md); `run-tests` run once on GitHub on a pull request of this repository (docs/LIVE_TESTING.md) |
+| Any pull request, as a team gate | reusable workflow `.github/workflows/gate.yml` (replay on the runner, receipt, policy from the base branch; optional upload to the control plane service); see `docs/GATE_WORKFLOW.md` and `docs/SETUP_GITHUB_APP.md` | **Run on real pull requests** (local-policy mode, 2026-10-22; with the control plane service and a required check pinned to its App, 2026-10-23: contradicted and unconfirmed pull requests blocked, acknowledgement by comment worked); fork pull requests not tested (`docs/LIVE_TESTING.md`) |
 | Anything else | paste or pipe the message; VS Code commands for clipboard/selection | Tested |
 
 ## Seeing the verdict
