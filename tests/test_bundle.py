@@ -25,9 +25,10 @@ class TreeHash(unittest.TestCase):
     def test_hash_of_a_dirty_tree_equals_the_tree_of_the_commit_made_later_and_writes_nothing(self):
         d, g = repo_with_change()
         (d / ".agentvow").mkdir(); (d / ".agentvow" / "z").write_text("q")
-        before = sorted(p.name for p in (d / ".git" / "objects").rglob("*") if p.is_file())
+        objects = lambda: sorted(p.name for p in (d / ".git" / "objects").rglob("*") if p.is_file() and not p.name.endswith(".lock"))   # git's own background maintenance (started by the commit above) may create maintenance.lock at any moment
+        before = objects()
         h = reality.git_tree_hash(d)
-        self.assertEqual(before, sorted(p.name for p in (d / ".git" / "objects").rglob("*") if p.is_file()))
+        self.assertEqual(before, objects())
         g("add", "-A", "--", ".", ":(exclude).agentvow"); g("commit", "-qm", "later")
         self.assertEqual(h, g("rev-parse", "HEAD^{tree}"))
         self.assertEqual(reality.git_tree_hash(d), h)   # clean now: still the same
