@@ -9,6 +9,7 @@ import argparse
 import html
 import json
 import os
+import re
 import secrets
 import sys
 import urllib.request
@@ -32,14 +33,19 @@ def convert(code: str) -> dict:
 
 
 def write_private(path: str, text: str) -> None:
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    """A fresh file, mode 600 from the first byte; an existing file or a link in its place is removed first (never written through)."""
+    try:
+        os.unlink(path)
+    except FileNotFoundError:
+        pass
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600)
     with os.fdopen(fd, "w") as f:
         f.write(text)
-    os.chmod(path, 0o600)
 
 
 def save(out: str, repo: str, app: dict, audience: str, workflow_ref: str) -> str:
     os.makedirs(out, mode=0o700, exist_ok=True)
+    os.chmod(out, 0o700)
     pem, env = os.path.join(out, "app.private-key.pem"), os.path.join(out, "cp.env")
     write_private(pem, app["pem"])
     write_private(env, "\n".join([f"AGENTVOW_CP_APP_ID={app['id']}", f"AGENTVOW_CP_PRIVATE_KEY_FILE={pem}", f"AGENTVOW_CP_WEBHOOK_SECRET={app['webhook_secret']}", f"AGENTVOW_CP_AUDIENCE={audience}",
@@ -47,13 +53,15 @@ def save(out: str, repo: str, app: dict, audience: str, workflow_ref: str) -> st
     return env
 
 
-def make_handler(page: str, state: str, on_app):
+def make_handler(page: str, state: str, on_app, allowed_hosts=()):
     class H(BaseHTTPRequestHandler):
         def _send(self, code, body, ctype="text/html; charset=utf-8"):
             b = body.encode()
             self.send_response(code); self.send_header("Content-Type", ctype); self.send_header("Content-Length", str(len(b))); self.send_header("Cache-Control", "no-store"); self.end_headers(); self.wfile.write(b)
 
         def do_GET(self):
+            if self.headers.get("Host", "") not in allowed_hosts:   # DNS rebinding: a page on another name must not reach this local server
+                return self._send(403, "<p>Unexpected Host header.</p>")
             u = urlparse(self.path)
             if u.path == "/":
                 return self._send(200, page)
@@ -85,6 +93,8 @@ def main(argv=None, convert_fn=convert, serve=True):
     a = ap.parse_args(argv)
     if not a.tunnel.startswith("https://"):
         ap.error("--tunnel must be an https address")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}", a.repo):
+        ap.error("--repo must look like owner/name")
     owner = a.repo.split("/")[0]
     state = secrets.token_urlsafe(24)
     redirect = f"http://127.0.0.1:{a.port}/callback"
@@ -100,8 +110,8 @@ def main(argv=None, convert_fn=convert, serve=True):
         done.update(app=app, env=env)
         return f"Registered {app.get('name')}. Install it on {a.repo}: {app.get('html_url')}/installations/new"
     if not serve:
-        return make_handler, page, state, on_app, done
-    srv = HTTPServer(("127.0.0.1", a.port), make_handler(page, state, on_app))
+        return make_handler, page, state, on_app, done, (f"127.0.0.1:{a.port}", f"localhost:{a.port}")
+    srv = HTTPServer(("127.0.0.1", a.port), make_handler(page, state, on_app, (f"127.0.0.1:{a.port}", f"localhost:{a.port}")))
     print(f"Open http://127.0.0.1:{a.port}/ in the browser where you are signed in to GitHub, and press 'Create GitHub App'.", flush=True)
     while "app" not in done:
         srv.handle_request()

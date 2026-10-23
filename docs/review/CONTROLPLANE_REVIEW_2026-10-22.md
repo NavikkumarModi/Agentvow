@@ -41,6 +41,27 @@ A second independent reviewer attacked the fixes and mutation-checked the regres
 
 Weak regression tests found by mutation and fixed: empty `repository_id`, schema-level hex strictness, the real `branch_sha` error path, acknowledgement refusals (each now fires for its own reason), an acknowledgement of another receipt, a contradiction that an acknowledgement cannot clear, and the stale-publish race.
 
+## Third review (commits after e102798: lifecycle, retention, dashboard, helpers, image) and its fixes
+A third independent reviewer attacked the code added after the live run and mutation-checked its tests (19 mutations; 5 survivors, strengthened).
+
+| ID | Class | Finding | Fix |
+|---|---|---|---|
+| 3-C1 | CONFIRMED, high | When a paid plan ended (a late invoice, a typo in `--days`) the next daily run deleted every receipt older than the free plan's 30 days | Retention follows the best plan the repository or owner ever had; a lapse never deletes (data leaves by retention while paid, by `erase`, or after uninstall) |
+| 3-C2 | CONFIRMED, medium | An exception ended the background thread (and the retry of unpublished checks); maintenance first ran 24 hours after every start | `background_pass`: each step isolated and logged; the last maintenance time is persisted, so restarts do not postpone it |
+| 3-C3 | CONFIRMED, medium | Erasure followed webhook order: a stale "removed" event could mark a live repository for erasure; a repository whose "created" event was missed was never erased | Erasure asks GitHub (`GET /repos/{r}/installation`): 404 for longer than the grace period erases, 200 resets, anything else changes nothing; removal events are scoped by installation id; an installation can only name its own account's repositories |
+| 3-C4 | CONFIRMED, low-medium | Plan keys were case-sensitive (`set-plan Acme` did not cover `acme/x`) | Plan keys are lower-cased |
+| 3-C5 | CONFIRMED, low | `deliveries` grew forever; an open pull request older than the retention loses its receipt (the check then shows pending, fail closed) | Deliveries pruned daily; the open-pull-request case documented. `checks` rows (a few bytes each) still only leave with `erase` |
+| 3-C6 | CONFIRMED, medium | A local `docker compose up --build` copied the git-ignored `secrets/` directory into the image | `.dockerignore` (allow-list: only `agentvow` and `controlplane`, never `secrets`); verified by building with a dummy secret; the image workflow also checks it |
+| 3-C7 | CONFIRMED, low | Glob characters in untracked `.agentvow/` file names (`*`, `p?licy.json`) removed the tracked policy from the hash | Literal pathspecs for that step |
+| 3-P1 | PLAUSIBLE | Dashboard and audit had no cap or rate limit (one large tenant could stall the single worker and spend API quota) | Dashboard shows the latest 500 receipts; audit and dashboard are rate limited like uploads |
+| 3-P2/P3 | PLAUSIBLE | The registration helper accepted any Host header (DNS rebinding), followed links and kept the modes of existing files | Host allow-list, files replaced (never written through), directory mode forced, `--repo` validated |
+| 3-P4 | PLAUSIBLE | The image smoke test never started the app; `:latest` floated | The workflow starts the container with a generated key and checks `/healthz` and the absence of `secrets`; only the version tag is pushed |
+| 3-P5/P6 | PLAUSIBLE | Erase was not atomic; no frame protection on the dashboard | One transaction; `frame-ancestors 'none'` and `X-Frame-Options: DENY` |
+
+Weak tests found by mutation and fixed: erase touching every table, retention removing acknowledgements, the dashboard's security headers, the helper's file modes with pre-existing files; missing tests added for plan lapse, the loop, out-of-order events, glob names.
+
+Not fixed, stated: deleted rows stay in SQLite's free pages and in older backups; compose file-secrets keep the host's ownership, so on Linux the secrets directory must be readable by uid 10001 (documented, not shown to work on Linux); the base image and transitive dependencies float.
+
 ## Residuals (not fixed, stated)
 * A sandbox escape inside the replay job can still forge a receipt that carries a valid token (the replay job has no token, but its output is what the upload job sends).
 * Write permission of an acknowledger is checked when the comment is processed, not again on every later evaluation.

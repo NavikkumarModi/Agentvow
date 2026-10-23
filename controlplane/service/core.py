@@ -32,6 +32,7 @@ class Config:
     per_minute: int = 30
     retention_days: dict = field(default_factory=lambda: {"free": 30, "team": 365, "business": 730})
     erase_after_uninstall_days: int = 30
+    dashboard_rows: int = 500
 
 
 class RateLimiter:
@@ -268,7 +269,7 @@ class Service:
         """Tenant lifecycle: who installed the App on which repositories. Uninstalling starts a grace period after which the repository's stored data is erased (`maintain`)."""
         inst = p.get("installation") or {}
         iid, account = inst.get("id"), str((inst.get("account") or {}).get("login", ""))
-        names = lambda key: [r["full_name"] for r in (p.get(key) or []) if isinstance(r, dict) and _repo_ok(r.get("full_name"))]
+        names = lambda key: [r["full_name"] for r in (p.get(key) or []) if isinstance(r, dict) and _repo_ok(r.get("full_name")) and r["full_name"].split("/")[0].lower() == account.lower()]   # an installation can only name its own account's repositories
         if not isinstance(iid, int) or not account:
             return 400, {"error": "unexpected payload"}
         act = p.get("action")
@@ -279,18 +280,28 @@ class Service:
         elif ev == "installation_repositories" and act == "added":
             self.store.add_install_repos(iid, names("repositories_added"))
         elif ev == "installation_repositories" and act == "removed":
-            self.store.remove_install_repos(names("repositories_removed"))
+            self.store.remove_install_repos(iid, names("repositories_removed"))
         else:
             return 200, {"ignored": f"{ev} {act}"}
         return 200, {"recorded": f"{ev} {act}"}
 
     def maintain(self) -> dict:
-        """Retention and erasure; run daily by the background loop and by `controlplane.service.cli maintain`."""
+        """Retention and erasure; run daily by the background loop and by `cli maintain`. Erasure is driven by what GitHub says NOW, not by webhook order: for every repository with stored data the service asks
+        whether the App is still installed; a repository the App has been gone from (GitHub answers 404) for longer than the grace period is erased; an unknown answer changes nothing."""
         expired = self.store.purge_expired(self.cfg.retention_days, self.cfg.retention_days["free"])
-        erased = self.store.uninstalled_longer_than(self.cfg.erase_after_uninstall_days)
-        for repo in erased:
-            self.store.erase_repo(repo)
-        return {"receipts_expired": expired, "repositories_erased": len(erased)}
+        erased = skipped = 0
+        for repo in self.store.repos_with_data():
+            try:
+                state = self.gh.installed(repo) if self.gh is not None else None
+            except Exception:
+                state = None
+            if state is None:
+                skipped += 1
+                continue
+            if self.store.note_installed(repo, state, self.cfg.erase_after_uninstall_days):
+                self.store.erase_repo(repo)
+                erased += 1
+        return {"receipts_expired": expired, "repositories_erased": erased, "repositories_unchecked": skipped, "deliveries_pruned": self.store.prune_deliveries()}
 
     def _pr_event(self, p):
         repo, sha = p["repository"]["full_name"], str(p["pull_request"]["head"]["sha"])
@@ -371,6 +382,8 @@ class Service:
     def audit(self, repo: str, headers: dict, fmt: str = "json") -> tuple:
         if not self._key_ok(repo, headers):
             return 401, {"error": "this repository's audit key is required"}
+        if not self.limiter.ok("read:" + repo):   # every export evaluates every receipt and calls GitHub: bounded like uploads
+            return 429, {"error": "too many exports for this repository; try again in a minute"}
         try:
             branch = self.gh.repo_info(repo)["default_branch"]
             policy = self.policy_for(repo, branch)   # fetched ONCE for the whole export; every decision below is "under the policy in force now", not "as it was then"
@@ -402,6 +415,7 @@ class Service:
         code, o = self.audit(repo, {"authorization": "Bearer " + key})
         if code != 200:
             return code, f"<p>{e(o.get('error', 'error'))}</p>"
+        total, o["records"] = len(o["records"]), o["records"][-self.cfg.dashboard_rows:]
         n, nbytes = self.store.usage(repo)
         plan = self.store.plan(repo)
         rows = "".join(
@@ -411,9 +425,10 @@ class Service:
                 "<style>body{font:14px system-ui;margin:2rem;color:#1f2328}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #d0d7de;padding:.4rem .6rem;text-align:left}"
                 ".d-allow{color:#1a7f37}.d-block{color:#cf222e}.d-needs_acknowledgement{color:#9a6700}small{color:#57606a}</style>"
                 f"<h1>{e(repo)}</h1><p><small>Plan: {e(plan)}. This month: {e(n)} receipts, {e(round(nbytes / 1024))} KB. Decisions are shown under the policy in force now. "
-                f"Receipts are kept {e(self.cfg.retention_days.get(plan, self.cfg.retention_days['free']))} days.</small></p>"
+                f"Receipts are kept {e(self.cfg.retention_days.get(self.store.retention_plan(repo), self.cfg.retention_days['free']))} days.</small></p>"
                 "<table><tr><th>Received (UTC)</th><th>PR</th><th>Commit</th><th>Decision</th><th>Acknowledged by</th><th>Reproduced</th><th>Not reproduced</th></tr>" + rows + "</table>"
-                "<p><small>A pass is evidence to weigh, not verification: the pull request's own code wrote the test output.</small></p>")
+                + (f"<p><small>Showing the latest {len(o['records'])} of {total} receipts; the audit export has all of them.</small></p>" if total > len(o["records"]) else "")
+                + "<p><small>A pass is evidence to weigh, not verification: the pull request's own code wrote the test output.</small></p>")
         return 200, page
 
     @staticmethod

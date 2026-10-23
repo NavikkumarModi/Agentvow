@@ -10,7 +10,8 @@ Status: the image builds and runs (read-only filesystem, non-root, all capabilit
 ## One host with Docker Compose
 ```bash
 cd controlplane/service && mkdir -p secrets && chmod 700 secrets
-cp /path/to/app.private-key.pem secrets/ && printf '%s' "$WEBHOOK_SECRET" > secrets/webhook_secret && chmod 600 secrets/*
+cp /path/to/app.private-key.pem secrets/ && printf '%s' "$WEBHOOK_SECRET" > secrets/webhook_secret
+sudo chown -R 10001 secrets && chmod 700 secrets && chmod 400 secrets/*   # the container user is uid 10001; unverified on Linux hosts
 export AGENTVOW_CP_APP_ID=<id>
 export AGENTVOW_CP_TRUSTED_WORKFLOWS='<owner>/<repo>/.github/workflows/gate.yml@refs/tags/v1'   # exact job_workflow_ref values, comma separated
 docker compose up -d --build
@@ -23,10 +24,13 @@ Then set the App's webhook URL to `https://<your domain>/v1/webhook` and, in the
 ## Operating it
 * **Plans and keys** (run inside the container or on the volume): `python -m controlplane.service.cli --db /data/controlplane.db set-plan <owner or owner/repo> team --days 365`, `issue-key owner/repo` (shown once), `stats`, `usage owner/repo`.
 * **Backups:** `cli backup /data/backup-$(date +%F).db` is a consistent online copy (mode 600); run it daily from cron and copy it off the host (encrypt it: receipts name repositories and file categories). Restore = stop the service, put the file at `/data/controlplane.db`, start.
-* **Retention and erasure:** the service deletes receipts older than the plan's retention (free 30 days, team 365, business 730) and erases everything stored about a repository 30 days after the App is uninstalled from it; both run daily in-process (`cli maintain` runs them by hand; `cli erase owner/repo` deletes on request, for example for a data-subject request).
+* **Retention and erasure:** once a day (and at start if more than a day has passed) the service deletes receipts older than the retention of the best plan the repository or its owner ever had (free 30 days, team 365, business 730; **a lapsed plan never deletes anything**), and, for every repository with stored data, asks GitHub whether the App is still installed: 404 for more than 30 days erases everything stored about the repository (receipts, acknowledgements, key, plan, counters); an unknown answer changes nothing. `cli maintain` runs it by hand (with the service's environment loaded, otherwise only retention runs); `cli erase owner/repo` deletes on request. Deleted rows remain in SQLite's free space and in earlier backups until overwritten.
 * **Logs:** every non-2xx answer logs its reason (never a token or receipt body). `/healthz` for monitoring. There are no metrics yet.
 * **Upgrades:** pull the new image, restart; the schema is created on start (`create table if not exists`); there is no migration tool yet, so back up first and read the changelog.
 * **Secrets rotation:** generate a new App private key in the App settings, replace the file, restart, delete the old key; rotate the webhook secret in the App settings and the secrets file together.
+
+## Build context
+`.dockerignore` allows only `agentvow/` and `controlplane/` into the image and always excludes `secrets/`; CI checks this on every build.
 
 ## Limits of this recipe
 One process, one disk, no high availability; SQLite does not scale to many writers (fine for tens of repositories, revisit before hundreds); no metrics or alerting; no migration tool; dependencies are pinned to exact versions but not by hash; the base image is a floating `python:3.12-slim`. A privacy policy, terms and a data-processing statement are needed before any customer sends receipts (they contain repository names and file and variable category names).

@@ -46,7 +46,13 @@ def main(argv=None) -> int:
         print(f"{a.repo}: everything stored about it was deleted")
     elif a.cmd == "maintain":
         from .core import Config, Service
-        print(json.dumps(Service(Config(), None, None, st).maintain()))
+        gh = None
+        try:   # with the service's environment loaded the erasure check can ask GitHub; without it only retention runs
+            from .asgi import build_service
+            gh = build_service().gh
+        except Exception:
+            print("note: no service configuration in the environment; retention only, nothing is erased", file=sys.stderr)
+        print(json.dumps(Service(Config(), None, gh, st).maintain()))
     elif a.cmd == "unbind-repo":
         st.unbind_repo(a.repo)
         print(f"{a.repo}: numeric repository id forgotten; the next trusted receipt binds it again")

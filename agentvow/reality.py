@@ -214,8 +214,8 @@ def git_tree_hash(repo: Path) -> str:
         (Path(t) / "obj").mkdir()
         base = ["git", *safe_prefix(repo), "-c", "core.autocrlf=false", "-c", "core.fileMode=true", "-c", "core.excludesFile=", "-c", "core.attributesFile=", "-c", "core.safecrlf=false",
                 "-c", "core.ignoreCase=false", "-c", "core.symlinks=true", "-c", "core.fsmonitor=false", "-C", str(repo)]
-        def run(*cmd, stdin=None):
-            r = subprocess.run([*base, *cmd], capture_output=True, text=True, env=env, timeout=120, input=stdin)
+        def run(*cmd, stdin=None, literal=False):
+            r = subprocess.run([*base, *cmd], capture_output=True, text=True, env={**env, "GIT_LITERAL_PATHSPECS": "1"} if literal else env, timeout=120, input=stdin)
             if r.returncode:
                 raise CollectorError(f"git {' '.join(cmd)} failed: {r.stderr.strip()[:120]}")
             return r.stdout
@@ -225,7 +225,7 @@ def git_tree_hash(repo: Path) -> str:
         tracked = set(run("ls-tree", "-r", "-z", "--name-only", "HEAD", "--", ".agentvow").split("\0"))
         extra = [f for f in run("ls-files", "-z", "--", ".agentvow").split("\0") if f and f not in tracked]
         if extra:
-            run("rm", "--cached", "-q", "--pathspec-from-file=-", "--pathspec-file-nul", stdin="\0".join(extra))
+            run("rm", "--cached", "-q", "--pathspec-from-file=-", "--pathspec-file-nul", stdin="\0".join(extra), literal=True)   # names are names, not patterns
         return run("write-tree").strip()
 
 

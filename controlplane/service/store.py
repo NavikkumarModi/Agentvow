@@ -16,6 +16,8 @@ create table if not exists acks(repo text not null, receipt_id text not null, by
 create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
+create table if not exists meta(k text primary key, v text not null);
+create table if not exists gone_since(repo text primary key, since real not null);
 create table if not exists installs(installation_id integer primary key, account text not null, deleted_at real);
 create table if not exists install_repos(repo text primary key, installation_id integer not null, removed_at real);
 create table if not exists repo_ids(repo text primary key, repo_id text not null);
@@ -115,15 +117,26 @@ class Store:
 
     # ---- plans, keys, usage
     def set_plan(self, repo, plan, until=None):
-        self.q("insert or replace into plans values(?,?,?)", repo, plan, until)
+        self.q("insert or replace into plans values(?,?,?)", str(repo).lower(), plan, until)   # GitHub logins are case-insensitive
 
     def plan(self, repo) -> str:
         """The plan of the repository, else of its owner account (`set_plan("owner", ...)` covers every repository of that account), else free. An ended plan counts as free."""
-        for key in (repo, str(repo).split("/")[0]):
+        for key in (str(repo).lower(), str(repo).split("/")[0].lower()):
             r = self.q("select plan, until from plans where repo=?", key)
             if r and (r[0][1] is None or r[0][1] > time.time()):
                 return r[0][0]
         return "free"
+
+    def retention_plan(self, repo) -> str:
+        """The plan whose retention applies to stored data: the best plan the repository or its owner EVER had (rows are kept after they end), so a lapsed subscription, a late invoice or a typo in
+        `--days` never deletes an audit trail; data leaves only by the plan's own retention while it was paid, by `erase`, or after the App is uninstalled."""
+        order = {"free": 0, "team": 1, "business": 2}
+        best = "free"
+        for key in (str(repo).lower(), str(repo).split("/")[0].lower()):
+            for (plan,) in self.q("select plan from plans where repo=?", key):
+                if order.get(plan, 0) > order.get(best, 0):
+                    best = plan
+        return best
 
     def issue_key(self, repo, rotate: bool = False) -> str:
         if not rotate and self.q("select 1 from keys where repo=?", repo):
@@ -152,10 +165,10 @@ class Store:
             for r in repos:
                 self.db.execute("insert or replace into install_repos values(?,?,NULL)", (r, int(iid)))
 
-    def remove_install_repos(self, repos) -> None:
+    def remove_install_repos(self, iid: int, repos) -> None:
         with self.lock:
             for r in repos:
-                self.db.execute("update install_repos set removed_at=? where repo=? and removed_at is null", (time.time(), r))
+                self.db.execute("update install_repos set removed_at=? where repo=? and installation_id=? and removed_at is null", (time.time(), r, int(iid)))
 
     def remove_install(self, iid: int) -> None:
         with self.lock:
@@ -164,19 +177,48 @@ class Store:
             self.db.execute("update install_repos set removed_at=? where installation_id=? and removed_at is null", (now, int(iid)))
 
     def erase_repo(self, repo) -> None:
-        """Everything stored about one repository (receipts, acknowledgements, check ids, key, plan, counters, binding, install record). Used when an App is uninstalled and on request."""
+        """Everything stored about one repository (receipts, acknowledgements, check ids, key, plan, counters, binding, install record), in one transaction. Used after the App is gone from it and on request.
+        (Deleted rows stay in SQLite's free pages and in earlier backups until overwritten.)"""
         with self.lock:
-            for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos"):
-                self.db.execute(f"delete from {t} where repo=?", (repo,))
+            self.db.execute("begin")
+            try:
+                for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos", "gone_since"):
+                    self.db.execute(f"delete from {t} where repo=?", (repo,))
+                self.db.execute("delete from plans where repo=?", (repo.lower(),))
+                self.db.execute("commit")
+            except BaseException:
+                self.db.execute("rollback")
+                raise
 
-    def uninstalled_longer_than(self, days: int):
-        return [r for (r,) in self.q("select repo from install_repos where removed_at is not null and removed_at < ?", time.time() - days * 86400)]
+    def repos_with_data(self):
+        return [r for (r,) in self.q("select repo from receipts union select repo from keys union select repo from install_repos") if "/" in r]
+
+    def note_installed(self, repo, installed: bool, grace_days: int) -> bool:
+        """Record what GitHub says about the App on this repository. -> True when the App has been gone for longer than the grace period (time to erase)."""
+        with self.lock:
+            if installed:
+                self.db.execute("delete from gone_since where repo=?", (repo,)); self.db.execute("update install_repos set removed_at=NULL where repo=?", (repo,))
+                return False
+            self.db.execute("insert or ignore into gone_since values(?,?)", (repo, time.time()))
+            since = self.db.execute("select since from gone_since where repo=?", (repo,)).fetchone()[0]
+            return since < time.time() - grace_days * 86400
+
+    def get_meta(self, k, default=None):
+        r = self.q("select v from meta where k=?", k)
+        return r[0][0] if r else default
+
+    def set_meta(self, k, v):
+        self.q("insert or replace into meta values(?,?)", k, str(v))
+
+    def prune_deliveries(self, older_than_days: int = 14) -> int:
+        with self.lock:
+            return self.db.execute("delete from deliveries where at < ?", (time.time() - older_than_days * 86400,)).rowcount
 
     def purge_expired(self, days_by_plan: dict, default_days: int) -> int:
         """Delete receipts (and their acknowledgements) older than the retention of each repository's plan. -> number of receipts removed."""
         removed = 0
         for (repo,) in self.q("select distinct repo from receipts"):
-            days = days_by_plan.get(self.plan(repo), default_days)
+            days = days_by_plan.get(self.retention_plan(repo), default_days)
             cutoff = time.time() - days * 86400
             with self.lock:
                 ids = [i for (i,) in self.db.execute("select id from receipts where repo=? and received < ?", (repo, cutoff)).fetchall()]

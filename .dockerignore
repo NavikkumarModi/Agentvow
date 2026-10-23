@@ -1,0 +1,8 @@
+# The image needs only the two packages. Everything else (and anything secret) stays out of the build context.
+*
+!agentvow
+!controlplane
+**/secrets
+**/__pycache__
+**/*.pyc
+controlplane/service/docker-compose.yml

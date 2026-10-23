@@ -42,7 +42,9 @@ class FakeGH:
     def __init__(self):
         self.tree, self.private, self.head, self.policy, self.perm, self.author = TREE, False, COMMIT, None, "write", "bob"
         self.checks, self.comments, self.fail_policy, self.branch_ok, self.refs = [], [], False, True, []
+        self.app_installed = True   # what GitHub says about the App on a repository: True, False (404) or None (unknown)
     def repo_info(self, repo): return {"private": self.private, "default_branch": "main"}
+    def installed(self, repo): return self.app_installed
     def commit_tree(self, repo, sha): return self.tree
     def pr_info(self, repo, n): return {"head_sha": self.head, "base_ref": "main", "state": "open", "user": self.author}
     def branch_sha(self, repo, branch):
@@ -365,9 +367,10 @@ class Lifecycle(unittest.TestCase):
         self.assertEqual(self.inst(s, "installation", "created", repositories=[{"full_name": "o/n"}, {"full_name": "../evil"}])[0], 200)
         self.assertEqual(s.store.stats()["installations"], 1)
         self.assertEqual(self.inst(s, "installation_repositories", "removed", repositories_removed=[{"full_name": "o/n"}])[0], 200)
-        self.assertEqual(s.maintain()["repositories_erased"], 0)   # still inside the grace period
+        gh.app_installed = False
+        self.assertEqual(s.maintain()["repositories_erased"], 0)   # first seen gone: inside the grace period
         self.assertEqual(len(s.audit("o/n", {"authorization": "Bearer " + k})[1]["records"]), 1)
-        s.store.q("update install_repos set removed_at = ?", time.time() - 40 * 86400)
+        s.store.q("update gone_since set since = ?", time.time() - 40 * 86400)
         self.assertEqual(s.maintain()["repositories_erased"], 1)
         self.assertEqual(s.store.receipts("o/n"), []); self.assertFalse(s.store.key_ok("o/n", k)); self.assertEqual(s.store.plan("o/n"), "free")
         self.assertEqual(self.inst(s, "installation", "deleted")[0], 200)
@@ -409,6 +412,106 @@ class Lifecycle(unittest.TestCase):
         self.assertEqual(cli.main(["--db", db, "stats"]), 0); self.assertEqual(cli.main(["--db", db, "maintain"]), 0)
 
 
+class ThirdReview(unittest.TestCase):
+    """Regression tests for the third adversarial review (new lifecycle, retention, dashboard and helper code)."""
+    def test_C1_a_lapsed_plan_never_deletes_the_audit_trail(self):
+        s, _ = make(); post(s); s.store.set_plan("o/n", "team", time.time() - 5)   # ended yesterday: a late invoice
+        s.store.q("update receipts set received = ?", time.time() - 100 * 86400)
+        self.assertEqual(s.store.plan("o/n"), "free"); self.assertEqual(s.store.retention_plan("o/n"), "team")
+        self.assertEqual(s.maintain()["receipts_expired"], 0)
+    def test_C2_background_pass_survives_failures_and_runs_maintenance_when_due_even_after_restarts(self):
+        from controlplane.service.asgi import background_pass
+        s, _ = make(); calls = []
+        s.reconcile = lambda: (_ for _ in ()).throw(RuntimeError("boom"))
+        orig = s.maintain; s.maintain = lambda: (calls.append(1), orig())[1]
+        t = [1000000.0]; background_pass(s, now=lambda: t[0]); self.assertEqual(len(calls), 1)   # reconcile failed, maintenance still ran
+        background_pass(s, now=lambda: t[0] + 100); self.assertEqual(len(calls), 1)               # not due again (the time is persisted: a restart does not reset it)
+        background_pass(s, now=lambda: t[0] + 86401); self.assertEqual(len(calls), 2)
+        s.maintain = lambda: (_ for _ in ()).throw(RuntimeError("boom")); background_pass(s, now=lambda: t[0] + 3 * 86400)   # must not raise
+    def test_C3_erasure_follows_what_github_says_now_not_webhook_order(self):
+        s, gh = make(); post(s); inst = TestLifecycleHelper(s)
+        inst("installation_repositories", "removed", 6, repositories_removed=[{"full_name": "o/n"}])   # a stale removal of ANOTHER installation
+        s.store.record_install(5, "o", ["o/n"]); inst("installation_repositories", "removed", 6, repositories_removed=[{"full_name": "o/n"}])
+        self.assertIsNone(s.store.q("select removed_at from install_repos where repo='o/n'")[0][0])   # scoped by installation id
+        gh.app_installed = None; s.maintain(); self.assertEqual(s.store.q("select count(*) from gone_since")[0][0], 0)   # unknown: nothing changes
+        gh.app_installed = False; self.assertEqual(s.maintain()["repositories_erased"], 0)
+        gh.app_installed = True; s.maintain(); self.assertEqual(s.store.q("select count(*) from gone_since")[0][0], 0)   # reinstalled: the clock resets
+        s.store.q("delete from install_repos")   # a repository whose installation webhook was never received
+        gh.app_installed = False; s.maintain(); s.store.q("update gone_since set since = ?", time.time() - 40 * 86400)
+        self.assertEqual(s.maintain()["repositories_erased"], 1); self.assertEqual(s.store.receipts("o/n"), [])
+    def test_C3_an_installation_cannot_name_another_accounts_repositories(self):
+        s, _ = make(); TestLifecycleHelper(s)("installation", "created", 5, repositories=[{"full_name": "victim/repo"}, {"full_name": "o/mine"}])
+        self.assertEqual([r for (r,) in s.store.q("select repo from install_repos")], ["o/mine"])
+    def test_C4_plans_are_case_insensitive(self):
+        s, _ = make(); s.store.set_plan("Acme", "team"); self.assertEqual(s.store.plan("acme/x"), "team"); self.assertEqual(s.store.plan("ACME/X"), "team")
+    def test_C6_docker_context_excludes_secrets_and_everything_but_the_two_packages(self):
+        d = (Path(__file__).resolve().parents[1] / ".dockerignore").read_text().splitlines()
+        self.assertIn("*", d); self.assertIn("**/secrets", d); self.assertIn("!agentvow", d); self.assertIn("!controlplane", d)
+        self.assertLess(d.index("!controlplane"), d.index("**/secrets"))   # the exclusion comes after the re-inclusion, so it wins
+    def test_C7_glob_characters_in_agentvow_names_do_not_touch_the_tracked_policy(self):
+        import tempfile, subprocess as sp
+        from agentvow import reality
+        d = Path(tempfile.mkdtemp()); g = lambda *a: sp.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True).stdout.strip()
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t"); (d / ".agentvow").mkdir(); (d / ".agentvow" / "policy.json").write_text("{}"); (d / "a.py").write_text("x=1\n")
+        g("add", "-A"); g("commit", "-qm", "c")
+        for n in ("*", "p?licy.json", "[a-z]olicy.json"): (d / ".agentvow" / n).write_text("local state")
+        self.assertEqual(reality.git_tree_hash(d), g("rev-parse", "HEAD^{tree}"))
+    def test_P1_dashboard_is_capped_and_reads_are_rate_limited(self):
+        s, _ = make(per_minute=1000, dashboard_rows=3); k = s.store.issue_key("o/n")
+        for i in range(6): post(s, receipt(created_at=str(i)), run_id=i)
+        page = s.dashboard("o/n", k)[1]; self.assertEqual(page.count("<tr><td>"), 3); self.assertIn("latest 3 of 6", page)
+        s2, _ = make(per_minute=2); k2 = s2.store.issue_key("o/n"); post(s2)
+        codes = [s2.audit("o/n", {"authorization": "Bearer " + k2})[0] for _ in range(4)]; self.assertIn(429, codes)
+    def test_P2_register_helper_refuses_other_host_names(self):
+        import tempfile, threading, urllib.request, urllib.error
+        from http.server import HTTPServer
+        from controlplane.service import register_app as R
+        mh, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", tempfile.mkdtemp() + "/x", "--port", "0"], convert_fn=lambda c: {}, serve=False)
+        srv = HTTPServer(("127.0.0.1", 0), mh(page, state, on_app, ())); threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            req = urllib.request.Request(f"http://127.0.0.1:{srv.server_address[1]}/", headers={"Host": "evil.example"})
+            with self.assertRaises(urllib.error.HTTPError) as e: urllib.request.urlopen(req)
+            self.assertEqual(e.exception.code, 403)
+        finally:
+            srv.shutdown()
+        with self.assertRaises(SystemExit): R.main(["--tunnel", "https://t.example", "--repo", "bad repo; rm", "--out", "x"], serve=False)
+    def test_P3_register_helper_replaces_existing_files_and_links_with_private_ones(self):
+        import tempfile, os, stat
+        from controlplane.service import register_app as R
+        d = tempfile.mkdtemp() + "/o"; os.makedirs(d, mode=0o755); target = d + "/elsewhere"; open(target, "w").write("keep")
+        os.symlink(target, d + "/app.private-key.pem"); open(d + "/cp.env", "w").write("old"); os.chmod(d + "/cp.env", 0o644)
+        R.save(d, "u/r", {"id": 1, "pem": "PEM", "webhook_secret": "WS"}, "aud", "u/r/.github/workflows/gate.yml@refs/tags/v1")
+        self.assertEqual(open(target).read(), "keep")   # not written through the link
+        for f in ("app.private-key.pem", "cp.env"): self.assertEqual(stat.S_IMODE(os.lstat(f"{d}/{f}").st_mode), 0o600)
+        self.assertEqual(stat.S_IMODE(os.stat(d).st_mode), 0o700)
+    def test_P5_erase_removes_every_table_and_retention_removes_acknowledgements(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN")); k = s.store.issue_key("o/n")
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]; s.store.add_ack("o/n", rid, "alice", "x"); s.store.mark_dirty("o/n", COMMIT); s.store.set_plan("o/n", "team")
+        s.store.q("update receipts set received = ?", time.time() - 40 * 86400); self.assertEqual(s.maintain()["receipts_expired"], 0)   # team keeps 365 days
+        s.store.set_plan("o/n", "free"); s.store.q("delete from plans")
+        self.assertEqual(s.maintain()["receipts_expired"], 1); self.assertEqual(s.store.acks("o/n", rid), [])   # free: 30 days; acknowledgements go with their receipt
+        post(s, receipt("UNKNOWN", created_at="9")); s.store.mark_dirty("o/n", COMMIT)
+        s.store.erase_repo("o/n")
+        for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos", "gone_since"):
+            self.assertEqual(s.store.q(f"select count(*) from {t} where repo='o/n'")[0][0], 0, t)
+    def test_P6_dashboard_security_headers(self):
+        from starlette.testclient import TestClient
+        from controlplane.service.asgi import make_app
+        r = TestClient(make_app(make()[0])).get("/dashboard"); csp = r.headers["content-security-policy"]
+        for part in ("default-src 'none'", "form-action 'self'", "frame-ancestors 'none'"): self.assertIn(part, csp)
+        self.assertEqual(r.headers["referrer-policy"], "no-referrer"); self.assertEqual(r.headers["x-frame-options"], "DENY")
+    def test_deliveries_are_pruned_by_maintenance(self):
+        s, _ = make(); s.store.record_delivery("old"); s.store.q("update deliveries set at = ?", time.time() - 20 * 86400)
+        s.store.record_delivery("new"); s.maintain(); self.assertFalse(s.store.delivery_seen("old")); self.assertTrue(s.store.delivery_seen("new"))
+
+
+def TestLifecycleHelper(s):
+    def send(ev, action, iid=5, **extra):
+        body = json.dumps({"action": action, "installation": {"id": iid, "account": {"login": "o"}}, **extra}).encode()
+        return s.webhook({"x-hub-signature-256": "sha256=" + hmac.new(b"s3cret", body, hashlib.sha256).hexdigest(), "x-github-event": ev}, body)
+    return send
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke
@@ -427,9 +530,9 @@ class Register(unittest.TestCase):
         from http.server import HTTPServer
         from controlplane.service import register_app as R
         out = tempfile.mkdtemp() + "/x"
-        make_handler, page, state, on_app, done = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", out, "--port", "0"], convert_fn=lambda code: {"id": 7, "name": "n", "slug": "n", "html_url": "https://github.com/apps/n", "pem": "PEM", "webhook_secret": "WS"}, serve=False)
+        make_handler, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", out, "--port", "0"], convert_fn=lambda code: {"id": 7, "name": "n", "slug": "n", "html_url": "https://github.com/apps/n", "pem": "PEM", "webhook_secret": "WS"}, serve=False)
         self.assertIn("https://t.example/v1/webhook", page); self.assertIn("pull_request", page); self.assertNotIn("WS", page)
-        srv = HTTPServer(("127.0.0.1", 0), make_handler(page, state, on_app)); port = srv.server_address[1]
+        srv = HTTPServer(("127.0.0.1", 0), make_handler(page, state, on_app, ("127.0.0.1:%d" % 0,))); port = srv.server_address[1]; srv.RequestHandlerClass = make_handler(page, state, on_app, (f"127.0.0.1:{port}",))
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         try:
             with self.assertRaises(urllib.error.HTTPError) as e: urllib.request.urlopen(f"http://127.0.0.1:{port}/callback?code=c&state=wrong")

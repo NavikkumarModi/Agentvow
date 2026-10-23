@@ -82,7 +82,7 @@ def make_app(service: Service) -> Starlette:
     FORM = ("<!doctype html><meta charset=utf-8><title>Agentvow receipts</title><body style='font:14px system-ui;margin:2rem'><h1>Agentvow receipts</h1>"
             "<form method=post action=/dashboard><p><label>Repository (owner/name)<br><input name=repo size=40 required></label></p>"
             "<p><label>Audit key<br><input name=key type=password size=40 required autocomplete=off></label></p><button>Show receipts</button></form>")
-    SECURITY = {"Cache-Control": "no-store", "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer"}
+    SECURITY = {"Cache-Control": "no-store", "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer"}
 
     async def dashboard_form(request):
         return HTMLResponse(FORM, headers=SECURITY)
@@ -102,18 +102,33 @@ def make_app(service: Service) -> Starlette:
     return Starlette(routes=[Route("/v1/receipts", receipts, methods=["POST"]), Route("/v1/webhook", webhook, methods=["POST"]), Route("/v1/check", check), Route("/v1/audit", audit), Route("/healthz", health), Route("/dashboard", dashboard_form), Route("/dashboard", dashboard, methods=["POST"])])
 
 
+def background_pass(service: Service, now=time.time) -> None:
+    """One pass of the background loop: retry unpublished checks, and run retention and erasure when 24 hours have passed since the last run (persisted, so a host that restarts more often than daily still
+    runs it). Each step is isolated: a failing step is logged and never ends the loop."""
+    log = logging.getLogger("agentvow.controlplane")
+
+    def step(name, fn):
+        try:
+            fn()
+        except Exception as e:
+            log.warning("background %s failed: %s", name, type(e).__name__)
+
+    def maintain():
+        r = service.maintain()
+        service.store.set_meta("last_maintain", now())
+        log.info("maintain: %s", r)
+    step("reconcile", service.reconcile)
+    if now() - float(service.store.get_meta("last_maintain", 0)) >= 86400:
+        step("maintain", maintain)
+
+
 def create_app() -> Starlette:
     """Application factory (`uvicorn --factory controlplane.service.asgi:create_app`). Built eagerly, so a missing setting stops the process at start-up instead of failing every request."""
     service = build_service()
 
-    ticks = [0]
-
     def loop():
         while True:
+            background_pass(service)
             time.sleep(60)
-            service.reconcile()
-            ticks[0] += 1
-            if ticks[0] % 1440 == 0:   # daily
-                service.maintain()
-    threading.Thread(target=loop, daemon=True).start()   # retries check runs whose publish failed
+    threading.Thread(target=loop, daemon=True).start()   # retries check runs whose publish failed; daily retention and erasure
     return make_app(service)

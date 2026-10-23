@@ -121,6 +121,13 @@ class GitHub:
         st, o = self._repo_call("GET", repo, f"/collaborators/{quote(login)}/permission")
         return str(o.get("permission", "none")) if st == 200 else "none"
 
+    def installed(self, repo: str):
+        """Is the App installed on this repository right now? True / False (GitHub answers 404) / None (anything else: unknown, do not act)."""
+        if not REPO_RE.fullmatch(str(repo)) or ".." in repo:
+            return None
+        st, _ = self._call("GET", f"/repos/{repo}/installation", self._app_jwt(), auth="bearer")
+        return True if st == 200 else (False if st == 404 else None)
+
     # ---- what the service does on GitHub
     def set_check(self, repo: str, sha: str, name: str, status: str, conclusion: str | None, title: str, summary: str, check_id: int | None = None) -> int:
         body = {"name": name, "head_sha": sha, "status": status, "output": {"title": title[:200], "summary": summary[:60000]}}
