@@ -1,5 +1,7 @@
-"""Operator commands: python -m controlplane.service.cli --db PATH {set-plan REPO PLAN [--days N] | issue-key REPO | purge DAYS | usage REPO}. Run on the host that holds the database; there is no remote admin interface."""
+"""Operator commands: python -m controlplane.service.cli --db PATH {set-plan REPO_OR_OWNER PLAN [--days N] | issue-key REPO | purge DAYS | usage REPO}. Run on the host that holds the database; there is no remote admin interface."""
 import argparse
+import json
+import os
 import sys
 import time
 
@@ -16,6 +18,10 @@ def main(argv=None) -> int:
     k = sub.add_parser("issue-key"); k.add_argument("repo"); k.add_argument("--rotate", action="store_true", help="replace an existing key")
     sub.add_parser("purge").add_argument("days", type=int)
     sub.add_parser("unbind-repo").add_argument("repo")
+    sub.add_parser("backup").add_argument("path")
+    sub.add_parser("stats")
+    sub.add_parser("erase").add_argument("repo")
+    sub.add_parser("maintain")
     sub.add_parser("usage").add_argument("repo")
     a = ap.parse_args(argv)
     st = Store(a.db)
@@ -29,6 +35,18 @@ def main(argv=None) -> int:
             print(st.issue_key(a.repo, a.rotate))   # shown once; only its hash is stored
         except ValueError as e:
             ap.error(str(e))
+    elif a.cmd == "backup":
+        st.backup(a.path)
+        os.chmod(a.path, 0o600)
+        print(f"backup written to {a.path}")
+    elif a.cmd == "stats":
+        print(json.dumps(st.stats(), indent=2))
+    elif a.cmd == "erase":
+        st.erase_repo(a.repo)
+        print(f"{a.repo}: everything stored about it was deleted")
+    elif a.cmd == "maintain":
+        from .core import Config, Service
+        print(json.dumps(Service(Config(), None, None, st).maintain()))
     elif a.cmd == "unbind-repo":
         st.unbind_repo(a.repo)
         print(f"{a.repo}: numeric repository id forgotten; the next trusted receipt binds it again")

@@ -1,0 +1,30 @@
+# Single-host deployment: `docker compose -f controlplane/service/docker-compose.yml up -d --build` from the repository root.
+# Put the address in front of it with TLS (a reverse proxy such as Caddy, or a Cloudflare named tunnel); the service itself speaks plain HTTP on 8080.
+# One replica only: SQLite with an in-process lock. Secrets stay OUTSIDE the repository (./secrets/ is git-ignored).
+services:
+  controlplane:
+    build:
+      context: ../..
+      dockerfile: controlplane/service/Dockerfile
+    restart: unless-stopped
+    ports: ["127.0.0.1:8080:8080"]
+    environment:
+      AGENTVOW_CP_APP_ID: ${AGENTVOW_CP_APP_ID:?set the GitHub App id}
+      AGENTVOW_CP_PRIVATE_KEY_FILE: /run/secrets/app_key
+      AGENTVOW_CP_WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+      AGENTVOW_CP_AUDIENCE: ${AGENTVOW_CP_AUDIENCE:-agentvow-control-plane}
+      AGENTVOW_CP_TRUSTED_WORKFLOWS: ${AGENTVOW_CP_TRUSTED_WORKFLOWS:?set the exact job_workflow_ref values}
+      AGENTVOW_CP_POLICY_PATH: ${AGENTVOW_CP_POLICY_PATH:-.agentvow/policy.json}
+      AGENTVOW_CP_DB: /data/controlplane.db
+    volumes:
+      - cp-data:/data
+    secrets: [app_key, webhook_secret]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+secrets:
+  app_key: {file: ./secrets/app.private-key.pem}
+  webhook_secret: {file: ./secrets/webhook_secret}
+volumes:
+  cp-data:

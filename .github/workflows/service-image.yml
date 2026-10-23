@@ -1,0 +1,37 @@
+# Builds the control plane service image. On a pull request or push that touches the service it only BUILDS (proves the Dockerfile works); on a tag `service-v*` it also pushes
+# ghcr.io/<owner>/agentvow-controlplane:<tag> and :latest with the repository's own GITHUB_TOKEN (no third-party action, no other secret).
+name: service-image
+on:
+  pull_request:
+    paths: ["controlplane/**", "agentvow/**", ".github/workflows/service-image.yml"]
+  push:
+    branches: [main]
+    paths: ["controlplane/**", "agentvow/**", ".github/workflows/service-image.yml"]
+    tags: ["service-v*"]
+permissions:
+  contents: read
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { persist-credentials: false }
+      - name: Build
+        run: docker build -f controlplane/service/Dockerfile -t agentvow-controlplane:build .
+      - name: Smoke test the image (starts, refuses to start without configuration)
+        run: |
+          if docker run --rm agentvow-controlplane:build 2>&1 | grep -q "missing environment variable"; then echo "refuses to start without configuration: ok"; else echo "expected a start-up refusal"; exit 1; fi
+      - name: Push (tags only)
+        if: startsWith(github.ref, 'refs/tags/service-v')
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          IMAGE="ghcr.io/$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')/agentvow-controlplane"
+          echo "$TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker tag agentvow-controlplane:build "$IMAGE:$TAG"; docker tag agentvow-controlplane:build "$IMAGE:latest"
+          docker push "$IMAGE:$TAG"; docker push "$IMAGE:latest"

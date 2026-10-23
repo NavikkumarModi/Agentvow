@@ -30,6 +30,8 @@ class Config:
     monthly_receipts: dict = field(default_factory=lambda: {"free": 30, "team": 3000, "business": 30000})
     monthly_bytes: int = 200 * 1024 * 1024
     per_minute: int = 30
+    retention_days: dict = field(default_factory=lambda: {"free": 30, "team": 365, "business": 730})
+    erase_after_uninstall_days: int = 30
 
 
 class RateLimiter:
@@ -242,6 +244,8 @@ class Service:
         ev = str(headers.get("x-github-event", ""))
         self.reconcile()
         try:
+            if ev in ("installation", "installation_repositories") and isinstance(p, dict):
+                return self._install_event(ev, p)
             if not isinstance(p, dict) or not _repo_ok((p.get("repository") or {}).get("full_name")):
                 return (200, {"ignored": ev}) if ev not in ("pull_request", "issue_comment") else (400, {"error": "unexpected payload"})
             if ev == "pull_request" and p.get("action") in ("opened", "reopened", "synchronize", "ready_for_review"):
@@ -259,6 +263,34 @@ class Service:
         except (KeyError, TypeError, ValueError, AttributeError):
             return 400, {"error": "unexpected payload"}
         return 200, {"ignored": ev}
+
+    def _install_event(self, ev, p):
+        """Tenant lifecycle: who installed the App on which repositories. Uninstalling starts a grace period after which the repository's stored data is erased (`maintain`)."""
+        inst = p.get("installation") or {}
+        iid, account = inst.get("id"), str((inst.get("account") or {}).get("login", ""))
+        names = lambda key: [r["full_name"] for r in (p.get(key) or []) if isinstance(r, dict) and _repo_ok(r.get("full_name"))]
+        if not isinstance(iid, int) or not account:
+            return 400, {"error": "unexpected payload"}
+        act = p.get("action")
+        if ev == "installation" and act == "created":
+            self.store.record_install(iid, account, names("repositories"))
+        elif ev == "installation" and act == "deleted":
+            self.store.remove_install(iid)
+        elif ev == "installation_repositories" and act == "added":
+            self.store.add_install_repos(iid, names("repositories_added"))
+        elif ev == "installation_repositories" and act == "removed":
+            self.store.remove_install_repos(names("repositories_removed"))
+        else:
+            return 200, {"ignored": f"{ev} {act}"}
+        return 200, {"recorded": f"{ev} {act}"}
+
+    def maintain(self) -> dict:
+        """Retention and erasure; run daily by the background loop and by `controlplane.service.cli maintain`."""
+        expired = self.store.purge_expired(self.cfg.retention_days, self.cfg.retention_days["free"])
+        erased = self.store.uninstalled_longer_than(self.cfg.erase_after_uninstall_days)
+        for repo in erased:
+            self.store.erase_repo(repo)
+        return {"receipts_expired": expired, "repositories_erased": len(erased)}
 
     def _pr_event(self, p):
         repo, sha = p["repository"]["full_name"], str(p["pull_request"]["head"]["sha"])
@@ -360,6 +392,29 @@ class Service:
                 w.writerow([self._cell(v) for v in (x["receipt_sha"], x["commit"], x["git_tree"], x["pr"], x["decision_under_current_policy"], ";".join(x["acknowledged_by"]), x["reproducibility"], ";".join(x["not_reproduced"]))])
             return 200, {"csv": buf.getvalue()}
         return 200, {"repo": repo, "records": rows}
+
+    def dashboard(self, repo: str, key: str) -> tuple:
+        """-> (status, html). A read-only page of a repository's receipts and decisions. The key is checked like the audit export; every value is escaped."""
+        import html as _h
+        e = lambda x: _h.escape(str(x if x is not None else ""))
+        if not _repo_ok(repo) or not self.store.key_ok(repo, key):
+            return 401, "<p>This repository's audit key is required.</p>"
+        code, o = self.audit(repo, {"authorization": "Bearer " + key})
+        if code != 200:
+            return code, f"<p>{e(o.get('error', 'error'))}</p>"
+        n, nbytes = self.store.usage(repo)
+        plan = self.store.plan(repo)
+        rows = "".join(
+            f"<tr><td>{e(time.strftime('%Y-%m-%d %H:%M', time.gmtime(r['received'])))}</td><td>{e(r['pr'])}</td><td><code>{e(r['commit'][:10])}</code></td><td class=d-{e(r['decision_under_current_policy'])}>{e(r['decision_under_current_policy'])}</td>"
+            f"<td>{e(', '.join(r['acknowledged_by']))}</td><td>{e(r['reproducibility'])}</td><td>{e(', '.join(r['not_reproduced']))}</td></tr>" for r in reversed(o["records"]))
+        page = ("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Agentvow receipts</title>"
+                "<style>body{font:14px system-ui;margin:2rem;color:#1f2328}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #d0d7de;padding:.4rem .6rem;text-align:left}"
+                ".d-allow{color:#1a7f37}.d-block{color:#cf222e}.d-needs_acknowledgement{color:#9a6700}small{color:#57606a}</style>"
+                f"<h1>{e(repo)}</h1><p><small>Plan: {e(plan)}. This month: {e(n)} receipts, {e(round(nbytes / 1024))} KB. Decisions are shown under the policy in force now. "
+                f"Receipts are kept {e(self.cfg.retention_days.get(plan, self.cfg.retention_days['free']))} days.</small></p>"
+                "<table><tr><th>Received (UTC)</th><th>PR</th><th>Commit</th><th>Decision</th><th>Acknowledged by</th><th>Reproduced</th><th>Not reproduced</th></tr>" + rows + "</table>"
+                "<p><small>A pass is evidence to weigh, not verification: the pull request's own code wrote the test output.</small></p>")
+        return 200, page
 
     @staticmethod
     def _cell(v) -> str:

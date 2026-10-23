@@ -16,6 +16,8 @@ create table if not exists acks(repo text not null, receipt_id text not null, by
 create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
+create table if not exists installs(installation_id integer primary key, account text not null, deleted_at real);
+create table if not exists install_repos(repo text primary key, installation_id integer not null, removed_at real);
 create table if not exists repo_ids(repo text primary key, repo_id text not null);
 create table if not exists dirty(repo text not null, commit_sha text not null, primary key(repo, commit_sha));
 create table if not exists deliveries(id text primary key, at real not null);
@@ -116,8 +118,12 @@ class Store:
         self.q("insert or replace into plans values(?,?,?)", repo, plan, until)
 
     def plan(self, repo) -> str:
-        r = self.q("select plan, until from plans where repo=?", repo)
-        return r[0][0] if r and (r[0][1] is None or r[0][1] > time.time()) else "free"
+        """The plan of the repository, else of its owner account (`set_plan("owner", ...)` covers every repository of that account), else free. An ended plan counts as free."""
+        for key in (repo, str(repo).split("/")[0]):
+            r = self.q("select plan, until from plans where repo=?", key)
+            if r and (r[0][1] is None or r[0][1] > time.time()):
+                return r[0][0]
+        return "free"
 
     def issue_key(self, repo, rotate: bool = False) -> str:
         if not rotate and self.q("select 1 from keys where repo=?", repo):
@@ -133,6 +139,67 @@ class Store:
     def usage(self, repo):
         r = self.q("select n, bytes from usage where repo=? and month=?", repo, time.strftime("%Y-%m"))
         return r[0] if r else (0, 0)
+
+    # ---- installations of the GitHub App (a tenant's lifecycle)
+    def record_install(self, iid: int, account: str, repos) -> None:
+        with self.lock:
+            self.db.execute("insert or replace into installs values(?,?,NULL)", (int(iid), str(account)[:100]))
+            for r in repos:
+                self.db.execute("insert or replace into install_repos values(?,?,NULL)", (r, int(iid), ))
+
+    def add_install_repos(self, iid: int, repos) -> None:
+        with self.lock:
+            for r in repos:
+                self.db.execute("insert or replace into install_repos values(?,?,NULL)", (r, int(iid)))
+
+    def remove_install_repos(self, repos) -> None:
+        with self.lock:
+            for r in repos:
+                self.db.execute("update install_repos set removed_at=? where repo=? and removed_at is null", (time.time(), r))
+
+    def remove_install(self, iid: int) -> None:
+        with self.lock:
+            now = time.time()
+            self.db.execute("update installs set deleted_at=? where installation_id=?", (now, int(iid)))
+            self.db.execute("update install_repos set removed_at=? where installation_id=? and removed_at is null", (now, int(iid)))
+
+    def erase_repo(self, repo) -> None:
+        """Everything stored about one repository (receipts, acknowledgements, check ids, key, plan, counters, binding, install record). Used when an App is uninstalled and on request."""
+        with self.lock:
+            for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos"):
+                self.db.execute(f"delete from {t} where repo=?", (repo,))
+
+    def uninstalled_longer_than(self, days: int):
+        return [r for (r,) in self.q("select repo from install_repos where removed_at is not null and removed_at < ?", time.time() - days * 86400)]
+
+    def purge_expired(self, days_by_plan: dict, default_days: int) -> int:
+        """Delete receipts (and their acknowledgements) older than the retention of each repository's plan. -> number of receipts removed."""
+        removed = 0
+        for (repo,) in self.q("select distinct repo from receipts"):
+            days = days_by_plan.get(self.plan(repo), default_days)
+            cutoff = time.time() - days * 86400
+            with self.lock:
+                ids = [i for (i,) in self.db.execute("select id from receipts where repo=? and received < ?", (repo, cutoff)).fetchall()]
+                for i in ids:
+                    self.db.execute("delete from acks where repo=? and receipt_id=?", (repo, i))
+                    self.db.execute("delete from receipts where repo=? and id=?", (repo, i))
+                removed += len(ids)
+        return removed
+
+    def backup(self, path: str) -> None:
+        """A consistent copy of the database (SQLite's online backup, safe while the service runs)."""
+        import sqlite3 as _s
+        dest = _s.connect(path)
+        try:
+            with self.lock:
+                self.db.backup(dest)
+        finally:
+            dest.close()
+
+    def stats(self) -> dict:
+        one = lambda sql: self.q(sql)[0][0]
+        return {"repositories": one("select count(distinct repo) from receipts"), "receipts": one("select count(*) from receipts"), "acknowledgements": one("select count(*) from acks"),
+                "installations": one("select count(*) from installs where deleted_at is null"), "paid_accounts": one("select count(*) from plans where plan != 'free'")}
 
     def purge(self, older_than_days: int) -> int:
         cutoff = time.time() - older_than_days * 86400

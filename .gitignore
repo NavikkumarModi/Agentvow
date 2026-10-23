@@ -8,3 +8,4 @@ node_modules/
 *.vsix
 *.whl
 .DS_Store
+controlplane/service/secrets/

@@ -351,6 +351,64 @@ class SecondReview(unittest.TestCase):
         hook(s, "issue_comment", ev); self.assertEqual(gh.checks[-1][4], "failure")
 
 
+class Lifecycle(unittest.TestCase):
+    def inst(self, s, ev, action, **extra):
+        body = json.dumps({"action": action, "installation": {"id": 5, "account": {"login": "o"}}, **extra}).encode()
+        return s.webhook({"x-hub-signature-256": "sha256=" + hmac.new(b"s3cret", body, hashlib.sha256).hexdigest(), "x-github-event": ev}, body)
+    def test_account_plan_covers_its_repositories_and_the_repository_plan_wins(self):
+        s, _ = make(); self.assertEqual(s.store.plan("o/n"), "free")
+        s.store.set_plan("o", "team"); self.assertEqual(s.store.plan("o/n"), "team"); self.assertEqual(s.store.plan("x/n"), "free")
+        s.store.set_plan("o/n", "business"); self.assertEqual(s.store.plan("o/n"), "business")
+        s.store.set_plan("o/n", "free", time.time() - 5); self.assertEqual(s.store.plan("o/n"), "team")   # an ended repository plan falls back to the account's
+    def test_install_lifecycle_and_erasure_after_the_grace_period(self):
+        s, gh = make(); post(s); k = s.store.issue_key("o/n"); s.store.set_plan("o/n", "team")
+        self.assertEqual(self.inst(s, "installation", "created", repositories=[{"full_name": "o/n"}, {"full_name": "../evil"}])[0], 200)
+        self.assertEqual(s.store.stats()["installations"], 1)
+        self.assertEqual(self.inst(s, "installation_repositories", "removed", repositories_removed=[{"full_name": "o/n"}])[0], 200)
+        self.assertEqual(s.maintain()["repositories_erased"], 0)   # still inside the grace period
+        self.assertEqual(len(s.audit("o/n", {"authorization": "Bearer " + k})[1]["records"]), 1)
+        s.store.q("update install_repos set removed_at = ?", time.time() - 40 * 86400)
+        self.assertEqual(s.maintain()["repositories_erased"], 1)
+        self.assertEqual(s.store.receipts("o/n"), []); self.assertFalse(s.store.key_ok("o/n", k)); self.assertEqual(s.store.plan("o/n"), "free")
+        self.assertEqual(self.inst(s, "installation", "deleted")[0], 200)
+    def test_malformed_install_payloads_are_refused_not_crashing(self):
+        s, _ = make()
+        self.assertEqual(s.webhook({"x-hub-signature-256": "sha256=" + hmac.new(b"s3cret", b"[]", hashlib.sha256).hexdigest(), "x-github-event": "installation"}, b"[]")[0], 200)
+        self.assertEqual(self.inst(s, "installation", "created", installation={"id": "x"})[0], 400)
+    def test_retention_follows_the_plan(self):
+        s, _ = make(); post(s); post(s, receipt(created_at="2"))
+        s.store.q("update receipts set received = ?", time.time() - 40 * 86400)
+        self.assertEqual(s.maintain()["receipts_expired"], 2)   # free: 30 days
+        post(s, receipt(created_at="3")); s.store.set_plan("o/n", "team"); s.store.q("update receipts set received = ?", time.time() - 40 * 86400)
+        self.assertEqual(s.maintain()["receipts_expired"], 0)   # team: 365 days
+    def test_dashboard_needs_the_key_escapes_everything_and_keeps_the_key_out_of_urls(self):
+        s, gh = make(); post(s, receipt(created_at="2")); k = s.store.issue_key("o/n")
+        self.assertEqual(s.dashboard("o/n", "wrong")[0], 401); self.assertEqual(s.dashboard("o/n", "")[0], 401)
+        code, page = s.dashboard("o/n", k); self.assertEqual(code, 200); self.assertIn("allow", page); self.assertNotIn(k, page)
+        evil = receipt(created_at="3"); evil["not_reproduced"] = ["<script>alert(1)</script>", "a|b"]
+        post(s, evil); page = s.dashboard("o/n", k)[1]
+        self.assertNotIn("<script>alert", page); self.assertIn("&lt;script&gt;", page)
+        from starlette.testclient import TestClient
+        from controlplane.service.asgi import make_app
+        c = TestClient(make_app(s))
+        self.assertEqual(c.get("/dashboard").status_code, 200)
+        r = c.post("/dashboard", data={"repo": "o/n", "key": k}); self.assertEqual(r.status_code, 200); self.assertEqual(r.headers["cache-control"], "no-store"); self.assertIn("default-src 'none'", r.headers["content-security-policy"])
+        self.assertEqual(c.post("/dashboard", data={"repo": "o/n", "key": "nope"}).status_code, 401)
+        self.assertEqual(c.post("/dashboard", content=b"x" * 5000).status_code, 413)
+    def test_backup_is_a_consistent_private_copy_and_cli_commands_work(self):
+        import tempfile, os, stat
+        from controlplane.service import cli
+        s, _ = make(); post(s)
+        d = tempfile.mkdtemp(); db = d + "/live.db"
+        from controlplane.service.store import Store
+        live = Store(db); live.add_receipt("o/n", "id", "a" * 40, None, {"x": 1}, 1)
+        self.assertEqual(cli.main(["--db", db, "backup", d + "/b.db"]), 0); self.assertEqual(stat.S_IMODE(os.stat(d + "/b.db").st_mode), 0o600)
+        self.assertEqual(Store(d + "/b.db").stats()["receipts"], 1)
+        self.assertEqual(cli.main(["--db", db, "set-plan", "o", "team"]), 0); self.assertEqual(Store(db).plan("o/anything"), "team")
+        self.assertEqual(cli.main(["--db", db, "erase", "o/n"]), 0); self.assertEqual(Store(db).stats()["receipts"], 0)
+        self.assertEqual(cli.main(["--db", db, "stats"]), 0); self.assertEqual(cli.main(["--db", db, "maintain"]), 0)
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke
