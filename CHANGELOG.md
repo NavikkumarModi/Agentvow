@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1 (not yet published)
+## 0.4.1 (2026-10-23)
 Fixes found by the first run of the control plane against real GitHub (docs/LIVE_TESTING.md) and by two adversarial reviews of it (docs/review/CONTROLPLANE_REVIEW_2026-10-22.md). No new commands.
 - **Content hash and `.agentvow/`**: `reality.git_tree_hash` removed everything under `.agentvow/` from the hash, so a repository that commits a file there (the policy was documented at `.agentvow/policy.json`) produced a receipt whose hash never matched the commit's tree, and the control plane refused every receipt. Files the commit tracks under `.agentvow/` are now content like any other; Agentvow's own untracked state there is still excluded. Hashes of repositories that do not track `.agentvow/` files are unchanged.
 - **Receipts are validated more strictly**: `commit` and `git_tree` must be full hexadecimal object ids (40 or 64) and `repo` must look like `owner/name`. Receipts made by 0.4.0 in normal use satisfy this.
