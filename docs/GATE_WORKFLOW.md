@@ -8,7 +8,7 @@
 ```yaml
 name: gate
 on: pull_request            # never pull_request_target
-permissions: { contents: read, id-token: write }    # the called workflow declares id-token for its upload job; grant it (untested whether a caller without it works when no service-url is set)
+permissions: { contents: read, id-token: write }    # the called workflow declares id-token for its upload job; grant it (verified 2026-10-23: a caller WITHOUT `id-token: write` does not start at all, `startup_failure`, even when no service-url is set; a design improvement would split the upload job into its own reusable workflow so local-only callers need no such permission)
 jobs:
   gate:
     uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<release tag or commit>
