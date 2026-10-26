@@ -25,9 +25,23 @@ class Explain(unittest.TestCase):
         t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["1234567890abcdef"], ["alice"])
         self.assertIn("must look at it and acknowledge", t); self.assertIn("`/agentvow acknowledge 1234567890ab`", t); self.assertIn("@alice", t); self.assertIn("never be acknowledged", t)
         b = explain.explain(result("block", ("contradicted", "block", "x", None)))
-        self.assertIn("will not let through", b); self.assertIn("cannot be acknowledged away", b); self.assertNotIn("/agentvow acknowledge", b)
+        self.assertIn("will not let this through", b); self.assertIn("cannot be acknowledged away", b); self.assertNotIn("/agentvow acknowledge", b)
         for text in (t, b):
             self.assertIn("What this does not show", text)
+
+    def test_a_block_from_the_policy_is_not_offered_an_acknowledgement(self):
+        t = explain.explain(result("block", ("unknown", "block", "x", None)), ["a" * 12], ["alice"])
+        self.assertIn("cannot be acknowledged", t); self.assertNotIn("a listed acknowledger replies", t); self.assertNotIn("/agentvow acknowledge", t)
+        self.assertIn("a rule in this repository's policy is set to block it", t)
+
+    def test_several_receipts_each_get_their_own_command_and_the_requirements_are_stated(self):
+        t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12, "b" * 12], ["alice"])
+        self.assertIn("Each receipt that needs it needs its own comment", t); self.assertIn("`/agentvow acknowledge " + "a" * 12 + "` and `/agentvow acknowledge " + "b" * 12 + "`", t)
+        self.assertIn("write access", t); self.assertIn("cannot be the pull request's author", t)
+
+    def test_a_supported_result_that_the_policy_wants_confirmed_asks_for_a_person(self):
+        t = explain.explain(result("needs_acknowledgement", ("supported", "needs_acknowledgement", "x", None)), ["a" * 12], ["alice"])
+        self.assertIn("asks a person to confirm even supported results", t); self.assertNotIn("Nothing to do", t)
 
     def test_an_unlisted_acknowledger_is_said_plainly_and_an_acknowledged_item_asks_for_nothing(self):
         self.assertIn("lists no acknowledger", explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12]))
@@ -50,7 +64,7 @@ class Explain(unittest.TestCase):
         out, err = io.StringIO(), io.StringIO()
         with redirect_stdout(out), redirect_stderr(err):
             self.assertEqual(cli.main(["policy", "explain", "--result", str(f)]), 0)
-        self.assertIn("will not let through", out.getvalue())
+        self.assertIn("will not let this through", out.getvalue())
         f.write_text("[1]")
         with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             self.assertEqual(cli.main(["policy", "explain", "--result", str(f)]), 3)

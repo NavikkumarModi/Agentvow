@@ -45,6 +45,9 @@ class Decision:
 
 
 _AUTORUN = ("conftest.py", "sitecustomize.py", "usercustomize.py")
+_ALWAYS_TEST_CONFIG = ("pytest.ini", ".coveragerc")
+_SHARED_CONFIG = ("pyproject.toml", "setup.cfg", "tox.ini")
+_PYTEST_KEYS = re.compile(r"^\+.*(addopts|testpaths|norecursedirs|python_files|python_classes|python_functions|deselect|--ignore|collect_ignore|\[pytest\]|tool\.pytest|tool:pytest|\[coverage|tool\.coverage)", re.M)
 
 
 def _runs_at_test_start(f: str) -> bool:
@@ -52,6 +55,21 @@ def _runs_at_test_start(f: str) -> bool:
     hide the same code in ordinary source or in an extra test file; that is a stated limit, docs/TRUST_MODEL.md.)"""
     name = f.rsplit("/", 1)[-1]
     return name in _AUTORUN or f.endswith(".pth") or (name == "__init__.py" and R.is_test(f))
+
+
+def _test_config_changed(repo: Path, base: str, f: str) -> bool:
+    """A change to what the test runner selects or measures can hide a failing test without touching any test file: `pytest.ini` and `.coveragerc` always count; `pyproject.toml`, `setup.cfg` and `tox.ini` only when the
+    changed lines mention pytest or coverage settings (they change for ordinary reasons all the time)."""
+    name = f.rsplit("/", 1)[-1]
+    if name in _ALWAYS_TEST_CONFIG:
+        return True
+    if name not in _SHARED_CONFIG:
+        return False
+    try:
+        diff = R._git(repo, "diff", "--no-ext-diff", "--no-textconv", "-U0", base, "HEAD", "--", f)
+    except Exception:
+        return True   # cannot tell: say so
+    return bool(_PYTEST_KEYS.search(diff))
 
 
 def _reality(repo: Path, base: str, changed_override=None):
@@ -86,7 +104,7 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
             findings.append(_compat(c, repo, base, changed))
         else:
             findings.append(Finding(c.text, c.kind, "UNKNOWN", "Agentvow has no check for this kind of claim; it is unverified."))
-    touched = [f for f in changed if (R.is_test(f) and R.existed_at(repo, base, f)) or _runs_at_test_start(f)]
+    touched = [f for f in changed if (R.is_test(f) and R.existed_at(repo, base, f)) or _runs_at_test_start(f) or _test_config_changed(repo, base, f)]
     if touched:
         for f in findings:
             if f.kind == C.TESTS_PASS and f.verdict == "SUPPORTED_BY_PRIOR_EVIDENCE":

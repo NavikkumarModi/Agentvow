@@ -46,9 +46,8 @@ class FakeGH:
         self.app_installed = True   # what GitHub says about the App on a repository: True, False (404) or None (unknown)
     def repo_info(self, repo): return {"private": self.private, "default_branch": "main"}
     def installed(self, repo): return self.app_installed
-    def open_pulls(self, repo): return list(getattr(self, 'pulls', [{'number': 7, 'head_sha': COMMIT}]))
     def commit_tree(self, repo, sha): return self.tree
-    def pr_info(self, repo, n): return {"head_sha": self.head, "base_ref": "main", "state": "open", "user": self.author}
+    def pr_info(self, repo, n): return {"head_sha": self.head, "base_ref": "main", "state": getattr(self, "pr_state", "open"), "user": self.author}
     def branch_sha(self, repo, branch):
         self.refs.append(branch)
         if not self.branch_ok: raise GitHubError("no such branch", 404)
@@ -648,7 +647,7 @@ class PolicyRefresh(unittest.TestCase):
         self.assertEqual(self.push(s, ref="refs/heads/feature")[1].get("ignored"), "not a push to the default branch")
         self.assertEqual(self.push(s, deleted=True)[1].get("ignored"), "not a push to the default branch")
         self.assertEqual(self.push(s, ref="refs/tags/v1")[0], 200); self.assertEqual(len(gh.checks), n)
-        gh.pulls = [{"number": 9, "head_sha": "e" * 40}]; code, o = self.push(s); self.assertEqual(o["refreshing"], 0); self.assertEqual(len(gh.checks), n)   # no receipt for that pull request: nothing to refresh
+        s.store.q("delete from receipts"); code, o = self.push(s); self.assertEqual(o.get("ignored"), "policy unchanged"); self.assertEqual(len(gh.checks), n)   # no receipt for any pull request: nothing to refresh
     def test_an_unreadable_policy_changes_nothing_and_fails_the_delivery(self):
         s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "unknown": "allow"}); post(s, receipt("UNKNOWN")); n = len(gh.checks)
         gh.fail_policy = True; code, o = self.push(s); self.assertEqual(code, 502); self.assertEqual(len(gh.checks), n)
@@ -657,24 +656,12 @@ class PolicyRefresh(unittest.TestCase):
         s, gh = make(per_minute=1000, monthly_receipts={"free": 1000, "team": 1000, "business": 1000}); gh.policy = json.dumps({"schema": P.POLICY, "unknown": "allow"}); shas = [f"{i:040x}" for i in range(1, 61)]
         for i, sha in enumerate(shas):
             r = receipt("UNKNOWN", created_at=str(i)); r["commit"] = sha; gh.tree = r["git_tree"]; gh.head = sha; post(s, r, run_id=i + 1)
-        gh.pulls = [{"number": 7, "head_sha": x} for x in shas]; gh.policy = json.dumps({"schema": P.POLICY, "unknown": "block"})
+        gh.policy = json.dumps({"schema": P.POLICY, "unknown": "block"})
         code, o = self.push(s); self.assertEqual(o["refreshing"], 60); self.assertEqual(len(s.store.dirty()), 10)   # 50 now
         s.reconcile(); self.assertEqual(s.store.dirty(), [])
         self.assertEqual([c[4] for c in gh.checks[-60:]].count("failure"), 60)
     def test_pushes_are_rate_limited(self):
         s, gh = make(per_minute=2); gh.policy = json.dumps({"schema": P.POLICY}); self.assertEqual([self.push(s)[0] for _ in range(4)].count(429), 2)
-    def test_open_pulls_pages_through_the_api_and_refuses_odd_answers(self):
-        pem = KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()); seen = []
-        def t(method, url, hdr, body):
-            seen.append(url)
-            if url.endswith("/installation"): return 200, b'{"id": 3}'
-            if "access_tokens" in url: return 201, b'{"token": "tok"}'
-            page = int(re.search(r"[&?]page=(\d+)", url).group(1)); n = 100 if page == 1 else 5
-            return 200, json.dumps([{"number": i, "head": {"sha": f"{page * 1000 + i:040x}"}} for i in range(n)] + [{"number": 0, "head": {"sha": "bad"}}]).encode()
-        gh = GitHub("12", pem, t); got = gh.open_pulls("o/n")
-        self.assertEqual(len(got), 105); self.assertEqual(len([u for u in seen if "/pulls?" in u]), 2)   # two pages; the entry with a malformed sha is dropped
-        self.assertTrue(all(len(x["head_sha"]) == 40 for x in got))
-        with self.assertRaises(GitHubError): GitHub("12", pem, lambda m, u, h, b: (200, b"{}") if "/pulls" in u else t(m, u, h, b)).open_pulls("o/n")
     def test_smoke_notes_a_missing_push_subscription_without_failing(self):
         import io
         from controlplane.service import smoke
@@ -714,6 +701,47 @@ class ForkGate(unittest.TestCase):
     def test_ordinary_events_are_unaffected_when_the_fork_path_is_on(self):
         s, gh = self.svc(); self.assertEqual(post(s)[0], 200)
         self.assertEqual(post(s, receipt(created_at="2"), event_name="schedule")[0], 403)
+
+
+class FifthReview(unittest.TestCase):
+    def push(self, s):
+        return PolicyRefresh.push(None, s)
+    def test_a_fresh_decision_for_one_pull_request_never_hides_that_another_still_shows_an_older_policy(self):
+        s, gh = make(per_minute=1000); gh.policy = json.dumps({"schema": P.POLICY, "unknown": "allow"})
+        b = receipt("UNKNOWN"); post(s, b); self.assertEqual(gh.checks[-1][4], "success")                  # pull request B: green under policy v1
+        gh.policy = json.dumps({"schema": P.POLICY, "unknown": "block"})                                     # policy v2 on main, the push webhook not yet handled
+        a = receipt("UNKNOWN", created_at="a"); a["commit"] = "f" * 40; gh.tree = a["git_tree"]; gh.head = a["commit"]; post(s, a, run_id=50)   # pull request A publishes under v2
+        code, o = self.push(s)                                                                               # now the push is handled
+        self.assertEqual((code, o.get("refreshing")), (200, 1)); self.assertEqual(s.store.q("select count(*) from published_policy")[0][0], 2)
+        shown = [c for c in gh.checks if c[1] == COMMIT][-1]; self.assertEqual(shown[4], "failure")           # B no longer shows the old decision
+    def test_no_candidate_is_dropped_by_a_page_limit(self):
+        s, gh = make(per_minute=1000, monthly_receipts={"free": 5000, "team": 5000, "business": 5000}); gh.policy = json.dumps({"schema": P.POLICY, "unknown": "allow"})
+        for i in range(350):
+            r = receipt("UNKNOWN", created_at=str(i)); r["commit"] = f"{i + 1:040x}"; gh.tree = r["git_tree"]; gh.head = r["commit"]; post(s, r, run_id=i + 1)
+        gh.policy = json.dumps({"schema": P.POLICY, "unknown": "block"}); code, o = self.push(s)
+        self.assertEqual(o["refreshing"], 350)                                                                # more than the old 300-pull-request page limit
+        for _ in range(8): s.reconcile()
+        self.assertEqual(s.store.dirty(), []); self.assertEqual(len(s.store.stale_commits("o/n", gh_policy_sha := P.sha({**P.DEFAULT_POLICY, "unknown": "block"}))), 0)
+    def test_published_policy_rows_follow_retention_and_erasure(self):
+        s, gh = make(); post(s); self.assertEqual(s.store.q("select count(*) from published_policy")[0][0], 1)
+        s.store.q("update receipts set received = ?", time.time() - 40 * 86400); s.maintain(); self.assertEqual(s.store.q("select count(*) from published_policy")[0][0], 0)
+        post(s, receipt(created_at="2"), run_id=3); s.store.erase_repo("o/n"); self.assertEqual(s.store.q("select count(*) from published_policy")[0][0], 0)
+    def test_a_failing_comment_uses_none_of_the_hourly_allowance(self):
+        s, gh = make(max_notifications_per_hour=2, per_minute=1000); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); gh.comment_fails = True
+        for i in range(6): post(s, receipt("UNKNOWN", created_at=str(i)), run_id=i + 1)
+        gh.comment_fails = False; post(s, receipt("UNKNOWN", created_at="ok"), run_id=99)
+        self.assertGreaterEqual(len(gh.comments), 1)                                                          # the failures did not starve the next pull request
+    def test_nothing_is_posted_on_a_closed_pull_request(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); gh.pr_state = "closed"; post(s, receipt("UNKNOWN")); self.assertEqual(gh.comments, []); self.assertEqual(gh.checks[-1][4], "action_required")
+    def test_team_slugs_and_odd_names_are_never_mentioned(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["myorg/everyone", "alice", "b|c", "-x", "a" * 40, "bob"]}); post(s, receipt("UNKNOWN"))
+        first = gh.comments[0].split("\n")[0]; self.assertEqual(first.split(" Agentvow")[0], "@alice @bob")
+    def test_only_the_receipts_that_need_an_acknowledgement_are_listed(self):
+        s, gh = make(per_minute=1000); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]})
+        post(s, receipt("UNKNOWN"), run_id=1)                                                                  # pull_request receipt: needs it
+        push = receipt("SUPPORTED_BY_PRIOR_EVIDENCE", pr=None, created_at="p"); post(s, push, event_name="push", sha=COMMIT, run_id=2)   # push receipt: fine
+        ids = {rid: r.get("pr") for rid, r in s.store.latest_receipts("o/n", COMMIT)}; need = [rid for rid, pr in ids.items() if pr]; fine = [rid for rid, pr in ids.items() if not pr]
+        text = gh.checks[-1][6]; self.assertIn(f"/agentvow acknowledge {need[0][:12]}", text); self.assertNotIn(fine[0][:12], text)
 
 
 class Smoke(unittest.TestCase):

@@ -97,18 +97,6 @@ class GitHub:
             return None
         return {"head_sha": o.get("head", {}).get("sha"), "base_ref": o.get("base", {}).get("ref"), "state": o.get("state"), "user": str((o.get("user") or {}).get("login") or "")}
 
-    def open_pulls(self, repo: str, limit: int = 300) -> list:
-        """The open pull requests of a repository as [{"number", "head_sha"}], at most `limit` (newest first)."""
-        out = []
-        for page in range(1, limit // 100 + 2):
-            st, o = self._repo_call("GET", repo, f"/pulls?state=open&per_page=100&page={page}")
-            if st != 200 or not isinstance(o, list):
-                raise GitHubError("open pull requests could not be listed", st)
-            out += [{"number": x.get("number"), "head_sha": (x.get("head") or {}).get("sha")} for x in o if isinstance(x, dict) and SHA_RE.fullmatch(str((x.get("head") or {}).get("sha")))]
-            if len(o) < 100 or len(out) >= limit:
-                break
-        return out[:limit]
-
     def branch_sha(self, repo: str, branch: str) -> str:
         """The commit a branch points to right now. A missing branch is an ERROR, never 'no policy' (a 404 on the policy file must mean only that the file does not exist)."""
         st, o = self._repo_call("GET", repo, f"/git/ref/heads/{quote(branch, safe='/')}")

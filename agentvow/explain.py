@@ -7,7 +7,7 @@ TITLES = {"allow": "Agentvow: nothing needs a person's attention (evidence, not 
 HEADLINES = {
     "allow": "Agentvow replayed the checks and found nothing that needs a person's attention under this repository's policy. That is evidence to weigh, not proof that the change is correct.",
     "needs_acknowledgement": "Agentvow could not fully confirm this change. A person named in the repository's policy must look at it and acknowledge it before it can merge.",
-    "block": "Agentvow found a problem it will not let through: a claim about this change was contradicted, or the check could not be trusted. It stays blocked until the code or the claim is corrected.",
+    "block": "Agentvow will not let this through: a claim about this change was contradicted, a rule in this repository's policy is set to block it, or the check could not be trusted. It stays blocked until the cause is fixed.",
 }
 # rule -> (what it means, what to do). Written for a reviewer, not for an engineer who knows Agentvow's internals.
 RULES = {
@@ -16,6 +16,7 @@ RULES = {
     "unknown": ("A claim could not be confirmed or refuted. Typical causes: the number of passing tests did not match what was said, a dependency or a credential the tests need was missing in the replay, or the only failures were ones that also happen without the change.",
                 "Open the `gate / replay` job log for the exact cause (the receipt deliberately keeps no free text), decide whether you are satisfied, and if so a listed acknowledger replies on the pull request with the acknowledge command below."),
     "supported": ("The replay reproduced the claim: the tests the claim is about passed in a clean sandbox.", "Nothing to do for this item. The tests are written by the same code under review, so this is not proof of correctness."),
+    "supported_confirm": ("The replay reproduced the claim, but this repository's policy asks a person to confirm even supported results.", "Review the change, then a listed acknowledger replies with the acknowledge command below."),
     "no_claims": ("The change made no claim that Agentvow can check, so nothing was confirmed or refuted.", "Review the change as you normally would; Agentvow has no opinion on it."),
     "unauthenticated_capture": ("The record of the agent's environment came from a file somebody supplied. Agentvow checked it against the exact files, but cannot tell who made it.",
                                 "Acknowledge only if you trust whoever supplied it."),
@@ -49,7 +50,10 @@ def explain(result: dict, receipt_ids=(), acknowledgers=()) -> str:
     if groups:
         out.append("**What Agentvow found**")
         for (rule, outcome, by), items in groups.items():
-            meaning, todo = RULES.get(rule, ("Agentvow reported something it has no plain description for.", "Read the detail."))
+            key_ = "supported_confirm" if rule == "supported" and outcome == "needs_acknowledgement" else rule
+            meaning, todo = RULES.get(key_, ("Agentvow reported something it has no plain description for.", "Read the detail."))
+            if outcome == "block" and rule not in ("contradicted", "policy_unreadable", "invalid_input", "unrecognized_verdict", "service"):   # a rule the policy sets to block is not something a person can acknowledge
+                todo = "This is blocked by the repository's policy and cannot be acknowledged: fix the cause, or ask a maintainer to change the policy."
             n = f" ({len(items)} claims)" if len(items) > 1 else ""
             line = f"- {meaning}{n}"
             if outcome == "allow":
@@ -64,7 +68,8 @@ def explain(result: dict, receipt_ids=(), acknowledgers=()) -> str:
         out.append("")
     if decision == "needs_acknowledgement" and receipt_ids:
         who = (" Listed acknowledgers: " + ", ".join("@" + _clean(a, 39) for a in acknowledgers) + ".") if acknowledgers else " The repository's policy lists no acknowledger yet, so nobody can acknowledge."
-        ids = " or ".join(f"`/agentvow acknowledge {_clean(i, 64)[:12]}`" for i in receipt_ids[:3])
-        out += [f"**To acknowledge:** a listed acknowledger comments {ids} on this pull request.{who} A contradiction can never be acknowledged.", ""]
+        ids = " and ".join(f"`/agentvow acknowledge {_clean(i, 64)[:12]}`" for i in receipt_ids[:3])
+        many = " Each receipt that needs it needs its own comment:" if len(receipt_ids) > 1 else ""
+        out += [f"**To acknowledge:**{many} a listed acknowledger comments {ids} on this pull request.{who} The acknowledger needs write access to the repository and cannot be the pull request's author (unless the author owns the repository). A contradiction can never be acknowledged.", ""]
     out.append(NOT_SHOWN)
     return "\n".join(out)

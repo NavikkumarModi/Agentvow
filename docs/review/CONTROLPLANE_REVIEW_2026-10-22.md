@@ -76,6 +76,21 @@ No bypass of the sha-pin trust and no cross-tenant issue was found (the reviewer
 
 Not fixed, stated: whether GitHub resolves a fork-network sha under the base repository's path in `uses:` (untested offline; the service string would differ in any case, and the configured sha must be a reviewed commit of the trusted repository); the `partial_capture`/`capture_authenticated` fields are informational beyond `partial_capture` (no rule reads `capture_authenticated`); `pilot_report` does not count partial replays; the hostile-harness text depends on Python 3.11+ formatting.
 
+## Fifth review (fork path, plain-language text, notification, policy refresh) and its fixes
+No code execution in a privileged context, no green-without-evidence and no cross-tenant issue was found in the fork path (every attacker-influenced value goes through `env`; no `${{ }}` inside a `run:`; git calls pinned; the allow-lists, the base-branch binding and the head check hold; 20 of 21 reverted lines were caught by the tests, the 21st was run against the wrong file). Defects found elsewhere:
+
+| ID | Class | Finding | Fix |
+|---|---|---|---|
+| 5-1 | CONFIRMED, medium-high | A policy change could leave an open pull request with a stale decision forever: any published decision wrote the repository-wide policy hash, so a fresh decision for one pull request made the later push handler say "unchanged" | The policy a decision used is recorded per commit; the push handler refreshes every commit with a pull-request receipt whose published decision was not made under the policy now on the default branch |
+| 5-2 | CONFIRMED, medium | Pull requests beyond the 300 listed were never refreshed, silently | Candidates come from the store, not from GitHub's list (no page limit; 45 days of receipts, newest first, the background loop does the batches); `open_pulls` removed |
+| 5-3 | CONFIRMED, medium | The check text gave wrong advice: it offered an acknowledgement for a rule the policy set to block, and listed the ids of receipts that did not need one | A policy block says it cannot be acknowledged; only receipts that need an acknowledgement are listed ("each receipt needs its own comment"); the requirements (write access, not the author) are stated; a supported result a policy wants confirmed asks for a person |
+| 5-4 | CONFIRMED, low-medium | A failing comment consumed the hourly notification allowance | The allowance is used only after the comment is posted; nothing is posted on a pull request that is no longer open |
+| 5-5 | PLAUSIBLE, low | A change to `pytest.ini`, `.coveragerc` or the pytest/coverage settings in `pyproject.toml`, `setup.cfg`, `tox.ini` can hide a failing test without touching a test file, with no warning | `pytest.ini` and `.coveragerc` always, the shared files only when the changed lines mention test or coverage settings, now trigger the harness warning |
+| 5-6 | CONFIRMED, low | Leftover policy meta after erasure; `notified` and per-commit rows not pruned; `@org/team` in the acknowledgers list became a team mention | The meta key is gone (per-commit table, erased and pruned with receipts); `notified` pruned after 400 days; only plain user logins are mentioned |
+| 5-7 | docs | Stale review count, README not pointing at the fork path, "no token" imprecise (the replay job has a read-only `GITHUB_TOKEN` and no OIDC permission), two fork risks unlisted | Corrected; FORK_PRS lists the cache scope and the auto-labeler risks and the label race |
+
+Not fixed, stated: `reconcile()` runs up to 50 refreshes inside any request (latency for other tenants after a policy push on a large repository); a pre-release version string such as `0.4.3rc1` is refused by the minimum-version check (fails closed); a maintainer can label a head the author pushed seconds earlier without seeing it (inherent to a label gate).
+
 ## Residuals (not fixed, stated)
 * A sandbox escape inside the replay job can still forge a receipt that carries a valid token (the replay job has no token, but its output is what the upload job sends).
 * Write permission of an acknowledger is checked when the comment is processed, not again on every later evaluation.

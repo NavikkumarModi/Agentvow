@@ -65,5 +65,32 @@ class HostileHarness(unittest.TestCase):
         self.assertIn("modified existing test file", why); self.assertIn("tests/__init__.py", why)
 
 
+class TestConfigChanges(unittest.TestCase):
+    """A change to what the runner selects or measures can hide a failing test without touching a test file (fifth review)."""
+    def repo(self, files_base, files_head):
+        import subprocess, tempfile
+        d = Path(tempfile.mkdtemp()); g = lambda *a: subprocess.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True).stdout.strip()
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+        for n, t in files_base.items(): (d / n).write_text(t)
+        g("add", "-A"); g("commit", "-qm", "base"); base = g("rev-parse", "HEAD")
+        for n, t in files_head.items(): (d / n).write_text(t)
+        g("add", "-A"); g("commit", "-qm", "head"); return d, base
+
+    def test_pytest_ini_and_coveragerc_always_count_and_shared_files_only_for_test_settings(self):
+        from agentvow import decision
+        d, base = self.repo({"a.py": "x=1\n", "pytest.ini": "[pytest]\n", ".coveragerc": "[run]\n", "pyproject.toml": "[project]\nversion='1'\n", "tox.ini": "[tox]\n", "setup.cfg": "[metadata]\nname=a\n"},
+                            {"pytest.ini": "[pytest]\naddopts = --deselect tests/test_b.py::test_bad\n", ".coveragerc": "[run]\nomit = a.py\n", "pyproject.toml": "[project]\nversion='2'\n", "tox.ini": "[tox]\nenvlist = py312\n", "setup.cfg": "[metadata]\nname=b\n"})
+        ch = lambda f: decision._test_config_changed(d, base, f)
+        self.assertTrue(ch("pytest.ini")); self.assertTrue(ch(".coveragerc")); self.assertTrue(ch("sub/pytest.ini"))
+        self.assertFalse(ch("pyproject.toml")); self.assertFalse(ch("tox.ini")); self.assertFalse(ch("setup.cfg")); self.assertFalse(ch("a.py"))   # ordinary edits to shared files do not warn
+        d2, base2 = self.repo({"pyproject.toml": "[project]\nversion='1'\n", "setup.cfg": "[metadata]\nname=a\n", "tox.ini": "[tox]\n"},
+                              {"pyproject.toml": "[project]\nversion='1'\n[tool.pytest.ini_options]\naddopts = '-k not bad'\n", "setup.cfg": "[metadata]\nname=a\n[tool:pytest]\ntestpaths = tests/good\n", "tox.ini": "[tox]\n[pytest]\nnorecursedirs = tests/bad\n"})
+        for f in ("pyproject.toml", "setup.cfg", "tox.ini"): self.assertTrue(decision._test_config_changed(d2, base2, f), f)
+
+    def test_the_finding_names_a_changed_test_configuration(self):
+        code, status, verdict, why = run(build(BASE, lambda r: (r / "pytest.ini").write_text("[pytest]\naddopts = -q\n")), "All tests pass.")
+        self.assertEqual(verdict, "NOT_CONTRADICTED"); self.assertIn("pytest.ini", why)
+
+
 if __name__ == "__main__":
     unittest.main()

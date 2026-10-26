@@ -16,6 +16,7 @@ create table if not exists acks(repo text not null, receipt_id text not null, by
 create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
+create table if not exists published_policy(repo text not null, commit_sha text not null, psha text not null, primary key(repo, commit_sha));
 create table if not exists notified(repo text not null, commit_sha text not null, key text not null, at real not null, primary key(repo, commit_sha, key));
 create table if not exists meta(k text primary key, v text not null);
 create table if not exists gone_since(repo text primary key, since real not null);
@@ -186,6 +187,7 @@ class Store:
                 for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos", "gone_since"):
                     self.db.execute(f"delete from {t} where repo=?", (repo,))
                 self.db.execute("delete from notified where repo=?", (repo,))
+                self.db.execute("delete from published_policy where repo=?", (repo,))
                 self.db.execute("delete from plans where repo=?", (repo.lower(),))
                 self.db.execute("commit")
             except BaseException:
@@ -204,6 +206,16 @@ class Store:
             self.db.execute("insert or ignore into gone_since values(?,?)", (repo, time.time()))
             since = self.db.execute("select since from gone_since where repo=?", (repo,)).fetchone()[0]
             return since < time.time() - grace_days * 86400
+
+    def record_published(self, repo, commit, psha) -> None:
+        """Which policy the check published for this commit was decided under (per commit, so one pull request's fresh decision never hides that another still shows an older one)."""
+        self.q("insert or replace into published_policy values(?,?,?)", repo, commit, psha)
+
+    def stale_commits(self, repo, psha, days=45, limit=2000) -> list:
+        """Commits with a pull-request receipt received within `days` whose published decision was NOT made under policy `psha` (or never recorded), newest first."""
+        return [c for (c,) in self.q("select r.commit_sha from receipts r where r.repo=? and r.pr is not null and r.received > ? "
+                                     "and not exists (select 1 from published_policy p where p.repo=r.repo and p.commit_sha=r.commit_sha and p.psha=?) "
+                                     "group by r.commit_sha order by max(r.received) desc limit ?", repo, time.time() - days * 86400, psha, int(limit))]
 
     def was_notified(self, repo, commit, key) -> bool:
         return bool(self.q("select 1 from notified where repo=? and commit_sha=? and key=?", repo, commit, key))
@@ -233,6 +245,8 @@ class Store:
                 for i in ids:
                     self.db.execute("delete from acks where repo=? and receipt_id=?", (repo, i))
                     self.db.execute("delete from receipts where repo=? and id=?", (repo, i))
+                self.db.execute("delete from published_policy where repo=? and commit_sha not in (select commit_sha from receipts where repo=?)", (repo, repo))
+                self.db.execute("delete from notified where repo=? and at < ?", (repo, time.time() - 400 * 86400))
                 removed += len(ids)
         return removed
 

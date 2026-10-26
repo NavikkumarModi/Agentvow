@@ -107,7 +107,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
 | Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report; opt-in `run-tests: true` also replays the tests in the sandbox on the runner and adds the evidence pack | Run on a real pull request of this repository (docs/LIVE_TESTING.md); `run-tests` run once on GitHub on a pull request of this repository (docs/LIVE_TESTING.md) |
-| Any pull request, as a team gate | two reusable workflows: `gate.yml` (replay on the runner, receipt, local decision; needs no credential) and `gate-service.yml` (the same replay plus an upload to the control plane service; pinned to a commit sha); see `docs/GATE_WORKFLOW.md` and `docs/SETUP_GITHUB_APP.md` | **Run on real pull requests** before the split into two files (local-policy mode, 2026-10-22; with the control plane service and a required check pinned to its App, 2026-10-23: contradicted and unconfirmed pull requests blocked, acknowledgement by comment worked); the two-file version is tested locally and not yet on GitHub; fork pull requests are not supported by the service path (`docs/LIVE_TESTING.md`) |
+| Any pull request, as a team gate | two reusable workflows: `gate.yml` (replay on the runner, receipt, local decision; needs no credential) and `gate-service.yml` (the same replay plus an upload to the control plane service; pinned to a commit sha); see `docs/GATE_WORKFLOW.md` and `docs/SETUP_GITHUB_APP.md` | **Run on real pull requests** before the split into two files (local-policy mode, 2026-10-22; with the control plane service and a required check pinned to its App, 2026-10-23: contradicted and unconfirmed pull requests blocked, acknowledgement by comment worked); the two-file version also ran on GitHub on 2026-10-26; fork pull requests: the service path does not support them, an experimental opt-in path exists (`docs/FORK_PRS.md`, never run on GitHub) (`docs/LIVE_TESTING.md`) |
 | Anything else | paste or pipe the message; VS Code commands for clipboard/selection | Tested |
 
 ## Seeing the verdict
@@ -139,4 +139,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 572 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 583 Python tests, 32 node tests -->

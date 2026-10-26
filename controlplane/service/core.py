@@ -49,6 +49,17 @@ class RateLimiter:
     def __init__(self, limit: int, window: float = 60.0, now=time.time, max_keys: int = 10000):
         self.limit, self.window, self.now, self.max_keys, self.hits, self.lock = limit, window, now, max_keys, {}, threading.Lock()
 
+    def would_allow(self, key: str) -> bool:
+        """Is there room right now? Does not use any of it (see `record`)."""
+        with self.lock:
+            q = self.hits.get(key)
+            t = self.now()
+            return len([x for x in q if x >= t - self.window]) < self.limit if q else True
+
+    def record(self, key: str) -> None:
+        with self.lock:
+            self.hits.setdefault(key, deque()).append(self.now())
+
     def ok(self, key: str) -> bool:
         with self.lock:
             t = self.now()
@@ -189,6 +200,7 @@ class Service:
         out = dict(worst)
         out["reasons"] = list(worst["reasons"]) + [x for res in results if res is not worst for x in res["reasons"]]
         out["receipts"] = [rid for rid, _ in rs]
+        out["ack_receipts"] = [rid for (rid, _), res in zip(rs, results) if any(x["outcome"] == "needs_acknowledgement" and not x.get("acknowledged_by") for x in res["reasons"])]   # only these can be acknowledged to move the check
         out["acknowledgers"] = [] if policy[1] else list({**P.DEFAULT_POLICY, **policy[0]}["acknowledgers"])
         return out
 
@@ -204,26 +216,34 @@ class Service:
                 self.store.mark_dirty(repo, commit)
                 raise
             self.store.clear_dirty(repo, commit)
-            if result.get("policy_sha"):   # the policy this PUBLISHED decision used: a later push that changes it re-evaluates the open pull requests
-                self.store.set_meta("policy:" + repo.lower(), result["policy_sha"])
+            if result.get("policy_sha"):   # the policy THIS commit's published decision used (per commit: one pull request's fresh decision never hides that another still shows an older one)
+                self.store.record_published(repo, commit, result["policy_sha"])
             self._notify(repo, commit, result)
             return result, cid
 
+    LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})")   # a GitHub user login: no "/" (so no `@org/team` mass mention), no markup
+
     def _notify(self, repo, commit, result) -> None:
         """When a change first needs a person's acknowledgement, say so ON THE PULL REQUEST and mention the listed acknowledgers (GitHub then notifies them). Once per (commit, set of receipts): a republish,
-        a reopen, a retry or a restart does not repeat it; a new push or a new receipt does. Never breaks the check: a failure is swallowed and retried at the next refresh."""
+        a reopen, a retry or a restart does not repeat it; a new push or a new receipt does. Never breaks the check: a failure is swallowed and retried at the next refresh, and it uses none of the hourly
+        allowance. Not posted on a pull request that is no longer open."""
         try:
             if not self.cfg.notify or result.get("decision") != "needs_acknowledgement":
                 return
             ids = list(result.get("receipts") or [])
+            ack_ids = list(result.get("ack_receipts") or [])
             pr = next((r["pr"] for rid, r in self.store.latest_receipts(repo, commit) if r.get("pr")), None)
             key = hashlib.sha256("|".join(sorted(ids)).encode()).hexdigest()[:16]
-            if not ids or not pr or self.store.was_notified(repo, commit, key) or not self.notify_limiter.ok("notify:" + repo):
+            if not ids or not pr or self.store.was_notified(repo, commit, key) or not self.notify_limiter.would_allow("notify:" + repo):
                 return
-            who = [a for a in result.get("acknowledgers") or [] if isinstance(a, str)]
-            mention = " ".join("@" + _clean(a, 39) for a in who[:self.cfg.max_mentions])
+            info = self.gh.pr_info(repo, int(pr))
+            if not info or info.get("state") != "open":
+                return
+            who = [a for a in result.get("acknowledgers") or [] if isinstance(a, str) and self.LOGIN.fullmatch(a)]
+            mention = " ".join("@" + a for a in who[:self.cfg.max_mentions])
             head = (mention + " " if mention else "") + "Agentvow needs a person to look at this pull request before it can merge."
-            self.gh.comment(repo, int(pr), head + "\n\n" + E.explain(result, ids, who))
+            self.gh.comment(repo, int(pr), head + "\n\n" + E.explain(result, ack_ids or ids, who))
+            self.notify_limiter.record("notify:" + repo)
             self.store.mark_notified(repo, commit, key)
         except Exception:
             return
@@ -285,7 +305,7 @@ class Service:
 
     def _publish(self, repo, commit, result) -> int:
         """The check run: a plain-language title and summary (`agentvow.explain`): what happened, what it means for the merge, what to do, and what a pass does not show."""
-        summary = E.explain(result, result.get("receipts") or [], result.get("acknowledgers") or [])
+        summary = E.explain(result, result.get("ack_receipts") or [], result.get("acknowledgers") or [])
         return self._check(repo, commit, "completed", CONCLUSIONS[result["conclusion"]], E.TITLES.get(result["decision"], E.TITLES["block"]), summary)
 
     # ------------------------------------------------------------------ webhooks
@@ -364,27 +384,24 @@ class Service:
         return {"receipts_expired": expired, "repositories_erased": erased, "repositories_unchecked": skipped, "deliveries_pruned": self.store.prune_deliveries()}
 
     def _push_event(self, p):
-        """A push to the default branch: if the policy file now says something different from what the last evaluation used, every open pull request with a receipt is re-evaluated under the new policy
-        (otherwise its check would keep showing the old decision until the next receipt). Comparison is by the policy's content, not by what the push says it touched, so a truncated push payload cannot hide a change."""
+        """A push to the default branch: every commit that has a pull-request receipt and whose published decision was NOT made under the policy now on the default branch is re-evaluated and republished
+        (otherwise its check would keep showing the old decision until the next receipt). The candidates come from the store, not from GitHub's list of open pull requests (so none is silently left out by a
+        page limit), and the comparison is per commit by the policy's content, not by what the push says it touched (so a truncated payload, a lost delivery or an earlier fresh decision cannot hide a change)."""
         repo, dflt = p["repository"]["full_name"], str(p["repository"].get("default_branch") or "")
         if not dflt or p.get("ref") != f"refs/heads/{dflt}" or p.get("deleted"):
             return 200, {"ignored": "not a push to the default branch"}
         if not self.limiter.ok("push:" + repo):
             return 429, {"error": "too many pushes for this repository; try again in a minute"}
         pol, err = self.policy_for(repo, dflt)
-        if err:   # nothing is changed on an unreadable policy (a failing delivery is visible in the App's settings); the next receipt re-evaluates anyway
+        if err:   # nothing is changed on an unreadable policy: the old checks stay as they are (a failing delivery is visible in the App's settings; the next receipt re-evaluates anyway)
             return 502, {"error": err}
-        psha = P.sha({**P.DEFAULT_POLICY, **pol})   # the same value `evaluate` reports as policy_sha
-        if self.store.get_meta("policy:" + repo.lower()) == psha:
+        stale = self.store.stale_commits(repo, P.sha({**P.DEFAULT_POLICY, **pol}))   # the same value `evaluate` reports as policy_sha
+        if not stale:
             return 200, {"ignored": "policy unchanged"}
-        marked = 0
-        for pr in self.gh.open_pulls(repo):
-            if self.store.latest_receipts(repo, pr["head_sha"]):
-                self.store.mark_dirty(repo, pr["head_sha"])
-                marked += 1
-        self.store.set_meta("policy:" + repo.lower(), psha)
+        for commit in stale:
+            self.store.mark_dirty(repo, commit)
         self.reconcile()   # up to 50 now; the background loop takes the rest within minutes
-        return 200, {"refreshing": marked}
+        return 200, {"refreshing": len(stale)}
 
     def _pr_event(self, p):
         repo, sha = p["repository"]["full_name"], str(p["pull_request"]["head"]["sha"])
