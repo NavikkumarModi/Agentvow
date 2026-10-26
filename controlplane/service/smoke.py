@@ -7,6 +7,7 @@ from .asgi import build_service
 
 REQUIRED_PERMISSIONS = {"checks": "write", "contents": "read", "pull_requests": "write", "issues": "write", "metadata": "read"}
 REQUIRED_EVENTS = {"pull_request", "issue_comment"}
+RECOMMENDED_EVENTS = {"push": "without it, open pull requests keep their old decision when the policy file changes, until the next receipt"}
 RANK = {"read": 1, "write": 2, "admin": 3}
 
 
@@ -33,6 +34,9 @@ def main(env=os.environ, out=sys.stdout) -> int:
         return 2
     print(f"App: {app.get('name')} (slug {app.get('slug')}, id {app.get('id')}, owner {(app.get('owner') or {}).get('login')})", file=out)
     print(f"Permissions: {app.get('permissions')}\nEvents: {app.get('events')}", file=out)
+    for ev, why in RECOMMENDED_EVENTS.items():
+        if ev not in (app.get("events") or []):
+            print(f"NOTE: event `{ev}` is not subscribed: {why}.", file=out)
     bad = problems(app)
     for b in bad:
         print("PROBLEM:", b, file=out)

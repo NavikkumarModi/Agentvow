@@ -196,6 +196,8 @@ class Service:
                 self.store.mark_dirty(repo, commit)
                 raise
             self.store.clear_dirty(repo, commit)
+            if result.get("policy_sha"):   # the policy this PUBLISHED decision used: a later push that changes it re-evaluates the open pull requests
+                self.store.set_meta("policy:" + repo.lower(), result["policy_sha"])
             self._notify(repo, commit, result)
             return result, cid
 
@@ -297,6 +299,8 @@ class Service:
                 return self._install_event(ev, p)
             if not isinstance(p, dict) or not _repo_ok((p.get("repository") or {}).get("full_name")):
                 return (200, {"ignored": ev}) if ev not in ("pull_request", "issue_comment") else (400, {"error": "unexpected payload"})
+            if ev == "push":
+                return self._push_event(p)
             if ev == "pull_request" and p.get("action") in ("opened", "reopened", "synchronize", "ready_for_review"):
                 return self._pr_event(p)
             if ev == "issue_comment" and p.get("action") == "created" and "pull_request" in (p.get("issue") or {}):
@@ -350,6 +354,29 @@ class Service:
                 self.store.erase_repo(repo)
                 erased += 1
         return {"receipts_expired": expired, "repositories_erased": erased, "repositories_unchecked": skipped, "deliveries_pruned": self.store.prune_deliveries()}
+
+    def _push_event(self, p):
+        """A push to the default branch: if the policy file now says something different from what the last evaluation used, every open pull request with a receipt is re-evaluated under the new policy
+        (otherwise its check would keep showing the old decision until the next receipt). Comparison is by the policy's content, not by what the push says it touched, so a truncated push payload cannot hide a change."""
+        repo, dflt = p["repository"]["full_name"], str(p["repository"].get("default_branch") or "")
+        if not dflt or p.get("ref") != f"refs/heads/{dflt}" or p.get("deleted"):
+            return 200, {"ignored": "not a push to the default branch"}
+        if not self.limiter.ok("push:" + repo):
+            return 429, {"error": "too many pushes for this repository; try again in a minute"}
+        pol, err = self.policy_for(repo, dflt)
+        if err:   # nothing is changed on an unreadable policy (a failing delivery is visible in the App's settings); the next receipt re-evaluates anyway
+            return 502, {"error": err}
+        psha = P.sha({**P.DEFAULT_POLICY, **pol})   # the same value `evaluate` reports as policy_sha
+        if self.store.get_meta("policy:" + repo.lower()) == psha:
+            return 200, {"ignored": "policy unchanged"}
+        marked = 0
+        for pr in self.gh.open_pulls(repo):
+            if self.store.latest_receipts(repo, pr["head_sha"]):
+                self.store.mark_dirty(repo, pr["head_sha"])
+                marked += 1
+        self.store.set_meta("policy:" + repo.lower(), psha)
+        self.reconcile()   # up to 50 now; the background loop takes the rest within minutes
+        return 200, {"refreshing": marked}
 
     def _pr_event(self, p):
         repo, sha = p["repository"]["full_name"], str(p["pull_request"]["head"]["sha"])

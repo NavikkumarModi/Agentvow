@@ -17,7 +17,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
 
 PERMISSIONS = {"checks": "write", "contents": "read", "issues": "write", "pull_requests": "write", "metadata": "read"}
-EVENTS = ["pull_request", "issue_comment"]
+EVENTS = ["pull_request", "issue_comment", "push"]   # push: refresh open pull requests when the policy file changes on the default branch
 CONVERT = "https://api.github.com/app-manifests/{code}/conversions"
 
 

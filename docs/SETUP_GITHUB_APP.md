@@ -61,7 +61,7 @@ Open the address it prints in a browser where you are signed in to GitHub and pr
 | Pull requests | **Read and write** | read a pull request's head commit and author, and post the acknowledgement replies (**found in the live test:** with Pull requests read-only, commenting on a pull request returns 403 even though Issues is write, despite GitHub's endpoint table listing "Issues or Pull requests") |
 | Metadata | Read-only | selected automatically |
 
-4. **Subscribe to events**: tick **Pull request** and **Issue comment** (the boxes appear after you grant the permissions above).
+4. **Subscribe to events**: tick **Pull request**, **Issue comment** and **Push** (the boxes appear after you grant the permissions above).
 5. **Where can this GitHub App be installed?** → **Only on this account**.
 6. **Create GitHub App**.
 7. On the page that opens: note the **App ID** (a number near the top, in the "About" box). Scroll to **Private keys** → **Generate a private key**. A `.pem` file downloads. Move it out of Downloads to a private place and lock it:
@@ -130,6 +130,7 @@ Open each pull request from a branch of the test repository. For every test writ
 | 1 | Open a pull request that adds a function `g` and says "I added g. All tests pass." | A check `agentvow/evidence` appears as in progress at once, then **success** after the gate run. Service log: no warnings. | webhook delivery and signature; App can create and update checks; the OIDC `job_workflow_ref` equals your configured value (if not: log says "exact trusted gate workflow"); `ref` = `refs/pull/N/merge`, `repository_id` present, custom audience accepted |
 | 2 | Open a pull request with the message "All 9 tests pass." | check **action_required** (UNKNOWN claim) | verdict and policy path |
 | 2b | (After test 2) look at the pull request's conversation | a comment from the App that starts with `@<listed acknowledger>` and says Agentvow needs a person to look at the pull request, with the plain explanation and the acknowledge command; it appears **once**, even if you re-run the gate workflow without changing the code | the acknowledgement notification (not yet seen on real GitHub) |
+| 2c | (After test 1, with the App subscribed to **Push**) change the policy on `main` (for example set `"unknown": "allow"` and merge it by a push to `main`), then push again with a stricter policy | open pull requests that already have a receipt are re-evaluated within a minute or so and their check changes without a new gate run; a push that does not change the policy changes nothing | the policy refresh (not yet seen on real GitHub) |
 | 3 | On test 2's pull request comment `/agentvow acknowledge` | the App replies with the receipt id to use; then comment `/agentvow acknowledge <id>` → check turns **success**, the App replies "acknowledged" | comment webhook; write-permission lookup; owner exception for the author rule |
 | 4 | Open a pull request that breaks `f` (return 2) and says "All tests pass." | check **failure**; acknowledging it is refused or has no effect | contradiction cannot be acknowledged |
 | 5 | In the caller, set `service-url: https://example.com` on a branch and open a pull request | the replay job passes, the upload job reports it is not an allowed address (**no token is requested**), decide fails, and the check stays pending (fail closed) | the service-URL pin |
