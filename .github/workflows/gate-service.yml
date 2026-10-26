@@ -1,0 +1,241 @@
+# Agentvow gate WITH the control plane service: a REUSABLE workflow in three jobs, so that no job that runs the pull request's code ever holds a credential:
+#   replay  : checks out the pull request, replays its tests in Agentvow's sandbox, builds a minimal receipt, evaluates it under the policy from the BASE branch. permissions: contents: read only.
+#   upload  : downloads the receipt artifact and posts it to the control plane with a GitHub OIDC token requested for that exact receipt. It never checks out or executes pull-request code. id-token: write lives here only.
+#   decide  : applies fail-on to the stricter of the local and the service decision. No credentials at all.
+# Use `gate.yml` (no service, no OIDC permission) when you only want the local decision. THIS file is the one the control plane trusts: its replay job is identical to gate.yml's (a test enforces it).
+# Call it from a pull_request workflow, pinned to a FULL COMMIT SHA (the service refuses a tag or a branch):
+#
+#   permissions: { contents: read, id-token: write }
+#   jobs:
+#     gate:
+#       uses: NavikkumarModi/Agentvow/.github/workflows/gate-service.yml@<40-character commit sha>
+#       with: { service-url: https://<your control plane>, fail-on: block }
+#
+# A receipt is trusted by the service only when the OIDC claims `job_workflow_ref` (which ends in the sha when the caller pins by sha) and `job_workflow_sha` name THIS workflow at the configured commit. Agentvow is
+# installed from PyPI at an exact version (there is deliberately no way to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md.
+# Needs Agentvow 0.4.0 or later (0.4.2 recommended).
+name: agentvow-gate-service
+on:
+  workflow_call:
+    inputs:
+      agentvow-version:
+        description: "Agentvow version installed from PyPI (an exact version, digits and dots)"
+        type: string
+        default: "0.4.2"
+      service-url:
+        description: "Control plane address; must be one of the addresses written in this workflow (ALLOWED_SERVICE_URLS). Required"
+        type: string
+        default: ""
+      audience:
+        description: "Audience of the OIDC token requested for the control plane"
+        type: string
+        default: "agentvow-control-plane"
+      policy-path:
+        description: "Policy file in the BASE branch (never read from the pull request)"
+        type: string
+        default: ".agentvow/policy.json"
+      test-timeout:
+        description: "Seconds allowed for each test run (a whole number)"
+        type: string
+        default: "900"
+      test-command:
+        description: "Optional --test-cmd for Agentvow, e.g. '{py} -m pytest -q tests'"
+        type: string
+        default: ""
+      fail-on:
+        description: "block (default): fail only when the policy blocks; needs_acknowledgement: also fail when a person must acknowledge; never: report only"
+        type: string
+        default: "block"
+    outputs:
+      decision:
+        description: "allow | needs_acknowledgement | block (the local policy evaluation)"
+        value: ${{ jobs.replay.outputs.decision }}
+      service-decision:
+        description: "The control plane's decision, when service-url was set"
+        value: ${{ jobs.upload.outputs.service-decision }}
+permissions:
+  contents: read
+env:
+  # The only control planes a receipt may be sent to, space separated, exact match. The hosted service address is NOT assigned yet: until it is, nothing can be uploaded. To self-host, copy this workflow into your
+  # own repository, put your service address here, and make your service trust YOUR copy's job_workflow_ref.
+  ALLOWED_SERVICE_URLS: "https://controlplane.agentvow.example"
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      decision: ${{ steps.policy.outputs.decision }}
+      receipt-sha: ${{ steps.policy.outputs.receipt-sha }}
+    steps:
+      - name: Refuse to run the pull request's code in an unsafe place
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          TEST_TIMEOUT: ${{ inputs.test-timeout }}
+          FAIL_ON: ${{ inputs.fail-on }}
+          VERSION: ${{ inputs.agentvow-version }}
+          POLICY_PATH: ${{ inputs.policy-path }}
+        run: |
+          case "$EVENT" in pull_request|push|workflow_dispatch) ;; *) echo "The gate runs the pull request's code and is refused on the '$EVENT' event (use pull_request, push or workflow_dispatch)."; exit 1;; esac
+          case "$TEST_TIMEOUT" in ''|*[!0-9]*) echo "test-timeout must be a whole number of seconds."; exit 1;; esac
+          case "$FAIL_ON" in block|needs_acknowledgement|never) ;; *) echo "fail-on must be block, needs_acknowledgement or never."; exit 1;; esac
+          case "$VERSION" in ''|*[!0-9.]*|.*|*.) echo "agentvow-version must be an exact version made of digits and dots."; exit 1;; esac
+          case "$POLICY_PATH" in ''|/*|*..*|*[!A-Za-z0-9_./-]*) echo "policy-path must be a plain relative path."; exit 1;; esac
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: { python-version: "3.12" }
+      - name: Install Agentvow (from PyPI, from a directory the pull request does not control)
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          VERSION: ${{ inputs.agentvow-version }}
+        run: |
+          python -I -m pip install --quiet "agentvow==$VERSION"
+          agentvow --version
+      - name: Linux sandbox prerequisites (bubblewrap, user namespaces)
+        shell: bash
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || echo "could not change the AppArmor setting; the sandbox may be unavailable"
+      - name: Replay the tests and build the receipt (from a neutral directory, no credential in the environment)
+        id: check
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          CLAIM: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TEST_TIMEOUT: ${{ inputs.test-timeout }}
+          TEST_COMMAND: ${{ inputs.test-command }}
+          REPO_SLUG: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set +e
+          GATE="$RUNNER_TEMP/gate"; mkdir -p "$GATE"
+          printf '%s' "$CLAIM" > "$GATE/claim.txt"
+          ARGS=()
+          if [ -n "$TEST_COMMAND" ]; then ARGS=(--test-cmd "$TEST_COMMAND"); fi
+          env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL -u ACTIONS_RUNTIME_TOKEN -u ACTIONS_RUNTIME_URL -u GITHUB_TOKEN \
+            agentvow check --repo "$GITHUB_WORKSPACE" ${BASE_SHA:+--base "$BASE_SHA"} --transcript "$GATE/claim.txt" --evidence-pack --test-timeout "$TEST_TIMEOUT" "${ARGS[@]}" --json > "$GATE/decision.json"
+          env -u ACTIONS_ID_TOKEN_REQUEST_TOKEN -u ACTIONS_ID_TOKEN_REQUEST_URL -u ACTIONS_RUNTIME_TOKEN -u ACTIONS_RUNTIME_URL -u GITHUB_TOKEN \
+            agentvow receipt --decision "$GATE/decision.json" --repo-slug "$REPO_SLUG" --repo "$GITHUB_WORKSPACE" ${BASE_SHA:+--base "$BASE_SHA"} ${PR_NUMBER:+--pr "$PR_NUMBER"} -o "$GATE/receipt.json"
+          echo "receipt_exit=$?" >> "$GITHUB_OUTPUT"
+      - name: Evaluate the policy from the base branch
+        id: policy
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          POLICY_PATH: ${{ inputs.policy-path }}
+        run: |
+          set +e
+          GATE="$RUNNER_TEMP/gate"
+          G=(git -c core.fsmonitor=false -c core.hooksPath=/dev/null -C "$GITHUB_WORKSPACE")
+          block() { echo "decision=block" >> "$GITHUB_OUTPUT"; echo "$1"; echo "## Agentvow gate: block" >> "$GITHUB_STEP_SUMMARY"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; exit 0; }
+          POL=()
+          if [ -n "$BASE_REF" ]; then
+            "${G[@]}" rev-parse --verify --quiet "origin/$BASE_REF" > /dev/null || "${G[@]}" fetch --quiet origin "$BASE_REF" 2> /dev/null
+            "${G[@]}" rev-parse --verify --quiet "origin/$BASE_REF" > /dev/null || block "Could not read the base branch ($BASE_REF), so the policy cannot be read; refusing to fall back to a weaker default."
+            if "${G[@]}" cat-file -e "origin/$BASE_REF:$POLICY_PATH" 2> /dev/null; then
+              "${G[@]}" show "origin/$BASE_REF:$POLICY_PATH" > "$GATE/policy.json" 2> /dev/null || block "The policy file exists in the base branch but could not be read."
+              POL=(--policy "$GATE/policy.json"); echo "Policy: $POLICY_PATH from origin/$BASE_REF"
+            else
+              echo "No policy file at $POLICY_PATH in the base branch: the default policy applies (contradicted blocks; unknown and unauthenticated captures need acknowledgement)."
+            fi
+          else
+            echo "No base branch for this event: the default policy applies."
+          fi
+          [ -s "$GATE/receipt.json" ] || block "No receipt was produced; treating as block."
+          agentvow policy evaluate "${POL[@]}" --receipt "$GATE/receipt.json" > "$GATE/result.json"
+          DEC=$(python3 -I -c "import json,sys;d=json.load(open(sys.argv[1]))['decision'];print(d if d in ('allow','needs_acknowledgement','block') else 'block')" "$GATE/result.json" 2> /dev/null)
+          [ -n "$DEC" ] || block "The policy evaluation produced no usable result; treating as block."
+          echo "decision=$DEC" >> "$GITHUB_OUTPUT"
+          echo "receipt-sha=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json")" >> "$GITHUB_OUTPUT"
+          python3 -I - "$GATE/result.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, re, sys
+          clean = lambda s: re.sub(r"[^\w .,;:()'/%+-]", "", str(s))[:200]
+          r = json.load(open(sys.argv[1]))
+          print(f"## Agentvow gate: {clean(r['decision'])}\n")
+          for x in r["reasons"]:
+              by = f", acknowledged by {clean(x['acknowledged_by'])}" if x.get("acknowledged_by") else ""
+              print(f"- **{clean(x['rule'])}** ({clean(x['outcome'])}{by}): {clean(x['text'])}")
+          print("\nA pass here is evidence to weigh, not verification: the pull request's own code wrote the test output.")
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: agentvow-gate
+          path: |
+            ${{ runner.temp }}/gate/receipt.json
+            ${{ runner.temp }}/gate/result.json
+          if-no-files-found: warn
+  upload:
+    needs: replay
+    if: ${{ inputs.service-url != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # the ONLY job that holds it; it never checks out or runs pull-request code. The caller's job must grant it too.
+    outputs:
+      service-decision: ${{ steps.upload.outputs.service-decision }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: agentvow-gate
+          path: ${{ runner.temp }}/gate
+      - name: Post the receipt to the control plane
+        id: upload
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          SERVICE_URL: ${{ inputs.service-url }}
+          AUDIENCE: ${{ inputs.audience }}
+          EXPECTED_SHA: ${{ needs.replay.outputs.receipt-sha }}
+        run: |
+          set +e
+          GATE="$RUNNER_TEMP/gate"
+          case " $ALLOWED_SERVICE_URLS " in *" $SERVICE_URL "*) ;; *) echo "service-url is not one of the addresses this workflow allows; nothing was sent."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0;; esac
+          # The receipt about to be sent must be byte-identical to the one the replay job produced (passed as a job output, not through the artifact store), and the token is requested for THAT receipt:
+          # audience "<audience>:<sha256 of the receipt>". A token that leaks to another server can then only be replayed with this same receipt.
+          RSHA=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json" 2> /dev/null)
+          if [ -z "$RSHA" ] || [ "$RSHA" != "$EXPECTED_SHA" ]; then echo "The receipt changed between the replay job and the upload job; not sending it."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "No OIDC token is available: the calling job needs 'permissions: id-token: write'."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
+          TOKEN=$(curl -sS --max-time 20 -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" --get --data-urlencode "audience=$AUDIENCE:$RSHA" "$ACTIONS_ID_TOKEN_REQUEST_URL" | python3 -I -c "import json,sys;print(json.load(sys.stdin)['value'])")
+          if [ -z "$TOKEN" ]; then echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "::add-mask::$TOKEN"
+          RESP=$(curl -sS --max-time 30 -X POST "$SERVICE_URL/v1/receipts" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary "@$GATE/receipt.json")
+          echo "$RESP" > "$GATE/service.json"
+          DEC=$(python3 -I -c "import json,sys;d=json.load(open(sys.argv[1]));x=d.get('decision',{}).get('decision');print(x if x in ('allow','needs_acknowledgement','block') else 'error')" "$GATE/service.json" 2> /dev/null || echo error)
+          echo "service-decision=$DEC" >> "$GITHUB_OUTPUT"
+          echo "Control plane answered: $DEC"
+  decide:
+    needs: [replay, upload]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Apply fail-on
+        shell: bash
+        env:
+          DECISION: ${{ needs.replay.outputs.decision }}
+          SERVICE_DECISION: ${{ needs.upload.outputs.service-decision }}
+          SERVICE_EXPECTED: ${{ inputs.service-url != '' }}
+          REPLAY_RESULT: ${{ needs.replay.result }}
+          FAIL_ON: ${{ inputs.fail-on }}
+        run: |
+          D=$(python3 -I -c "
+          import sys
+          rank = {'allow': 0, 'needs_acknowledgement': 1, 'block': 2}
+          local = sys.argv[1] if sys.argv[1] in rank and sys.argv[4] == 'success' else 'block'
+          svc = (sys.argv[2] if sys.argv[2] in rank else 'block') if sys.argv[3] == 'true' else None
+          print(max([local] + ([svc] if svc else []), key=lambda x: rank[x]))" "$DECISION" "$SERVICE_DECISION" "$SERVICE_EXPECTED" "$REPLAY_RESULT")
+          echo "effective decision: $D"
+          case "$FAIL_ON" in
+            never) exit 0 ;;
+            needs_acknowledgement) [ "$D" = "allow" ] || exit 1 ;;
+            *) [ "$D" = "block" ] && exit 1 ;;
+          esac
+          exit 0

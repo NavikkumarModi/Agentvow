@@ -7,17 +7,17 @@ Status 2026-10-23: everything below uses released software (Agentvow 0.4.2 from 
 * Their repository: Python, tests runnable on a Linux GitHub-hosted runner, agents already open pull requests. If tests need services or secrets, say so now: the replay will report UNKNOWN for those, and the pilot should say it early, not at the readout.
 
 ## Week 0: setup (about two hours with them)
-1. **Install the gate.** Add `.github/workflows/agentvow-gate.yml` calling the reusable workflow, pinned to a release tag (not a branch), with `permissions: contents: read` and, for a local-policy pilot, no `service-url`:
+1. **Install the gate.** Add `.github/workflows/agentvow-gate.yml` calling the **local-decision** workflow, pinned to a full commit sha of the Agentvow repository (never a branch; a sha is also what a security review expects). It needs no credential at all:
    ```yaml
    name: agentvow-gate
    on: pull_request
-   permissions: { contents: read, id-token: write }   # id-token is REQUIRED even without a service: the workflow's upload job declares it, and GitHub refuses to start the run otherwise (startup_failure, verified)
+   permissions: { contents: read }
    jobs:
      gate:
-       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<a release tag or commit sha>
-       with: { fail-on: block }
+       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha>
+       with: { fail-on: block, policy-path: agentvow-policy.json }
    ```
-   Pin a **commit sha of the Agentvow repository at or after `95059fe`** (the `v0.4.2` tag predates the change of the workflow's default Agentvow version to 0.4.2; a sha is also what a security review expects). Verified on 2026-10-23 in the throwaway repository: the cross-repository form `uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<sha>` with `with: { fail-on: block, policy-path: agentvow-policy.json }` ran replay and decide (upload skipped without a service) and passed; the same caller without `id-token: write` ended in `startup_failure`. `docs/GATE_WORKFLOW.md`.
+   `gate.yml` (two jobs, `contents: read` only) is new on 2026-10-26; **it has not yet been run on GitHub in this form**: run it on a throwaway repository first (`docs/GOLDEN_PATH.md`). The earlier single workflow ran in local mode with an `id-token: write` grant that the new file no longer needs. `docs/GATE_WORKFLOW.md`.
 2. **Write the first policy with them**, in the repository's **default branch**: `agentvow-policy.json` at the root (not under `.agentvow/` on versions before 0.4.1). Start from `agentvow policy init`: contradictions block; UNKNOWN needs acknowledgement; list their acknowledger's GitHub login. Ask what they want stricter (for example a minimum share of changed lines run by tests) and write down why.
 3. **Run a test pull request together** that is true, one that is false (break a test), one the replay cannot confirm. Show them each outcome and the plain-language comment.
 4. **Write the replay notes**: what the replay can and cannot recreate for this project (services, secrets, generated files, system packages). This list is the most valuable output of week 0.

@@ -1,9 +1,22 @@
 # Control plane service, phase 1
 
-Status: **built, run once against real GitHub (`docs/LIVE_TESTING.md`, 2026-10-23: 10 acceptance tests passed after two defects were fixed; fork pull requests not tested), adversarially reviewed twice (findings fixed, `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`) and tested against fakes; never run against real GitHub, never deployed.** Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
+Status (2026-10-26), as a matrix instead of a sentence:
+
+| Part | State |
+|---|---|
+| Receipt upload, OIDC verification, policy, check run, acknowledgement by comment, audit export | **Live-tested** once against real GitHub from a laptop behind a tunnel (`docs/LIVE_TESTING.md`, 2026-10-23: 10 acceptance tests passed after two defects were fixed) |
+| Required check pinned to the App as its source; a spoofed check from `GITHUB_TOKEN` did not count | **Live-tested** (same run) |
+| Commit-sha pins for the trusted workflow, `job_workflow_sha` check, the split into `gate.yml` and `gate-service.yml` | **Tested against fakes and the workflow's own steps; the new pins and files have not yet been run on real GitHub** (the `job_workflow_sha` claim itself was seen live on 2026-10-26) |
+| Account plans, retention, erasure driven by GitHub's answer, dashboard, backup, image, compose recipe | **Tested against fakes**; the image builds and runs (local Docker and CI); never on a hosted machine |
+| Installation events (`installation`, `installation_repositories`) | Handled per GitHub's documented shape; **never seen live** |
+| Fork pull requests, real concurrency, rate limits, macOS runners, private repositories on a paid plan | **Not tested** |
+| Deployment (domain, TLS, hosting, billing, monitoring, privacy policy) | **Not done**; needs the owner's accounts |
+| Adversarial review | Three rounds, findings fixed (`docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`); the fixes of the third round and the later changes have had no further review |
+
+Code: `controlplane/service/`. Design and threats: `docs/CONTROLPLANE_THREAT_MODEL.md`.
 
 ## What it does
-1. `POST /v1/receipts` (called by the gate workflow's upload job): verifies the GitHub Actions OIDC token (RS256 against GitHub's keys, issuer, audience, expiry), requires the exact trusted `job_workflow_ref` and an accepted event, requires the token's repository to equal the receipt's, requires the token to have been issued for exactly this receipt (audience `<audience>:<sha256 of the body>`) and to name its pull request or commit, asks GitHub (as oracle) whether the commit's tree hash matches the receipt and whether the commit is the pull request's head, reads the policy from the repository's **default branch** through the GitHub API, evaluates with `agentvow.policy.evaluate` and sets the check run `agentvow/evidence`.
+1. `POST /v1/receipts` (called by the gate workflow's upload job): verifies the GitHub Actions OIDC token (RS256 against GitHub's keys, issuer, audience, expiry), requires the exact trusted `job_workflow_ref` (a full commit sha; the service refuses to start with a tag or branch) and that `job_workflow_sha` agrees and an accepted event, requires the token's repository to equal the receipt's, requires the token to have been issued for exactly this receipt (audience `<audience>:<sha256 of the body>`) and to name its pull request or commit, asks GitHub (as oracle) whether the commit's tree hash matches the receipt and whether the commit is the pull request's head, reads the policy from the repository's **default branch** through the GitHub API (the gate workflow's local decision reads the pull request's base branch; see `docs/GATE_WORKFLOW.md`, "Policy authority"), evaluates with `agentvow.policy.evaluate` and sets the check run `agentvow/evidence`.
 2. `POST /v1/webhook` (GitHub App webhook, HMAC-verified): on pull-request events it creates a pending check (so a required check cannot be satisfied by silence); on a pull-request comment `/agentvow acknowledge` it requires the receipt id (`/agentvow acknowledge <id>`), a person who is a listed acknowledger **and** has write access (and, unless they own the repository account, is not the pull request's author), stores the acknowledgement against the current receipt id, re-evaluates and updates the check.
 3. `GET /v1/check`, `GET /v1/audit?format=json|csv`: per-repository key (Bearer); a key for one repository never reads another's records.
 4. Operator CLI: `python -m controlplane.service.cli --db PATH set-plan|issue-key|purge|usage`.
@@ -14,7 +27,7 @@ Fail-closed rules: an unreadable or invalid base-branch policy blocks; GitHub er
 Permissions: Checks read/write, Contents read, Pull requests write, Issues write (comments), Metadata read. Events: Pull request, Issue comment. Webhook URL `https://<host>/v1/webhook`, with a secret. Then protect the target branch with a required status check named `agentvow/evidence` and choose this App as its **source** (with source "any", a writer's own `GITHUB_TOKEN` can post a green check of that name).
 
 ## Environment variables
-`AGENTVOW_CP_APP_ID`, `AGENTVOW_CP_PRIVATE_KEY_FILE` (path to the PEM; preferred) or `AGENTVOW_CP_PRIVATE_KEY` (PEM, `\n` allowed), `AGENTVOW_CP_WEBHOOK_SECRET`, `AGENTVOW_CP_AUDIENCE` (the audience the gate workflow requests), `AGENTVOW_CP_TRUSTED_WORKFLOWS` (comma-separated exact `job_workflow_ref` values), `AGENTVOW_CP_DB` (default `/data/controlplane.db`). The process refuses to start if one is missing (`uvicorn --factory`).
+`AGENTVOW_CP_APP_ID`, `AGENTVOW_CP_PRIVATE_KEY_FILE` (path to the PEM; preferred) or `AGENTVOW_CP_PRIVATE_KEY` (PEM, `\n` allowed), `AGENTVOW_CP_WEBHOOK_SECRET`, `AGENTVOW_CP_AUDIENCE` (the audience the gate workflow requests), `AGENTVOW_CP_TRUSTED_WORKFLOWS` (comma-separated exact `job_workflow_ref` values, each ending in a full 40-character sha; `AGENTVOW_CP_ALLOW_MUTABLE_REFS=1` is for development only), `AGENTVOW_CP_DB` (default `/data/controlplane.db`). The process refuses to start if one is missing (`uvicorn --factory`).
 
 ## Run
 `docker build -f controlplane/service/Dockerfile -t agentvow-controlplane .` then run with a `/data` volume and TLS in front. One process only (SQLite with an in-process lock).

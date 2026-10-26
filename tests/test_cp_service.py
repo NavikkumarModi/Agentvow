@@ -9,7 +9,8 @@ from controlplane.service.github import GitHub, GitHubError  # noqa: E402
 from controlplane.service.oidc import OidcError, OidcVerifier, ISSUER  # noqa: E402
 from controlplane.service.store import Store  # noqa: E402
 
-WF = "o/gate/.github/workflows/gate.yml@refs/tags/v1"
+GATE_SHA = "c" * 40
+WF = f"o/gate/.github/workflows/gate-service.yml@{GATE_SHA}"
 TREE, COMMIT = "b" * 40, "a" * 40
 KEY = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 OTHER = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -29,7 +30,7 @@ def token(claims, key=KEY, kid="k1", alg="RS256"):
 
 
 def claims(**o):
-    c = {"iss": ISSUER, "aud": "agentvow", "exp": time.time() + 300, "repository": "o/n", "repository_id": "99", "job_workflow_ref": WF, "event_name": "pull_request", "ref": "refs/pull/7/merge", "sha": "f" * 40, "run_id": 5, "run_attempt": 1}
+    c = {"iss": ISSUER, "aud": "agentvow", "exp": time.time() + 300, "repository": "o/n", "repository_id": "99", "job_workflow_ref": WF, "job_workflow_sha": GATE_SHA, "event_name": "pull_request", "ref": "refs/pull/7/merge", "sha": "f" * 40, "run_id": 5, "run_attempt": 1}
     c.update(o); return c
 
 
@@ -466,7 +467,7 @@ class ThirdReview(unittest.TestCase):
         import tempfile, threading, urllib.request, urllib.error
         from http.server import HTTPServer
         from controlplane.service import register_app as R
-        mh, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", tempfile.mkdtemp() + "/x", "--port", "0"], convert_fn=lambda c: {}, serve=False)
+        mh, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--workflow-sha", "c" * 40, "--out", tempfile.mkdtemp() + "/x", "--port", "0"], convert_fn=lambda c: {}, serve=False)
         srv = HTTPServer(("127.0.0.1", 0), mh(page, state, on_app, ())); threading.Thread(target=srv.serve_forever, daemon=True).start()
         try:
             req = urllib.request.Request(f"http://127.0.0.1:{srv.server_address[1]}/", headers={"Host": "evil.example"})
@@ -474,7 +475,8 @@ class ThirdReview(unittest.TestCase):
             self.assertEqual(e.exception.code, 403)
         finally:
             srv.shutdown()
-        with self.assertRaises(SystemExit): R.main(["--tunnel", "https://t.example", "--repo", "bad repo; rm", "--out", "x"], serve=False)
+        with self.assertRaises(SystemExit): R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--workflow-sha", "v1", "--out", "x"], serve=False)   # a tag is not a sha
+        with self.assertRaises(SystemExit): R.main(["--tunnel", "https://t.example", "--repo", "bad repo; rm", "--workflow-sha", "c" * 40, "--out", "x"], serve=False)
     def test_P3_register_helper_replaces_existing_files_and_links_with_private_ones(self):
         import tempfile, os, stat
         from controlplane.service import register_app as R
@@ -512,6 +514,26 @@ def TestLifecycleHelper(s):
     return send
 
 
+class ImmutablePins(unittest.TestCase):
+    def test_a_tag_or_branch_pin_is_refused_at_construction_and_at_startup(self):
+        import os, uvicorn
+        from unittest import mock
+        with self.assertRaises(ValueError): Service(Config(trusted_workflows=frozenset({"o/g/.github/workflows/gate-service.yml@refs/tags/v1"}), webhook_secret=b"x"), None, None, Store())
+        with self.assertRaises(ValueError): Service(Config(trusted_workflows=frozenset({"o/g/.github/workflows/gate-service.yml@" + "c" * 39}), webhook_secret=b"x"), None, None, Store())
+        Service(Config(trusted_workflows=frozenset({"o/g/.github/workflows/gate-service.yml@refs/tags/v1"}), webhook_secret=b"x", allow_mutable_refs=True), None, None, Store())   # development only
+        pem = KEY.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()).decode()
+        env = {"AGENTVOW_CP_APP_ID": "1", "AGENTVOW_CP_PRIVATE_KEY": pem, "AGENTVOW_CP_WEBHOOK_SECRET": "x", "AGENTVOW_CP_TRUSTED_WORKFLOWS": "o/g/.github/workflows/gate-service.yml@refs/tags/v1", "AGENTVOW_CP_AUDIENCE": "a", "AGENTVOW_CP_DB": ":memory:"}
+        from controlplane.service.asgi import build_service
+        with self.assertRaises(ValueError): build_service(env)
+        build_service({**env, "AGENTVOW_CP_ALLOW_MUTABLE_REFS": "1"})
+    def test_the_token_commit_claim_must_agree_with_the_pin_and_a_moved_workflow_is_refused(self):
+        s, gh = make()
+        self.assertEqual(post(s, job_workflow_sha="d" * 40)[0], 403)      # the ref string says one commit, the signed claim another
+        self.assertEqual(post(s, job_workflow_sha=None)[0], 403)
+        self.assertEqual(post(s, job_workflow_ref=WF.replace("c" * 40, "d" * 40), job_workflow_sha="d" * 40)[0], 403)   # a different commit of the same workflow file is not trusted
+        self.assertEqual(post(s)[0], 200)
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke
@@ -530,7 +552,7 @@ class Register(unittest.TestCase):
         from http.server import HTTPServer
         from controlplane.service import register_app as R
         out = tempfile.mkdtemp() + "/x"
-        make_handler, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--out", out, "--port", "0"], convert_fn=lambda code: {"id": 7, "name": "n", "slug": "n", "html_url": "https://github.com/apps/n", "pem": "PEM", "webhook_secret": "WS"}, serve=False)
+        make_handler, page, state, on_app, done, hosts = R.main(["--tunnel", "https://t.example", "--repo", "u/r", "--workflow-sha", "c" * 40, "--out", out, "--port", "0"], convert_fn=lambda code: {"id": 7, "name": "n", "slug": "n", "html_url": "https://github.com/apps/n", "pem": "PEM", "webhook_secret": "WS"}, serve=False)
         self.assertIn("https://t.example/v1/webhook", page); self.assertIn("pull_request", page); self.assertNotIn("WS", page)
         srv = HTTPServer(("127.0.0.1", 0), make_handler(page, state, on_app, ("127.0.0.1:%d" % 0,))); port = srv.server_address[1]; srv.RequestHandlerClass = make_handler(page, state, on_app, (f"127.0.0.1:{port}",))
         threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -543,7 +565,7 @@ class Register(unittest.TestCase):
         self.assertNotIn("WS", body); self.assertNotIn("PEM", body)
         for f in ("app.private-key.pem", "cp.env"): self.assertEqual(stat.S_IMODE(os.stat(f"{out}/{f}").st_mode), 0o600)
         env = open(f"{out}/cp.env").read()
-        self.assertIn("AGENTVOW_CP_APP_ID=7", env); self.assertIn("u/r/.github/workflows/gate.yml@refs/tags/v1", env)
+        self.assertIn("AGENTVOW_CP_APP_ID=7", env); self.assertIn("u/r/.github/workflows/gate-service.yml@" + "c" * 40, env)
 
 
 class Hooks(unittest.TestCase):

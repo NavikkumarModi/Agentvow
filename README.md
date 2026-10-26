@@ -49,7 +49,7 @@ needs_acknowledgement
 - unknown (needs_acknowledgement): The 'tests_pass' claim could not be confirmed or refuted (UNKNOWN):
   the evidence was missing or the replay could not run.
 ```
-**3. The gate on three agent pull requests (recording).** The steps of `gate.yml` (`check`, `receipt`, `policy evaluate`) run on three pull-request branches: the claim is true (allow), the claim is false because the change breaks a test (block), and the claim cannot be confirmed because the agent said 9 tests passed and one exists (needs acknowledgement).
+**3. The gate on three agent pull requests (recording).** The steps of the gate workflow (`check`, `receipt`, `policy evaluate`) run on three pull-request branches: the claim is true (allow), the claim is false because the change breaks a test (block), and the claim cannot be confirmed because the agent said 9 tests passed and one exists (needs acknowledgement).
 
 ![Three screens, one per agent pull request. The first, "I added g(). All tests pass.", ends in allow, with the grey note that the required check passes. The second, "I simplified f(). All tests pass.", ends in block because the claim is contradicted and cannot be acknowledged away. The third, "I added h(). All 9 tests pass.", ends in needs_acknowledgement.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo_gate.gif?raw=true)
 
@@ -107,7 +107,7 @@ Anything else the agent says is listed as **unchecked**, and the report says how
 | Copilot CLI (terminal), Copilot cloud agent | same hook file | From documentation only |
 | Codex, Cursor, Gemini CLI | their stop hooks → `agentvow check --hook` | Not tested; `AGENTVOW_DEBUG=1` records only the *structure* of what an agent sends so an adapter can be built |
 | Any agent's pull request | GitHub Action `action.yml`: PR description as the claim, CI results, comment + report; opt-in `run-tests: true` also replays the tests in the sandbox on the runner and adds the evidence pack | Run on a real pull request of this repository (docs/LIVE_TESTING.md); `run-tests` run once on GitHub on a pull request of this repository (docs/LIVE_TESTING.md) |
-| Any pull request, as a team gate | reusable workflow `.github/workflows/gate.yml` (replay on the runner, receipt, policy from the base branch; optional upload to the control plane service); see `docs/GATE_WORKFLOW.md` and `docs/SETUP_GITHUB_APP.md` | **Run on real pull requests** (local-policy mode, 2026-10-22; with the control plane service and a required check pinned to its App, 2026-10-23: contradicted and unconfirmed pull requests blocked, acknowledgement by comment worked); fork pull requests not tested (`docs/LIVE_TESTING.md`) |
+| Any pull request, as a team gate | two reusable workflows: `gate.yml` (replay on the runner, receipt, local decision; needs no credential) and `gate-service.yml` (the same replay plus an upload to the control plane service; pinned to a commit sha); see `docs/GATE_WORKFLOW.md` and `docs/SETUP_GITHUB_APP.md` | **Run on real pull requests** before the split into two files (local-policy mode, 2026-10-22; with the control plane service and a required check pinned to its App, 2026-10-23: contradicted and unconfirmed pull requests blocked, acknowledgement by comment worked); the two-file version is tested locally and not yet on GitHub; fork pull requests are not supported by the service path (`docs/LIVE_TESTING.md`) |
 | Anything else | paste or pipe the message; VS Code commands for clipboard/selection | Tested |
 
 ## Seeing the verdict
@@ -127,7 +127,7 @@ From the [Marketplace](https://marketplace.visualstudio.com/items?itemName=Navik
 Then **Developer: Reload Window**, and click **Agentvow** in the status bar to try the demo. The extension is plain JavaScript with no dependencies; it calls the `agentvow` command, which must be reachable by path (use the full path in `agentvow.command` if VS Code does not see your shell's PATH).
 
 ## Team gate and control plane
-The gate workflow (`docs/GATE_WORKFLOW.md`) replays on the runner, builds a receipt, and applies your policy from the base branch. A self-hostable control plane service (`controlplane/service/`, in development, first live run on GitHub passed on 2026-10-23; `docs/CONTROLPLANE_PHASE1.md`; to try it with your own GitHub App: `docs/SETUP_GITHUB_APP.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
+The gate workflows (`docs/GATE_WORKFLOW.md`) replay on the runner, build a receipt, and apply your policy (the local decision reads the pull request's base branch; the service reads the default branch). The GitHub Action, the local gate and the service-backed gate are **different levels of enforcement**: only the last can make a check required and keep a named acknowledgement record. What each artifact proves, and does not: `docs/TRUST_MODEL.md`. A self-hostable control plane service (`controlplane/service/`, in development, first live run on GitHub passed on 2026-10-23; `docs/CONTROLPLANE_PHASE1.md`; to try it with your own GitHub App: `docs/SETUP_GITHUB_APP.md`) publishes the `agentvow/evidence` check, records named acknowledgements and offers a per-repository audit export. It stores receipts only and never runs your code.
 
 ## Evidence, scope and limits
 Agentvow 0.4.2 is a prototype for Python repositories; running tests needs macOS or Linux. A pass is evidence to weigh, not a safety verdict. Studies, measured numbers, known limits and the security model are in [docs/EVIDENCE_AND_LIMITS.md](docs/EVIDENCE_AND_LIMITS.md) and `docs/SECURITY_MODEL.md`.
@@ -139,4 +139,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 515 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 524 Python tests, 32 node tests -->

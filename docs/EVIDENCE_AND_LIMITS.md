@@ -2,7 +2,19 @@
 
 Moved out of the README so the front page can describe what the tool does. Nothing here has been softened or removed: read it before relying on a result.
 
-## Evidence so far (and what it does not show)
+## The capture studies (the replayability evidence; feasibility scale; details in `docs/paper/SHORT_MSR2027.md` and `docs/strategy/PRODUCT_EXPLORATION_2026-10.md`)
+These measure whether a result can be **replayed**, not whether code is correct, and not whether replay finds more real defects. One model family (Claude Code), Python only, small repositories, authored by the same person who built the tool.
+| Study | Result | Caveat |
+|---|---|---|
+| B6 (pre-registered): 22 valid agent runs of 40 | Replaying the agent's captured packages reproduced **20 of 22** passing results; a repository-only zero-config reconstruction reproduced **12 of 22** (capture only 8, reconstruction only 0) | the comparator is weak by design; the rule was met at the minimum power (22 valid runs against a floor of 20); 21 of 22 from one PR-author family |
+| E3: a stronger reconstruction baseline (CI files, Dockerfile, requirements) on the 18 re-runnable runs | capture **16 of 18**, strong baseline **9**, zero-config ladder 10; capture only 7, baseline only 0 | the baseline reader was frozen before the run but the author had seen B6; it is one reasonable strong baseline, not the only one |
+| E1: the same captures replayed 8 days later | **16 of 16** testable captures still passed; the pre-registered threshold (18 of 20) could not be met because 4 runs are not re-runnable from the saved patch | stability over weeks and the +30-day point are not shown |
+| E2: the captures replayed on Linux (aarch64 container, same Python minor) | **15 of 16** passed; the one flip was a platform-specific pin with no Linux distribution (`pymsalruntime`), which the product now leaves out and reports as a partial replay | one Linux flavour, not x86-64, bubblewrap inside a privileged container |
+| E5: planted faults under the captured and the project-native context | 9 faults ran (7 had no plantable line, 4 runs not re-runnable); 3 flagged by at least one context: 2 by both, **1 by captured only**; pre-registered reading **weak** | faults are authored by us, operator flips on added lines only; capture's contribution here was "the context could run at all", not "it sees more faults when both can run"; faults that only a newly added test catches stay UNKNOWN by design |
+
+What these support, and no more: the agent's recorded Python packages usually let a clean sandbox replay its passing test result, and the repository alone often does not say how. They do **not** support: that captured replay detects more real defects, that agents are dishonest, that a reproduced test result proves correctness, or any claim about other languages, agents or system-level dependencies.
+
+## Earlier detection and coverage studies
 - Agent PR claims in the wild (688 public Python PRs from five agents that claim tests pass): CI test jobs could judge 33%; of those about 27% had a failing test job (clustered in a few repositories; not an agent ranking). `docs/research/CI_CLAIM_STUDY.md`
 - Local runs on unfamiliar repos with automatic setup reached a verdict for 29% of PRs; half stopped on a missing dependency. `docs/research/LOCAL_COVERAGE.md`
 - Detection on real agent PRs (pre-registered v2, 140 PRs): the suite could be run locally for 19% of PRs; among the 13 CI-failing PRs that ran, 2 real regressions were flagged as contradicted (4 with the `review` policy), none was declared fine, and 1 of 14 CI-passing controls got a false alert (a dependency-version mismatch, since guarded). Small, clustered, in-sample for the follow-up rules. `docs/research/DETECTION_V2.md`

@@ -12,7 +12,8 @@ try:
     import yaml
 except ImportError:
     yaml = None
-WF = ROOT / ".github" / "workflows" / "gate.yml"
+WF = ROOT / ".github" / "workflows" / "gate-service.yml"   # the workflow the control plane trusts (replay, upload, decide)
+WF_LOCAL = ROOT / ".github" / "workflows" / "gate.yml"      # the local-decision workflow (replay, decide; no credential at all)
 SECRET = b"sim-secret"
 TRUSTED = "trusted-owner/gate"
 
@@ -30,6 +31,40 @@ def online():
         socket.create_connection(("pypi.org", 443), timeout=3).close(); return True
     except OSError:
         return False
+
+
+@unittest.skipIf(yaml is None, "PyYAML not installed")
+class LocalWorkflow(unittest.TestCase):
+    """gate.yml: the local-decision workflow needs no credential at all and its replay job is the service workflow's replay job."""
+    def load(self, path):
+        return yaml.safe_load(path.read_text())
+
+    def test_it_holds_no_oidc_permission_anywhere_and_has_no_service_inputs(self):
+        d = self.load(WF_LOCAL)
+        self.assertEqual(d["permissions"], {"contents": "read"}); self.assertEqual(list(d["jobs"]), ["replay", "decide"])
+        for name, job in d["jobs"].items():
+            self.assertNotIn("id-token", json.dumps(job.get("permissions", {})), name)
+        self.assertNotIn("id-token", WF_LOCAL.read_text().replace("#", "\n#").split("\nname:")[1])   # not even in the body after the header comments
+        for k in ("service-url", "audience"): self.assertNotIn(k, d[True]["workflow_call"]["inputs"])
+        self.assertNotIn("ALLOWED_SERVICE_URLS", WF_LOCAL.read_text())
+
+    def test_the_replay_job_is_identical_in_both_workflows(self):
+        self.assertEqual(self.load(WF_LOCAL)["jobs"]["replay"], self.load(WF)["jobs"]["replay"])
+        for k in ("agentvow-version", "policy-path", "test-timeout", "test-command", "fail-on"):
+            self.assertEqual(self.load(WF_LOCAL)[True]["workflow_call"]["inputs"][k], self.load(WF)[True]["workflow_call"]["inputs"][k], k)
+
+    def run_decide(self, decision, replay="success", fail_on="block"):
+        r = self.load(WF_LOCAL)["jobs"]["decide"]["steps"][0]["run"]
+        env = {**os.environ, "DECISION": decision, "REPLAY_RESULT": replay, "FAIL_ON": fail_on}
+        return subprocess.run(["bash", "-c", r], env=env, capture_output=True, text=True).returncode
+
+    def test_the_local_decision_fails_closed(self):
+        self.assertEqual(self.run_decide("allow"), 0); self.assertEqual(self.run_decide("block"), 1)
+        self.assertEqual(self.run_decide("needs_acknowledgement"), 0); self.assertEqual(self.run_decide("needs_acknowledgement", fail_on="needs_acknowledgement"), 1)
+        self.assertEqual(self.run_decide("block", fail_on="never"), 0)
+        self.assertEqual(self.run_decide("", fail_on="block"), 1)              # the replay produced nothing
+        self.assertEqual(self.run_decide("allow", replay="failure"), 1)        # the replay job itself failed
+        self.assertEqual(self.run_decide("garbage"), 1)
 
 
 @unittest.skipIf(yaml is None, "PyYAML not installed")
@@ -77,7 +112,7 @@ class Static(unittest.TestCase):
         self.assertIn("core.hooksPath=/dev/null", run)
 
     def guard(self, **env):
-        base = {**os.environ, "EVENT": "pull_request", "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.0", "POLICY_PATH": ".agentvow/policy.json", "SERVICE_URL": "", "ALLOWED_SERVICE_URLS": "https://svc.example http://127.0.0.1:8000"}
+        base = {**os.environ, "EVENT": "pull_request", "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.0", "POLICY_PATH": ".agentvow/policy.json"}
         return subprocess.run(["bash", "-c", next(iter(steps().values()))["run"]], env={**base, **env}, capture_output=True, text=True)
 
     def test_guard(self):
@@ -93,13 +128,21 @@ class Static(unittest.TestCase):
             self.assertEqual(self.guard(VERSION=bad).returncode, 1, repr(bad))
         for bad in ("/etc/passwd", "../x", "a b", "a;b", ""):
             self.assertEqual(self.guard(POLICY_PATH=bad).returncode, 1, repr(bad))
-        for bad in ("http://evil.example", "ftp://x", "file:///etc", "https://svc.example.evil.test", "https://svc.example/", "https://svc.example https://evil.test", "https://evil.test/https://svc.example", "http://127.0.0.1:80000"):
-            self.assertEqual(self.guard(SERVICE_URL=bad).returncode, 1, bad)
+
+    def upload_message(self, url, allowed="https://svc.example http://127.0.0.1:8000"):
+        out = Path(tempfile.mkdtemp()) / "out"; out.write_text("")
+        env = {**os.environ, "SERVICE_URL": url, "ALLOWED_SERVICE_URLS": allowed, "AUDIENCE": "a", "EXPECTED_SHA": "x", "RUNNER_TEMP": str(out.parent), "GITHUB_OUTPUT": str(out), "ACTIONS_ID_TOKEN_REQUEST_URL": "", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": ""}
+        r = subprocess.run(["bash", "-c", steps("upload")["Post the receipt to the control plane"]["run"]], env=env, capture_output=True, text=True, cwd=out.parent)
+        return r.stdout + r.stderr
+
+    def test_the_service_url_must_be_one_of_the_addresses_written_in_the_workflow(self):
+        for bad in ("", "http://evil.example", "ftp://x", "file:///etc", "https://svc.example.evil.test", "https://svc.example/", "https://svc.example https://evil.test", "https://evil.test/https://svc.example", "http://127.0.0.1:80000"):
+            self.assertIn("not one of the addresses", self.upload_message(bad), repr(bad))
         for ok in ("https://svc.example", "http://127.0.0.1:8000"):
-            self.assertEqual(self.guard(SERVICE_URL=ok).returncode, 0, ok)
+            self.assertNotIn("not one of the addresses", self.upload_message(ok), ok)
 
     def test_the_shipped_allow_list_is_hard_coded_exact_and_has_no_test_addresses(self):
-        text = (ROOT / ".github" / "workflows" / "gate.yml").read_text()
+        text = WF.read_text()
         import re as _re
         m = _re.search(r'^  ALLOWED_SERVICE_URLS: "([^"]*)"', text, _re.M)
         self.assertIsNotNone(m)

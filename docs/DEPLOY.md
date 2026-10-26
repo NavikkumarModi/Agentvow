@@ -13,13 +13,13 @@ cd controlplane/service && mkdir -p secrets && chmod 700 secrets
 cp /path/to/app.private-key.pem secrets/ && printf '%s' "$WEBHOOK_SECRET" > secrets/webhook_secret
 sudo chown -R 10001 secrets && chmod 700 secrets && chmod 400 secrets/*   # the container user is uid 10001; unverified on Linux hosts
 export AGENTVOW_CP_APP_ID=<id>
-export AGENTVOW_CP_TRUSTED_WORKFLOWS='<owner>/<repo>/.github/workflows/gate.yml@refs/tags/v1'   # exact job_workflow_ref values, comma separated
+export AGENTVOW_CP_TRUSTED_WORKFLOWS='<owner>/<repo>/.github/workflows/gate-service.yml@<40-character commit sha>'   # exact job_workflow_ref values, comma separated, each pinned to a full sha (the service refuses to start with a tag or branch)
 docker compose up -d --build
 curl -s http://127.0.0.1:8080/healthz        # ok
 ```
 Or use the image the `service-image` workflow publishes when you push a tag `service-v0.1.0` (`ghcr.io/<owner>/agentvow-controlplane`). The container needs: `AGENTVOW_CP_APP_ID`, `AGENTVOW_CP_PRIVATE_KEY_FILE`, `AGENTVOW_CP_WEBHOOK_SECRET_FILE`, `AGENTVOW_CP_AUDIENCE`, `AGENTVOW_CP_TRUSTED_WORKFLOWS`, `AGENTVOW_CP_POLICY_PATH` (optional), `AGENTVOW_CP_DB` (on a volume). It refuses to start if a required value is missing.
 
-Then set the App's webhook URL to `https://<your domain>/v1/webhook` and, in the copy of `gate.yml` your customers call, `ALLOWED_SERVICE_URLS` to `https://<your domain>`.
+Then set the App's webhook URL to `https://<your domain>/v1/webhook` and, in the copy of `gate-service.yml` your customers call, `ALLOWED_SERVICE_URLS` to `https://<your domain>`.
 
 ## Operating it
 * **Plans and keys** (run inside the container or on the volume): `python -m controlplane.service.cli --db /data/controlplane.db set-plan <owner or owner/repo> team --days 365`, `issue-key owner/repo` (shown once), `stats`, `usage owner/repo`.

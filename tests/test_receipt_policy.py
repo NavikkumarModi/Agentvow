@@ -27,6 +27,30 @@ def ack(r, by="alice"):
     return {"schema": policy.ACK, "receipt_sha": policy.sha(r), "by": by, "at": "t", "note": "ok"}
 
 
+class Provenance(unittest.TestCase):
+    def claim_receipt(self, **meta):
+        d = json.loads(json.dumps(DECISION)); d["findings"][0]["meta"].update(meta); return policy.build_receipt(d, "o/n", "b" * 40)
+    def test_provenance_fields_are_kept_apart_and_never_one_flag(self):
+        none = self.claim_receipt()["claims"][0]; self.assertIsNone(none["capture_authenticated"]); self.assertEqual((none["state_binding"], none["partial_replay"]), ("", False))
+        local = self.claim_receipt(capture_source="local")["claims"][0]; self.assertEqual((local["capture_authenticated"], local["state_binding"]), (True, "capsule"))
+        bundle = self.claim_receipt(capture_source="bundle")["claims"][0]; self.assertEqual((bundle["capture_authenticated"], bundle["state_binding"]), (False, "git_tree"))
+        part = self.claim_receipt(capture_source="local", dropped_pins=["pymsalruntime==0.20.6"])["claims"][0]; self.assertTrue(part["partial_replay"]); self.assertEqual(part["dropped_pins"], 1)
+    def test_a_partial_replay_needs_acknowledgement_by_default_and_the_policy_can_change_it(self):
+        r = self.claim_receipt(capture_source="local", dropped_pins=["x==1"])
+        res = policy.evaluate(r); self.assertEqual(res["decision"], "needs_acknowledgement"); self.assertIn("partial_capture", [x["rule"] for x in res["reasons"]])
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "partial_capture": "allow"})["decision"], "allow")
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "partial_capture": "block"})["decision"], "block")
+        ok = self.claim_receipt(capture_source="local"); self.assertEqual(policy.evaluate(ok)["decision"], "allow")
+        old = self.claim_receipt(capture_source="local", dropped_pins=["x==1"]); [c.pop("partial_replay") for c in old["claims"]]   # a receipt from before the field existed still counts
+        self.assertEqual(policy.evaluate(old)["decision"], "needs_acknowledgement")
+    def test_the_fields_are_validated(self):
+        r = self.claim_receipt(capture_source="local"); r["claims"][0]["capture_authenticated"] = "yes"; self.assertIsNotNone(policy.validate_receipt(r))
+        r = self.claim_receipt(capture_source="local"); r["claims"][0]["partial_replay"] = 1; self.assertIsNotNone(policy.validate_receipt(r))
+        r = self.claim_receipt(capture_source="local"); r["claims"][0]["state_binding"] = "x" * 40; self.assertIsNotNone(policy.validate_receipt(r))
+        self.assertIsNone(policy.validate_receipt(self.claim_receipt(capture_source="bundle")))
+        self.assertIsNone(policy.validate_receipt({k: v for k, v in self.claim_receipt().items()}))   # receipts without the fields stay valid
+
+
 class ReceiptCommit(unittest.TestCase):
     def test_a_check_that_could_not_collect_still_gives_a_valid_receipt_for_the_checked_out_commit(self):
         # found by installing 0.4.1 from PyPI: on a repository without a usable base the check reports commit "?", and 0.4.1's stricter receipt validation then made the receipt a block

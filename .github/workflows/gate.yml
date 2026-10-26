@@ -1,17 +1,17 @@
-# Agentvow gate: a REUSABLE workflow in three jobs, so that no job that runs the pull request's code ever holds a credential:
-#   replay  : checks out the pull request, replays its tests in Agentvow's sandbox, builds a minimal receipt, evaluates it under the policy from the BASE branch. permissions: contents: read only.
-#   upload  : (only when service-url is set) downloads the receipt artifact and posts it to the control plane with a GitHub OIDC token. It never checks out or executes pull-request code. id-token: write lives here only.
-#   decide  : applies fail-on to the stricter of the local and the service decision. No credentials at all.
-# Call it from a pull_request workflow, pinned to a release tag or commit:
+# Agentvow gate (local decision): a REUSABLE workflow in two jobs, with NO credential at all (no id-token, contents: read only):
+#   replay  : checks out the pull request, replays its tests in Agentvow's sandbox, builds a minimal receipt, evaluates it under the policy from the BASE branch.
+#   decide  : applies fail-on to that decision.
+# To publish the check through the control plane service use `gate-service.yml` instead (it needs `id-token: write` and a commit-sha pin). The replay job here is identical to that file's (a test enforces it).
+# Call it from a pull_request workflow, pinned to a full commit sha:
 #
-#   permissions: { contents: read, id-token: write }     # id-token only if you set service-url
+#   permissions: { contents: read }
 #   jobs:
 #     gate:
-#       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<release tag or commit>
+#       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha>
 #       with: { fail-on: block }
 #
-# A receipt is trusted by the service only when the OIDC claim `job_workflow_ref` names THIS workflow at a pinned ref. Agentvow is installed from PyPI at an exact version (there is deliberately no way
-# to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md. Needs Agentvow 0.4.0 or later (0.4.2 recommended).
+# Agentvow is installed from PyPI at an exact version (there is deliberately no way to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md.
+# Needs Agentvow 0.4.0 or later (0.4.2 recommended).
 name: agentvow-gate
 on:
   workflow_call:
@@ -20,14 +20,6 @@ on:
         description: "Agentvow version installed from PyPI (an exact version, digits and dots)"
         type: string
         default: "0.4.2"
-      service-url:
-        description: "Control plane address; must be one of the addresses written in this workflow (ALLOWED_SERVICE_URLS). Empty: no upload; the policy is evaluated locally only"
-        type: string
-        default: ""
-      audience:
-        description: "Audience of the OIDC token requested for the control plane"
-        type: string
-        default: "agentvow-control-plane"
       policy-path:
         description: "Policy file in the BASE branch (never read from the pull request)"
         type: string
@@ -48,15 +40,8 @@ on:
       decision:
         description: "allow | needs_acknowledgement | block (the local policy evaluation)"
         value: ${{ jobs.replay.outputs.decision }}
-      service-decision:
-        description: "The control plane's decision, when service-url was set"
-        value: ${{ jobs.upload.outputs.service-decision }}
 permissions:
   contents: read
-env:
-  # The only control planes a receipt may be sent to, space separated, exact match. The hosted service address is NOT assigned yet: until it is, nothing can be uploaded. To self-host, copy this workflow into your
-  # own repository, put your service address here, and make your service trust YOUR copy's job_workflow_ref.
-  ALLOWED_SERVICE_URLS: "https://controlplane.agentvow.example"
 jobs:
   replay:
     runs-on: ubuntu-latest
@@ -74,15 +59,12 @@ jobs:
           FAIL_ON: ${{ inputs.fail-on }}
           VERSION: ${{ inputs.agentvow-version }}
           POLICY_PATH: ${{ inputs.policy-path }}
-          SERVICE_URL: ${{ inputs.service-url }}
         run: |
           case "$EVENT" in pull_request|push|workflow_dispatch) ;; *) echo "The gate runs the pull request's code and is refused on the '$EVENT' event (use pull_request, push or workflow_dispatch)."; exit 1;; esac
           case "$TEST_TIMEOUT" in ''|*[!0-9]*) echo "test-timeout must be a whole number of seconds."; exit 1;; esac
           case "$FAIL_ON" in block|needs_acknowledgement|never) ;; *) echo "fail-on must be block, needs_acknowledgement or never."; exit 1;; esac
           case "$VERSION" in ''|*[!0-9.]*|.*|*.) echo "agentvow-version must be an exact version made of digits and dots."; exit 1;; esac
           case "$POLICY_PATH" in ''|/*|*..*|*[!A-Za-z0-9_./-]*) echo "policy-path must be a plain relative path."; exit 1;; esac
-          # service-url is only a CHOICE among the addresses written into this workflow file (ALLOWED_SERVICE_URLS, exact match): the caller's workflow comes from the pull request, so it must not be able to name a server.
-          if [ -n "$SERVICE_URL" ]; then case " $ALLOWED_SERVICE_URLS " in *" $SERVICE_URL "*) ;; *) echo "service-url is not one of the addresses this workflow allows."; exit 1;; esac; fi
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -173,47 +155,8 @@ jobs:
             ${{ runner.temp }}/gate/receipt.json
             ${{ runner.temp }}/gate/result.json
           if-no-files-found: warn
-  upload:
-    needs: replay
-    if: ${{ inputs.service-url != '' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write   # the ONLY job that holds it; it never checks out or runs pull-request code. The caller's job must grant it too.
-    outputs:
-      service-decision: ${{ steps.upload.outputs.service-decision }}
-    steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          name: agentvow-gate
-          path: ${{ runner.temp }}/gate
-      - name: Post the receipt to the control plane
-        id: upload
-        shell: bash
-        working-directory: ${{ runner.temp }}
-        env:
-          SERVICE_URL: ${{ inputs.service-url }}
-          AUDIENCE: ${{ inputs.audience }}
-          EXPECTED_SHA: ${{ needs.replay.outputs.receipt-sha }}
-        run: |
-          set +e
-          GATE="$RUNNER_TEMP/gate"
-          case " $ALLOWED_SERVICE_URLS " in *" $SERVICE_URL "*) ;; *) echo "service-url is not one of the addresses this workflow allows; nothing was sent."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0;; esac
-          # The receipt about to be sent must be byte-identical to the one the replay job produced (passed as a job output, not through the artifact store), and the token is requested for THAT receipt:
-          # audience "<audience>:<sha256 of the receipt>". A token that leaks to another server can then only be replayed with this same receipt.
-          RSHA=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json" 2> /dev/null)
-          if [ -z "$RSHA" ] || [ "$RSHA" != "$EXPECTED_SHA" ]; then echo "The receipt changed between the replay job and the upload job; not sending it."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
-          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "No OIDC token is available: the calling job needs 'permissions: id-token: write'."; echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
-          TOKEN=$(curl -sS --max-time 20 -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" --get --data-urlencode "audience=$AUDIENCE:$RSHA" "$ACTIONS_ID_TOKEN_REQUEST_URL" | python3 -I -c "import json,sys;print(json.load(sys.stdin)['value'])")
-          if [ -z "$TOKEN" ]; then echo "service-decision=error" >> "$GITHUB_OUTPUT"; exit 0; fi
-          echo "::add-mask::$TOKEN"
-          RESP=$(curl -sS --max-time 30 -X POST "$SERVICE_URL/v1/receipts" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary "@$GATE/receipt.json")
-          echo "$RESP" > "$GATE/service.json"
-          DEC=$(python3 -I -c "import json,sys;d=json.load(open(sys.argv[1]));x=d.get('decision',{}).get('decision');print(x if x in ('allow','needs_acknowledgement','block') else 'error')" "$GATE/service.json" 2> /dev/null || echo error)
-          echo "service-decision=$DEC" >> "$GITHUB_OUTPUT"
-          echo "Control plane answered: $DEC"
   decide:
-    needs: [replay, upload]
+    needs: [replay]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions: {}
@@ -222,17 +165,13 @@ jobs:
         shell: bash
         env:
           DECISION: ${{ needs.replay.outputs.decision }}
-          SERVICE_DECISION: ${{ needs.upload.outputs.service-decision }}
-          SERVICE_EXPECTED: ${{ inputs.service-url != '' }}
           REPLAY_RESULT: ${{ needs.replay.result }}
           FAIL_ON: ${{ inputs.fail-on }}
         run: |
           D=$(python3 -I -c "
           import sys
-          rank = {'allow': 0, 'needs_acknowledgement': 1, 'block': 2}
-          local = sys.argv[1] if sys.argv[1] in rank and sys.argv[4] == 'success' else 'block'
-          svc = (sys.argv[2] if sys.argv[2] in rank else 'block') if sys.argv[3] == 'true' else None
-          print(max([local] + ([svc] if svc else []), key=lambda x: rank[x]))" "$DECISION" "$SERVICE_DECISION" "$SERVICE_EXPECTED" "$REPLAY_RESULT")
+          ok = ('allow', 'needs_acknowledgement', 'block')
+          print(sys.argv[1] if sys.argv[1] in ok and sys.argv[2] == 'success' else 'block')" "$DECISION" "$REPLAY_RESULT")
           echo "effective decision: $D"
           case "$FAIL_ON" in
             never) exit 0 ;;

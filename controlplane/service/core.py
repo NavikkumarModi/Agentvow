@@ -20,6 +20,9 @@ WRITE = ("write", "admin", "maintain")
 CONCLUSIONS = {"success": "success", "failure": "failure", "action_required": "action_required"}   # neutral and skipped would PASS a required check: never used
 
 
+SHA_REF = re.compile(r".+/\.github/workflows/[^@]+@[0-9a-f]{40}")
+
+
 @dataclass
 class Config:
     trusted_workflows: frozenset = frozenset()          # exact job_workflow_ref values, each with its pinned ref
@@ -32,6 +35,7 @@ class Config:
     per_minute: int = 30
     retention_days: dict = field(default_factory=lambda: {"free": 30, "team": 365, "business": 730})
     erase_after_uninstall_days: int = 30
+    allow_mutable_refs: bool = False   # development only: trust a workflow pinned by tag or branch
     dashboard_rows: int = 500
 
 
@@ -69,6 +73,10 @@ def _repo_ok(repo) -> bool:
 class Service:
     def __init__(self, cfg: Config, verifier, github, store, now=time.time):
         self.cfg, self.oidc, self.gh, self.store, self.now = cfg, verifier, github, store, now
+        if not cfg.allow_mutable_refs:
+            mutable = [w for w in cfg.trusted_workflows if not SHA_REF.fullmatch(w)]
+            if mutable:
+                raise ValueError(f"trusted workflows must be pinned to a full 40-character commit sha (a tag or branch can be moved): {sorted(mutable)[0]}")
         self.limiter = RateLimiter(cfg.per_minute, now=now)
         self.locks = [threading.RLock() for _ in range(64)]   # one publisher at a time per (repository, commit)
 
@@ -97,8 +105,11 @@ class Service:
         repo = r["repo"]
         if not _repo_ok(repo) or claims.get("repository") != repo:
             return 403, {"error": "the token is for another repository than the receipt claims"}
-        if str(claims.get("job_workflow_ref", "")) not in self.cfg.trusted_workflows:
+        wf = str(claims.get("job_workflow_ref", ""))
+        if wf not in self.cfg.trusted_workflows:
             return 403, {"error": "receipts are accepted only from the exact trusted gate workflow at its pinned ref"}
+        if SHA_REF.fullmatch(wf) and claims.get("job_workflow_sha") != wf.rsplit("@", 1)[1]:   # defence in depth: the claim that names the commit must agree with the pin (seen live, 2026-10-26)
+            return 403, {"error": "the workflow commit in the token does not match the pinned commit"}
         event = claims.get("event_name")
         if event not in self.cfg.events:
             return 403, {"error": "the token comes from an event the service does not accept"}

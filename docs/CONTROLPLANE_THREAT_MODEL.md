@@ -32,3 +32,8 @@ Hosting execution of customer code (a different and much larger threat model: a 
 
 ## 6. Phase-1 review (2026-10-22)
 An independent adversarial review of the built service found four routes to a green check without evidence and several smaller defects; all were fixed. Record and residuals: `docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`. **Required for correctness of this model:** branch protection must name the Agentvow App as the *source* of the required check `agentvow/evidence`; with source "any", a repository writer's own `GITHUB_TOKEN` can post a check with that name.
+
+## 7. Added 2026-10-26 (after an external review and live checks)
+* **The trusted workflow is a commit, not a name.** The service refuses to start unless every trusted `job_workflow_ref` ends in a full 40-character sha, and requires the signed `job_workflow_sha` claim to agree. A tag or branch can be moved; a sha cannot. Seen live: for a caller that pins by sha, both `job_workflow_ref` and `job_workflow_sha` carry that sha.
+* **Local-only use needs no credential.** `gate.yml` (replay, decide) has no OIDC permission at all; only `gate-service.yml` has an upload job with `id-token: write`, and only that file is trusted by the service. The two replay jobs are identical (tested).
+* **Replay integrity remains a residual risk** (reviewer note, accepted): the job that runs the pull request's code produces the receipt; a sandbox escape or a hostile test harness can forge or suppress results, and the upload job would sign for what it is given. What this model defends is the *transport and identity* of the receipt, not the truthfulness of a result written by hostile code (`docs/TRUST_MODEL.md`).
