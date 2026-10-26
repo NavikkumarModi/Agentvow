@@ -11,7 +11,7 @@
 #       with: { fail-on: block }
 #
 # Agentvow is installed from PyPI at an exact version (there is deliberately no way to install it from the pull request's own checkout). This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md.
-# Needs Agentvow 0.4.0 or later (0.4.3 recommended).
+# Needs Agentvow 0.4.0 or later (0.4.4 recommended).
 name: agentvow-gate
 on:
   workflow_call:
@@ -19,7 +19,7 @@ on:
       agentvow-version:
         description: "Agentvow version installed from PyPI (an exact version, digits and dots)"
         type: string
-        default: "0.4.3"
+        default: "0.4.4"
       policy-path:
         description: "Policy file in the BASE branch (never read from the pull request)"
         type: string

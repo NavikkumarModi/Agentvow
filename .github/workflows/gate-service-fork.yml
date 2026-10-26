@@ -20,7 +20,7 @@ on:
       agentvow-version:
         description: "Agentvow version installed from PyPI (an exact version, digits and dots)"
         type: string
-        default: "0.4.3"
+        default: "0.4.4"
       service-url:
         description: "Control plane address; must be one of the addresses written in this workflow (ALLOWED_SERVICE_URLS). Required"
         type: string
