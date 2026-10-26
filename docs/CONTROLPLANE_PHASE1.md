@@ -6,7 +6,7 @@ Status (2026-10-26), as a matrix instead of a sentence:
 |---|---|
 | Receipt upload, OIDC verification, policy, check run, acknowledgement by comment, audit export | **Live-tested** once against real GitHub from a laptop behind a tunnel (`docs/LIVE_TESTING.md`, 2026-10-23: 10 acceptance tests passed after two defects were fixed) |
 | Required check pinned to the App as its source; a spoofed check from `GITHUB_TOKEN` did not count | **Live-tested** (same run) |
-| Commit-sha pins for the trusted workflow, `job_workflow_sha` check, the split into `gate.yml` and `gate-service.yml` | **Tested against fakes and the workflow's own steps; the new pins and files have not yet been run on real GitHub** (the `job_workflow_sha` claim itself was seen live on 2026-10-26) |
+| Commit-sha pins for the trusted workflow, `job_workflow_sha` check, the split into `gate.yml` and `gate-service.yml` | **Live-tested 2026-10-26** (`docs/LIVE_TESTING.md`): a sha-pinned caller was accepted and published the check; another commit of the same file and a branch-name pin were refused with 403; a tag-pinned configuration is refused at startup. The pending check and acknowledgement flows were not re-run with the new files |
 | Account plans, retention, erasure driven by GitHub's answer, dashboard, backup, image, compose recipe | **Tested against fakes**; the image builds and runs (local Docker and CI); never on a hosted machine |
 | Installation events (`installation`, `installation_repositories`) | Handled per GitHub's documented shape; **never seen live** |
 | Fork pull requests, real concurrency, rate limits, macOS runners, private repositories on a paid plan | **Not tested** |
