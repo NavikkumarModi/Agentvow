@@ -58,7 +58,9 @@ class FakeGH:
     def permission(self, repo, login): return self.perm
     def set_check(self, repo, sha, name, status, conclusion, title, summary, check_id=None):
         self.checks.append((repo, sha, name, status, conclusion, title, summary)); return 100 + len(self.checks)
-    def comment(self, repo, n, text): self.comments.append(text)
+    def comment(self, repo, n, text):
+        if getattr(self, 'comment_fails', False): raise GitHubError('comment refused', 403)
+        self.comments.append((text if n == 7 else f'[PR {n}] ' + text))
 
 
 def make(gh=None, **cfg):
@@ -580,6 +582,47 @@ class PlainCheckText(unittest.TestCase):
         rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
         ev = {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid[:12]}", "user": {"login": "alice", "type": "User"}}}
         hook(s, "issue_comment", ev); self.assertIn("now allows this change", gh.comments[-1]); self.assertNotIn("Decision:", gh.comments[-1])
+
+
+class Notification(unittest.TestCase):
+    def setup(self, **cfg):
+        s, gh = make(**cfg); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice", "bob"]}); return s, gh
+    def test_the_listed_acknowledgers_are_mentioned_once_when_a_change_first_needs_an_acknowledgement(self):
+        s, gh = self.setup(); post(s, receipt("UNKNOWN"))
+        self.assertEqual(len(gh.comments), 1); c = gh.comments[0]
+        self.assertTrue(c.startswith("@alice @bob Agentvow needs a person to look at this pull request")); rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        self.assertIn(f"/agentvow acknowledge {rid[:12]}", c); self.assertIn("What this does not show", c)
+        # a republish, a reopen, the same receipt again, a retry: no second comment
+        hook(s, "pull_request", {**Hooks.PR, "action": "reopened"}); post(s, receipt("UNKNOWN")); s.reconcile(); s._refresh("o/n", COMMIT, "main")
+        self.assertEqual(len(gh.comments), 1)
+    def test_a_new_receipt_or_a_new_commit_is_a_new_request(self):
+        s, gh = self.setup(); post(s, receipt("UNKNOWN"), run_id=1); post(s, receipt("UNKNOWN", created_at="2"), run_id=2)
+        self.assertEqual(len(gh.comments), 2)   # the newer receipt is a different receipt to acknowledge
+    def test_nothing_is_said_when_nothing_needs_a_person_or_when_there_is_no_pull_request(self):
+        s, gh = self.setup(); post(s); post(s, receipt("CONTRADICTED", created_at="2"), run_id=9)
+        self.assertEqual(gh.comments, [])   # allow, then block: nobody can acknowledge a contradiction
+        s2, gh2 = self.setup(); post(s2, receipt("UNKNOWN", pr=None), event_name="push", sha=COMMIT); self.assertEqual(gh2.comments, [])   # a push has no pull request to comment on
+    def test_no_listed_acknowledger_is_said_plainly_and_nobody_is_mentioned(self):
+        s, gh = make(); gh.policy = None; post(s, receipt("UNKNOWN"))
+        self.assertEqual(len(gh.comments), 1); self.assertTrue(gh.comments[0].startswith("Agentvow needs a person")); self.assertIn("lists no acknowledger", gh.comments[0]); self.assertNotIn("@", gh.comments[0].split("\n")[0])
+    def test_mentions_are_cleaned_and_capped(self):
+        s, gh = make(max_mentions=3); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["a1", "a2", "a3", "a4", "e<script>x", "b|c"]}); post(s, receipt("UNKNOWN"))
+        first = gh.comments[0].split("\n")[0]; self.assertEqual(first.count("@"), 3); self.assertNotIn("a4", first)
+        s2, gh2 = make(); gh2.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["e<script>x", "b|c"]}); post(s2, receipt("UNKNOWN"))
+        self.assertNotIn("<script>", gh2.comments[0]); self.assertNotIn("|", gh2.comments[0].split("\n")[0])
+    def test_a_failing_comment_never_breaks_the_check_and_is_retried(self):
+        s, gh = self.setup(); gh.comment_fails = True
+        code, o = post(s, receipt("UNKNOWN")); self.assertEqual(code, 200); self.assertEqual(gh.checks[-1][4], "action_required"); self.assertEqual(gh.comments, [])
+        gh.comment_fails = False; s._refresh("o/n", COMMIT, "main"); self.assertEqual(len(gh.comments), 1)   # not marked as sent, so the next refresh tries again
+    def test_a_loop_of_pushes_cannot_spam_the_acknowledgers(self):
+        s, gh = self.setup(per_minute=1000, max_notifications_per_hour=3)
+        for i in range(8): post(s, receipt("UNKNOWN", created_at=str(i)), run_id=i + 1)
+        self.assertEqual(len(gh.comments), 3); self.assertEqual(gh.checks[-1][4], "action_required")   # the check itself is always published
+
+    def test_it_can_be_switched_off_and_erasure_forgets_it(self):
+        s, gh = self.setup(notify=False); post(s, receipt("UNKNOWN")); self.assertEqual(gh.comments, []); self.assertEqual(gh.checks[-1][4], "action_required")
+        s2, gh2 = self.setup(); post(s2, receipt("UNKNOWN")); self.assertEqual(s2.store.q("select count(*) from notified")[0][0], 1)
+        s2.store.erase_repo("o/n"); self.assertEqual(s2.store.q("select count(*) from notified")[0][0], 0)
 
 
 class Smoke(unittest.TestCase):

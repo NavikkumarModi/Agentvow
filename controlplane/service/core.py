@@ -39,6 +39,9 @@ class Config:
     min_tool_version: str = "0.4.3"   # receipts made by an older Agentvow are refused: the workflow is pinned by sha, the code that builds the receipt must not be an older, weaker version
     allow_mutable_refs: bool = False   # development only: trust a workflow pinned by tag or branch
     dashboard_rows: int = 500
+    notify: bool = True   # comment on the pull request, mentioning the listed acknowledgers, when a change first needs an acknowledgement
+    max_mentions: int = 10
+    max_notifications_per_hour: int = 20   # per repository
 
 
 class RateLimiter:
@@ -88,6 +91,7 @@ class Service:
             if mutable:
                 raise ValueError(f"trusted workflows must be pinned to a full 40-character commit sha (a tag or branch can be moved): {sorted(mutable)[0]}")
         self.limiter = RateLimiter(cfg.per_minute, now=now)
+        self.notify_limiter = RateLimiter(cfg.max_notifications_per_hour, window=3600.0, now=now)   # a writer who pushes in a loop must not be able to spam the acknowledgers
         self.locks = [threading.RLock() for _ in range(64)]   # one publisher at a time per (repository, commit)
 
     # ------------------------------------------------------------------ receipts
@@ -192,7 +196,27 @@ class Service:
                 self.store.mark_dirty(repo, commit)
                 raise
             self.store.clear_dirty(repo, commit)
+            self._notify(repo, commit, result)
             return result, cid
+
+    def _notify(self, repo, commit, result) -> None:
+        """When a change first needs a person's acknowledgement, say so ON THE PULL REQUEST and mention the listed acknowledgers (GitHub then notifies them). Once per (commit, set of receipts): a republish,
+        a reopen, a retry or a restart does not repeat it; a new push or a new receipt does. Never breaks the check: a failure is swallowed and retried at the next refresh."""
+        try:
+            if not self.cfg.notify or result.get("decision") != "needs_acknowledgement":
+                return
+            ids = list(result.get("receipts") or [])
+            pr = next((r["pr"] for rid, r in self.store.latest_receipts(repo, commit) if r.get("pr")), None)
+            key = hashlib.sha256("|".join(sorted(ids)).encode()).hexdigest()[:16]
+            if not ids or not pr or self.store.was_notified(repo, commit, key) or not self.notify_limiter.ok("notify:" + repo):
+                return
+            who = [a for a in result.get("acknowledgers") or [] if isinstance(a, str)]
+            mention = " ".join("@" + _clean(a, 39) for a in who[:self.cfg.max_mentions])
+            head = (mention + " " if mention else "") + "Agentvow needs a person to look at this pull request before it can merge."
+            self.gh.comment(repo, int(pr), head + "\n\n" + E.explain(result, ids, who))
+            self.store.mark_notified(repo, commit, key)
+        except Exception:
+            return
 
     def reconcile(self) -> None:
         """Re-publish check runs whose last publish failed (best effort; called on every receipt and webhook and by the background loop)."""

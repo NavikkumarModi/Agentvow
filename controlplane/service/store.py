@@ -16,6 +16,7 @@ create table if not exists acks(repo text not null, receipt_id text not null, by
 create index if not exists acks_receipt on acks(repo, receipt_id);
 create table if not exists plans(repo text primary key, plan text not null, until real);
 create table if not exists keys(repo text primary key, key_hash text not null);
+create table if not exists notified(repo text not null, commit_sha text not null, key text not null, at real not null, primary key(repo, commit_sha, key));
 create table if not exists meta(k text primary key, v text not null);
 create table if not exists gone_since(repo text primary key, since real not null);
 create table if not exists installs(installation_id integer primary key, account text not null, deleted_at real);
@@ -184,6 +185,7 @@ class Store:
             try:
                 for t in ("receipts", "checks", "acks", "plans", "keys", "usage", "repo_ids", "dirty", "install_repos", "gone_since"):
                     self.db.execute(f"delete from {t} where repo=?", (repo,))
+                self.db.execute("delete from notified where repo=?", (repo,))
                 self.db.execute("delete from plans where repo=?", (repo.lower(),))
                 self.db.execute("commit")
             except BaseException:
@@ -202,6 +204,12 @@ class Store:
             self.db.execute("insert or ignore into gone_since values(?,?)", (repo, time.time()))
             since = self.db.execute("select since from gone_since where repo=?", (repo,)).fetchone()[0]
             return since < time.time() - grace_days * 86400
+
+    def was_notified(self, repo, commit, key) -> bool:
+        return bool(self.q("select 1 from notified where repo=? and commit_sha=? and key=?", repo, commit, key))
+
+    def mark_notified(self, repo, commit, key) -> None:
+        self.q("insert or ignore into notified values(?,?,?,?)", repo, commit, key, time.time())
 
     def get_meta(self, k, default=None):
         r = self.q("select v from meta where k=?", k)
