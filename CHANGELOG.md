@@ -1,6 +1,7 @@
 # Changelog
 
-## Unreleased
+## 0.4.4 (not yet published)
+Plain-language explanations of every decision, a wider warning when a change could have shaped its own test output, and the control plane service features that arrived with them (notification, policy refresh, an experimental fork path). Items marked "repository" are not in the wheel.
 - **Harness warning also for test-runner configuration**: a change to `pytest.ini` or `.coveragerc`, or to pytest/coverage settings in `pyproject.toml`, `setup.cfg`, `tox.ini` (it can deselect a failing test without touching a test file), now downgrades SUPPORTED to NOT_CONTRADICTED with the same wording; ordinary edits of the shared files do not.
 - **Check text fixes** (`explain`): a rule the policy sets to block is no longer offered an acknowledgement; only receipts that actually need one are listed (each needs its own comment); the requirements for an acknowledger are stated; a supported result a policy wants confirmed asks for a person.
 - Repository (not in the wheel), from the fifth review: the policy refresh is per commit and store-based (no page limit, no stale decision after a concurrent fresh one); a failing notification comment uses none of the hourly allowance and nothing is posted on a closed pull request; only plain user logins are mentioned; `notified` and per-commit policy rows are pruned.

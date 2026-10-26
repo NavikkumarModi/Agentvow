@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentvow"
-version = "0.4.3"
+version = "0.4.4"
 description = "Check a coding agent's claims against the repository before you approve."
 readme = "README.md"
 license = { text = "MIT" }
