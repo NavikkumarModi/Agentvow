@@ -26,7 +26,8 @@ SHA_REF = re.compile(r".+/\.github/workflows/[^@]+@[0-9a-f]{40}")
 
 @dataclass
 class Config:
-    trusted_workflows: frozenset = frozenset()          # exact job_workflow_ref values, each with its pinned ref
+    trusted_workflows: frozenset = frozenset()          # exact job_workflow_ref values, each pinned to a full commit sha
+    fork_workflows: frozenset = frozenset()             # EXPERIMENTAL, off unless set: the fork gate workflow(s) (gate-service-fork.yml at a full sha), accepted only for pull_request_target receipts (docs/FORK_PRS.md)
     events: frozenset = frozenset({"pull_request", "push", "workflow_dispatch"})
     webhook_secret: bytes = b""
     policy_path: str = ".agentvow/policy.json"
@@ -87,7 +88,7 @@ class Service:
     def __init__(self, cfg: Config, verifier, github, store, now=time.time):
         self.cfg, self.oidc, self.gh, self.store, self.now = cfg, verifier, github, store, now
         if not cfg.allow_mutable_refs:
-            mutable = [w for w in cfg.trusted_workflows if not SHA_REF.fullmatch(w)]
+            mutable = [w for w in (*cfg.trusted_workflows, *cfg.fork_workflows) if not SHA_REF.fullmatch(w)]
             if mutable:
                 raise ValueError(f"trusted workflows must be pinned to a full 40-character commit sha (a tag or branch can be moved): {sorted(mutable)[0]}")
         self.limiter = RateLimiter(cfg.per_minute, now=now)
@@ -122,16 +123,21 @@ class Service:
         if not _repo_ok(repo) or claims.get("repository") != repo:
             return 403, {"error": "the token is for another repository than the receipt claims"}
         wf = str(claims.get("job_workflow_ref", ""))
-        if wf not in self.cfg.trusted_workflows:
+        # a pull_request_target receipt (a fork pull request) is accepted only from the fork workflow, and every other event only from the regular one: neither list can stand in for the other
+        allowed = self.cfg.fork_workflows if claims.get("event_name") == "pull_request_target" else self.cfg.trusted_workflows
+        if wf not in allowed:
             return 403, {"error": "receipts are accepted only from the exact trusted gate workflow at its pinned ref"}
         if SHA_REF.fullmatch(wf) and claims.get("job_workflow_sha") != wf.rsplit("@", 1)[1]:   # defence in depth: the claim that names the commit must agree with the pin (seen live, 2026-10-26)
             return 403, {"error": "the workflow commit in the token does not match the pinned commit"}
         event = claims.get("event_name")
-        if event not in self.cfg.events:
+        if event not in self.cfg.events and not (event == "pull_request_target" and self.cfg.fork_workflows):
             return 403, {"error": "the token comes from an event the service does not accept"}
         if event == "pull_request":
             if not r.get("pr") or claims.get("ref") != f"refs/pull/{r['pr']}/merge":
                 return 403, {"error": "the token's pull request is not the receipt's pull request"}
+        elif event == "pull_request_target":
+            if not r.get("pr"):   # the run's own sha is the base branch's head, so this event is bound through the pull request and the base branch below
+                return 403, {"error": "a pull_request_target receipt must name its pull request"}
         elif claims.get("sha") != r["commit"]:
             return 403, {"error": "the token's commit is not the receipt's commit"}
         if not self.limiter.ok("repo:" + repo):
@@ -150,6 +156,8 @@ class Service:
                 pr = self.gh.pr_info(repo, r["pr"])
                 if not pr or pr["head_sha"] != r["commit"]:
                     return 422, {"error": "the receipt's commit is not the head of that pull request"}
+                if event == "pull_request_target" and claims.get("ref") != f"refs/heads/{pr['base_ref']}":
+                    return 403, {"error": "the token's run was not triggered for the base branch of that pull request"}
         except GitHubError as e:
             return 502, {"error": f"GitHub could not confirm the receipt ({_clean(e)})"}
         rid = P.sha(r)

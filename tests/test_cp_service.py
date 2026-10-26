@@ -683,6 +683,39 @@ class PolicyRefresh(unittest.TestCase):
         self.assertIn("push", R.EVENTS)
 
 
+class ForkGate(unittest.TestCase):
+    """EXPERIMENTAL fork path: pull_request_target receipts from the fork workflow only (docs/FORK_PRS.md)."""
+    FSHA = "d" * 40; FWF = f"o/gate/.github/workflows/gate-service-fork.yml@{FSHA}"
+    def svc(self, fork=True):
+        return make(fork_workflows=frozenset({self.FWF}) if fork else frozenset())
+    def fpost(self, s, r=None, **c):
+        kw = dict(event_name="pull_request_target", ref="refs/heads/main", job_workflow_ref=self.FWF, job_workflow_sha=self.FSHA, sha="9" * 40); kw.update(c)
+        return post(s, r or receipt(), **kw)
+    def test_a_fork_receipt_is_accepted_from_the_fork_workflow_for_the_pull_requests_base_branch(self):
+        s, gh = self.svc(); code, o = self.fpost(s); self.assertEqual(code, 200); self.assertEqual(gh.checks[-1][4], "success")
+    def test_it_is_off_unless_a_fork_workflow_is_configured(self):
+        s, gh = self.svc(fork=False); self.assertEqual(self.fpost(s)[0], 403); self.assertEqual(gh.checks, [])
+    def test_neither_workflow_list_can_stand_in_for_the_other(self):
+        s, gh = self.svc()
+        self.assertEqual(self.fpost(s, job_workflow_ref=WF, job_workflow_sha=GATE_SHA)[0], 403)         # the regular workflow under pull_request_target
+        self.assertEqual(post(s, job_workflow_ref=self.FWF, job_workflow_sha=self.FSHA)[0], 403)        # the fork workflow under pull_request
+        self.assertEqual(post(s, receipt(pr=None), event_name="push", sha=COMMIT, job_workflow_ref=self.FWF, job_workflow_sha=self.FSHA)[0], 403)
+        self.assertEqual(gh.checks, [])
+    def test_the_run_must_be_for_the_base_branch_of_that_pull_request_and_the_commit_must_still_be_its_head(self):
+        s, gh = self.svc()
+        self.assertEqual(self.fpost(s, ref="refs/heads/other")[0], 403)               # a run triggered for another branch
+        self.assertEqual(self.fpost(s, ref="refs/pull/7/merge")[0], 403)
+        self.assertEqual(self.fpost(s, receipt(pr=None))[0], 403)                       # no pull request named
+        gh.head = "e" * 40; self.assertEqual(self.fpost(s)[0], 422)                     # the head moved after the label: the receipt is for a commit nobody looked at
+        self.assertEqual(gh.checks, [])
+    def test_the_fork_workflow_must_be_pinned_to_a_sha_and_agree_with_the_token(self):
+        with self.assertRaises(ValueError): Service(Config(fork_workflows=frozenset({"o/g/.github/workflows/gate-service-fork.yml@refs/tags/v1"}), webhook_secret=b"x"), None, None, Store())
+        s, gh = self.svc(); self.assertEqual(self.fpost(s, job_workflow_sha="a" * 40)[0], 403)
+    def test_ordinary_events_are_unaffected_when_the_fork_path_is_on(self):
+        s, gh = self.svc(); self.assertEqual(post(s)[0], 200)
+        self.assertEqual(post(s, receipt(created_at="2"), event_name="schedule")[0], 403)
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke

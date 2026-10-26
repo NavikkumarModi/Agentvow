@@ -28,7 +28,7 @@ def build_service(env=os.environ) -> Service:
     pem = env.get("AGENTVOW_CP_PRIVATE_KEY") or (Path(env["AGENTVOW_CP_PRIVATE_KEY_FILE"]).read_text() if env.get("AGENTVOW_CP_PRIVATE_KEY_FILE") else "")
     if not pem:
         raise RuntimeError("missing environment variable AGENTVOW_CP_PRIVATE_KEY (or AGENTVOW_CP_PRIVATE_KEY_FILE, preferred: the key is then not in the process environment)")
-    cfg = Config(policy_path=env.get("AGENTVOW_CP_POLICY_PATH", ".agentvow/policy.json"), trusted_workflows=frozenset(x.strip() for x in env["AGENTVOW_CP_TRUSTED_WORKFLOWS"].split(",") if x.strip()), webhook_secret=secret.encode(), allow_mutable_refs=env.get("AGENTVOW_CP_ALLOW_MUTABLE_REFS") == "1", min_tool_version=env.get("AGENTVOW_CP_MIN_TOOL_VERSION", "0.4.3"), notify=env.get("AGENTVOW_CP_NOTIFY", "1") != "0")
+    cfg = Config(policy_path=env.get("AGENTVOW_CP_POLICY_PATH", ".agentvow/policy.json"), trusted_workflows=frozenset(x.strip() for x in env["AGENTVOW_CP_TRUSTED_WORKFLOWS"].split(",") if x.strip()), fork_workflows=frozenset(x.strip() for x in env.get("AGENTVOW_CP_FORK_WORKFLOWS", "").split(",") if x.strip()), webhook_secret=secret.encode(), allow_mutable_refs=env.get("AGENTVOW_CP_ALLOW_MUTABLE_REFS") == "1", min_tool_version=env.get("AGENTVOW_CP_MIN_TOOL_VERSION", "0.4.3"), notify=env.get("AGENTVOW_CP_NOTIFY", "1") != "0")
     return Service(cfg, OidcVerifier(env["AGENTVOW_CP_AUDIENCE"]), GitHub(env["AGENTVOW_CP_APP_ID"], pem.replace("\\n", "\n").encode()), Store(env.get("AGENTVOW_CP_DB", "/data/controlplane.db")))
 
 

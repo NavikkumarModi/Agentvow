@@ -9,7 +9,8 @@ Status (2026-10-26), as a matrix instead of a sentence:
 | Commit-sha pins for the trusted workflow, `job_workflow_sha` check, the split into `gate.yml` and `gate-service.yml` | **Live-tested 2026-10-26** (`docs/LIVE_TESTING.md`): a sha-pinned caller was accepted and published the check; another commit of the same file and a branch-name pin were refused with 403; a tag-pinned configuration is refused at startup. The pending check on open and the acknowledgement flow (bare, wrong id, correct id) were re-run with the sha-pinned files the same day: they work |
 | Account plans, retention, erasure driven by GitHub's answer, dashboard, backup, image, compose recipe | **Tested against fakes**; the image builds and runs (local Docker and CI); never on a hosted machine |
 | Installation events (`installation`, `installation_repositories`) | Handled per GitHub's documented shape; **never seen live** |
-| Fork pull requests, real concurrency, rate limits, macOS runners, private repositories on a paid plan | **Not tested** |
+| Fork pull requests | **Experimental, opt-in** (`docs/FORK_PRS.md`: `gate-service-fork.yml`, `AGENTVOW_CP_FORK_WORKFLOWS`): tested against fakes and the workflow's own guard; **never run on GitHub** (needs a second account) |
+| Real concurrency, rate limits, macOS runners, private repositories on a paid plan | **Not tested** |
 | Deployment (domain, TLS, hosting, billing, monitoring, privacy policy) | **Not done**; needs the owner's accounts |
 | Adversarial review | Three rounds, findings fixed (`docs/review/CONTROLPLANE_REVIEW_2026-10-22.md`); the fixes of the third round and the later changes have had no further review |
 

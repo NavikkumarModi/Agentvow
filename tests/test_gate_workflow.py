@@ -13,6 +13,7 @@ try:
 except ImportError:
     yaml = None
 WF = ROOT / ".github" / "workflows" / "gate-service.yml"   # the workflow the control plane trusts (replay, upload, decide)
+WF_FORK = ROOT / ".github" / "workflows" / "gate-service-fork.yml"   # EXPERIMENTAL: pull_request_target, only after a maintainer applies a label
 WF_LOCAL = ROOT / ".github" / "workflows" / "gate.yml"      # the local-decision workflow (replay, decide; no credential at all)
 SECRET = b"sim-secret"
 TRUSTED = "trusted-owner/gate"
@@ -79,6 +80,44 @@ class LocalWorkflow(unittest.TestCase):
         self.assertEqual(self.run_decide("", fail_on="block"), 1)              # the replay produced nothing
         self.assertEqual(self.run_decide("allow", replay="failure"), 1)        # the replay job itself failed
         self.assertEqual(self.run_decide("garbage"), 1)
+
+
+@unittest.skipIf(yaml is None, "PyYAML not installed")
+class ForkWorkflow(unittest.TestCase):
+    """gate-service-fork.yml differs from gate-service.yml in the header and ONE step: the guard."""
+    def load(self, p):
+        return yaml.safe_load(p.read_text())
+
+    def test_everything_but_the_guard_step_is_identical_to_the_service_workflow(self):
+        a, b = self.load(WF), self.load(WF_FORK)
+        ra, rb = a["jobs"]["replay"], b["jobs"]["replay"]
+        self.assertNotEqual(ra["steps"][0], rb["steps"][0])
+        self.assertEqual(ra["steps"][1:], rb["steps"][1:]); self.assertEqual({k: v for k, v in ra.items() if k != "steps"}, {k: v for k, v in rb.items() if k != "steps"})
+        for job in ("upload", "decide"): self.assertEqual(a["jobs"][job], b["jobs"][job])
+        self.assertEqual(a[True], b[True]); self.assertEqual(a["permissions"], b["permissions"]); self.assertEqual(a["env"], b["env"])
+        self.assertEqual(set(b[True]), {"workflow_call"})
+
+    def guard(self, event, action="", label=""):
+        env = {**os.environ, "EVENT": event, "ACTION": action, "LABEL": label, "TEST_TIMEOUT": "900", "FAIL_ON": "block", "VERSION": "0.4.3", "POLICY_PATH": "agentvow-policy.json"}
+        return subprocess.run(["bash", "-c", self.load(WF_FORK)["jobs"]["replay"]["steps"][0]["run"]], env=env, capture_output=True, text=True).returncode
+
+    def test_it_runs_only_for_pull_request_target_after_the_label_was_applied(self):
+        self.assertEqual(self.guard("pull_request_target", "labeled", "agentvow-fork-gate"), 0)
+        for ev, act, lab in (("pull_request_target", "opened", ""), ("pull_request_target", "synchronize", ""), ("pull_request_target", "labeled", "bug"), ("pull_request_target", "labeled", "agentvow-fork-gate-x"),
+                             ("pull_request_target", "unlabeled", "agentvow-fork-gate"), ("pull_request", "labeled", "agentvow-fork-gate"), ("push", "", ""), ("workflow_dispatch", "", ""), ("issue_comment", "created", "")):
+            self.assertEqual(self.guard(ev, act, lab), 1, (ev, act, lab))
+
+    def test_the_regular_workflows_still_refuse_pull_request_target(self):
+        for wf in (WF, WF_LOCAL):
+            guard = yaml.safe_load(wf.read_text())["jobs"]["replay"]["steps"][0]["run"]
+            r = subprocess.run(["bash", "-c", guard], env={**os.environ, "EVENT": "pull_request_target", "TEST_TIMEOUT": "9", "FAIL_ON": "block", "VERSION": "0.4.3", "POLICY_PATH": "p.json"}, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 1, wf.name)
+
+    def test_the_replay_job_still_has_no_token(self):
+        j = self.load(WF_FORK)["jobs"]
+        self.assertEqual(j["replay"]["permissions"], {"contents": "read"}); self.assertEqual(j["upload"]["permissions"], {"contents": "read", "id-token": "write"})
+        co = next(s for s in j["replay"]["steps"] if str(s.get("uses", "")).startswith("actions/checkout"))
+        self.assertIs(co["with"]["persist-credentials"], False)
 
 
 @unittest.skipIf(yaml is None, "PyYAML not installed")
