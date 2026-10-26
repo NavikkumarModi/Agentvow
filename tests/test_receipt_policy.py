@@ -51,6 +51,28 @@ class Provenance(unittest.TestCase):
         self.assertIsNone(policy.validate_receipt({k: v for k, v in self.claim_receipt().items()}))   # receipts without the fields stay valid
 
 
+class HarnessWarningPolicy(unittest.TestCase):
+    def rcpt(self, kinds, verdict="NOT_CONTRADICTED"):
+        d = json.loads(json.dumps(DECISION)); f = d["findings"][0]; f["verdict"] = verdict; f["meta"]["harness_warning"] = kinds
+        return policy.build_receipt(d, "o/n", "b" * 40)
+    def test_the_receipt_records_why_and_the_policy_asks_a_person_by_default(self):
+        r = self.rcpt(["modified_test_file", "autorun_file"]); self.assertEqual(r["claims"][0]["harness_warning"], ["modified_test_file", "autorun_file"])
+        res = policy.evaluate(r); self.assertEqual(res["decision"], "needs_acknowledgement"); self.assertIn("harness_warning", [x["rule"] for x in res["reasons"]])
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "harness_warning": "allow"})["decision"], "allow")
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "harness_warning": "block"})["decision"], "block")
+        self.assertEqual(policy.evaluate(self.rcpt([]))["decision"], "allow")                                  # nothing touched: no question
+        a = {"schema": policy.ACK, "receipt_sha": policy.sha(r), "by": "alice", "at": "t", "note": "read it"}
+        self.assertEqual(policy.evaluate(r, {"schema": policy.POLICY, "acknowledgers": ["alice"]}, [a])["decision"], "allow")   # a named person can accept it
+    def test_it_applies_to_supported_results_only_and_a_contradiction_still_blocks(self):
+        self.assertEqual(policy.evaluate(self.rcpt(["test_config"], "CONTRADICTED"))["decision"], "block")
+        res = policy.evaluate(self.rcpt(["test_config"], "UNKNOWN")); self.assertNotIn("harness_warning", [x["rule"] for x in res["reasons"]])
+    def test_a_receipt_without_the_field_is_unaffected_and_the_field_is_validated(self):
+        r = self.rcpt([]); [c.pop("harness_warning") for c in r["claims"]]; self.assertEqual(policy.evaluate(r)["decision"], "allow"); self.assertIsNone(policy.validate_receipt(r))
+        for bad in ("x", ["a"] * 6, ["x" * 41], [1]):
+            r = self.rcpt([]); r["claims"][0]["harness_warning"] = bad; self.assertIsNotNone(policy.validate_receipt(r), repr(bad))
+        self.assertIsNotNone(policy.validate_policy({"schema": policy.POLICY, "harness_warning": "bogus"})); self.assertIn("harness_warning", policy.DEFAULT_POLICY)
+
+
 class ReceiptCommit(unittest.TestCase):
     def test_a_check_that_could_not_collect_still_gives_a_valid_receipt_for_the_checked_out_commit(self):
         # found by installing 0.4.1 from PyPI: on a repository without a usable base the check reports commit "?", and 0.4.1's stricter receipt validation then made the receipt a block

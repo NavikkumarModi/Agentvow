@@ -104,11 +104,20 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
             findings.append(_compat(c, repo, base, changed))
         else:
             findings.append(Finding(c.text, c.kind, "UNKNOWN", "Agentvow has no check for this kind of claim; it is unverified."))
-    touched = [f for f in changed if (R.is_test(f) and R.existed_at(repo, base, f)) or _runs_at_test_start(f) or _test_config_changed(repo, base, f)]
+    kinds: dict = {}   # why a change could have shaped its own test output -> the files (receipt and policy: `harness_warning`)
+    for f in changed:
+        if R.is_test(f) and R.existed_at(repo, base, f):
+            kinds.setdefault("modified_test_file", []).append(f)
+        if _runs_at_test_start(f):
+            kinds.setdefault("autorun_file", []).append(f)
+        if _test_config_changed(repo, base, f):
+            kinds.setdefault("test_config", []).append(f)
+    touched = sorted({f for fs in kinds.values() for f in fs})
     if touched:
         for f in findings:
             if f.kind == C.TESTS_PASS and f.verdict == "SUPPORTED_BY_PRIOR_EVIDENCE":
                 f.verdict = "NOT_CONTRADICTED"
+                f.meta = {**f.meta, "harness_warning": sorted(kinds)}
                 f.why += (f" However this change modified existing test file(s) or files that run automatically when tests start ({', '.join(touched[:3])}"
                           f"{', …' if len(touched) > 3 else ''}), and a green run does not show the tests still test what they did before.")
     if message_missing:

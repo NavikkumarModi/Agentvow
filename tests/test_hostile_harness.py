@@ -65,6 +65,30 @@ class HostileHarness(unittest.TestCase):
         self.assertIn("modified existing test file", why); self.assertIn("tests/__init__.py", why)
 
 
+@unittest.skipIf(runner.sandbox_problem(), "no working sandbox on this machine")
+class PolicyAsksAPerson(unittest.TestCase):
+    """End to end: the finding's warning becomes a receipt field and the default policy asks a named person."""
+    def decide(self, change):
+        import io, json, os, tempfile
+        from agentvow import cli, policy
+        r = build(BASE, change); os.environ["AGENTVOW_HOME"] = tempfile.mkdtemp(prefix="fh_")
+        old = sys.stdin, sys.stdout, sys.stderr; sys.stdin, out, sys.stderr = io.StringIO("All tests pass."), io.StringIO(), io.StringIO(); sys.stdout = out
+        try:
+            cli.main(["check", "--repo", str(r), "--base", "HEAD~1", "--run-tests", "--python", sys.executable, "--test-cmd", "{py} -m unittest discover -s tests -t . -v", "--json"])
+        finally:
+            sys.stdin, sys.stdout, sys.stderr = old
+        rcpt = policy.build_receipt(json.loads(out.getvalue()), "o/n", "b" * 40)
+        return rcpt, policy.evaluate(rcpt)
+
+    def test_a_harness_file_makes_the_default_policy_ask_a_person_and_an_ordinary_change_does_not(self):
+        rcpt, res = self.decide(lambda r: (r / "sitecustomize.py").write_text("import os\n"))
+        self.assertEqual(rcpt["claims"][0]["harness_warning"], ["autorun_file"]); self.assertEqual(res["decision"], "needs_acknowledgement"); self.assertIn("harness_warning", [x["rule"] for x in res["reasons"]])
+        rcpt, res = self.decide(lambda r: (r / "lib.py").write_text(LIB + "\ndef extra():\n    return 3\n"))
+        self.assertEqual(rcpt["claims"][0]["harness_warning"], []); self.assertEqual(res["decision"], "allow")
+        rcpt, res = self.decide(lambda r: (r / "tests" / "test_lib.py").write_text((r / "tests" / "test_lib.py").read_text() + "\n# touched\n"))
+        self.assertEqual(rcpt["claims"][0]["harness_warning"], ["modified_test_file"]); self.assertEqual(res["decision"], "needs_acknowledgement")
+
+
 class TestConfigChanges(unittest.TestCase):
     """A change to what the runner selects or measures can hide a failing test without touching a test file (fifth review)."""
     def repo(self, files_base, files_head):
