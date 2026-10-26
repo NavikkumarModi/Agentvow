@@ -44,6 +44,16 @@ class Decision:
     pack: dict | None = None   # evidence pack (pack.py): three separate evidence dimensions; informational
 
 
+_AUTORUN = ("conftest.py", "sitecustomize.py", "usercustomize.py")
+
+
+def _runs_at_test_start(f: str) -> bool:
+    """Files the interpreter or the test runner executes by themselves when a run starts, whether the change added them or edited them: a harness here can shape the output. (A hostile change can also
+    hide the same code in ordinary source or in an extra test file; that is a stated limit, docs/TRUST_MODEL.md.)"""
+    name = f.rsplit("/", 1)[-1]
+    return name in _AUTORUN or f.endswith(".pth") or (name == "__init__.py" and R.is_test(f))
+
+
 def _reality(repo: Path, base: str, changed_override=None):
     snap = R.snapshot(repo)
     changed = R.changed_files(repo, base) if changed_override is None else list(changed_override)
@@ -76,12 +86,12 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
             findings.append(_compat(c, repo, base, changed))
         else:
             findings.append(Finding(c.text, c.kind, "UNKNOWN", "Agentvow has no check for this kind of claim; it is unverified."))
-    touched = [f for f in changed if R.is_test(f) and R.existed_at(repo, base, f)]
+    touched = [f for f in changed if (R.is_test(f) and R.existed_at(repo, base, f)) or _runs_at_test_start(f)]
     if touched:
         for f in findings:
             if f.kind == C.TESTS_PASS and f.verdict == "SUPPORTED_BY_PRIOR_EVIDENCE":
                 f.verdict = "NOT_CONTRADICTED"
-                f.why += (f" However this change modified existing test file(s) ({', '.join(touched[:3])}"
+                f.why += (f" However this change modified existing test file(s) or files that run automatically when tests start ({', '.join(touched[:3])}"
                           f"{', …' if len(touched) > 3 else ''}), and a green run does not show the tests still test what they did before.")
     if message_missing:
         findings.append(Finding("(the agent's message for this turn could not be read)", "none", "UNKNOWN",

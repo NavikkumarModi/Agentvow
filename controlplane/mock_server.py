@@ -86,7 +86,7 @@ class Store:
 class App:
     def __init__(self, auth, oracle, store=None, trusted_workflows=(), admin_token="admin", audience="agentvow-control-plane", events=("pull_request", "push", "workflow_dispatch")):
         """`trusted_workflows`: the EXACT `job_workflow_ref` values accepted, each with its pinned ref (for example
-        "OWNER/REPO/.github/workflows/gate.yml@refs/tags/v0.4.0"); none by default, so nothing is accepted until configured."""
+        "OWNER/REPO/.github/workflows/gate-service.yml@refs/tags/v0.4.0"); none by default, so nothing is accepted until configured."""
         self.auth, self.oracle, self.store = auth, oracle, store or Store()
         self.trusted, self.admin_token, self.audience, self.events = frozenset(trusted_workflows), admin_token, audience, frozenset(events)
 

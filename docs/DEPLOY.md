@@ -15,7 +15,7 @@ Status (2026-10-26): the image builds and runs (read-only filesystem, non-root, 
 4. **The licence of `controlplane/`** (`docs/strategy/MONETISATION_UPDATE_2026-10-23.md` section 4); not needed to deploy, needed before customers.
 
 ### Steps
-1. **Register the App under the organisation** (`docs/SETUP_GITHUB_APP.md` section 3, or `register_app.py`), with webhook URL `https://gate.<yourdomain>/v1/webhook`. Permissions: Checks write, Contents read, Pull requests write, Issues write, Metadata read; events: Pull request, Issue comment. Install it on one test repository first. GitHub asks for a passkey or code when you change App settings; that confirmation is yours.
+1. **Register the App under the organisation** (`docs/SETUP_GITHUB_APP.md` section 3, or the manifest helper: `python -m controlplane.service.register_app --tunnel https://gate.<yourdomain> --repo <owner>/<test repo> --out ./secrets`, run on YOUR machine with a browser signed in to GitHub; leave `--workflow-sha` out, it is not known yet). The helper writes `secrets/app.private-key.pem` and `secrets/webhook_secret` (what compose mounts) and a `cp.env` for running the service directly on that machine (not used with compose) and prints the App id; the webhook URL is set to `https://gate.<yourdomain>/v1/webhook` by the manifest. Permissions: Checks write, Contents read, Pull requests write, Issues write, Metadata read; events: Pull request, Issue comment. Install it on one test repository first. GitHub asks for a passkey or code when you change App settings; that confirmation is yours.
 2. **Prepare the VM:** SSH keys only (no password login); firewall open on ports 22, 80 and 443 only; automatic security updates; Docker with the Compose plugin; an A record for `gate.<yourdomain>` pointing at the VM.
 3. **Put TLS in front.** The service speaks plain HTTP and the compose file binds it to `127.0.0.1:8080`. Caddy on the same host needs only:
    ```
@@ -28,8 +28,8 @@ Status (2026-10-26): the image builds and runs (read-only filesystem, non-root, 
    ```bash
    git clone https://github.com/NavikkumarModi/Agentvow && cd Agentvow/controlplane/service
    mkdir -p secrets && chmod 700 secrets
-   # copy app.private-key.pem and the webhook secret in with scp, then:
-   sudo chown -R 10001 secrets && chmod 400 secrets/*     # the container user is uid 10001; not verified on a real Linux host (the image workflow's smoke test hit exactly this permission problem once)
+   # copy secrets/app.private-key.pem and secrets/webhook_secret to the host with scp (not the cp.env), then:
+   sudo chown -R 10001 secrets && sudo chmod 700 secrets && sudo chmod 400 secrets/*   # the container user is uid 10001; every command needs sudo once the files belong to it; not verified on a real Linux host (the image workflow's smoke test hit exactly this permission problem once)
    ```
 5. **Set the trusted workflow and start** (put the exports in a root-only env file, not your shell history):
    ```bash
@@ -44,7 +44,7 @@ Status (2026-10-26): the image builds and runs (read-only filesystem, non-root, 
 7. **Pin the sha in the workflow your customers call.** In `gate-service.yml` set `ALLOWED_SERVICE_URLS` to `https://gate.<yourdomain>`, commit it to the public repository, and use that commit's sha in the service's trusted value and in every caller's `uses:`. A later change to the workflow means a new sha, updated in both places together.
 8. **Run the acceptance tests on the real host** (`docs/SETUP_GITHUB_APP.md` section 8, with the production App and a sha-pinned caller; tests 1 to 4, 7, 8 and 10 matter most) and write the result in `docs/LIVE_TESTING.md`.
 9. **Make the check required:** branch protection on the target branch requires `agentvow/evidence` with the App chosen as its **source**. With source "any", a writer's own `GITHUB_TOKEN` can post a green check of that name (seen live: it did not count when the source was pinned).
-10. **Backups and routine operation** (below): a daily `backup` from cron with the copy taken off the host; `stats`; plans set by hand with `set-plan`; keys issued with `issue-key`.
+10. **Backups and routine operation** (below): a daily `backup` from cron, with the copy taken off the host (`docker compose cp controlplane:/data/backup-<date>.db .`, then encrypt and move it; the file is mode 600 owned by uid 10001 inside the volume); `stats`; plans set by hand with `set-plan`; keys issued with `issue-key`. `AGENTVOW_CP_MIN_TOOL_VERSION` (default 0.4.3) refuses receipts made by an older Agentvow.
 
 ### Before any customer's receipts arrive
 A privacy policy, terms and a data-processing statement from a lawyer. Receipts hold repository names and category names of what could not be reproduced, not source code, but that is still customer metadata.
@@ -56,7 +56,7 @@ You: the organisation, domain, VM, DNS, secrets and the passkey confirmations. T
 ```bash
 cd controlplane/service && mkdir -p secrets && chmod 700 secrets
 cp /path/to/app.private-key.pem secrets/ && printf '%s' "$WEBHOOK_SECRET" > secrets/webhook_secret
-sudo chown -R 10001 secrets && chmod 700 secrets && chmod 400 secrets/*   # the container user is uid 10001; unverified on Linux hosts
+sudo chown -R 10001 secrets && sudo chmod 700 secrets && sudo chmod 400 secrets/*   # the container user is uid 10001; unverified on Linux hosts
 export AGENTVOW_CP_APP_ID=<id>
 export AGENTVOW_CP_TRUSTED_WORKFLOWS='<owner>/<repo>/.github/workflows/gate-service.yml@<40-character commit sha>'   # exact job_workflow_ref values, comma separated, each pinned to a full sha (the service refuses to start with a tag or branch)
 docker compose up -d --build

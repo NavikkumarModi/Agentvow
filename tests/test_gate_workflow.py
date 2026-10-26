@@ -53,6 +53,18 @@ class LocalWorkflow(unittest.TestCase):
         for k in ("agentvow-version", "policy-path", "test-timeout", "test-command", "fail-on"):
             self.assertEqual(self.load(WF_LOCAL)[True]["workflow_call"]["inputs"][k], self.load(WF)[True]["workflow_call"]["inputs"][k], k)
 
+    def test_the_two_workflows_share_everything_a_replay_could_inherit(self):
+        a, b = self.load(WF_LOCAL), self.load(WF)
+        self.assertEqual(a["permissions"], b["permissions"])
+        self.assertNotIn("env", a); self.assertEqual(list(b.get("env", {})), ["ALLOWED_SERVICE_URLS"])   # a workflow-level env would be inherited by the replay job in one file and not the other
+        self.assertEqual(a["jobs"]["replay"].get("env"), b["jobs"]["replay"].get("env"))
+
+    def test_in_the_service_workflow_the_service_is_never_optional(self):
+        d = self.load(WF)
+        self.assertNotIn("if", d["jobs"]["upload"])                                   # an empty service-url is refused by the upload step, not skipped
+        self.assertEqual(d["jobs"]["decide"]["steps"][0]["env"]["SERVICE_EXPECTED"], "true")
+        self.assertIn("not one of the addresses", d["jobs"]["upload"]["steps"][1]["run"])
+
     def run_decide(self, decision, replay="success", fail_on="block"):
         r = self.load(WF_LOCAL)["jobs"]["decide"]["steps"][0]["run"]
         env = {**os.environ, "DECISION": decision, "REPLAY_RESULT": replay, "FAIL_ON": fail_on}
@@ -62,6 +74,8 @@ class LocalWorkflow(unittest.TestCase):
         self.assertEqual(self.run_decide("allow"), 0); self.assertEqual(self.run_decide("block"), 1)
         self.assertEqual(self.run_decide("needs_acknowledgement"), 0); self.assertEqual(self.run_decide("needs_acknowledgement", fail_on="needs_acknowledgement"), 1)
         self.assertEqual(self.run_decide("block", fail_on="never"), 0)
+        for odd in ("cancelled", "skipped", "", "timed_out"):
+            self.assertEqual(self.run_decide("allow", replay=odd), 1, odd)   # only a replay job that SUCCEEDED can allow
         self.assertEqual(self.run_decide("", fail_on="block"), 1)              # the replay produced nothing
         self.assertEqual(self.run_decide("allow", replay="failure"), 1)        # the replay job itself failed
         self.assertEqual(self.run_decide("garbage"), 1)

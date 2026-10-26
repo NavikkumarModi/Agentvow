@@ -35,6 +35,7 @@ class Config:
     per_minute: int = 30
     retention_days: dict = field(default_factory=lambda: {"free": 30, "team": 365, "business": 730})
     erase_after_uninstall_days: int = 30
+    min_tool_version: str = "0.4.3"   # receipts made by an older Agentvow are refused: the workflow is pinned by sha, the code that builds the receipt must not be an older, weaker version
     allow_mutable_refs: bool = False   # development only: trust a workflow pinned by tag or branch
     dashboard_rows: int = 500
 
@@ -64,6 +65,14 @@ def _clean(x, n=200) -> str:
 
 
 REPO_RE = re.compile(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}")
+
+
+def _version(v) -> tuple:
+    """(0, 4, 3) from "0.4.3"; anything that is not digits and dots sorts below every real version."""
+    try:
+        return tuple(int(x) for x in str(v).split("."))
+    except ValueError:
+        return (-1,)
 
 
 def _repo_ok(repo) -> bool:
@@ -102,6 +111,8 @@ class Service:
         bad = P.validate_receipt(r)
         if bad:
             return 422, {"error": f"malformed receipt: {bad}"}
+        if _version(r.get("tool_version")) < _version(self.cfg.min_tool_version):
+            return 422, {"error": f"this receipt was made by Agentvow {_clean(r.get('tool_version', '?'), 20)}; the service accepts {self.cfg.min_tool_version} or later"}
         repo = r["repo"]
         if not _repo_ok(repo) or claims.get("repository") != repo:
             return 403, {"error": "the token is for another repository than the receipt claims"}

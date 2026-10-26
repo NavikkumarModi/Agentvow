@@ -88,7 +88,7 @@ def validate_receipt(r) -> str | None:
             return "changed_lines must hold non-negative whole numbers"
         if not _count(c.get("dropped_pins", 0)):
             return "dropped_pins must be a whole number"
-        if c.get("capture_authenticated") not in (None, True, False) or not isinstance(c.get("partial_replay", False), bool) or not isinstance(c.get("state_binding", ""), str) or len(c.get("state_binding", "")) > 20:
+        if not (c.get("capture_authenticated") is None or isinstance(c.get("capture_authenticated"), bool)) or not isinstance(c.get("partial_replay", False), bool) or not isinstance(c.get("state_binding", ""), str) or len(c.get("state_binding", "")) > 20:
             return "capture provenance fields have the wrong type"
     cov = r.get("coverage")
     if cov is not None and (not isinstance(cov, dict) or not _count(cov.get("executed")) or not _count(cov.get("executable"))):

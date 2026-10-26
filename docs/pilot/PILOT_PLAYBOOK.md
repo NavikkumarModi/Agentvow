@@ -14,10 +14,10 @@ Status 2026-10-23: everything below uses released software (Agentvow 0.4.2 from 
    permissions: { contents: read }
    jobs:
      gate:
-       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha>
+       uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha at or after 8316b33>
        with: { fail-on: block, policy-path: agentvow-policy.json }
    ```
-   `gate.yml` (two jobs, `contents: read` only) is new on 2026-10-26; **it has not yet been run on GitHub in this form**: run it on a throwaway repository first (`docs/GOLDEN_PATH.md`). The earlier single workflow ran in local mode with an `id-token: write` grant that the new file no longer needs. `docs/GATE_WORKFLOW.md`.
+   `gate.yml` (two jobs, `contents: read` only) is new on 2026-10-26; it ran on GitHub once from the public repository by sha with `contents: read` only (`docs/LIVE_TESTING.md`), and has not run on a customer repository: run it on a throwaway repository first (`docs/GOLDEN_PATH.md`). The earlier single workflow ran in local mode with an `id-token: write` grant that the new file no longer needs. `docs/GATE_WORKFLOW.md`.
 2. **Write the first policy with them**, in the repository's **default branch**: `agentvow-policy.json` at the root (not under `.agentvow/` on versions before 0.4.1). Start from `agentvow policy init`: contradictions block; UNKNOWN needs acknowledgement; list their acknowledger's GitHub login. Ask what they want stricter (for example a minimum share of changed lines run by tests) and write down why.
 3. **Run a test pull request together** that is true, one that is false (break a test), one the replay cannot confirm. Show them each outcome and the plain-language comment.
 4. **Write the replay notes**: what the replay can and cannot recreate for this project (services, secrets, generated files, system packages). This list is the most valuable output of week 0.

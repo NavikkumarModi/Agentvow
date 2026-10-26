@@ -6,7 +6,7 @@ from agentvow import policy  # noqa: E402
 from controlplane import mock_server as cp  # noqa: E402
 
 SECRET = b"test-secret"
-WF = "owner/repo/.github/workflows/gate.yml@refs/tags/v0.4.0"
+WF = "owner/repo/.github/workflows/gate-service.yml@refs/tags/v0.4.0"
 TREE = "b" * 40
 COMMIT = "a" * 40
 

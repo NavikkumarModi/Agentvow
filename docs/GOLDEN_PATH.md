@@ -4,7 +4,7 @@ One path that has been exercised, with what was and was not verified at each ste
 
 ## 1. Install and check the machine (verified, repeatedly)
 ```bash
-pip install agentvow==0.4.2          # from PyPI; Python 3.10+; macOS or Linux (tests are refused on Windows)
+pip install agentvow==0.4.3          # from PyPI; Python 3.10+; macOS or Linux (tests are refused on Windows)
 agentvow doctor --repo /path/to/project
 ```
 `doctor` says what is missing (a sandbox on Linux: bubblewrap, and on Ubuntu 24.04+ the user-namespace setting) and runs the whole hook path.
@@ -32,7 +32,7 @@ on: pull_request
 permissions: { contents: read }
 jobs:
   gate:
-    uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha at or after 275a655>
+    uses: NavikkumarModi/Agentvow/.github/workflows/gate.yml@<40-character commit sha at or after 8316b33>   # the gate's default Agentvow version is 0.4.3 from 76276df on; the commit 8316b33 is the 0.4.3 release
     with: { fail-on: block, policy-path: agentvow-policy.json }
 ```
 Open a pull request: the `gate / replay` and `gate / decide` checks run; the job summary shows the decision and reasons. This path needs no credential, no service and no OIDC permission, and also works for pull requests from forks as a local decision (not run on a fork here).

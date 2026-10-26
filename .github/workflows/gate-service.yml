@@ -174,7 +174,6 @@ jobs:
           if-no-files-found: warn
   upload:
     needs: replay
-    if: ${{ inputs.service-url != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -222,7 +221,7 @@ jobs:
         env:
           DECISION: ${{ needs.replay.outputs.decision }}
           SERVICE_DECISION: ${{ needs.upload.outputs.service-decision }}
-          SERVICE_EXPECTED: ${{ inputs.service-url != '' }}
+          SERVICE_EXPECTED: "true"   # in this workflow the service is never optional: an empty service-url is refused by the upload step and blocks
           REPLAY_RESULT: ${{ needs.replay.result }}
           FAIL_ON: ${{ inputs.fail-on }}
         run: |

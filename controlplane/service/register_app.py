@@ -48,6 +48,7 @@ def save(out: str, repo: str, app: dict, audience: str, workflow_ref: str) -> st
     os.chmod(out, 0o700)
     pem, env = os.path.join(out, "app.private-key.pem"), os.path.join(out, "cp.env")
     write_private(pem, app["pem"])
+    write_private(os.path.join(out, "webhook_secret"), app["webhook_secret"])   # the file `docker compose` mounts as a secret (cp.env is for running the service directly on this machine)
     write_private(env, "\n".join([f"AGENTVOW_CP_APP_ID={app['id']}", f"AGENTVOW_CP_PRIVATE_KEY_FILE={pem}", f"AGENTVOW_CP_WEBHOOK_SECRET={app['webhook_secret']}", f"AGENTVOW_CP_AUDIENCE={audience}",
                                   f"AGENTVOW_CP_TRUSTED_WORKFLOWS={workflow_ref}", f"AGENTVOW_CP_DB={os.path.join(out, 'cp.db')}", ""]))
     return env
@@ -88,12 +89,12 @@ def main(argv=None, convert_fn=convert, serve=True):
     ap.add_argument("--out", required=True)
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--audience", default="agentvow-control-plane")
-    ap.add_argument("--workflow-sha", required=True, help="the 40-character commit sha of gate-service.yml that callers pin (the service refuses a tag or branch)")
+    ap.add_argument("--workflow-sha", default="", help="the 40-character commit sha of gate-service.yml that callers pin (the service refuses a tag or branch); leave out when it is not known yet: cp.env then holds a placeholder that makes the service refuse to start until you set it")
     ap.add_argument("--name")
     a = ap.parse_args(argv)
     if not a.tunnel.startswith("https://"):
         ap.error("--tunnel must be an https address")
-    if not re.fullmatch(r"[0-9a-f]{40}", a.workflow_sha):
+    if a.workflow_sha and not re.fullmatch(r"[0-9a-f]{40}", a.workflow_sha):
         ap.error("--workflow-sha must be a full 40-character commit sha")
     if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}", a.repo):
         ap.error("--repo must look like owner/name")
@@ -108,7 +109,7 @@ def main(argv=None, convert_fn=convert, serve=True):
 
     def on_app(code):
         app = convert_fn(code)
-        env = save(a.out, a.repo, app, a.audience, f"{a.repo}/.github/workflows/gate-service.yml@{a.workflow_sha}")
+        env = save(a.out, a.repo, app, a.audience, f"{a.repo}/.github/workflows/gate-service.yml@{a.workflow_sha or '<SET-THE-40-CHARACTER-SHA>'}")
         done.update(app=app, env=env)
         return f"Registered {app.get('name')}. Install it on {a.repo}: {app.get('html_url')}/installations/new"
     if not serve:

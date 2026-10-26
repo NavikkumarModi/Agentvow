@@ -534,6 +534,33 @@ class ImmutablePins(unittest.TestCase):
         self.assertEqual(post(s)[0], 200)
 
 
+class FourthReview(unittest.TestCase):
+    def test_the_sha_pin_pattern_is_strict(self):
+        from controlplane.service.core import SHA_REF
+        ok = "o/g/.github/workflows/gate-service.yml@" + "a" * 40
+        self.assertTrue(SHA_REF.fullmatch(ok))
+        for bad in (ok.replace("a" * 40, "A" * 40), ok + "a", ok[:-1], "o/g/.github/workflows/gate-service.yml@refs/heads/" + "a" * 40, ok + "\n", "o/g/workflows/x.yml@" + "a" * 40):
+            self.assertFalse(SHA_REF.fullmatch(bad), bad)
+    def test_receipts_from_an_older_agentvow_are_refused_whatever_the_workflow_says(self):
+        s, gh = make(); old = receipt(); old["tool_version"] = "0.4.2"
+        code, o = post(s, old); self.assertEqual(code, 422); self.assertIn("0.4.3", o["error"]); self.assertEqual(gh.checks, [])
+        for bad in ("", "latest", None, "0.4"): self.assertEqual(post(s, {**receipt(created_at=str(bad)), "tool_version": bad})[0], 422, repr(bad))
+        s2, _ = make(min_tool_version="0.4.2"); self.assertEqual(post(s2, old)[0], 200)
+        newer = receipt(created_at="n"); newer["tool_version"] = "0.10.0"; self.assertEqual(post(s, newer)[0], 200)   # numeric, not text, comparison
+    def test_policy_enums_and_provenance_types_are_checked(self):
+        self.assertIsNotNone(P.validate_policy({"schema": P.POLICY, "partial_capture": "bogus"}))
+        self.assertIsNone(P.validate_policy({"schema": P.POLICY, "partial_capture": "block"}))
+        r = receipt(); r["claims"][0]["capture_authenticated"] = 1; self.assertIsNotNone(P.validate_receipt(r))
+        r["claims"][0]["capture_authenticated"] = 0; self.assertIsNotNone(P.validate_receipt(r))
+    def test_register_helper_without_a_sha_writes_a_placeholder_the_service_refuses_and_the_compose_secret_file(self):
+        import tempfile, os, stat
+        from controlplane.service import register_app as R
+        d = tempfile.mkdtemp() + "/o"
+        env = R.save(d, "u/r", {"id": 1, "pem": "PEM", "webhook_secret": "WS"}, "aud", "u/r/.github/workflows/gate-service.yml@<SET-THE-40-CHARACTER-SHA>")
+        self.assertEqual(stat.S_IMODE(os.stat(d + "/webhook_secret").st_mode), 0o600); self.assertEqual(open(d + "/webhook_secret").read(), "WS")
+        with self.assertRaises(ValueError): Service(Config(trusted_workflows=frozenset({"u/r/.github/workflows/gate-service.yml@<SET-THE-40-CHARACTER-SHA>"}), webhook_secret=b"x"), None, None, Store())
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke

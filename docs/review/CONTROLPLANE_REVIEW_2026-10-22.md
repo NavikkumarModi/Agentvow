@@ -62,6 +62,20 @@ Weak tests found by mutation and fixed: erase touching every table, retention re
 
 Not fixed, stated: deleted rows stay in SQLite's free pages and in older backups; compose file-secrets keep the host's ownership, so on Linux the secrets directory must be readable by uid 10001 (documented, not shown to work on Linux); the base image and transitive dependencies float.
 
+## Fourth review (commit-sha pins, the gate split, provenance fields, hostile-harness tests, 0.4.1 to 0.4.3, the deployment walkthrough) and its fixes
+No bypass of the sha-pin trust and no cross-tenant issue was found (the reviewer ran the full suite on a clean copy: 527 tests; 26 mutations, 9 survivors listed below).
+
+| ID | Class | Finding | Fix |
+|---|---|---|---|
+| 4-F1 | CONFIRMED, medium | The hostile-harness "limit" was wider than the documents said: the warning fired only for a modified existing test file; the same deceptive code in a new `sitecustomize.py`, in ordinary source or in an extra test file gave SUPPORTED with no warning | The warning now also fires for files that run when tests start (`conftest.py`, `sitecustomize.py`, `usercustomize.py`, `.pth`, test `__init__.py`), new or old. The source and extra-test-file variants are pinned as a KNOWN LIMIT and `docs/TRUST_MODEL.md` says so |
+| 4-F2 | CONFIRMED (by reading), medium | The deployment walkthrough failed as written: the helper needed a sha that is not known yet, wrote no `webhook_secret` file for compose, `chmod` after `chown` needed sudo, and the backup could not be copied off the host | `--workflow-sha` optional (a placeholder the service refuses), `webhook_secret` file written, `sudo chmod`, `docker compose cp` for backups |
+| 4-F3 | PLAUSIBLE, low-medium | The sha pin fixes the workflow, not the Agentvow version the caller installs | The service refuses receipts with `tool_version` below a minimum (default 0.4.3, numeric comparison) |
+| 4-F4 | CONFIRMED, low | An empty `service-url` in `gate-service.yml` silently degraded to a local-only decision | The upload job has no `if`; decide always expects the service; an empty address is refused by the allow-list step |
+| 4-F5 | CONFIRMED, low | Stale statements in four documents (OIDC "not verified", the playbook, the golden path's pin, the `basis` values) and the mock's example | Corrected |
+| 4-F6 | tests | Survivors: the sha pattern's strictness, an invalid policy enum, integer `capture_authenticated`, 'cancelled' and 'skipped' replay results, a workflow-level `env` inherited by one replay job only, and two end-to-end hostile-suite variants | Added: pattern cases, the enum, a strict bool check, the extra decide cases, an environment-equality test; the two end-to-end survivors are covered by other layers and left |
+
+Not fixed, stated: whether GitHub resolves a fork-network sha under the base repository's path in `uses:` (untested offline; the service string would differ in any case, and the configured sha must be a reviewed commit of the trusted repository); the `partial_capture`/`capture_authenticated` fields are informational beyond `partial_capture` (no rule reads `capture_authenticated`); `pilot_report` does not count partial replays; the hostile-harness text depends on Python 3.11+ formatting.
+
 ## Residuals (not fixed, stated)
 * A sandbox escape inside the replay job can still forge a receipt that carries a valid token (the replay job has no token, but its output is what the upload job sends).
 * Write permission of an acknowledger is checked when the comment is processed, not again on every later evaluation.

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- **Test-harness warning widened**: the NOT_CONTRADICTED downgrade ("a green run does not show the tests still test what they did before") now also applies when a change adds or edits a file that runs automatically when tests start (`conftest.py`, `sitecustomize.py`, `usercustomize.py`, a `.pth` file, a test package's `__init__.py`), not only when it modifies an existing test file. A harness hidden in ordinary source or in an extra test file is still believed without a warning (a pinned, documented limit).
+- **Strict `capture_authenticated`** (a real boolean or null) in receipt validation.
+- Repository (not in the wheel): the control plane refuses receipts made by an Agentvow older than 0.4.3 (`AGENTVOW_CP_MIN_TOOL_VERSION`); in `gate-service.yml` the service is never optional (an empty `service-url` blocks); the manifest helper writes `webhook_secret` and accepts a missing `--workflow-sha`; the deployment walkthrough was corrected after the fourth review.
+
 ## 0.4.3 (2026-10-26)
 Provenance and policy: what a capture proves is now stated in every receipt, and the gate workflows were split so that local use needs no credential. The other changes below are in the repository, not in the wheel.
 - **Receipt provenance fields** (per claim): `capture_authenticated` (true local capsule, false supplied bundle, null none), `state_binding` (`capsule`, `git_tree`), `partial_replay` (the replay left out pinned packages). New policy key **`partial_capture`** (default `needs_acknowledgement`): a supported result from a replay that left out pinned packages needs a named acknowledgement. A policy file that uses the new key is rejected by older Agentvow versions (unknown key blocks), so pin the gate's `agentvow-version` to 0.4.3 or later when you use it. Receipts without the fields stay valid and old receipts with `dropped_pins` are treated as partial.
