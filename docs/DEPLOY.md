@@ -1,13 +1,58 @@
 # Deploying the control plane service
 
-Status: the image builds and runs (read-only filesystem, non-root, all capabilities dropped) and answers `/healthz` and `/dashboard`; the service has run against real GitHub from a laptop behind a tunnel (`docs/LIVE_TESTING.md`). **It has never run on a hosted machine with a real domain.** Everything below is a recipe, not a record.
+Status (2026-10-26): the image builds and runs (read-only filesystem, non-root, all capabilities dropped) and answers `/healthz` and `/dashboard`; the service has run against real GitHub from a laptop behind a tunnel (`docs/LIVE_TESTING.md`). **It has never run on a hosted machine with a real domain.** Everything below is a recipe, not a record.
 
 ## What you need (accounts are yours)
 * A machine or container host that can run one container with a persistent volume (a small VM is enough: the service is a single process with SQLite; receipts are small).
 * A domain name and TLS in front (Caddy or nginx on the same host, a cloud load balancer, or a Cloudflare named tunnel). The service speaks plain HTTP on port 8080.
 * A GitHub **organisation** that owns the production App (needed later for any Marketplace listing: only organisation-owned apps can be sold). Register it with `controlplane/service/register_app.py --tunnel https://<your domain> --repo <owner>/<a test repo> --out secrets` or by hand (`docs/SETUP_GITHUB_APP.md`; permissions: Checks write, Contents read, Pull requests write, Issues write, Metadata read; events: Pull request, Issue comment; GitHub delivers the `installation` and `installation_repositories` events to an App's webhook without a subscription, which the live test did not exercise: unverified).
 
-## One host with Docker Compose
+## First deployment on one VM, step by step (written 2026-10-26; **not yet followed by anyone**: expect the first hosted run to expose a defect, and record it in `docs/LIVE_TESTING.md`)
+### Decide first
+1. **The GitHub organisation** that will own the production App (only organisation-owned apps can be sold on Marketplace; moving an App later is a transfer).
+2. **Domain and host:** a small Linux VM at any provider (cost is a few dollars to about ten per month: an estimate, not checked) and a domain you control, for example `gate.<yourdomain>`.
+3. **Where the trusted workflow lives.** The service trusts exactly one `gate-service.yml` at one commit sha. Simplest: keep it in the public Agentvow repository, put your real address in its `ALLOWED_SERVICE_URLS`, commit, and use that commit's sha everywhere.
+4. **The licence of `controlplane/`** (`docs/strategy/MONETISATION_UPDATE_2026-10-23.md` section 4); not needed to deploy, needed before customers.
+
+### Steps
+1. **Register the App under the organisation** (`docs/SETUP_GITHUB_APP.md` section 3, or `register_app.py`), with webhook URL `https://gate.<yourdomain>/v1/webhook`. Permissions: Checks write, Contents read, Pull requests write, Issues write, Metadata read; events: Pull request, Issue comment. Install it on one test repository first. GitHub asks for a passkey or code when you change App settings; that confirmation is yours.
+2. **Prepare the VM:** SSH keys only (no password login); firewall open on ports 22, 80 and 443 only; automatic security updates; Docker with the Compose plugin; an A record for `gate.<yourdomain>` pointing at the VM.
+3. **Put TLS in front.** The service speaks plain HTTP and the compose file binds it to `127.0.0.1:8080`. Caddy on the same host needs only:
+   ```
+   gate.<yourdomain> {
+       reverse_proxy 127.0.0.1:8080
+   }
+   ```
+   (Caddy gets and renews the certificate itself; nginx with certbot or a Cloudflare named tunnel work too.)
+4. **Get the code and the secrets onto the host:**
+   ```bash
+   git clone https://github.com/NavikkumarModi/Agentvow && cd Agentvow/controlplane/service
+   mkdir -p secrets && chmod 700 secrets
+   # copy app.private-key.pem and the webhook secret in with scp, then:
+   sudo chown -R 10001 secrets && chmod 400 secrets/*     # the container user is uid 10001; not verified on a real Linux host (the image workflow's smoke test hit exactly this permission problem once)
+   ```
+5. **Set the trusted workflow and start** (put the exports in a root-only env file, not your shell history):
+   ```bash
+   export AGENTVOW_CP_APP_ID=<id>
+   export AGENTVOW_CP_TRUSTED_WORKFLOWS='NavikkumarModi/Agentvow/.github/workflows/gate-service.yml@<40-character sha>'
+   docker compose up -d --build
+   curl -s http://127.0.0.1:8080/healthz          # ok
+   curl -s https://gate.<yourdomain>/healthz      # ok, through Caddy
+   ```
+   The service refuses to start if a variable is missing or the trusted value is not a full sha.
+6. **Check the configuration against real GitHub:** `docker compose exec controlplane python -m controlplane.service.smoke` should end with "OK: the App has what the service needs." (It prints the App's permissions and events and names anything missing.)
+7. **Pin the sha in the workflow your customers call.** In `gate-service.yml` set `ALLOWED_SERVICE_URLS` to `https://gate.<yourdomain>`, commit it to the public repository, and use that commit's sha in the service's trusted value and in every caller's `uses:`. A later change to the workflow means a new sha, updated in both places together.
+8. **Run the acceptance tests on the real host** (`docs/SETUP_GITHUB_APP.md` section 8, with the production App and a sha-pinned caller; tests 1 to 4, 7, 8 and 10 matter most) and write the result in `docs/LIVE_TESTING.md`.
+9. **Make the check required:** branch protection on the target branch requires `agentvow/evidence` with the App chosen as its **source**. With source "any", a writer's own `GITHUB_TOKEN` can post a green check of that name (seen live: it did not count when the source was pinned).
+10. **Backups and routine operation** (below): a daily `backup` from cron with the copy taken off the host; `stats`; plans set by hand with `set-plan`; keys issued with `issue-key`.
+
+### Before any customer's receipts arrive
+A privacy policy, terms and a data-processing statement from a lawyer. Receipts hold repository names and category names of what could not be reproduced, not source code, but that is still customer metadata.
+
+### Who does what
+You: the organisation, domain, VM, DNS, secrets and the passkey confirmations. The assistant: the workflow edit with your address, the sha bookkeeping, the acceptance run and its record, and the fixes the first hosted run exposes.
+
+## One host with Docker Compose (reference)
 ```bash
 cd controlplane/service && mkdir -p secrets && chmod 700 secrets
 cp /path/to/app.private-key.pem secrets/ && printf '%s' "$WEBHOOK_SECRET" > secrets/webhook_secret
