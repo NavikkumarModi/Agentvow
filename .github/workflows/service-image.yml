@@ -26,7 +26,7 @@ jobs:
           if docker run --rm agentvow-controlplane:build 2>&1 | grep -q "missing environment variable"; then echo "refuses to start without configuration: ok"; else echo "expected a start-up refusal"; exit 1; fi
           D="$(mktemp -d)"; openssl genrsa -out "$D/key.pem" 2048 2> /dev/null; printf 's3cret' > "$D/ws"; chmod 755 "$D"; chmod 644 "$D"/*   # the container user (uid 10001) must be able to traverse and read
           docker run -d --name cp -p 127.0.0.1:18080:8080 -v "$D":/run/secrets:ro -e AGENTVOW_CP_APP_ID=1 -e AGENTVOW_CP_PRIVATE_KEY_FILE=/run/secrets/key.pem \
-            -e AGENTVOW_CP_WEBHOOK_SECRET_FILE=/run/secrets/ws -e AGENTVOW_CP_AUDIENCE=a -e AGENTVOW_CP_TRUSTED_WORKFLOWS=o/r/.github/workflows/gate.yml@refs/tags/v1 agentvow-controlplane:build
+            -e AGENTVOW_CP_WEBHOOK_SECRET_FILE=/run/secrets/ws -e AGENTVOW_CP_AUDIENCE=a -e AGENTVOW_CP_TRUSTED_WORKFLOWS=o/r/.github/workflows/gate-service.yml@cccccccccccccccccccccccccccccccccccccccc agentvow-controlplane:build
           for i in 1 2 3 4 5 6 7 8 9 10; do [ "$(curl -s http://127.0.0.1:18080/healthz)" = ok ] && break; sleep 2; done
           [ "$(curl -s http://127.0.0.1:18080/healthz)" = ok ] || { docker logs cp; exit 1; }
           docker exec cp ls /app/controlplane/service | grep -q secrets && { echo "secrets directory is inside the image"; exit 1; } || echo "no secrets directory in the image: ok"
