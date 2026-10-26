@@ -121,3 +121,14 @@ Setup: a Cloudflare quick tunnel to the service on the maintainer's laptop (serv
 | 3 | Caller pinned to **another commit of the same workflow file** | service `403 receipts are accepted only from the exact trusted gate workflow at its pinned ref`; decide failed; merge **BLOCKED** (no check from the App) |
 | 4 | Caller pinned by **branch name** | same 403; decide failed; merge BLOCKED |
 Not run: a fork pull request; the pending-check and acknowledgement flows against the new files; macOS runners; a hosted machine.
+
+### Pending check and acknowledgement flow with the sha-pinned workflow (2026-10-26, later the same day)
+After the maintainer completed GitHub's passkey confirmation in the browser, the App's webhook URL was changed to the new tunnel address (confirmed by `GET /app/hook/config`), a new copy of `gate-service.yml` was pinned by sha and trusted by the service, and one pull request ("I added a1. All 9 tests pass.", an UNKNOWN claim) was opened:
+| Step | Result |
+|---|---|
+| Pull request opened | `agentvow/evidence` appeared at once as `in_progress`, "Agentvow: waiting for the gate" (webhook, signature and App check creation) |
+| Gate run finished | check `completed`, `action_required`, "needs_acknowledgement" (receipt accepted from the sha-pinned workflow) |
+| `/agentvow acknowledge` with no id | the App replied naming the current receipt id to use; nothing acknowledged |
+| `/agentvow acknowledge 000000000000` | the App replied that the id matches no current receipt; check unchanged |
+| `/agentvow acknowledge <id> <note>` by the listed acknowledger (the repository owner, who also opened the pull request) | the App replied "acknowledged ... Decision: allow"; check **success**; merge state **clean** |
+Not run in this session: a fork pull request, a second person acknowledging, the author rule for a non-owner author, concurrency, a hosted deployment.
