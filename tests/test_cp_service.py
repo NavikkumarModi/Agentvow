@@ -561,6 +561,27 @@ class FourthReview(unittest.TestCase):
         with self.assertRaises(ValueError): Service(Config(trusted_workflows=frozenset({"u/r/.github/workflows/gate-service.yml@<SET-THE-40-CHARACTER-SHA>"}), webhook_secret=b"x"), None, None, Store())
 
 
+class PlainCheckText(unittest.TestCase):
+    def test_the_check_run_carries_a_plain_title_and_explanation_for_each_decision(self):
+        from agentvow import explain
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]})
+        post(s, receipt("SUPPORTED_BY_PRIOR_EVIDENCE")); c = gh.checks[-1]
+        self.assertEqual(c[5], explain.TITLES["allow"]); self.assertIn("nothing that needs a person's attention", c[6]); self.assertIn("What this does not show", c[6])
+        post(s, receipt("UNKNOWN", created_at="2"), run_id=9); c = gh.checks[-1]
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        self.assertEqual(c[5], explain.TITLES["needs_acknowledgement"]); self.assertIn(f"/agentvow acknowledge {rid[:12]}", c[6]); self.assertIn("@alice", c[6])
+        post(s, receipt("CONTRADICTED", created_at="3"), run_id=20); c = gh.checks[-1]
+        self.assertEqual(c[5], explain.TITLES["block"]); self.assertIn("cannot be acknowledged away", c[6]); self.assertNotIn("/agentvow acknowledge", c[6])
+    def test_an_unreadable_policy_is_explained_not_just_blocked(self):
+        s, gh = make(); gh.fail_policy = True; post(s)
+        self.assertIn("policy file could not be read", gh.checks[-1][6]); self.assertIn("Fix the policy file", gh.checks[-1][6])
+    def test_the_acknowledgement_replies_are_plain(self):
+        s, gh = make(); gh.policy = json.dumps({"schema": P.POLICY, "acknowledgers": ["alice"]}); post(s, receipt("UNKNOWN"))
+        rid = s.store.latest_receipts("o/n", COMMIT)[0][0]
+        ev = {"action": "created", "repository": {"full_name": "o/n"}, "issue": {"number": 7, "pull_request": {"url": "u"}}, "comment": {"body": f"/agentvow acknowledge {rid[:12]}", "user": {"login": "alice", "type": "User"}}}
+        hook(s, "issue_comment", ev); self.assertIn("now allows this change", gh.comments[-1]); self.assertNotIn("Decision:", gh.comments[-1])
+
+
 class Smoke(unittest.TestCase):
     def test_problems_lists_what_the_app_is_missing(self):
         from controlplane.service import smoke

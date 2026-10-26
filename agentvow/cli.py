@@ -515,9 +515,10 @@ def main(argv=None) -> int:
     rc.add_argument("--pr", type=int, default=None, help="pull request number (optional)")
     rc.add_argument("-o", "--output", default="-")
     po = sub.add_parser("policy", help="evaluate a receipt under a policy (allow / block / needs_acknowledgement), or print the default policy")
-    po.add_argument("action", choices=["evaluate", "init"])
+    po.add_argument("action", choices=["evaluate", "init", "explain"])
     po.add_argument("--policy", default=None, help="policy file (agentvow-policy/1). In CI take it from the BASE branch, never from the pull request")
     po.add_argument("--receipt", default=None)
+    po.add_argument("--result", default=None, help="for `explain`: the JSON that `policy evaluate` printed")
     po.add_argument("--ack", action="append", default=[], help="acknowledgement file (agentvow-ack/1); only counts for exactly this receipt and a listed acknowledger")
     pr_ = sub.add_parser("pilot-report", help="a mechanical evidence report over a directory of receipts (counts, decisions under a policy, reproducibility, coverage, what could not be recreated); no claim about defects prevented")
     pr_.add_argument("--receipts", required=True, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
@@ -624,6 +625,17 @@ def main(argv=None) -> int:
         from . import policy as policy_mod
         if a.action == "init":
             print(json.dumps(policy_mod.DEFAULT_POLICY, indent=2))
+            return 0
+        if a.action == "explain":
+            from . import explain as explain_mod
+            try:
+                res = json.loads(Path(a.result).read_text(encoding="utf-8"))
+                if not isinstance(res, dict) or not isinstance(res.get("reasons", []), list):
+                    raise ValueError("not an evaluation result")
+            except (OSError, ValueError, TypeError) as e:
+                print(f"agentvow policy explain: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+                return 3
+            print(explain_mod.explain(res, [res["receipt_sha"]] if isinstance(res.get("receipt_sha"), str) and res.get("receipt_sha") else ()))
             return 0
         try:
             rcpt = json.loads(Path(a.receipt).read_text(encoding="utf-8"))

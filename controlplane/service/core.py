@@ -9,6 +9,7 @@ import time
 from collections import deque
 from dataclasses import dataclass, field
 
+from agentvow import explain as E
 from agentvow import policy as P
 
 from .github import GitHubError
@@ -176,6 +177,7 @@ class Service:
         out = dict(worst)
         out["reasons"] = list(worst["reasons"]) + [x for res in results if res is not worst for x in res["reasons"]]
         out["receipts"] = [rid for rid, _ in rs]
+        out["acknowledgers"] = [] if policy[1] else list({**P.DEFAULT_POLICY, **policy[0]}["acknowledgers"])
         return out
 
     def _refresh(self, repo, commit, branch, policy=None):
@@ -248,9 +250,9 @@ class Service:
         return cid
 
     def _publish(self, repo, commit, result) -> int:
-        lines = [f"- **{_clean(x['rule'])}** ({_clean(x['outcome'])}{', acknowledged by ' + _clean(x['acknowledged_by']) if x.get('acknowledged_by') else ''}): {_clean(x['text'], 300)}" for x in result["reasons"]]
-        summary = "\n".join(lines) + "\n\nA pass here is evidence to weigh, not verification: the pull request's own code wrote the test output. To acknowledge an UNKNOWN result, a listed acknowledger comments `/agentvow acknowledge <receipt id>` on the pull request."
-        return self._check(repo, commit, "completed", CONCLUSIONS[result["conclusion"]], f"Agentvow: {result['decision']}", summary)
+        """The check run: a plain-language title and summary (`agentvow.explain`): what happened, what it means for the merge, what to do, and what a pass does not show."""
+        summary = E.explain(result, result.get("receipts") or [], result.get("acknowledgers") or [])
+        return self._check(repo, commit, "completed", CONCLUSIONS[result["conclusion"]], E.TITLES.get(result["decision"], E.TITLES["block"]), summary)
 
     # ------------------------------------------------------------------ webhooks
     def webhook(self, headers: dict, body: bytes) -> tuple:
@@ -380,9 +382,9 @@ class Service:
             self.store.add_ack(repo, rid, login, m.group(2).strip())
             result, _ = self._refresh(repo, pr["head_sha"], info["default_branch"], (pol, None))
         if result["decision"] == "allow":
-            self.gh.comment(repo, number, f"Agentvow: acknowledged by @{_clean(login, 39)} for receipt `{rid[:12]}`. Decision: **allow**.")
+            self.gh.comment(repo, number, f"Agentvow: acknowledged by @{_clean(login, 39)} for receipt `{rid[:12]}`. The check now allows this change (it is still evidence to weigh, not proof that the change is correct).")
         else:   # the acknowledgement is recorded but does not change this decision (a contradiction, or another receipt that still needs one)
-            self.gh.comment(repo, number, f"Agentvow: acknowledgement by @{_clean(login, 39)} recorded for receipt `{rid[:12]}`, but the decision is still **{result['decision']}**: a contradiction cannot be acknowledged away, and every current receipt that needs an acknowledgement needs its own.")
+            self.gh.comment(repo, number, f"Agentvow: acknowledgement by @{_clean(login, 39)} recorded for receipt `{rid[:12]}`, but the change is still **{'blocked' if result['decision'] == 'block' else 'waiting for an acknowledgement'}**: a contradiction cannot be acknowledged away, and every current receipt that needs an acknowledgement needs its own.")
         return 200, {"decision": result["decision"]}
 
     # ------------------------------------------------------------------ reading

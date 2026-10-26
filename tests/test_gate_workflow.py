@@ -149,6 +149,11 @@ class Static(unittest.TestCase):
         r = subprocess.run(["bash", "-c", steps("upload")["Post the receipt to the control plane"]["run"]], env=env, capture_output=True, text=True, cwd=out.parent)
         return r.stdout + r.stderr
 
+    def test_the_job_summary_uses_the_plain_explanation_and_falls_back_for_older_agentvow_versions(self):
+        run = steps()["Evaluate the policy from the base branch"]["run"]
+        self.assertIn('agentvow policy explain --result "$GATE/result.json" 2> /dev/null ||', run)   # 0.4.4 and later
+        self.assertIn("print(f\"- **{clean(x['rule'])}**", run)                                      # the older plain list, for versions without `policy explain`
+
     def test_the_service_url_must_be_one_of_the_addresses_written_in_the_workflow(self):
         for bad in ("", "http://evil.example", "ftp://x", "file:///etc", "https://svc.example.evil.test", "https://svc.example/", "https://svc.example https://evil.test", "https://evil.test/https://svc.example", "http://127.0.0.1:80000"):
             self.assertIn("not one of the addresses", self.upload_message(bad), repr(bad))
@@ -260,6 +265,7 @@ class Simulation(unittest.TestCase):
         self.assertEqual(self.out("service-decision"), "allow", res["upload"].stdout + res["upload"].stderr)
         self.assertEqual(res["apply"].returncode, 0)
         self.assertEqual(self.app.handle("GET", f"/v1/check?repo=o/n&commit={head}", {})[1]["conclusion"], "success")
+        self.assertIn("nothing that needs a person's attention", (self.rt / "sum").read_text())   # the job summary is the plain-language explanation
         receipt = (self.rt / "gate" / "receipt.json").read_text()
         for leak in ("runner-secret", "gh-secret", str(self.t)):
             self.assertNotIn(leak, receipt)

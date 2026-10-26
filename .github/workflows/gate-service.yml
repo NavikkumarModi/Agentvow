@@ -155,16 +155,19 @@ jobs:
           [ -n "$DEC" ] || block "The policy evaluation produced no usable result; treating as block."
           echo "decision=$DEC" >> "$GITHUB_OUTPUT"
           echo "receipt-sha=$(python3 -I -c "import hashlib,sys;print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" "$GATE/receipt.json")" >> "$GITHUB_OUTPUT"
-          python3 -I - "$GATE/result.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          {
+            echo "## Agentvow gate: $DEC"; echo
+            # plain-language explanation (Agentvow 0.4.4 and later); older versions fall back to the plain list below
+            agentvow policy explain --result "$GATE/result.json" 2> /dev/null || python3 -I - "$GATE/result.json" <<'PY'
           import json, re, sys
           clean = lambda s: re.sub(r"[^\w .,;:()'/%+-]", "", str(s))[:200]
           r = json.load(open(sys.argv[1]))
-          print(f"## Agentvow gate: {clean(r['decision'])}\n")
           for x in r["reasons"]:
               by = f", acknowledged by {clean(x['acknowledged_by'])}" if x.get("acknowledged_by") else ""
               print(f"- **{clean(x['rule'])}** ({clean(x['outcome'])}{by}): {clean(x['text'])}")
           print("\nA pass here is evidence to weigh, not verification: the pull request's own code wrote the test output.")
           PY
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: agentvow-gate
