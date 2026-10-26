@@ -242,7 +242,7 @@ class Service:
             who = [a for a in result.get("acknowledgers") or [] if isinstance(a, str) and self.LOGIN.fullmatch(a)]
             mention = " ".join("@" + a for a in who[:self.cfg.max_mentions])
             head = (mention + " " if mention else "") + "Agentvow needs a person to look at this pull request before it can merge."
-            self.gh.comment(repo, int(pr), head + "\n\n" + E.explain(result, ack_ids or ids, who))
+            self.gh.comment(repo, int(pr), head + "\n\n" + E.explain(result, ack_ids or ids, who, mode="service"))
             self.notify_limiter.record("notify:" + repo)
             self.store.mark_notified(repo, commit, key)
         except Exception:
@@ -305,7 +305,7 @@ class Service:
 
     def _publish(self, repo, commit, result) -> int:
         """The check run: a plain-language title and summary (`agentvow.explain`): what happened, what it means for the merge, what to do, and what a pass does not show."""
-        summary = E.explain(result, result.get("ack_receipts") or [], result.get("acknowledgers") or [])
+        summary = E.explain(result, result.get("ack_receipts") or [], result.get("acknowledgers") or [], mode="service")
         return self._check(repo, commit, "completed", CONCLUSIONS[result["conclusion"]], E.TITLES.get(result["decision"], E.TITLES["block"]), summary)
 
     # ------------------------------------------------------------------ webhooks

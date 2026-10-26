@@ -14,9 +14,9 @@ RULES = {
     "contradicted": ("A claim made about this change is false: tests that passed before the change fail after it.",
                      "Fix the code, or correct the claim. This cannot be acknowledged away."),
     "unknown": ("A claim could not be confirmed or refuted. Typical causes: the number of passing tests did not match what was said, a dependency or a credential the tests need was missing in the replay, or the only failures were ones that also happen without the change.",
-                "Open the `gate / replay` job log for the exact cause (the receipt deliberately keeps no free text), decide whether you are satisfied, and if so a listed acknowledger replies on the pull request with the acknowledge command below."),
+                "Open the `gate / replay` job log for the exact cause (the receipt deliberately keeps no free text), decide whether you are satisfied, and if so a listed acknowledger acknowledges it as described below."),
     "supported": ("The replay reproduced the claim: the tests the claim is about passed in a clean sandbox.", "Nothing to do for this item. The tests are written by the same code under review, so this is not proof of correctness."),
-    "supported_confirm": ("The replay reproduced the claim, but this repository's policy asks a person to confirm even supported results.", "Review the change, then a listed acknowledger replies with the acknowledge command below."),
+    "supported_confirm": ("The replay reproduced the claim, but this repository's policy asks a person to confirm even supported results.", "Review the change, then a listed acknowledger acknowledges it as described below."),
     "no_claims": ("The change made no claim that Agentvow can check, so nothing was confirmed or refuted.", "Review the change as you normally would; Agentvow has no opinion on it."),
     "unauthenticated_capture": ("The record of the agent's environment came from a file somebody supplied. Agentvow checked it against the exact files, but cannot tell who made it.",
                                 "Acknowledge only if you trust whoever supplied it."),
@@ -37,8 +37,8 @@ def _clean(x, n=300) -> str:
     return re.sub(r"[^\w .,;:()'/%+=-]", "", str(x))[:n]
 
 
-def explain(result: dict, receipt_ids=(), acknowledgers=()) -> str:
-    """Markdown for a check run summary or a pull request comment. `receipt_ids`: the ids a person can name when acknowledging (shown only when an acknowledgement is what is needed)."""
+def explain(result: dict, receipt_ids=(), acknowledgers=None, mode: str = "local") -> str:
+    """Markdown for a check run summary or a pull request comment. `receipt_ids`: the ids a person can name when acknowledging (shown only when an acknowledgement is what is needed). `acknowledgers`: the policy's list (None when not known: nothing is said about who). `mode`: "service" (the control plane: a comment on the pull request) or "local" (the command line and the gate's job summary).""" 
     receipt_ids = [receipt_ids] if isinstance(receipt_ids, str) else list(receipt_ids)
     decision = result.get("decision") if result.get("decision") in HEADLINES else "block"
     out = [HEADLINES[decision], ""]
@@ -67,9 +67,18 @@ def explain(result: dict, receipt_ids=(), acknowledgers=()) -> str:
             out.append(f"  - Detail: {_clean(items[0].get('text', ''))} (rule: `{_clean(rule, 40)}`)")
         out.append("")
     if decision == "needs_acknowledgement" and receipt_ids:
-        who = (" Listed acknowledgers: " + ", ".join("@" + _clean(a, 39) for a in acknowledgers) + ".") if acknowledgers else " The repository's policy lists no acknowledger yet, so nobody can acknowledge."
-        ids = " and ".join(f"`/agentvow acknowledge {_clean(i, 64)[:12]}`" for i in receipt_ids[:3])
-        many = " Each receipt that needs it needs its own comment:" if len(receipt_ids) > 1 else ""
-        out += [f"**To acknowledge:**{many} a listed acknowledger comments {ids} on this pull request.{who} The acknowledger needs write access to the repository and cannot be the pull request's author (unless the author owns the repository). A contradiction can never be acknowledged.", ""]
+        if acknowledgers is None:
+            who = ""
+        elif acknowledgers:
+            who = " Listed acknowledgers: " + ", ".join("@" + _clean(a, 39) for a in acknowledgers) + "."
+        else:
+            who = " The repository's policy lists no acknowledger yet, so nobody can acknowledge."
+        if mode == "service":
+            ids = " and ".join(f"`/agentvow acknowledge {_clean(i, 64)[:12]}`" for i in receipt_ids[:3])
+            many = " Each receipt that needs it needs its own comment:" if len(receipt_ids) > 1 else ""
+            out += [f"**To acknowledge:**{many} a listed acknowledger comments {ids} on this pull request.{who} The acknowledger needs write access to the repository and cannot be the pull request's author (unless the author owns the repository). A contradiction can never be acknowledged.", ""]
+        else:
+            ids = " and ".join(f"`{_clean(i, 64)[:12]}`" for i in receipt_ids[:3])
+            out += [f"**To acknowledge:** a listed acknowledger records an acknowledgement for receipt {ids} (`agentvow policy evaluate --ack FILE`), or uses the control plane service, where they comment `/agentvow acknowledge <id>` on the pull request.{who} A contradiction can never be acknowledged.", ""]
     out.append(NOT_SHOWN)
     return "\n".join(out)

@@ -22,7 +22,7 @@ class Explain(unittest.TestCase):
 
     def test_each_decision_says_what_it_means_for_the_merge(self):
         self.assertIn("nothing that needs a person's attention", explain.explain(result("allow", ("supported", "allow", "x", None))))
-        t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["1234567890abcdef"], ["alice"])
+        t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["1234567890abcdef"], ["alice"], mode="service")
         self.assertIn("must look at it and acknowledge", t); self.assertIn("`/agentvow acknowledge 1234567890ab`", t); self.assertIn("@alice", t); self.assertIn("never be acknowledged", t)
         b = explain.explain(result("block", ("contradicted", "block", "x", None)))
         self.assertIn("will not let this through", b); self.assertIn("cannot be acknowledged away", b); self.assertNotIn("/agentvow acknowledge", b)
@@ -35,18 +35,33 @@ class Explain(unittest.TestCase):
         self.assertIn("a rule in this repository's policy is set to block it", t)
 
     def test_several_receipts_each_get_their_own_command_and_the_requirements_are_stated(self):
-        t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12, "b" * 12], ["alice"])
+        t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12, "b" * 12], ["alice"], mode="service")
         self.assertIn("Each receipt that needs it needs its own comment", t); self.assertIn("`/agentvow acknowledge " + "a" * 12 + "` and `/agentvow acknowledge " + "b" * 12 + "`", t)
         self.assertIn("write access", t); self.assertIn("cannot be the pull request's author", t)
 
     def test_a_supported_result_that_the_policy_wants_confirmed_asks_for_a_person(self):
-        t = explain.explain(result("needs_acknowledgement", ("supported", "needs_acknowledgement", "x", None)), ["a" * 12], ["alice"])
+        t = explain.explain(result("needs_acknowledgement", ("supported", "needs_acknowledgement", "x", None)), ["a" * 12], ["alice"], mode="service")
         self.assertIn("asks a person to confirm even supported results", t); self.assertNotIn("Nothing to do", t)
 
     def test_an_unlisted_acknowledger_is_said_plainly_and_an_acknowledged_item_asks_for_nothing(self):
-        self.assertIn("lists no acknowledger", explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12]))
+        self.assertIn("lists no acknowledger", explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None)), ["a" * 12], [], mode="service"))
         done = explain.explain(result("allow", ("unknown", "needs_acknowledgement", "x", "alice")))
         self.assertIn("Acknowledged by @alice", done); self.assertNotIn("What to do", done)
+
+    def test_local_mode_does_not_pretend_there_is_a_pull_request_comment_flow_and_never_guesses_who_may_acknowledge(self):
+        res = result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "x", None))
+        unknown = explain.explain(res, ["a" * 12])                                  # acknowledgers not known (an older result)
+        self.assertIn("agentvow policy evaluate --ack FILE", unknown); self.assertNotIn("Listed acknowledgers", unknown); self.assertNotIn("lists no acknowledger", unknown)
+        self.assertIn("Listed acknowledgers: @alice", explain.explain(res, ["a" * 12], ["alice"])); self.assertIn("lists no acknowledger", explain.explain(res, ["a" * 12], []))
+
+    def test_an_evaluation_carries_the_policys_acknowledgers_and_the_cli_prints_them(self):
+        d = {"status": "x", "commit": "a" * 40, "unexamined": 0, "findings": [{"kind": "tests_pass", "verdict": "UNKNOWN", "meta": {}}], "pack": {}}
+        res = policy.evaluate(policy.build_receipt(d, "o/n", "b" * 40), {"schema": policy.POLICY, "acknowledgers": ["alice"]})
+        self.assertEqual(res["acknowledgers"], ["alice"])
+        f = Path(tempfile.mkdtemp()) / "r.json"; f.write_text(json.dumps(res)); out = io.StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(cli.main(["policy", "explain", "--result", str(f)]), 0)
+        self.assertIn("Listed acknowledgers: @alice", out.getvalue())
 
     def test_repeated_reasons_are_grouped(self):
         t = explain.explain(result("needs_acknowledgement", ("unknown", "needs_acknowledgement", "a", None), ("unknown", "needs_acknowledgement", "b", None)), ["a" * 12])

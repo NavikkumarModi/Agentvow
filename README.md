@@ -10,6 +10,8 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 
 *Recorded from [examples/demo_capture.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_capture.py) on the released package: a real virtualenv with pytest, a real commit, a real `agentvow capture`, a real sandboxed replay and a real changed-line coverage measurement. Staged for the recording, not faked: the pacing and simulated typing of the two commands, the "agent" scene (a pre-made commit stands in for a live agent), and the line wrapping of the report text so it fits the terminal. Note what the report does and does not say: the tests pass and the result reproduces from the captured packages, but nearly half of the changed lines were never run by any test, which is exactly what a person would want to know before trusting "all tests pass".*
 
+*Video versions (MP4) of every recording on this page: [capture and replay](assets/demo.mp4), [the gate on three pull requests](assets/demo_gate.mp4), [what a reviewer reads](assets/demo_explain.mp4).*
+
 ## What you get
 - **Independent replay.** Tests are re-run in a clean sandbox, built from the packages the agent's own environment actually had, and compared with a build from the project's own setup (CI files, Dockerfile, requirements).
 - **Honest answers, three ways.** *Contradicted*, *supported (with the basis stated)*, or *UNKNOWN*. Missing evidence is never turned into "OK", and every UNKNOWN comes with the next step that would resolve it.
@@ -17,49 +19,56 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 - **Claim checks beyond tests.** Backward compatibility (public-API diff) and downstream impact (import graph) for Python.
 - **Portable evidence.** A minimal receipt and a capture bundle that can be verified on another machine, bound to the exact files by git tree hash.
 - **Team gate.** A reusable GitHub workflow replays on the runner, builds a receipt and applies your policy from the base branch; a pull request that is contradicted cannot be merged when `agentvow/evidence` is a required check, and a person can acknowledge an UNKNOWN result by name (`/agentvow acknowledge <id>`). A self-hostable control plane service publishes that check; see below.
+- **Plain-language decisions.** The check, the job summary and the CLI (`agentvow policy explain`) say what happened, what it means for the merge, what to do next, who can acknowledge and how, and what a pass does *not* show; the control plane also notifies the listed acknowledgers on the pull request and refreshes open pull requests when the policy file changes (both tested against fakes, not yet seen on GitHub).
 - **Policy as a file.** `agentvow policy` turns a receipt into allow, needs acknowledgement or block under rules you write (contradictions always block; unauthenticated captures and unmeasured coverage can require a named acknowledger).
 - **Evidence for a team.** `agentvow pilot-report` summarises a folder of receipts mechanically (decisions, reproducibility, coverage, what could not be recreated) and states what it does not show.
 - **Where you work.** Claude Code hooks (`agentvow init`), GitHub Copilot in VS Code, the VS Code extension, the command line, GitHub Actions.
 - **Safe by construction.** Sandboxed test runs (macOS `sandbox-exec`, Linux bubblewrap), network denied, sealed results, text from agents escaped in reports.
 
 ## How it works
-1. The agent works and stops (or opens a pull request).
-2. Agentvow reads its message and extracts the checkable claims by rules.
-3. It replays and measures: tests at base and head, captured-environment replay, project-native replay, changed-line coverage.
-4. You get a plain-language verdict with evidence, scope and what was not examined.
+1. The agent works and stops (or opens a pull request). Agentvow's hook records the packages of the agent's environment right after its tests.
+2. Agentvow reads the agent's message and extracts the checkable claims by rules (no model).
+3. It replays and measures: tests at base and head in a clean sandbox, from the captured packages and from the project's own setup, plus changed-line coverage.
+4. It writes a **receipt** (verdicts, counts and category names; no source) and applies your **policy** from the base branch: *allow*, *needs acknowledgement* or *block*. A contradiction always blocks.
+5. In a pull request, the **check** says all this in plain words; a named person acknowledges an unconfirmed result with one comment, and the acknowledgement is recorded.
 
-## Demos (all real output)
-**1. An agent's claim, checked.** The agent says it added `g` and that 9 tests pass; Agentvow runs the tests and finds 1. It reports UNKNOWN and says why, not "OK" (output of `agentvow check` from 0.4.2, trimmed to the report):
+```text
+agent -> capture -> check -> receipt -> policy -> explain -> pull request check -> acknowledgement
+```
+
+## Demos (all real output; staged only as stated)
+Each recording is a real run of the commands shown; what is staged is said under it. **The same flow, four views:**
+
+**1. An agent's claim is replayed from its own packages** (the recording at the top of this page).
+
+**2. An agent's claim, checked, and what it becomes.** The agent says it added `g` and that 9 tests pass; Agentvow runs the tests and finds 1. It reports UNKNOWN and says why, not "OK"; a receipt keeps only verdicts, counts and category names; a policy turns it into a decision (output of 0.4.2, trimmed):
 ```text
 $ agentvow check --repo . --base HEAD~1 --transcript msg.txt --run-tests --test-cmd "{py} -m unittest discover -s tests -t ."
 STATUS: INSUFFICIENT EVIDENCE
-Checked commit 7a3f6553. Changed files: lib.py.
-
 ? The agent said: "All 9 tests pass."
    UNKNOWN: The agent reported 9 passing tests but Agentvow ran 1 test suite(s) on this exact state
    (tests: 1 passed, 0 failed); total 1 passed, 0 failed, 0 skipped. The numbers differ, which may mean
    the agent ran a different set or configuration.
-This tool informs your decision; it does not approve, reject or merge anything.
-```
-**2. From a verdict to a decision you can share.** A receipt keeps only verdicts, counts and category names (no source, no free text, no paths); a policy turns it into a decision:
-```text
 $ agentvow receipt --decision d.json --repo-slug you/project --repo . -o receipt.json
 $ agentvow policy evaluate --receipt receipt.json
 needs_acknowledgement
-- unknown (needs_acknowledgement): The 'tests_pass' claim could not be confirmed or refuted (UNKNOWN):
-  the evidence was missing or the replay could not run.
 ```
-**3. The gate on three agent pull requests (recording).** The steps of the gate workflow (`check`, `receipt`, `policy evaluate`) run on three pull-request branches: the claim is true (allow), the claim is false because the change breaks a test (block), and the claim cannot be confirmed because the agent said 9 tests passed and one exists (needs acknowledgement).
+
+**3. The gate on three agent pull requests.** The steps of the gate workflow run on three pull-request branches: the claim is true (allow), the claim is false because the change breaks a test (block), and the claim cannot be confirmed because the agent said 9 tests passed and one exists (needs acknowledgement).
 
 ![Three screens, one per agent pull request. The first, "I added g(). All tests pass.", ends in allow, with the grey note that the required check passes. The second, "I simplified f(). All tests pass.", ends in block because the claim is contradicted and cannot be acknowledged away. The third, "I added h(). All 9 tests pass.", ends in needs_acknowledgement.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo_gate.gif?raw=true)
 
-*Recorded from [examples/demo_gate.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_gate.py) on the released 0.4.2 package, real commands on a throwaway project with a real virtualenv and pytest; the decisions are not scripted. Staged for the recording, not faked: the pacing and simulated typing, the three branches (pre-made commits stand in for agents, and their pull-request descriptions are the claims), the working files kept outside the repository, the commands shortened on screen (the real ones also pass `--python .venv/bin/python` and longer paths), and the grey "on GitHub" notes, which say what the required check then does (shown for real in the screenshot below and in `docs/LIVE_TESTING.md`).*
+*Recorded from [examples/demo_gate.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_gate.py) on the released 0.4.2 package, real commands on a throwaway project with a real virtualenv and pytest; the decisions are not scripted. Staged: the pacing and simulated typing, the pre-made branches that stand in for agents (their pull-request descriptions are the claims), the working files kept outside the repository, the commands shortened on screen (the real ones also pass `--python .venv/bin/python` and longer paths), and the grey "on GitHub" notes (what the required check then does: shown for real in view 5 and in `docs/LIVE_TESTING.md`). [MP4](assets/demo_gate.mp4)*
 
-**4. On a real pull request.** The gate workflow and the control plane service, run against GitHub in a throwaway repository (`docs/LIVE_TESTING.md`): a pull request whose tests are broken but whose description says "All tests pass." gets a failing, **required** `agentvow/evidence` check from the Agentvow App, and the merge button is disabled. A pull request that merely could not be confirmed waits for a named person to acknowledge it.
+**4. What a reviewer reads.** The next step: `agentvow policy explain` turns the decision into the plain-language text that the check run and the job summary show (this is the 0.4.4 release candidate; the gate workflows use it once their default Agentvow version is raised to 0.4.4).
+
+![Two screens. In the first, a pull request whose claim was contradicted: "Agentvow will not let this through", what was found in plain words, "This cannot be acknowledged away". In the second, a pull request whose claim could not be confirmed: "Agentvow could not fully confirm this change. A person named in the repository's policy must look at it and acknowledge it before it can merge", what to do, who is listed as acknowledger, and that a contradiction can never be acknowledged.](https://github.com/NavikkumarModi/Agentvow/blob/main/assets/demo_explain.gif?raw=true)
+
+*Recorded from [examples/demo_explain.py](https://github.com/NavikkumarModi/Agentvow/blob/main/examples/demo_explain.py) with the 0.4.4 release candidate built from this repository (not yet on PyPI), on the same throwaway project as view 3; the decisions are not scripted. Staged as in view 3, plus: a policy that lists one acknowledger (alice), and the closing paragraph ("what this does not show", which every explanation ends with) left out of the picture. [MP4](assets/demo_explain.mp4)*
+
+**5. On a real pull request.** The gate workflow and the control plane service, run against GitHub in a throwaway repository (`docs/LIVE_TESTING.md`): a pull request whose tests are broken but whose description says "All tests pass." gets a failing, **required** `agentvow/evidence` check from the Agentvow App, and the merge button is disabled. A pull request that merely could not be confirmed waits for a named person to acknowledge it, and the acknowledgement flow worked end to end. (That run predates the plain-language text, the notification and the policy refresh; those have not yet run on GitHub.)
 
 ![A pull request with the required check agentvow/evidence failing with "Agentvow: block"; the Merge pull request button is greyed out.](https://raw.githubusercontent.com/NavikkumarModi/Agentvow/main/docs/images/gate-blocked-pr.png)
-
-**5. Replay from the agent's own packages** is the recording at the top of this page; the verdict view is the picture further down.
 
 ## Quick start
 ```bash
@@ -75,7 +84,8 @@ agentvow check --repo . --transcript msg.txt --ci --html report.html            
 # portable evidence and a team decision (docs/GATE_WORKFLOW.md):
 agentvow capture --repo . --export bundle.json && agentvow check --repo . --transcript msg.txt --from-capture bundle.json   # anyone with the same files can replay it; refused if the files differ
 agentvow check --repo . --transcript msg.txt --json > d.json && agentvow receipt --decision d.json --repo-slug you/project --repo . -o receipt.json
-agentvow policy init > policy.json && agentvow policy evaluate --receipt receipt.json --policy policy.json   # allow / needs_acknowledgement / block
+agentvow policy init > policy.json && agentvow policy evaluate --receipt receipt.json --policy policy.json > result.json   # allow / needs_acknowledgement / block
+agentvow policy explain --result result.json                                              # the same decision in plain words (0.4.4+): what happened, what to do, who can acknowledge
 agentvow pilot-report --receipts ./receipts -o report.md                                  # a mechanical evidence report over many receipts
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
@@ -139,4 +149,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 583 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 585 Python tests, 32 node tests -->

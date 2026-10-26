@@ -635,7 +635,7 @@ def main(argv=None) -> int:
             except (OSError, ValueError, TypeError) as e:
                 print(f"agentvow policy explain: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
                 return 3
-            print(explain_mod.explain(res, [res["receipt_sha"]] if isinstance(res.get("receipt_sha"), str) and res.get("receipt_sha") else ()))
+            print(explain_mod.explain(res, [res["receipt_sha"]] if isinstance(res.get("receipt_sha"), str) and res.get("receipt_sha") else (), res.get("acknowledgers") if isinstance(res.get("acknowledgers"), list) else None))
             return 0
         try:
             rcpt = json.loads(Path(a.receipt).read_text(encoding="utf-8"))

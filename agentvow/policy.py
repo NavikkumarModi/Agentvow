@@ -186,4 +186,4 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
         if _RANK[o] > _RANK[eff]:
             eff = o
     concl = {"allow": "success", "needs_acknowledgement": "action_required", "block": "failure"}[eff]
-    return {"decision": eff, "conclusion": concl, "reasons": reasons, "policy_sha": sha(pol), "receipt_sha": rsha}
+    return {"decision": eff, "conclusion": concl, "reasons": reasons, "policy_sha": sha(pol), "receipt_sha": rsha, "acknowledgers": list(pol["acknowledgers"])}
