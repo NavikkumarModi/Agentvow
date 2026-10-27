@@ -13,6 +13,7 @@ from . import claims as C
 from . import api_diff, changedcov, lint as lint_mod, statements as S
 from . import reality as R
 
+WEAK_KINDS = ("files_scope", "docs_updated", "lint_clean")   # checks that restate git or run a style tool: they never count as support for a change on their own
 REVIEW = "REVIEW REQUIRED"
 INSUFFICIENT = "INSUFFICIENT EVIDENCE"
 NO_CONTRA = "NO CONTRADICTION FOUND (scoped, not a safety verdict)"
@@ -133,6 +134,10 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
     elif not extracted:
         findings.append(Finding("(no checkable claims found)", "none", "UNKNOWN",
                                 "The message made no claim Agentvow can check. Nothing was verified."))
+    elif not any(f.kind not in WEAK_KINDS for f in findings):   # only statements about files, documentation or lint: git's own change list agreeing with a sentence says nothing about whether the change works
+        findings.append(Finding("(no claim about tests or impact found)", "none", "UNKNOWN",
+                                "The message made no claim about tests, impact or compatibility, so none of those was checked. The statements about files, documentation or lint that were checked "
+                                "do not show the change works."))
     if new_test_failures == "review":
         for f in findings:
             n = f.meta.get("new_test_failures", 0)
@@ -207,6 +212,21 @@ def _text_vs_changes(c, v, why, ev) -> Finding:
     return Finding(c.text, c.kind, v, why, evidence=ev[:8])
 
 
+_FILE_LEVEL_SUPPRESSION = re.compile(r"^\s*#\s*(?:flake8|ruff|fmt|isort|pylint)\s*:\s*(?:noqa|skip-file|off|skip_file|disable)\b", re.I | re.M)
+
+
+def _lint_shaping(repo, changed, files) -> list:
+    """Reasons a clean lint result may have been shaped by the change itself: the change edits a lint configuration file, or adds a file-level suppression comment to a file it lints."""
+    why = [f for f in changed if f.rsplit("/", 1)[-1] in lint_mod.CONFIG_FILES]
+    for f in files:
+        try:
+            if _FILE_LEVEL_SUPPRESSION.search((Path(repo) / f).read_text(errors="replace")[:400_000]):
+                why.append(f)
+        except OSError:
+            continue
+    return sorted(set(why))
+
+
 def _lint(c, repo, changed, runner_fn) -> Finding:
     tool = (c.detail or {}).get("tool", "")
     if tool not in lint_mod.TOOLS:
@@ -215,14 +235,20 @@ def _lint(c, repo, changed, runner_fn) -> Finding:
     files = named or [f for f in changed if f.endswith(".py")]
     r = runner_fn(repo, tool, files)
     v = r.get("version", "")
+    scope = f"the {r['files']} file(s) it was given" + (" (only those the agent named)" if named else " (the changed Python files)")
     if r["status"] == "clean":
+        shaped = _lint_shaping(repo, changed, files)
+        if shaped:
+            return Finding(c.text, c.kind, "UNKNOWN",
+                           f"{tool} ({v or 'version unknown'}) reports nothing on {scope}, but this change also edits lint configuration or adds a file-level suppression ({', '.join(shaped[:3])}), "
+                           "so a clean result may reflect that and not the code. A person should look.", attention=True, meta={"lint_tool": tool, "lint_version": v, "lint_shaped": shaped[:5]})
         return Finding(c.text, c.kind, "NOT_CONTRADICTED",
-                       f"{tool} ({v or 'version unknown'}) reports nothing on the {r['files']} changed Python file(s), with this repository's configuration. A different version of the tool may disagree.",
-                       meta={"lint_tool": tool, "lint_version": v})
+                       f"{tool} ({v or 'version unknown'}) reports no findings on {scope}, with this repository's configuration; files its configuration excludes are skipped silently. "
+                       "A different version of the tool may disagree.", meta={"lint_tool": tool, "lint_version": v})
     if r["status"] == "findings":
         return Finding(c.text, c.kind, "CONTRADICTED",
-                       f"The agent said {tool} is clean, but {tool} ({v or 'version unknown'}) reports {r['findings']} finding(s) in the {r['files']} changed Python file(s). "
-                       "A different version of the tool may disagree; check the version the project pins.", evidence=r.get("lines", [])[:8], meta={"lint_tool": tool, "lint_version": v})
+                       f"The agent said {tool} is clean, but {tool} ({v or 'version unknown'}) reports {r['findings']} finding(s) in {scope}. "
+                       "A different version of the tool may disagree; check the version the project pins.", evidence=list(r.get("lines", []))[:8], meta={"lint_tool": tool, "lint_version": v})
     return Finding(c.text, c.kind, "UNKNOWN", f"The lint claim could not be checked: {r.get('summary', 'the linter did not run')}")
 
 

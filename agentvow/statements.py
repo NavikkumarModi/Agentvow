@@ -72,10 +72,28 @@ def is_path(tok: str) -> bool:
         return False
     if not re.fullmatch(r"[\w./\-+@]+", tok) or tok.startswith(("/", "-", "..", "@")) or "//" in tok:   # "@scope/pkg/x.ts" is a package name, not a path
         return False
+    if any(seg in (".", "..") for seg in tok.rstrip("/").split("/")):   # "d/./f.py" and "d/../x" name a file in a way git's list does not: never match them, never touch the disk with them
+        return False
     if tok.endswith("/"):
+        last = tok.rstrip("/").rsplit("/", 1)[-1]
+        if "." in last and last.rsplit(".", 1)[-1].lower() in _EXT:   # "bad.py/" is not the directory that "bad.py" is not
+            return False
         return "/" in tok.rstrip("/") or len(tok) > 2
     ext = tok.rsplit(".", 1)[-1].lower() if "." in tok.rsplit("/", 1)[-1] else ""
     return ext in _EXT
+
+
+def _exists(repo, path: str) -> bool:
+    """Whether a path exists inside the repository. A path that leaves it (a symlink, however it is spelled) counts as not existing and the disk outside is never probed."""
+    import os
+    try:
+        root = os.path.realpath(str(repo))
+        target = os.path.realpath(os.path.join(root, path))
+    except (OSError, ValueError, TypeError):
+        return False
+    if target != root and not target.startswith(root + os.sep):
+        return False
+    return os.path.isdir(target) if path.endswith("/") else os.path.exists(target)
 
 
 def _clause(before: str) -> str:
@@ -226,7 +244,9 @@ def _ignored(repo: Path, path: str) -> bool:
 def resolve(repo: Path, changed: list, path: str, tracked: list):
     """-> (matches in the change list, ambiguous). A bare name matches by its last path components; a trailing slash matches a directory prefix."""
     if path.endswith("/"):
-        return [f for f in changed if f.startswith(path) or ("/" + path) in ("/" + f)], False
+        top = [f for f in changed if f.startswith(path)]
+        inner = [f for f in changed if ("/" + path) in ("/" + f) and not f.startswith(path)]   # "tests/" also matches "vendor/tests/x": the agent may mean either
+        return top + inner, bool(inner) and not top
     exact = [f for f in changed if f == path]
     if exact or "/" in path:
         if exact:
@@ -244,9 +264,9 @@ def check_files(repo: Path, changed: list, detail: dict):
     for c in detail["checks"]:
         path, expect = c["path"], c["expect"]
         hits, ambiguous = resolve(repo, changed, path, tracked)
-        exists = (repo / path).exists() if not path.endswith("/") else (repo / path).is_dir()
+        exists = _exists(repo, path)
         if expect == "changed":
-            if ambiguous:
+            if ambiguous and not path.endswith("/"):
                 unsure.append(f"{path}: several files have this name")
             elif hits:
                 ok.append(f"{path}: in the change list")

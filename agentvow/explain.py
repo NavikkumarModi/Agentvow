@@ -20,6 +20,8 @@ RULES = {
     "no_claims": ("The change made no claim that Agentvow can check, so nothing was confirmed or refuted.", "Review the change as you normally would; Agentvow has no opinion on it."),
     "harness_warning": ("The tests passed, but this change also modified existing tests, a file that runs when tests start, or the test runner's configuration, so the result may have been shaped by the change itself.",
                         "Read those changes: check that the tests still test what they did before, then acknowledge."),
+    "description_mismatch": ("The description (or the agent's message) says something about files or documentation that git's list of changed files disagrees with, for example it names a file this change does not touch.",
+                             "Check which is right, the description or the change. This is shown to a person and is not a block: in tests on real descriptions about two thirds or more of such mismatches were real, the rest were shorthand names."),
     "unauthenticated_capture": ("The record of the agent's environment came from a file somebody supplied. Agentvow checked it against the exact files, but cannot tell who made it.",
                                 "Acknowledge only if you trust whoever supplied it."),
     "partial_capture": ("The replay could not install some of the recorded packages on this runner and left them out, so it is not a full reproduction of the agent's environment.",

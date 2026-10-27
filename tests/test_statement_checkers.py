@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import tempfile
@@ -5,7 +6,10 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agentvow import claims, decision, lint, runner, statements  # noqa: E402
+import os
+from unittest import mock
+
+from agentvow import claims, decision, lint, policy, runner, statements  # noqa: E402
 
 
 def repo_with_change(**edits):
@@ -295,6 +299,131 @@ class RealRuff(unittest.TestCase):
         from unittest import mock
         with mock.patch("shutil.which", return_value=None):
             self.assertEqual(lint.run(repo_with_change(**{"a/util.py": "x = 2\n"}), "ruff check", ["a/util.py"])["status"], "unavailable")
+
+
+class ReviewFindings(unittest.TestCase):
+    """Each test is one finding of the adversarial review of 2026-10-27 (docs/research/CHECKERS_FILES_DOCS_LINT.md)."""
+
+    def test_flake8_is_not_run_when_the_repository_configures_local_plugins(self):   # high: a plugin is Python from the repository; the sandbox can still read files outside it
+        for name in ("setup.cfg", "tox.ini", ".flake8"):
+            d = repo_with_change(**{name: "[flake8:local-plugins]\nextension =\n    X = plug:P\n", "a/util.py": "x = 2\n"})
+            self.assertIn("local plugins", lint.runs_repository_code(d, "flake8"))
+            res = lint.run(d, "flake8", ["a/util.py"])
+            self.assertEqual(res["status"], "unavailable")
+            self.assertIn("was not run", res["summary"])
+        d = repo_with_change(**{"setup.cfg": "[flake8]\nmax-line-length = 100\n", "a/util.py": "x = 2\n"})
+        self.assertIsNone(lint.runs_repository_code(d, "flake8"))
+        self.assertIsNone(lint.runs_repository_code(repo_with_change(**{"setup.cfg": "[flake8:local-plugins]\n"}), "ruff check"))
+
+    def test_only_parsed_path_and_code_pairs_are_reported_never_the_tools_free_text(self):   # high: a plugin or a crafted file name can put file contents or tokens in the output
+        out = ["a/util.py:1:1: X001 token=FAKETOKEN123", "other/secret.py:2:2: F401 not a file we gave", "free text with FAKETOKEN123", "a/util.py:3:4 E501 line too long: SECRET",
+               "a/util.py:9:9: lowercase01 nope"]
+        got = lint.parse("flake8", out, {"a/util.py"})
+        self.assertEqual(got, ["a/util.py X001", "a/util.py E501"])
+        self.assertNotIn("FAKETOKEN123", " ".join(got)); self.assertNotIn("SECRET", " ".join(got))
+        self.assertEqual(lint.parse("ruff format", ["would reformat a/util.py", "would reformat /etc/passwd", "garbage"], {"a/util.py"}), ["a/util.py would be reformatted"])
+
+    def test_the_tool_is_found_only_in_absolute_path_entries_outside_the_repository(self):   # low: a '.' or empty entry would pick the repository's own ruff
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        inside = str(d / "bin"); (d / "bin").mkdir()
+        with mock.patch.dict(os.environ, {"PATH": os.pathsep.join(["", ".", "bin", inside, "/usr/bin", "/bin"])}):
+            got = lint.trusted_path(d).split(os.pathsep)
+        self.assertEqual([x for x in got if x], [x for x in ("/usr/bin", "/bin") if os.path.isdir(x)] or got)
+        self.assertNotIn(inside, got); self.assertNotIn("", got); self.assertNotIn(".", got); self.assertNotIn("bin", got)
+
+    def test_a_clean_lint_result_is_not_trusted_when_the_change_edits_lint_configuration_or_suppresses_a_file(self):   # medium
+        clean = {"status": "clean", "version": "v", "files": 1, "findings": 0, "summary": "", "lines": []}
+        for edits in ({"a/util.py": "x = 2\n", ".flake8": "[flake8]\nexclude = a/util.py\n"}, {"a/util.py": "# flake8: noqa\nimport os\n"}, {"a/util.py": "# ruff: noqa\nimport os\n"},
+                      {"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\nignore = ['ALL']\n"}):
+            d = repo_with_change(**edits)
+            f = find(decision.check(d, "HEAD", "`ruff check` passes with no issues.", lint_runner=lambda *a: clean), statements.LINT_CLEAN)[0]
+            self.assertEqual(f.verdict, "UNKNOWN", edits); self.assertTrue(f.attention); self.assertIn("lint configuration or adds a file-level suppression", f.why)
+        d = repo_with_change(**{"a/util.py": "x = 2  # noqa: E501\n"})   # a line-level noqa is ordinary
+        f = find(decision.check(d, "HEAD", "`ruff check` passes with no issues.", lint_runner=lambda *a: clean), statements.LINT_CLEAN)[0]
+        self.assertEqual(f.verdict, "NOT_CONTRADICTED")
+        self.assertIn("files its configuration excludes are skipped", f.why)
+
+    def test_findings_stay_contradicted_even_when_the_config_changed(self):
+        d = repo_with_change(**{"a/util.py": "x = 2\n", ".flake8": "[flake8]\n"})
+        bad = {"status": "findings", "version": "v", "files": 1, "findings": 1, "summary": "", "lines": ["a/util.py F401"]}
+        f = find(decision.check(d, "HEAD", "`ruff check` passes with no issues.", lint_runner=lambda *a: bad), statements.LINT_CLEAN)[0]
+        self.assertEqual(f.verdict, "CONTRADICTED")
+
+    def test_paths_with_dot_segments_or_parent_references_are_never_claims_and_the_disk_outside_is_not_probed(self):   # medium
+        for text in ("I did not touch `d/./f.py`.", "Removed `d/../../outside.conf`.", "Removed `../x.py`.", "I did not touch `bad.py/`.", "Updated `a/../b.py`."):
+            self.assertEqual([k for k, _ in kinds(text) if k == statements.FILES_SCOPE], [], text)
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        outside = Path(tempfile.mkdtemp()); (outside / "secret.conf").write_text("x")
+        (d / "link").symlink_to(outside)
+        self.assertFalse(statements._exists(d, "link/secret.conf"))   # a symlink out of the repository counts as not existing
+        self.assertFalse(statements._exists(d, "../" + outside.name))
+        self.assertTrue(statements._exists(d, "a/util.py")); self.assertTrue(statements._exists(d, "a/"))
+
+    def test_an_inner_directory_match_is_ambiguous_for_a_left_alone_claim_but_fine_for_a_changed_claim(self):   # low
+        d = repo_with_change(**{"vendor/tests/x.py": "y = 1\n"})
+        f = find(decision.check(d, "HEAD", "I did not touch `tests/`."), statements.FILES_SCOPE)[0]
+        self.assertEqual(f.verdict, "UNKNOWN"); self.assertFalse(f.attention)
+        f = find(decision.check(d, "HEAD", "Added `tests/x.py`."), statements.FILES_SCOPE)[0]
+        self.assertEqual(f.verdict, "NOT_CONTRADICTED")
+
+    def test_statements_about_files_alone_never_amount_to_an_allow(self):   # high: "Added `x.py`." used to turn no_claims into an automatic allow
+        d = repo_with_change(**{"b/new.py": "z = 1\n"})
+        r = decision.check(d, "HEAD", "Added `b/new.py`.")
+        self.assertNotEqual(r.status, decision.NO_CONTRA)
+        self.assertIn("none", [f.kind for f in r.findings])
+        rec = policy.build_receipt(json.loads(json.dumps(__import__("agentvow.report", fromlist=["to_dict"]).to_dict(r))), "o/r", "b" * 40)
+        rec["commit"] = "a" * 40
+        res = policy.evaluate(rec)
+        self.assertEqual(res["decision"], "needs_acknowledgement")
+        # but with a tests claim beside it the statement is just one more finding
+        weak_only = {"kind": "files_scope", "verdict": "NOT_CONTRADICTED"}
+        self.assertTrue(all(c["kind"] in decision.WEAK_KINDS for c in rec["claims"] if c["kind"] != "none"))
+        text = " ".join(x["text"] for x in policy.evaluate({**rec, "claims": [{**weak_only, "mismatch": False}]})["reasons"])
+        self.assertNotIn("replay", text)   # not described as supported by the replay
+
+    def test_a_mismatch_reaches_the_receipt_and_the_policy_as_its_own_rule(self):   # medium
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        r = decision.check(d, "HEAD", "Updated `docs/guide.md`.")
+        rec = policy.build_receipt(__import__("agentvow.report", fromlist=["to_dict"]).to_dict(r), "o/r", "b" * 40)
+        rec["commit"] = "a" * 40
+        self.assertTrue(any(c.get("mismatch") for c in rec["claims"]))
+        self.assertIsNone(policy.validate_receipt(rec))
+        res = policy.evaluate(rec)
+        self.assertIn("description_mismatch", [x["rule"] for x in res["reasons"]])
+        self.assertNotIn("unknown", [x["rule"] for x in res["reasons"] if x["rule"] == "unknown" and "docs" in x["text"]])
+        self.assertEqual(policy.evaluate(rec, {"description_mismatch": "allow", "unknown": "allow", "no_claims": "allow"})["decision"], "allow")   # a policy may choose
+        bad = json.loads(json.dumps(rec)); bad["claims"][0]["mismatch"] = "yes"
+        self.assertIn("mismatch", policy.validate_receipt(bad))
+        from agentvow import explain
+        self.assertIn("description_mismatch", explain.RULES)
+
+    def test_on_linux_a_repository_under_a_hidden_location_is_bound_read_only_for_the_linter_and_never_writable(self):
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        scratch = Path(tempfile.mkdtemp())
+        real = str(d.resolve())
+        cmd = runner._bwrap_prefix([scratch], False, ["ruff"], {"PATH": ""}, readonly=[d])
+        triples = list(zip(cmd, cmd[1:], cmd[2:]))
+        self.assertIn(("--ro-bind", real, real), triples)
+        self.assertNotIn(("--bind", real, real), triples)
+        cmd = runner._bwrap_prefix([scratch], False, ["ruff"], {"PATH": ""})
+        self.assertNotIn(("--ro-bind", real, real), list(zip(cmd, cmd[1:], cmd[2:])))
+
+    def test_a_timeout_goes_through_the_process_group_killer(self):   # low: subprocess.run(timeout) leaves a plugin's children running
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        with mock.patch.object(lint.shutil, "which", return_value="/bin/echo"), mock.patch.object(runner, "sandbox_problem", return_value=None), \
+                mock.patch.object(runner, "_run_group", side_effect=subprocess.TimeoutExpired("x", 1)) as g:
+            res = lint.run(d, "ruff check", ["a/util.py"])
+        self.assertEqual(res["status"], "error"); self.assertTrue(g.called)
+
+    @unittest.skipIf(runner.sandbox_problem(), "needs a working sandbox")
+    def test_the_sandbox_with_a_read_only_repository_really_refuses_a_write_into_it(self):   # the old test of this was vacuous (ruff --no-cache never writes)
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        scratch = Path(tempfile.mkdtemp(prefix="al", dir=runner.scratch_base())).resolve()
+        code = "import sys\nfor p in sys.argv[1:]:\n    try:\n        open(p, 'w').write('x'); print('wrote', p)\n    except OSError as e:\n        print('refused', p)\n"
+        argv = runner.wrap([sys.executable, "-I", "-c", code, str(d.resolve() / "pwned.txt"), str(scratch / "ok.txt")], scratch, scratch, env={"PATH": os.environ.get("PATH", "")}, readonly=[d.resolve()])
+        out = subprocess.run(argv, capture_output=True, text=True, cwd=d, timeout=60).stdout
+        self.assertIn("refused", out.splitlines()[0]); self.assertIn("wrote", out.splitlines()[1])
+        self.assertFalse((d / "pwned.txt").exists())
 
 
 class Feedback(unittest.TestCase):

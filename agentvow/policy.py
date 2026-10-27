@@ -17,8 +17,8 @@ ACK = "agentvow-ack/1"
 OUTCOMES = ("allow", "needs_acknowledgement", "block")
 _RANK = {"allow": 0, "needs_acknowledgement": 1, "block": 2}
 DEFAULT_POLICY = {"schema": POLICY, "contradicted": "block", "unknown": "needs_acknowledgement", "supported": "allow", "no_claims": "needs_acknowledgement",
-                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "needs_acknowledgement", "partial_capture": "needs_acknowledgement", "harness_warning": "needs_acknowledgement", "acknowledgers": []}
-_POLICY_ENUMS = {"contradicted": ("block",), "unknown": OUTCOMES, "supported": OUTCOMES, "no_claims": OUTCOMES, "unauthenticated_capture": OUTCOMES, "partial_capture": OUTCOMES, "harness_warning": OUTCOMES, "require_reproducibility": (None, "both", "any")}
+                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "needs_acknowledgement", "partial_capture": "needs_acknowledgement", "harness_warning": "needs_acknowledgement", "description_mismatch": "needs_acknowledgement", "acknowledgers": []}
+_POLICY_ENUMS = {"contradicted": ("block",), "unknown": OUTCOMES, "supported": OUTCOMES, "no_claims": OUTCOMES, "unauthenticated_capture": OUTCOMES, "partial_capture": OUTCOMES, "harness_warning": OUTCOMES, "description_mismatch": OUTCOMES, "require_reproducibility": (None, "both", "any")}
 _SUPPORTED = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED")
 
 
@@ -45,6 +45,8 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
                        # provenance of the capture, kept apart (never one "verified" flag): where it came from, whether the source was authenticated, what bound it to the files, whether the replay used all of it
                        "capture_authenticated": {"local": True, "bundle": False}.get(str(meta.get("capture_source", ""))), "state_binding": {"local": "capsule", "bundle": "git_tree"}.get(str(meta.get("capture_source", "")), ""),
                        "partial_replay": bool(meta.get("dropped_pins")),
+                       # a statement about files or documentation that git's change list disagrees with (decision._text_vs_changes): not missing evidence, a disagreement for a person
+                       "mismatch": bool(meta.get("mismatch")),
                        # why the result may have been shaped by the change itself (a modified test file, a file that runs when tests start, test-runner configuration): the policy can ask a person
                        "harness_warning": [str(x)[:40] for x in (meta.get("harness_warning") or [])][:5],
                        "changed_lines": {"executed": cov.get("executed"), "executable": cov.get("executable")} if cov else None})
@@ -93,6 +95,8 @@ def validate_receipt(r) -> str | None:
         hw = c.get("harness_warning", [])
         if not isinstance(hw, list) or len(hw) > 5 or not all(isinstance(x, str) and len(x) <= 40 for x in hw):
             return "harness_warning must be a short list of short strings"
+        if not isinstance(c.get("mismatch", False), bool):
+            return "mismatch must be true or false"
         if not (c.get("capture_authenticated") is None or isinstance(c.get("capture_authenticated"), bool)) or not isinstance(c.get("partial_replay", False), bool) or not isinstance(c.get("state_binding", ""), str) or len(c.get("state_binding", "")) > 20:
             return "capture provenance fields have the wrong type"
     cov = r.get("coverage")
@@ -162,7 +166,10 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
         if v == "CONTRADICTED":
             add("contradicted", pol["contradicted"], f"The check found the '{kind}' claim contradicted. A contradiction cannot be acknowledged away: change the code or correct the claim.")
         elif v in _SUPPORTED:
-            add("supported", pol["supported"], f"The '{kind}' claim was supported by the replay.")
+            if kind in ("files_scope", "docs_updated", "lint_clean"):
+                add("supported", pol["supported"], f"The '{kind}' statement agreed with git's change list or the linter. This does not show that the change works.")
+            else:
+                add("supported", pol["supported"], f"The '{kind}' claim was supported by the replay.")
             if c.get("capture_source") == "bundle":
                 add("unauthenticated_capture", pol["unauthenticated_capture"], "The package capture was supplied as a file and is not authenticated (it was checked against the exact files and replayed here; the packages it names were chosen by whoever made it).")
             if c.get("partial_replay") or (c.get("dropped_pins") or 0) > 0:
@@ -177,6 +184,8 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
                     add("min_changed_line_coverage", "needs_acknowledgement", "The policy asks for a minimum of changed lines run by the tests, but changed-line coverage was not measured for this change.")
                 elif exe > 0 and (ex or 0) / exe < m:
                     add("min_changed_line_coverage", "needs_acknowledgement", f"Only {ex or 0} of {exe} changed lines were run by the tests ({(ex or 0) / exe:.0%}); the policy asks for {m:.0%}.")
+        elif v == "UNKNOWN" and c.get("mismatch"):
+            add("description_mismatch", pol["description_mismatch"], f"The '{kind}' statement disagrees with git's list of changed files; a person should check which is right.")
         elif v == "UNKNOWN":
             add("unknown", pol["unknown"], f"The '{kind}' claim could not be confirmed or refuted (UNKNOWN): the evidence was missing or the replay could not run.")
         else:
