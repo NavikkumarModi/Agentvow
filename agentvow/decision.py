@@ -229,27 +229,42 @@ def _lint_shaping(repo, changed, files) -> list:
 
 def _lint(c, repo, changed, runner_fn) -> Finding:
     tool = (c.detail or {}).get("tool", "")
-    if tool not in lint_mod.TOOLS:
-        return Finding(c.text, c.kind, "UNKNOWN", f"Agentvow can run ruff, black and flake8 to check a lint claim; it has no runner for '{tool}', so this claim is unverified.")
     named = [p for p in (c.detail or {}).get("paths", []) if p in changed]
     files = named or [f for f in changed if f.endswith(".py")]
-    r = runner_fn(repo, tool, files)
-    v = r.get("version", "")
-    scope = f"the {r['files']} file(s) it was given" + (" (only those the agent named)" if named else " (the changed Python files)")
-    if r["status"] == "clean":
-        shaped = _lint_shaping(repo, changed, files)
-        if shaped:
-            return Finding(c.text, c.kind, "UNKNOWN",
-                           f"{tool} ({v or 'version unknown'}) reports nothing on {scope}, but this change also edits lint configuration or adds a file-level suppression ({', '.join(shaped[:3])}), "
-                           "so a clean result may reflect that and not the code. A person should look.", attention=True, meta={"lint_tool": tool, "lint_version": v, "lint_shaped": shaped[:5]})
-        return Finding(c.text, c.kind, "NOT_CONTRADICTED",
-                       f"{tool} ({v or 'version unknown'}) reports no findings on {scope}, with this repository's configuration; files its configuration excludes are skipped silently. "
-                       "A different version of the tool may disagree.", meta={"lint_tool": tool, "lint_version": v})
-    if r["status"] == "findings":
+    notes: list = []
+    if tool in lint_mod.GENERIC:
+        tools, notes, blocked = lint_mod.resolve(repo, tool, changed)
+        if blocked:
+            return Finding(c.text, c.kind, "UNKNOWN", f"The statement names no tool and Agentvow could not tell which one it means: {blocked}. It is unverified.")
+    elif tool in lint_mod.TOOLS:
+        tools = [tool]
+    else:
+        return Finding(c.text, c.kind, "UNKNOWN", f"Agentvow can run ruff, black and flake8 to check a lint claim; it has no runner for '{tool}', so this claim is unverified.")
+    results = [(t, runner_fn(repo, t, files)) for t in tools]
+    scope = lambda r: f"the {r['files']} file(s) it was given" + (" (only those the agent named)" if named else " (the changed Python files)")
+    ver = lambda t, r: f"{t} ({r.get('version') or 'version unknown'})"
+    meta = {"lint_tools": [t for t, _ in results], "lint_versions": {t: r.get("version", "") for t, r in results}}
+    extra = (" " + "; ".join(notes) + ".") if notes else ""
+    bad = [(t, r) for t, r in results if r["status"] == "findings"]
+    if bad:
+        evidence = [f"{t}: {x}" for t, r in bad for x in r.get("lines", [])][:8]
         return Finding(c.text, c.kind, "CONTRADICTED",
-                       f"The agent said {tool} is clean, but {tool} ({v or 'version unknown'}) reports {r['findings']} finding(s) in {scope}. "
-                       "A different version of the tool may disagree; check the version the project pins.", evidence=list(r.get("lines", []))[:8], meta={"lint_tool": tool, "lint_version": v})
-    return Finding(c.text, c.kind, "UNKNOWN", f"The lint claim could not be checked: {r.get('summary', 'the linter did not run')}")
+                       f"The agent said lint is clean, but " + "; ".join(f"{ver(t, r)} reports {r['findings']} finding(s) in {scope(r)}" for t, r in bad) + ". "
+                       "A different version of the tool may disagree; check the version the project pins." + extra, evidence=evidence, meta=meta)
+    clean = [(t, r) for t, r in results if r["status"] == "clean"]
+    other = [(t, r) for t, r in results if r["status"] != "clean"]
+    if other or (tool in lint_mod.GENERIC and notes and any("not run" in n for n in notes)):
+        ran = ("; ".join(f"{ver(t, r)} reports no findings in {scope(r)}" for t, r in clean) + ". ") if clean else ""
+        left = "; ".join(f"{t}: {r.get('summary') or 'it did not run'}" for t, r in other)
+        return Finding(c.text, c.kind, "UNKNOWN", f"The lint claim could not be fully checked. {ran}{left + '. ' if left else ''}Part of what the statement covers was not run.{extra}", meta=meta)
+    shaped = _lint_shaping(repo, changed, files)
+    if shaped:
+        return Finding(c.text, c.kind, "UNKNOWN",
+                       "; ".join(f"{ver(t, r)} reports nothing on {scope(r)}" for t, r in clean) + f", but this change also edits lint configuration or adds a file-level suppression ({', '.join(shaped[:3])}), "
+                       "so a clean result may reflect that and not the code. A person should look." + extra, attention=True, meta={**meta, "lint_shaped": shaped[:5]})
+    return Finding(c.text, c.kind, "NOT_CONTRADICTED",
+                   "; ".join(f"{ver(t, r)} reports no findings on {scope(r)}" for t, r in clean) + ", with this repository's configuration; files its configuration excludes are skipped silently. "
+                   "A different version of the tool may disagree." + extra, meta=meta)
 
 
 def _compat(c, repo, base, changed) -> Finding:

@@ -22,7 +22,7 @@ Rules that keep false mismatches rare:
 
 **A disagreement with git's change list is a mismatch for a person, not CONTRADICTED.** For files and documentation the verdict is UNKNOWN with attention (overall status REVIEW REQUIRED; under the default policy a person must acknowledge), because on real pull-request descriptions the measured precision of such mismatches does not support blocking a merge (below). Only the lint result, which is a tool's own output, can be CONTRADICTED. Verdict mapping uses the four existing verdicts; the checks fit the existing policy, receipt and explanation without new rules. The feedback text sent back to the agent has a fixed reason per kind and never repeats repository strings.
 
-## Tests (52, `tests/test_statement_checkers.py`)
+## Tests (61, `tests/test_statement_checkers.py`)
 Extraction (including the precision traps above), each file/doc/lint verdict on a real temporary git repository, a real `ruff` run in the sandbox (skipped when ruff or the sandbox is absent), the repository left untouched by the linter, the read-only bind, and the feedback text. Mutation checks: 11 deliberate breakages of the new code (the unchanged-file contradiction, the ignored-file guard, the ambiguity guard, the second-verb stop list, the README target, the docstring guard, lint CONTRADICTED, named-file scoping, option-like names, the unchecked-duplicate guard, the `.agentvow` exclusion) were all caught by at least one test after two tests were added for survivors.
 
 ## Evaluation on the 22 valid B6 messages
@@ -61,6 +61,18 @@ An independent reviewer (a separate agent instructed to falsify the feature, no 
 | 7 | low | `tests/` matched `vendor/tests/x` for a left-alone claim. | an inner-directory match is ambiguous (UNKNOWN) |
 | 8 | low | Unverified: an empty or `.` PATH entry could select the repository's own tool. | PATH entries must be absolute and outside the repository |
 The reviewer also found one vacuous test (a read-only check with a tool that never writes), replaced by a test that makes the sandbox refuse a real write. Accepted, documented limits: "created" passes for a file that was only modified; any changed `.md` file satisfies "documented"; I could not test the Linux sandbox path locally (CI will).
+
+## Generic lint statements resolved from the repository's configuration (built 2026-10-27)
+Most lint statements name no tool ("lint passes", "formatting checks pass", "pre-commit passes"). They are now resolved from the repository's own files, read as text (nothing is executed): `[tool.ruff]` / `ruff.toml` (ruff), `[tool.black]` (black), `.flake8` or `[flake8]` in `setup.cfg`/`tox.ini` (flake8), and the hook ids of `.pre-commit-config.yaml`. "Lint" runs the configured linters (`ruff check`, `flake8`), "format" the configured formatters (`ruff format`, `black`), "pre-commit" the hooks it can run. Rules: nothing is guessed (no configuration: UNKNOWN); a change that also touches another language's files is UNKNOWN (a "lint" about a TypeScript change is not about ruff); hooks that cannot be run (mypy, eslint, ...) are named and make the result UNKNOWN even when the rest is clean; one tool's findings contradict the whole statement and name the tool; a tool that could not run makes a clean result UNKNOWN; the lint-configuration and suppression distrust applies as before.
+
+Measured on the lint statements of the five precision rounds (`research/checkers/lint_resolution_rate.py`, 371 distinct (pull request, tool) statements; configuration files from each repository's default branch today, an approximation; the linters were not run on those repositories):
+| | statements | share |
+|---|---|---|
+| names a runnable tool (ruff, black, flake8) | 39 | 11% |
+| names no tool, resolved to runnable tools | 48 | 13% |
+| names a tool Agentvow cannot run (mypy 14, isort 2) | 16 | 4% |
+| names no tool, not resolved | 268 | 72% |
+The runnable share rose from 11% to 24%. The 268 unresolved are mostly not a defect of the resolver: about 160 of them are changes that touch TypeScript, JavaScript or Go (the corpus is multi-language), 51 are repositories that configure none of ruff, black or flake8. Covering them needs linters for those languages; eslint runs repository plugins and would need the same refusal as flake8, so it is not built.
 
 ## Limits
 Rule-based extraction misses most phrasings (it only finds explicit verbs next to backticked paths); one tool version on one machine decides lint; the file check says which files changed, not what changed in them; the base the change is measured against must be the right one (a statement about an earlier turn's work can look contradicted against a later base); the Linux sandbox path for lint is untested until CI runs it.

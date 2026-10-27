@@ -12,12 +12,14 @@ from unittest import mock
 from agentvow import claims, decision, lint, policy, runner, statements  # noqa: E402
 
 
-def repo_with_change(**edits):
+def repo_with_change(_base=None, **edits):
     """A repository with a base commit and an uncommitted working-tree change. edits: {path: content}; a None value deletes the file."""
     d = Path(tempfile.mkdtemp())
     g = lambda *a: subprocess.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True).stdout.strip()
     g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
     for p, c in {"a/util.py": "x = 1\n", "b/util.py": "y = 1\n", "README.md": "# r\n", "docs/guide.md": "g\n", "tests/test_a.py": "def test_a(): pass\n", ".gitignore": "secret.env\n", "cfg.json": "{}\n"}.items():
+        (d / p).parent.mkdir(parents=True, exist_ok=True); (d / p).write_text(c)
+    for p, c in (_base or {}).items():   # files that already exist at the base (a lint configuration the change did not touch)
         (d / p).parent.mkdir(parents=True, exist_ok=True); (d / p).write_text(c)
     g("add", "-A"); g("commit", "-qm", "base")
     for p, c in edits.items():
@@ -424,6 +426,84 @@ class ReviewFindings(unittest.TestCase):
         out = subprocess.run(argv, capture_output=True, text=True, cwd=d, timeout=60).stdout
         self.assertIn("refused", out.splitlines()[0]); self.assertIn("wrote", out.splitlines()[1])
         self.assertFalse((d / "pwned.txt").exists())
+
+
+class GenericLint(unittest.TestCase):
+    """"lint passes" names no tool (285 of 393 lint statements on real pull-request descriptions): it is resolved from the repository's own configuration, never guessed."""
+    CLEAN = {"status": "clean", "version": "v1", "files": 1, "findings": 0, "summary": "", "lines": []}
+
+    CONFIGS = ("pyproject.toml", ".flake8", ".pre-commit-config.yaml", "ruff.toml")
+
+    def run_generic(self, text, results=None, **edits):
+        edits = edits or {"a/util.py": "x = 2\n"}
+        base = {k: edits.pop(k) for k in list(edits) if k in self.CONFIGS and not edits.get("_edit_config")}
+        edits.pop("_edit_config", None)
+        d = repo_with_change(base, **edits)
+        calls = []
+
+        def runner_fn(repo, tool, files):
+            calls.append(tool)
+            return (results or {}).get(tool, self.CLEAN)
+        r = decision.check(d, "HEAD", text, lint_runner=runner_fn)
+        return find(r, statements.LINT_CLEAN), calls
+
+    def test_configuration_is_read_from_text_and_a_comment_or_a_lookalike_does_not_count(self):
+        d = repo_with_change(**{"pyproject.toml": "# [tool.ruff]\n[tool.ruffle]\n[tool.black]\n", ".flake8": "[flake8]\n"})
+        self.assertEqual(sorted(lint.configured(d)), ["black", "flake8"])
+        d = repo_with_change(**{"pyproject.toml": "[tool.ruff.lint]\nselect = ['E']\n"})
+        self.assertIn("ruff", lint.configured(d))
+        d = repo_with_change(**{"ruff.toml": "line-length = 100\n"})
+        self.assertEqual(lint.configured(d), {"ruff": "ruff.toml"})
+        self.assertEqual(lint.configured(repo_with_change()), {})
+
+    def test_lint_resolves_to_the_configured_python_linters(self):
+        f, calls = self.run_generic("Lint passes.", **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\n"})
+        self.assertEqual(calls, ["ruff check"]); self.assertEqual(f[0].verdict, "NOT_CONTRADICTED"); self.assertIn("resolved from this repository's configuration", f[0].why)
+        f, calls = self.run_generic("Linting passes.", **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\n", ".flake8": "[flake8]\n"})
+        self.assertEqual(sorted(calls), ["flake8", "ruff check"])
+
+    def test_formatting_resolves_to_the_formatters_not_the_linters(self):
+        f, calls = self.run_generic("Formatting checks pass.", **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.black]\n[tool.ruff]\n"})
+        self.assertEqual(sorted(calls), ["black", "ruff format"])
+
+    def test_one_tools_findings_contradict_the_whole_statement_and_name_the_tool(self):
+        bad = {"status": "findings", "version": "v9", "files": 1, "findings": 2, "summary": "", "lines": ["a/util.py F401", "a/util.py E501"]}
+        f, calls = self.run_generic("Lint passes.", {"flake8": bad}, **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\n", ".flake8": "[flake8]\n"})
+        self.assertEqual(f[0].verdict, "CONTRADICTED"); self.assertIn("flake8 (v9) reports 2", f[0].why); self.assertEqual(f[0].evidence, ["flake8: a/util.py F401", "flake8: a/util.py E501"])
+
+    def test_a_tool_that_could_not_run_makes_a_clean_result_unknown_not_clean(self):
+        gone = {"status": "unavailable", "version": "", "files": 0, "findings": 0, "summary": "flake8 is not installed in a trusted location here", "lines": []}
+        f, _ = self.run_generic("Lint passes.", {"flake8": gone}, **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\n", ".flake8": "[flake8]\n"})
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertIn("ruff check (v1) reports no findings", f[0].why); self.assertIn("flake8 is not installed", f[0].why)
+
+    def test_nothing_is_guessed_when_no_python_linter_is_configured_or_other_languages_changed(self):
+        f, calls = self.run_generic("Lint passes.")
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertEqual(calls, []); self.assertIn("configures none of ruff, black or flake8", f[0].why)
+        f, calls = self.run_generic("Lint passes.", **{"a/util.py": "x = 2\n", "web/app.ts": "let a = 1\n", "pyproject.toml": "[tool.ruff]\n"})
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertEqual(calls, []); self.assertIn("another language", f[0].why)
+
+    def test_pre_commit_runs_the_hooks_it_can_and_says_when_others_were_not_run(self):
+        cfg = "repos:\n  - repo: https://github.com/astral-sh/ruff-pre-commit\n    hooks:\n      - id: ruff\n      - id: ruff-format\n  - repo: https://github.com/pre-commit/mirrors-mypy\n    hooks:\n      - id: mypy\n"
+        f, calls = self.run_generic("`pre-commit` passes.", **{"a/util.py": "x = 2\n", ".pre-commit-config.yaml": cfg})
+        self.assertEqual(sorted(calls), ["ruff check", "ruff format"])
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertIn("1 other hook(s) were not run (mypy)", f[0].why)
+        cfg = "repos:\n  - repo: x\n    hooks:\n      - id: black\n      - id: flake8\n"
+        f, calls = self.run_generic("`pre-commit` passes.", **{"a/util.py": "x = 2\n", ".pre-commit-config.yaml": cfg})
+        self.assertEqual(sorted(calls), ["black", "flake8"]); self.assertEqual(f[0].verdict, "NOT_CONTRADICTED")
+        f, calls = self.run_generic("`pre-commit` passes.")
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertEqual(calls, []); self.assertIn("no .pre-commit-config.yaml", f[0].why)
+        f, calls = self.run_generic("`pre-commit` passes.", **{"a/util.py": "x = 2\n", ".pre-commit-config.yaml": "repos:\n  - repo: x\n    hooks:\n      - id: eslint\n"})
+        self.assertEqual(calls, []); self.assertEqual(f[0].verdict, "UNKNOWN")
+
+    def test_a_resolved_clean_result_is_still_distrusted_when_the_change_edits_the_configuration(self):
+        f, _ = self.run_generic("Lint passes.", **{"a/util.py": "x = 2\n", "pyproject.toml": "[tool.ruff]\nexclude = ['a']\n", "_edit_config": True})
+        self.assertEqual(f[0].verdict, "UNKNOWN"); self.assertTrue(f[0].attention)
+
+    def test_the_configuration_is_read_from_the_repository_not_executed(self):
+        d = repo_with_change(**{"pyproject.toml": "[tool.ruff]\n", "a/util.py": "x = 2\n"})
+        with mock.patch.object(subprocess, "run", side_effect=AssertionError("nothing may be executed to read configuration")), mock.patch.object(subprocess, "Popen", side_effect=AssertionError("no")):
+            self.assertEqual(lint.configured(d), {"ruff": "pyproject.toml [tool.ruff]"})
+            self.assertEqual(lint.resolve(d, "lint", ["a/util.py"])[0], ["ruff check"])
 
 
 class Feedback(unittest.TestCase):

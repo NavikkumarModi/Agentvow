@@ -31,6 +31,72 @@ _VIOLATION = re.compile(r"^(?P<path>[^\s:][^:\n]*):\d+(?::\d+)?:?\s+(?P<code>[A-
 _REFORMAT = re.compile(r"^would reformat (?P<path>.+)$")
 
 
+# A statement that only says "lint passes" names no tool. It is resolved from the repository's own configuration, never guessed: the Python linters the repository configures, and only when
+# the change touches no other language (a "lint" about a TypeScript change is not about ruff).
+_OTHER_LANGUAGE = (".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".go", ".rs", ".java", ".kt", ".rb", ".php", ".c", ".h", ".cc", ".cpp", ".hpp", ".cs", ".swift", ".m", ".scala", ".dart", ".ex", ".exs", ".vue", ".svelte")
+HOOK_TOOLS = {"ruff": "ruff check", "ruff-check": "ruff check", "ruff-format": "ruff format", "black": "black", "flake8": "flake8"}
+GENERIC = ("lint", "format", "pre-commit")
+
+
+def _text(repo: Path, name: str) -> str:
+    try:
+        return (Path(repo) / name).read_text(errors="replace")[:300_000]
+    except OSError:
+        return ""
+
+
+def configured(repo: Path) -> dict:
+    """{"ruff": file, "black": file, "flake8": file} for the runnable tools the repository configures (value: where), found by reading its files; nothing is executed."""
+    out = {}
+    pyproject, setup_cfg, tox = _text(repo, "pyproject.toml"), _text(repo, "setup.cfg"), _text(repo, "tox.ini")
+    if re.search(r"^\[tool\.ruff[\].]", pyproject, re.M):
+        out["ruff"] = "pyproject.toml [tool.ruff]"
+    for n in ("ruff.toml", ".ruff.toml"):
+        if (Path(repo) / n).is_file():
+            out["ruff"] = n
+    if re.search(r"^\[tool\.black\]", pyproject, re.M):
+        out["black"] = "pyproject.toml [tool.black]"
+    if (Path(repo) / ".flake8").is_file():
+        out["flake8"] = ".flake8"
+    elif re.search(r"^\[flake8\]", setup_cfg, re.M):
+        out["flake8"] = "setup.cfg [flake8]"
+    elif re.search(r"^\[flake8\]", tox, re.M):
+        out["flake8"] = "tox.ini [flake8]"
+    return out
+
+
+def hooks(repo: Path) -> list:
+    """The hook ids of .pre-commit-config.yaml, read as text (no YAML parser, nothing executed)."""
+    return re.findall(r"^\s*-?\s*id:\s*['\"]?([\w.\-]+)", _text(repo, ".pre-commit-config.yaml"), re.M)[:80]
+
+
+def resolve(repo: Path, generic: str, changed: list):
+    """-> (tools, notes, blocked). tools: concrete runner names; notes: what was resolved or left out; blocked: why a generic statement cannot be resolved (then tools is empty)."""
+    other = sorted({f.rsplit(".", 1)[-1] for f in changed if f.lower().endswith(_OTHER_LANGUAGE)})
+    if other:
+        return [], [], f"the change also touches {', '.join('.' + x for x in other[:3])} files, so 'lint' may mean another language's linter, which Agentvow cannot run"
+    conf = configured(repo)
+    notes = []
+    if generic == "pre-commit":
+        ids = hooks(repo)
+        if not ids:
+            return [], [], "there is no .pre-commit-config.yaml to say which hooks run"
+        tools = sorted({HOOK_TOOLS[i] for i in ids if i in HOOK_TOOLS})
+        left = sorted({i for i in ids if i not in HOOK_TOOLS})
+        if left:
+            notes.append(f"{len(left)} other hook(s) were not run ({', '.join(left[:4])}{', ...' if len(left) > 4 else ''})")
+        if not tools:
+            return [], notes, "none of the repository's pre-commit hooks is a linter Agentvow can run"
+        return tools, notes + [f"resolved from .pre-commit-config.yaml: {', '.join(tools)}"], None
+    if generic == "format":
+        tools = [t for t, k in (("ruff format", "ruff"), ("black", "black")) if k in conf]
+    else:
+        tools = [t for t, k in (("ruff check", "ruff"), ("flake8", "flake8")) if k in conf]
+    if not tools:
+        return [], [], "the repository configures none of ruff, black or flake8"
+    return tools, [f"resolved from this repository's configuration: {', '.join(f'{t} ({conf[k]})' for t, k in (('ruff check', 'ruff'), ('flake8', 'flake8'), ('ruff format', 'ruff'), ('black', 'black')) if t in tools)}"], None
+
+
 def trusted_path(repo: Path) -> str:
     """PATH for finding the tool: absolute entries only, none inside the repository (a repository-relative or empty entry would pick the repository's own `ruff`)."""
     real = os.path.realpath(str(repo))
