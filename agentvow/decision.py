@@ -103,11 +103,9 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
         elif c.kind == C.BACKCOMPAT:
             findings.append(_compat(c, repo, base, changed))
         elif c.kind == C.FILES_SCOPE:
-            v, why, ev = S.check_files(repo, changed, c.detail or {"checks": []})
-            findings.append(Finding(c.text, c.kind, v, why, evidence=ev[:8]))
+            findings.append(_text_vs_changes(c, *S.check_files(repo, changed, c.detail or {"checks": []})))
         elif c.kind == C.DOCS_UPDATED:
-            v, why, ev = S.check_docs(changed, c.detail or {})
-            findings.append(Finding(c.text, c.kind, v, why, evidence=ev[:8]))
+            findings.append(_text_vs_changes(c, *S.check_docs(changed, c.detail or {})))
         elif c.kind == C.LINT_CLEAN:
             findings.append(_lint(c, repo, changed, lint_runner or lint_mod.run))
         else:
@@ -197,6 +195,16 @@ def _no_impact(c, changed, changed_py, graph) -> Finding:
                        _gap_summary(graph.gaps), unknowns=list(graph.gaps))
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",
                    "No other Python module imports the changed code. This does not cover runtime, config or other languages.")
+
+
+def _text_vs_changes(c, v, why, ev) -> Finding:
+    """A statement about files or documentation that git's change list disagrees with is reported as a mismatch a person must look at (UNKNOWN with attention), not as CONTRADICTED:
+    on real pull-request descriptions about two thirds of such mismatches were real (a named file the change does not touch) and the rest were shorthand or wording the rules misread
+    (docs/research/CHECKERS_FILES_DOCS_LINT.md), which is too few to block a merge on."""
+    if v == "CONTRADICTED":
+        return Finding(c.text, c.kind, "UNKNOWN", why + " A person should check which is right: the description or the change. (Such mismatches were real in about two thirds of a test on real descriptions; the rest were shorthand names or wording the rules misread, so this does not block by itself.)",
+                       evidence=ev[:8], attention=True, meta={"mismatch": True})
+    return Finding(c.text, c.kind, v, why, evidence=ev[:8])
 
 
 def _lint(c, repo, changed, runner_fn) -> Finding:

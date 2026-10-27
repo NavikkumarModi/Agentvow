@@ -52,6 +52,49 @@ class Extraction(unittest.TestCase):
                      "Updated `Class.method` in `thing`."):
             self.assertEqual([k for k, _ in kinds(text) if k == statements.FILES_SCOPE], [], text)
 
+    def test_the_verb_must_open_the_clause_so_a_description_of_behaviour_is_not_a_claim(self):   # found on real pull-request descriptions
+        for text in ("Dockerfile's env merging logic always created `.env` from `.env.default`", "The old helper wrote `out/result.json` on every call.", "Previously the script modified `conf/app.yaml` in place."):
+            self.assertEqual([k for k, _ in kinds(text) if k == statements.FILES_SCOPE], [], text)
+        for text in ("- Updated `CLAUDE.md` with patterns", "- [x] **Session Fix**: Modified `a/cookie.go` to create a guest", "I've added it in `doc/api/`.", "* **Docs**: Created `site/new.md`"):
+            self.assertEqual(len([k for k, _ in kinds(text) if k == statements.FILES_SCOPE]), 1, text)
+
+    def test_something_written_into_another_file_is_not_a_changed_file(self):   # found on held-out real descriptions
+        for text in ("- **.gitignore**: Added `.venv/` for uv's virtual environments", "Added `node_modules/` to `.gitignore` to keep dependencies out", "- **.gitignore**: Added `.ansible/` directory to prevent temporary files",
+                     "- Added `USAGE_EXISTING_REDIS.md` documentation reference", "Added `.js` extension to all imports", "- Added references to `NOTES.md` for detail", "Added `docs/api.md` link to the index", "- **Added `repomix-output.xml`** to `.gitignore` for cleaner repository", "Added `x/y.json` entry to the manifest"):
+            self.assertEqual([k for k, _ in kinds(text) if k == statements.FILES_SCOPE], [], text)
+        self.assertEqual(len([k for k, _ in kinds("Added `docs/api.md` with the new endpoints.") if k == statements.FILES_SCOPE]), 1)
+
+    def test_the_thing_added_to_a_file_is_not_a_file_but_the_file_it_went_into_is(self):
+        got = kinds("- Added `sys/types.h` include to `bsd.h` for type definitions")
+        self.assertEqual([(c["path"], c["expect"]) for k, d in got for c in d["checks"]], [("bsd.h", "changed")])
+
+    def test_removing_something_from_a_file_is_not_removing_the_file(self):
+        self.assertEqual(kinds("- Removed `cli/tests/test_cli.rs` temporal test case"), [])
+        self.assertEqual(kinds("Removed `old/dead.py` entirely."), [(statements.FILES_SCOPE, {"checks": [{"path": "old/dead.py", "expect": "absent"}]})])
+        self.assertEqual(kinds("Deleted `old/dead.py`."), [(statements.FILES_SCOPE, {"checks": [{"path": "old/dead.py", "expect": "absent"}]})])
+
+    def test_template_checkboxes_and_conditional_wording_are_not_statements(self):   # 25 of 37 documentation contradictions on real pull requests were these
+        for text in ("- [ ] Updated documentation if needed", "- [ ] I have updated the documentation", "- [x] Updated documentation if needed", "- [x] I have added documentation (if applicable)",
+                     "- [ ] `ruff check` passes", "Have you updated the documentation?", "- [x] No documentation change needed (N/A)"):
+            self.assertEqual(kinds(text), [], text)
+        self.assertEqual(kinds("- [x] I have updated the documentation"), [(statements.DOCS_UPDATED, {"target": "any"})])
+
+    def test_a_document_that_is_only_a_link_target_was_not_edited(self):
+        self.assertEqual(kinds("Updated the Table of Contents with an entry linking to the README.md file."), [])
+        self.assertEqual(len(kinds("Updated the README to describe the flag.")), 1)
+
+    def test_documentation_inside_code_is_not_a_documentation_file_claim(self):
+        for text in ("Added XML documentation to the MSBuild task methods.", "Added documentation comments explaining the upgrade.", "Created a multi-stage Dockerfile for the documentation site:",
+                     "Added JSDoc to the helpers.", "Created workflow for version management with changelog generation"):
+            self.assertEqual([k for k, _ in kinds(text) if k == statements.DOCS_UPDATED], [], text)
+
+    def test_lint_claims_need_a_real_clean_statement_not_a_word_that_happens_to_appear(self):
+        for text in ("- clean ruff lint issues", "Fix formatting and clean up syslog tests", "mvn -B clean license:format formatter:format test", "guard bigint JSON formatting so builds without Boost succeed",
+                     "Generated SDKs compile successfully with new formatter version"):
+            self.assertEqual(kinds(text), [], text)
+        self.assertEqual([d["tool"] for k, d in kinds("Linting and formatting checks pass.")], ["lint"])
+        self.assertEqual([d["tool"] for k, d in kinds("The linter is clean.")], ["lint"])
+
     def test_a_negation_the_extractor_does_not_understand_says_nothing(self):
         self.assertEqual(kinds("I could not add `x.py` because the sandbox forbids it."), [])
         self.assertEqual(kinds("Not sure whether `x.py` should be changed."), [])
@@ -83,6 +126,13 @@ class Extraction(unittest.TestCase):
         self.assertEqual(sorted(got), sorted([claims.TESTS_PASS, statements.FILES_SCOPE]))
 
 
+def mismatch(test, f):
+    """A disagreement with git's change list is a mismatch for a person (UNKNOWN with attention), never CONTRADICTED: see decision._text_vs_changes."""
+    test.assertEqual(f.verdict, "UNKNOWN", f.why)
+    test.assertTrue(f.attention)
+    test.assertTrue(f.meta.get("mismatch"))
+
+
 class Files(unittest.TestCase):
     def verdict(self, d, text):
         r = decision.check(d, "HEAD", text)
@@ -98,18 +148,18 @@ class Files(unittest.TestCase):
     def test_a_file_said_to_be_left_alone_but_changed_is_contradicted(self):
         d = repo_with_change(**{"tests/test_a.py": "def test_a(): assert 1\n"})
         f = self.verdict(d, "I did not touch `tests/test_a.py`.")
-        self.assertEqual(f.verdict, "CONTRADICTED")
+        mismatch(self, f)
         self.assertIn("left alone, but it was changed", f.why)
 
     def test_a_file_said_to_be_changed_but_not_is_contradicted(self):
         d = repo_with_change(**{"a/util.py": "x = 2\n"})
-        self.assertEqual(self.verdict(d, "Updated `docs/guide.md`.").verdict, "CONTRADICTED")
+        mismatch(self, self.verdict(d, "Updated `docs/guide.md`."))
 
     def test_a_new_untracked_file_counts_as_changed_and_a_directory_matches_by_prefix(self):
         d = repo_with_change(**{"pkg/new_mod.py": "z = 1\n"})
         self.assertEqual(self.verdict(d, "Added `pkg/new_mod.py`.").verdict, "NOT_CONTRADICTED")
         self.assertEqual(self.verdict(d, "Added `pkg/new_mod.py` under `pkg/`.").verdict, "NOT_CONTRADICTED")
-        self.assertEqual(self.verdict(d, "No files under `pkg/` were touched.").verdict, "CONTRADICTED")
+        mismatch(self, self.verdict(d, "No files under `pkg/` were touched."))
 
     def test_a_bare_name_that_several_files_share_is_unknown_never_contradicted(self):
         d = repo_with_change(**{"a/util.py": "x = 2\n"})
@@ -126,17 +176,35 @@ class Files(unittest.TestCase):
         d = repo_with_change(**{"secret.env": "K=1\n"})
         self.assertEqual(self.verdict(d, "Wrote `secret.env`.").verdict, "UNKNOWN")
 
+    def test_a_removed_bare_name_that_exists_elsewhere_is_unknown(self):
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        self.assertEqual(self.verdict(d, "Removed `README.md` from the old directory.").verdict, "UNKNOWN")
+
     def test_removed_means_absent(self):
         d = repo_with_change(**{"cfg.json": None})
         self.assertEqual(self.verdict(d, "Removed `cfg.json`.").verdict, "NOT_CONTRADICTED")
         d = repo_with_change(**{"a/util.py": "x = 2\n"})
-        self.assertEqual(self.verdict(d, "Deleted `cfg.json`.").verdict, "CONTRADICTED")
+        mismatch(self, self.verdict(d, "Deleted `a/util.py`."))
 
     def test_each_sentence_is_judged_on_its_own(self):
         d = repo_with_change(**{"a/util.py": "x = 2\n"})
         r = decision.check(d, "HEAD", "Updated `a/util.py`. Fixed `docs/guide.md`.")
-        self.assertEqual([f.verdict for f in find(r, statements.FILES_SCOPE)], ["NOT_CONTRADICTED", "CONTRADICTED"])
-        self.assertEqual(r.status, decision.REVIEW)
+        self.assertEqual([f.verdict for f in find(r, statements.FILES_SCOPE)], ["NOT_CONTRADICTED", "UNKNOWN"])
+        mismatch(self, find(r, statements.FILES_SCOPE)[1])
+        self.assertEqual(r.status, decision.REVIEW)   # attention makes the overall status REVIEW REQUIRED
+
+
+class DirectoriesAndDocs(unittest.TestCase):
+    def test_a_directory_the_agent_names_without_its_parent_still_matches(self):
+        d = repo_with_change(**{"docusaurus/versioned/v2/a.md": "x\n"})
+        f = find(decision.check(d, "HEAD", "Created `versioned/v2/` with a snapshot."), statements.FILES_SCOPE)[0]
+        self.assertEqual(f.verdict, "NOT_CONTRADICTED", f.why)
+
+    def test_a_changelog_claim_is_unknown_when_no_file_is_named_like_one_and_other_language_sources_count_as_possible_docs(self):
+        d = repo_with_change(**{"cfg.json": "{\"a\": 1}\n"})
+        self.assertEqual(find(decision.check(d, "HEAD", "Added a changelog entry."), statements.DOCS_UPDATED)[0].verdict, "UNKNOWN")
+        d = repo_with_change(**{"main.go": "package main\n"})
+        self.assertEqual(find(decision.check(d, "HEAD", "Updated the documentation."), statements.DOCS_UPDATED)[0].verdict, "UNKNOWN")
 
 
 class Docs(unittest.TestCase):
@@ -149,7 +217,7 @@ class Docs(unittest.TestCase):
 
     def test_readme_means_a_readme(self):
         d = repo_with_change(**{"docs/guide.md": "g2\n"})
-        self.assertEqual(self.verdict(d, "I updated the README.").verdict, "CONTRADICTED")
+        mismatch(self, self.verdict(d, "I updated the README."))
         d = repo_with_change(**{"README.md": "# r2\n"})
         self.assertEqual(self.verdict(d, "I updated the README.").verdict, "NOT_CONTRADICTED")
 
@@ -159,7 +227,7 @@ class Docs(unittest.TestCase):
 
     def test_nothing_documentation_like_changed_is_contradicted(self):
         d = repo_with_change(**{"cfg.json": "{\"a\": 1}\n"})
-        self.assertEqual(self.verdict(d, "Updated the documentation.").verdict, "CONTRADICTED")
+        mismatch(self, self.verdict(d, "Updated the documentation."))
 
 
 class Lint(unittest.TestCase):
@@ -232,10 +300,16 @@ class RealRuff(unittest.TestCase):
 class Feedback(unittest.TestCase):
     def test_the_feedback_to_the_agent_has_a_fixed_reason_for_the_new_kinds_and_no_repository_strings(self):
         from agentvow import cli
-        d = repo_with_change(**{"tests/test_a.py": "x\n"})
-        r = decision.check(d, "HEAD", "I did not touch `tests/test_a.py`.")
+        d = repo_with_change(**{"a/util.py": "x = 2\n"})
+        r = decision.check(d, "HEAD", "`ruff check` passes with no issues.", lint_runner=lambda repo, tool, files: {"status": "findings", "version": "v", "files": 1, "findings": 1, "summary": "x", "lines": ["a/util.py:1:1: F401 secret-path"]})
         text = cli.agent_feedback(r)
-        self.assertIn("git's change list disagrees", text)
+        self.assertIn("the linter reports findings", text)
+        self.assertNotIn("secret-path", text)   # the linter's lines are repository-controlled and never go back to the agent
+
+    def test_a_mismatch_needing_a_person_does_not_go_back_to_the_agent_as_contradicted(self):
+        from agentvow import cli
+        d = repo_with_change(**{"tests/test_a.py": "x\n"})
+        self.assertIsNone(cli.agent_feedback(decision.check(d, "HEAD", "I did not touch `tests/test_a.py`.")))
 
 
 if __name__ == "__main__":
