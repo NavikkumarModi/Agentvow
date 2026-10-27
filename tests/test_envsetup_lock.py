@@ -120,7 +120,7 @@ class BuildEnvWithLock(unittest.TestCase):
             calls.append(list(args))
             return fake(args)
         t = Path(tempfile.mkdtemp())
-        with mock.patch.object(envsetup, "_pip", pip), mock.patch.object(envsetup, "uninstall_project_dists"), mock.patch.dict(os.environ, env):
+        with mock.patch.object(envsetup, "_pip", pip), mock.patch.object(envsetup, "uninstall_project_dists"), mock.patch.dict(os.environ, {"AGENTVOW_LOCK": "1", **env}):
             out = envsetup.build_env(r, t / "venv", t / "home")
         return out, calls, t
 
@@ -140,6 +140,15 @@ class BuildEnvWithLock(unittest.TestCase):
         self.assertTrue(all("-c" not in c and "--no-deps" not in c for c in calls))
         _, calls, _ = self.build({"pyproject.toml": self.PYPROJECT, "uv.lock": UV}, lambda a: (0, ""), AGENTVOW_LOCK="0")
         self.assertTrue(all("-c" not in c and "--no-deps" not in c for c in calls))
+
+    def test_it_is_off_unless_asked_for(self):   # the experiment did not justify a default
+        r = repo({"pyproject.toml": self.PYPROJECT, "uv.lock": UV})
+        calls = []
+        t = Path(tempfile.mkdtemp())
+        env = {k: v for k, v in os.environ.items() if k != "AGENTVOW_LOCK"}
+        with mock.patch.object(envsetup, "_pip", lambda *a: (calls.append(list(a[3])) or (0, ""))), mock.patch.object(envsetup, "uninstall_project_dists"), mock.patch.dict(os.environ, env, clear=True):
+            envsetup.build_env(r, t / "venv", t / "home")
+        self.assertTrue(calls and all("-c" not in c and "--no-deps" not in c for c in calls))
 
     def test_a_step_that_conflicts_with_the_pins_is_installed_without_them(self):
         def fake(a):

@@ -270,7 +270,7 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
         if r.returncode:
             return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
     constraints = None
-    pins, lock_name = read_lock(proj) if os.environ.get("AGENTVOW_LOCK", "1") != "0" else ([], None)
+    pins, lock_name = read_lock(proj) if os.environ.get("AGENTVOW_LOCK") == "1" else ([], None)   # opt in: measured on 12 repositories it moved 4 replays from a missing dependency to a test run, produced no verdict, and cost 5 to 100 times the time (docs/research/LOCK_FILE_EXPERIMENT.md)
     if pins:
         t0 = time.time()
         done, skipped, guard = _install_pins(venv, proj, home, pins, timeout, max_venv, min_free)
