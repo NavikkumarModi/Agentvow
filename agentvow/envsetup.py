@@ -4,6 +4,7 @@ Fixed ladder, nothing clever: venv, `pip install -e .[test|tests|testing|dev]`, 
 recorded. Installs run under `sandbox-exec` (network allowed, writes limited to the venv, repo and temp) and under hard resource
 guards, because installs execute third-party build code and can be huge: a live size watchdog, a free-disk floor, a timeout, no pip cache.
 """
+import json
 import os
 import re
 import shutil
@@ -21,6 +22,86 @@ REQ_FILES = ("requirements.txt", "requirements-dev.txt", "requirements_dev.txt",
 MAX_VENV = int(float(os.environ.get("AGENTVOW_MAX_ENV_MB") or 700) * 1024**2)   # disk guard for a replay environment; raise it for projects with heavy pinned dependencies
 MIN_FREE = 2.5 * 1024**3
 BUILD_BUDGET = int(float(os.environ.get("AGENTVOW_BUILD_BUDGET") or 900))   # overall seconds for all install steps of one environment (each step also has its own timeout)
+
+
+# ---- the repository's own lock file ---------------------------------------------------------------------------------------------------------------------------------
+# A reconstructed environment that ignores the lock drifts: a dependency released after the change was written can break it, and the dependencies of test groups the zero-config ladder does not
+# know about are simply missing (found by the foamlib case and the detection study: most inconclusive replays were missing dependencies, and a third of those repositories ship a lock file).
+# The lock is read as data (never executed); only registry packages with one locked version are used; a package name must look like a package name before it reaches pip's argument list.
+LOCK_FILES = ("uv.lock", "poetry.lock", "pdm.lock", "Pipfile.lock")
+MAX_PINS = 600
+_PIN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,80}==[A-Za-z0-9][A-Za-z0-9._!+-]{0,40}")
+_FOREIGN = ("git", "path", "url", "editable", "directory", "virtual", "file", "develop", "source")
+
+
+def _norm(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def read_lock(repo: Path):
+    """-> (pins ['name==version', ...], lock file name) or ([], None). The first lock file found in LOCK_FILES order."""
+    repo = Path(repo)
+    for name in LOCK_FILES:
+        f = repo / name
+        try:
+            if not f.is_file() or f.stat().st_size > 20 * 1024**2:
+                continue
+            text = f.read_text(errors="replace")
+        except OSError:
+            continue
+        versions: dict = {}
+        try:
+            if name == "Pipfile.lock":
+                d = json.loads(text)
+                for sect in ("default", "develop"):
+                    for pkg, meta in (d.get(sect) or {}).items():
+                        if isinstance(meta, dict) and not any(k in meta for k in _FOREIGN) and isinstance(meta.get("version"), str) and meta["version"].startswith("=="):
+                            versions.setdefault(_norm(pkg), set()).add((pkg, meta["version"][2:]))
+            else:
+                for pkg in tomllib.loads(text).get("package", []):
+                    if not isinstance(pkg, dict) or not isinstance(pkg.get("name"), str) or not isinstance(pkg.get("version"), str):
+                        continue
+                    src = pkg.get("source")
+                    if name == "uv.lock" and not (isinstance(src, dict) and "registry" in src and len(src) == 1):
+                        continue   # git, path, editable, virtual and directory sources are not published releases
+                    if name != "uv.lock" and (src or any(k in pkg for k in _FOREIGN)):
+                        continue
+                    versions.setdefault(_norm(pkg["name"]), set()).add((pkg["name"], pkg["version"]))
+        except (ValueError, tomllib.TOMLDecodeError, AttributeError, TypeError):
+            continue
+        pins = []
+        for key, vs in sorted(versions.items()):
+            if len({v for _, v in vs}) != 1:
+                continue   # locked at several versions (one per Python version or platform): leave it to the resolver
+            nm, ver = sorted(vs)[0]
+            pin = f"{nm}=={ver}"
+            if _PIN.fullmatch(pin):
+                pins.append(pin)
+        if pins:
+            return pins[:MAX_PINS], name
+    return [], None
+
+
+def _install_pins(venv: Path, proj: Path, home: Path, pins: list, timeout: int, max_venv: int, min_free: float):
+    """Install the pins with --no-deps from published wheels only (no source builds). -> (installed count, skipped list, guard reason or None). A batch that fails is retried one by one."""
+    done, skipped = 0, []
+    for i in range(0, len(pins), 40):
+        batch = pins[i:i + 40]
+        rc, out = _pip(venv, proj, home, ["install", "-q", "--no-deps", "--only-binary=:all:", *batch], timeout, max_venv, min_free)
+        if rc == 125:
+            return done, skipped, str(out)
+        if rc == 0:
+            done += len(batch)
+            continue
+        for pin in batch:
+            rc, out = _pip(venv, proj, home, ["install", "-q", "--no-deps", "--only-binary=:all:", pin], timeout, max_venv, min_free)
+            if rc == 125:
+                return done, skipped, str(out)
+            if rc == 0:
+                done += 1
+            else:
+                skipped.append(pin.split("==")[0])
+    return done, skipped, None
 
 
 def dir_size(p: Path) -> int:
@@ -188,6 +269,21 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
         r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
         if r.returncode:
             return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
+    constraints = None
+    pins, lock_name = read_lock(proj) if os.environ.get("AGENTVOW_LOCK", "1") != "0" else ([], None)
+    if pins:
+        t0 = time.time()
+        done, skipped, guard = _install_pins(venv, proj, home, pins, timeout, max_venv, min_free)
+        if guard:   # the locked environment is too heavy or too slow: start again without it, as before
+            notes.append(f"the pinned packages of {lock_name} could not be installed within the limits ({guard}); using the ladder without them")
+            shutil.rmtree(venv, ignore_errors=True)
+            r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
+            if r.returncode:
+                return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
+        else:
+            notes.append(f"installed {done} of {len(pins)} pinned package(s) from {lock_name}" + (f"; not installed: {', '.join(skipped[:6])}{', ...' if len(skipped) > 6 else ''}" if skipped else ""))
+            constraints = home / "constraints.txt"
+            constraints.write_text("\n".join(pins) + "\n")
     extras = detect_extras(proj)
     steps = []
     if (proj / "pyproject.toml").exists() or (proj / "setup.py").exists():
@@ -201,7 +297,11 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
         if time.time() - t_start > BUILD_BUDGET:
             notes.append(f"the install steps used more than the overall budget of {BUILD_BUDGET} s (AGENTVOW_BUILD_BUDGET); stopped before {label}")
             return str(venv / "bin/python"), notes, "timeout"
-        rc, out = _pip(venv, proj, home, args, timeout, max_venv, min_free)
+        use_c = bool(constraints) and args[:2] == ["install", "-q"] and "pytest" not in args[2:3]
+        rc, out = _pip(venv, proj, home, [*args[:2], "-c", str(constraints), *args[2:]] if use_c else args, timeout, max_venv, min_free)
+        if rc and use_c and rc != 125:   # the pins conflict with what this step wants: install it as the ladder always did
+            notes.append(f"{label}: conflicts with the pins; installed without them")
+            rc, out = _pip(venv, proj, home, args, timeout, max_venv, min_free)
         if rc == 125:
             notes.append(f"{label}: {out}")
             return str(venv / "bin/python"), notes, out  # aborted by a resource guard
