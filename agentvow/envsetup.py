@@ -14,7 +14,7 @@ import time
 import tomllib
 from pathlib import Path
 
-from . import runner
+from . import pyversion, runner
 
 EXTRAS = ("test", "tests", "testing", "dev", "develop")
 REQ_FILES = ("requirements.txt", "requirements-dev.txt", "requirements_dev.txt", "requirements-test.txt", "requirements_test.txt",
@@ -102,6 +102,26 @@ def _install_pins(venv: Path, proj: Path, home: Path, pins: list, timeout: int, 
             else:
                 skipped.append(pin.split("==")[0])
     return done, skipped, None
+
+
+def make_venv(venv: Path, repo: Path, notes: list):
+    """Create `venv` with the interpreter the repository says it supports (pyversion.choose; only with AGENTVOW_PYVERSION=1, otherwise the running interpreter is kept). -> the subprocess result of the final attempt."""
+    py, ver, why = (sys.executable, None, "")
+    if os.environ.get("AGENTVOW_PYVERSION") == "1":   # opt in until measured (research/envsetup/pyversion_experiment.py)
+        try:
+            py, ver, why = pyversion.choose(repo)
+        except Exception:   # a choice that cannot be made is not a reason to stop: use the running interpreter
+            py, ver, why = sys.executable, None, ""
+    if why:
+        notes.append(why)
+    r = subprocess.run([py, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
+    if r.returncode and py != sys.executable:
+        notes.append(f"a virtual environment could not be made with {py}; used the running Python {sys.version_info[0]}.{sys.version_info[1]}")
+        shutil.rmtree(venv, ignore_errors=True)
+        r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
+    elif not r.returncode and ver and py != sys.executable:
+        notes.append(f"environment built with Python {ver[0]}.{ver[1]}")
+    return r
 
 
 def dir_size(p: Path) -> int:
@@ -266,7 +286,7 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
     if not proj.exists() and not _copy_project(repo, proj):
         return None, ["project too large to copy for installation"], "too large"
     if not (venv / "bin/python").exists():
-        r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
+        r = make_venv(venv, repo, notes)
         if r.returncode:
             return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
     constraints = None
@@ -277,7 +297,7 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
         if guard:   # the locked environment is too heavy or too slow: start again without it, as before
             notes.append(f"the pinned packages of {lock_name} could not be installed within the limits ({guard}); using the ladder without them")
             shutil.rmtree(venv, ignore_errors=True)
-            r = subprocess.run([sys.executable, "-I", "-m", "venv", str(venv)], capture_output=True, text=True)
+            r = make_venv(venv, repo, notes)
             if r.returncode:
                 return None, ["venv failed: " + (r.stdout + r.stderr)[-200:]], None
         else:
