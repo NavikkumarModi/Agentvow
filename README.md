@@ -106,6 +106,9 @@ In VS Code run **Agentvow: Try the demo**: it shows the red verdict panel and co
 | "tests pass" (with an optional count) | tests run at the base and head states in a sandbox; a regression is a test that passed before and fails now; the claimed count is compared; failures that also occur at base are treated as environmental; deleted/skipped tests and modified existing tests prevent a plain "supported"; CI test jobs for the commit are read with `--ci` |
 | "backward compatible" | static public-API diff of changed Python files (removed or renamed names and parameters, new required parameters, `__init__` re-exports) |
 | "no downstream impact" | static import graph (src layout aware); deleted modules, dynamic imports and non-Python code make the result UNKNOWN |
+| "added / changed / removed `f.py`", "did not touch `f.py`" | git's own change list (committed, uncommitted and new files); a bare file name that several files share, or a path git ignores, is UNKNOWN; it says which files changed, not what changed in them |
+| "updated the README / the docs / the changelog" | a documentation file (README, CHANGELOG, `docs/`, `.md`/`.rst`) is among the changed files; "documentation" with only Python changed is UNKNOWN (docstrings are not read) |
+| "`ruff check` passes" (also `ruff format`, `black`, `flake8`) | the named linter is run in the sandbox on the changed Python files (it must already be installed; its version is reported; any other tool is UNKNOWN) |
 
 Anything else the agent says is listed as **unchecked**, and the report says how many statements were not examined. **UNKNOWN is a real result**: missing evidence, a failed collector, an unreadable message or an unfamiliar format never become "OK". The best possible status is `NO CONTRADICTION FOUND (scoped, not a safety verdict)`.
 
@@ -149,4 +152,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 589 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 617 Python tests, 32 node tests -->

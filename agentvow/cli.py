@@ -411,7 +411,8 @@ def context_for_agent(dec: dict) -> str:
     """Context handed to the agent about ITS PREVIOUS reply. Built from fixed templates and the agent's own claim wording only (never
     repository-controlled strings such as file or test names), so a hostile repository cannot inject instructions through it."""
     why = {"no_downstream_impact": "other modules depend on the code that changed", "tests_pass": "an independent test run or the project's CI contradicts it",
-           "backward_compatible": "the public API changed"}
+           "backward_compatible": "the public API changed", "files_scope": "git's change list disagrees with what it says about files", "docs_updated": "no documentation file was changed",
+           "lint_clean": "the linter reports findings"}
     f = [x for x in dec.get("findings", []) if x.get("kind") != "snapshot"]
     bad = [x for x in f if x.get("verdict") == "CONTRADICTED"]
     unk = [x for x in f if x.get("verdict") == "UNKNOWN"]
@@ -454,7 +455,8 @@ def agent_feedback(d) -> str | None:
     """Text fed BACK TO THE AGENT: built from the agent's own claim wording and fixed explanations, never from repository-controlled strings
     (file names, test names), so a hostile repository cannot use this channel to inject instructions."""
     why = {"no_downstream_impact": "other modules depend on the code that changed", "tests_pass": "an independent test run or the project's CI contradicts it",
-           "backward_compatible": "the public API changed"}
+           "backward_compatible": "the public API changed", "files_scope": "git's change list disagrees with what it says about files", "docs_updated": "no documentation file was changed",
+           "lint_clean": "the linter reports findings"}
     bad = [f for f in d.findings if f.verdict == "CONTRADICTED"]
     if not bad:
         return None

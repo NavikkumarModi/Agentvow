@@ -5,7 +5,7 @@
 ## Method and honesty notes
 - I split each message into atomic statements and gave each a class. **The labels are mine, unreviewed by a second labeller**, so counts are approximate (±10%). Notes to the user and offers are excluded.
 - "Checker level" belongs to the class, not to a statement: *today* = a checker exists and runs; *partial* = part of the statement is replayed; *feasible* = deterministic and cheap but not built; *hard* = only some forms (signatures, new symbols) are checkable; *unverifiable* = explanation or process.
-- **"Today" overstates the tool's output.** For these runs the tool produces one finding per message (the tests-pass claim, with the stated count). The 46 test and count statements collapse into at most 22 findings.
+- **"Today" overstates the tool's output.** The tool judges sentences that match a claim pattern: for these 22 messages it produced 26 findings (25 tests-pass sentences, 1 backward-compatibility), so the 46 test and count statements collapse into about 25 findings.
 
 ## Result: 152 statements, 6.9 per message
 | checker level | statements | share |

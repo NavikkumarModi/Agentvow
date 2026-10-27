@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import claims as C
-from . import api_diff, changedcov
+from . import api_diff, changedcov, lint as lint_mod, statements as S
 from . import reality as R
 
 REVIEW = "REVIEW REQUIRED"
@@ -80,7 +80,7 @@ def _reality(repo: Path, base: str, changed_override=None):
 
 
 def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_failures: str = "unknown", message_missing: bool = False,
-          changed_override=None) -> Decision:
+          changed_override=None, lint_runner=None) -> Decision:
     extracted = C.extract(transcript)
     unexamined = C.count_unexamined(transcript, extracted)
     try:
@@ -102,6 +102,14 @@ def check(repo: Path, base: str, transcript: str, extra_evidence=None, new_test_
             findings.append(_tests(c, evidence, snap, changed, repo))
         elif c.kind == C.BACKCOMPAT:
             findings.append(_compat(c, repo, base, changed))
+        elif c.kind == C.FILES_SCOPE:
+            v, why, ev = S.check_files(repo, changed, c.detail or {"checks": []})
+            findings.append(Finding(c.text, c.kind, v, why, evidence=ev[:8]))
+        elif c.kind == C.DOCS_UPDATED:
+            v, why, ev = S.check_docs(changed, c.detail or {})
+            findings.append(Finding(c.text, c.kind, v, why, evidence=ev[:8]))
+        elif c.kind == C.LINT_CLEAN:
+            findings.append(_lint(c, repo, changed, lint_runner or lint_mod.run))
         else:
             findings.append(Finding(c.text, c.kind, "UNKNOWN", "Agentvow has no check for this kind of claim; it is unverified."))
     kinds: dict = {}   # why a change could have shaped its own test output -> the files (receipt and policy: `harness_warning`)
@@ -189,6 +197,25 @@ def _no_impact(c, changed, changed_py, graph) -> Finding:
                        _gap_summary(graph.gaps), unknowns=list(graph.gaps))
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",
                    "No other Python module imports the changed code. This does not cover runtime, config or other languages.")
+
+
+def _lint(c, repo, changed, runner_fn) -> Finding:
+    tool = (c.detail or {}).get("tool", "")
+    if tool not in lint_mod.TOOLS:
+        return Finding(c.text, c.kind, "UNKNOWN", f"Agentvow can run ruff, black and flake8 to check a lint claim; it has no runner for '{tool}', so this claim is unverified.")
+    named = [p for p in (c.detail or {}).get("paths", []) if p in changed]
+    files = named or [f for f in changed if f.endswith(".py")]
+    r = runner_fn(repo, tool, files)
+    v = r.get("version", "")
+    if r["status"] == "clean":
+        return Finding(c.text, c.kind, "NOT_CONTRADICTED",
+                       f"{tool} ({v or 'version unknown'}) reports nothing on the {r['files']} changed Python file(s), with this repository's configuration. A different version of the tool may disagree.",
+                       meta={"lint_tool": tool, "lint_version": v})
+    if r["status"] == "findings":
+        return Finding(c.text, c.kind, "CONTRADICTED",
+                       f"The agent said {tool} is clean, but {tool} ({v or 'version unknown'}) reports {r['findings']} finding(s) in the {r['files']} changed Python file(s). "
+                       "A different version of the tool may disagree; check the version the project pins.", evidence=r.get("lines", [])[:8], meta={"lint_tool": tool, "lint_version": v})
+    return Finding(c.text, c.kind, "UNKNOWN", f"The lint claim could not be checked: {r.get('summary', 'the linter did not run')}")
 
 
 def _compat(c, repo, base, changed) -> Finding:

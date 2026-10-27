@@ -189,7 +189,7 @@ def _needed_roots(argv: list, env: dict, hidden: list) -> list:
     return out
 
 
-def _bwrap_prefix(writable: list, network: bool, argv: list | None = None, env: dict | None = None) -> list:
+def _bwrap_prefix(writable: list, network: bool, argv: list | None = None, env: dict | None = None, readonly: list | None = None) -> list:
     """Linux: bubblewrap. Read-only view of the system; the user's HOME, /tmp and /run are EMPTY (no credentials, browser profiles, shell history, other
     projects, ssh-agent/docker/D-Bus sockets), with only the interpreter/venv the command needs and the writable paths mounted back; no network unless
     asked; own PID/IPC/UTS namespaces; all capabilities dropped."""
@@ -215,19 +215,22 @@ def _bwrap_prefix(writable: list, network: bool, argv: list | None = None, env: 
     for r in _needed_roots(argv or [], env or os.environ, hidden):
         if not any(r == w or r.startswith(w + os.sep) for w in wr):
             cmd += ["--ro-bind", r, r]
+    for r in (os.path.realpath(x) for x in (readonly or [])):   # read-only views (e.g. a repository to lint) that sit under a hidden location
+        if os.path.exists(r) and not any(r == w or r.startswith(w + os.sep) for w in wr):
+            cmd += ["--ro-bind", r, r]
     for w in wr:
         cmd += ["--bind", w, w]
     return cmd
 
 
-def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = False, writable: list | None = None, env: dict | None = None) -> list:
+def wrap(argv: list, repo: Path, scratch: Path | None = None, network: bool = False, writable: list | None = None, env: dict | None = None, readonly: list | None = None) -> list:
     """Prefix `argv` with the platform sandbox. macOS: sandbox-exec; Linux: bubblewrap. Anything else is refused by _require_sandbox."""
     if sys.platform == "darwin":
         if network:
             return ["sandbox-exec", "-p", profile_with_network(writable or [repo]), *argv]
         return ["sandbox-exec", "-p", _profile(repo, scratch), *argv]
     paths = list(writable) if writable else [repo, *([scratch] if scratch else [])]
-    return [*_bwrap_prefix(paths, network, argv, env), *argv]
+    return [*_bwrap_prefix(paths, network, argv, env, readonly), *argv]
 
 
 def probe(py, code: str, *args: str, timeout: int = 60) -> subprocess.CompletedProcess:

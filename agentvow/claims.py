@@ -2,9 +2,12 @@
 import re
 from dataclasses import dataclass
 
+from . import statements
+
 NO_IMPACT = "no_downstream_impact"
 TESTS_PASS = "tests_pass"
 BACKCOMPAT = "backward_compatible"
+FILES_SCOPE, DOCS_UPDATED, LINT_CLEAN = statements.FILES_SCOPE, statements.DOCS_UPDATED, statements.LINT_CLEAN
 
 _PATTERNS = [
     (BACKCOMPAT, re.compile(r"\b(?:no|without|non)[- ]breaking (?:changes?|api)\b|\bbackward[s]?[- ]compatib|\bno api changes?\b|\bpublic api (?:is )?unchanged\b", re.I)),
@@ -19,6 +22,7 @@ class Claim:
     kind: str  # NO_IMPACT, TESTS_PASS, or "unchecked"
     text: str
     count: int | None = None  # number of tests the agent says passed, if stated
+    detail: dict | None = None  # files_scope / docs_updated / lint_clean: what exactly was claimed (statements.py)
 
 
 _RATIO = re.compile(r"\b(\d[\d,]*)\s*/\s*(\d[\d,]*)\s+(?:tests?\s+)?(?:pass\w*|green)\b", re.I)
@@ -35,13 +39,17 @@ def extract(transcript: str) -> list[Claim]:
         s = sentence.strip()[:600]
         if not s:
             continue
+        added = [Claim(k, s, detail=d) for k, d in statements.extract_sentence(s)]   # files changed or left alone, documentation, linters (a negation can be the claim: "did not touch x")
+        claims.extend(added)
         if _NEGATED.search(s):
-            claims.append(Claim("unchecked", s))  # a negated statement is not a claim of success; surface it as unchecked
+            if not added:
+                claims.append(Claim("unchecked", s))  # a negated statement is not a claim of success; surface it as unchecked
             continue
         if re.search(r"\b[1-9]\d*\s+(?:failed|failing|failures?|errors?)\b", s, re.I):
-            claims.append(Claim("unchecked", s))  # an honest failure report is not a claim that tests pass
+            if not added:
+                claims.append(Claim("unchecked", s))  # an honest failure report is not a claim that tests pass
             continue
-        matched = False
+        matched = bool(added)
         for kind, pat in _PATTERNS:
             if pat.search(s):
                 r = _RATIO.search(s) if kind == TESTS_PASS else None

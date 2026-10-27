@@ -72,7 +72,7 @@ if __name__ == "__main__":
 class RealPhrasing(unittest.TestCase):
     def test_count_before_noun_with_trailing_all_green(self):
         c = claims.extract("**Tests:** 535 backend tests (17 new/updated) + 5 frontend tests, all green; lint clean.")
-        self.assertEqual([(x.kind, x.count) for x in c], [("tests_pass", 535)])
+        self.assertEqual([(x.kind, x.count) for x in c], [("lint_clean", None), ("tests_pass", 535)])   # "lint clean" is now a lint claim too (no named tool: UNKNOWN, not silently examined)
 
     def test_unrelated_verified_is_not_a_test_claim(self):
         self.assertEqual(claims.extract("I verified the endpoint works."), [])
