@@ -14,7 +14,7 @@ All 22 runs are valid by construction, so for them "continue" is the right actio
 | replay reconstructed from the repository only | 4 | 18 | 0 |
 
 - Escalations under the attested baseline: the 5 runs with no claim (the `no_claims` rule asks a person) and 1 run with a harness warning.
-- Escalations under capture: the same 6, plus 4 whose capture replay was UNKNOWN (2 inconclusive replays: localstack#12976 and instructor#1667; 2 passing replays that Agentvow still called UNKNOWN because the agent's claimed count did not match what the replay found: Bindu#10, open-webui-developer-toolkit#510, mfat/sshpilot#445; one of the three was already counted here). Exact per-run list: `python3 research/autonomy/label_b6.py --table`.
+- Escalations under capture (10): the same 6, plus 4 runs with a claim whose capture replay was UNKNOWN: Bindu#10, open-webui-developer-toolkit#510 and mfat/sshpilot#445 (replay passed, but the agent's claimed result did not line up with what the replay found) and instructor#1667 (replay inconclusive: a credential outside the capture). localstack#12976 (inconclusive replay) is among the 5 no-claim runs. Exact per-run list: `python3 research/autonomy/label_b6.py --table`.
 - **No stops under any source.** Every run is valid, so any stop would have been a false stop; none occurred.
 - The harness warning fired once: mfat/sshpilot#331 changed `tests/conftest.py`. Under the old behaviour it would have continued on both capture and repository evidence; under the 0.4.5 rule it escalates.
 - Changes to shared config files (`pyproject.toml`, `setup.cfg`, `tox.ini`) cannot be judged from the stored data (no diff). None of the 22 changed one.
