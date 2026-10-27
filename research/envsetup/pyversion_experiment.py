@@ -16,9 +16,7 @@ import lock_experiment as L  # noqa: E402
 
 ROOT, DATA = L.ROOT, L.DATA
 OUT = DATA / "pyversion_experiment.jsonl"
-REPOS = ["PaddlePaddle/FastDeploy", "PrefectHQ/marvin", "elementary-data/dbt-data-reliability", "exospherehost/exospherehost", "google/clusterfuzz", "hud-evals/hud-python", "iamarunbrahma/vision-parse",
-         "langchain-ai/langchain-google", "llama-farm/llamafarm", "microsoft/AzureTRE", "microsoft/vscode-mypy", "ml-struct-bio/cryodrgn", "pyodide/pyodide", "quay/quay", "rhesis-ai/rhesis",
-         "swingerman/ha-dual-smart-thermostat"]
+REPOS = ["google/clusterfuzz", "PrefectHQ/marvin", "hud-evals/hud-python", "llama-farm/llamafarm", "ml-struct-bio/cryodrgn"]   # the swaps that are plainly 3.13 -> 3.11 on the machine used
 
 
 def run(d, t, pyversion):
