@@ -104,6 +104,56 @@ def _install_pins(venv: Path, proj: Path, home: Path, pins: list, timeout: int, 
     return done, skipped, None
 
 
+# ---- dependency discovery beyond the root ---------------------------------------------------------------------------------------------------------------------------
+# The ladder installs from fixed places in the repository root. In a classification of 36 inconclusive replays, 17 declared their dependencies elsewhere: requirements files in sub-folders, the
+# sub-projects of a monorepo, extras or groups with other names (docs/research/INCONCLUSIVE_CLASSIFICATION.md). Discovery reads the repository (nothing executed) for those places, bounded in depth
+# and number, and the steps it adds run under the same sandbox, size and time guards as the rest.
+SKIP_DIRS = {".git", ".hg", "node_modules", ".venv", "venv", "env", "site-packages", "build", "dist", "docs", "doc", "examples", "example", "benchmarks", "benchmark", "third_party", "vendor", "__pycache__", ".tox"}
+REQ_TOKENS = {"requirements", "requirement", "base", "common", "main", "core", "dev", "develop", "development", "test", "tests", "testing", "ci", "qa", "all", "full"}
+TEST_TOKENS = {"test", "tests", "testing", "dev", "develop", "development", "ci", "qa"}
+MAX_REQ_FILES, MAX_SUBPROJECTS, MAX_DEPTH = 6, 8, 3
+
+
+def _tokens(name: str) -> set:
+    return {t for t in re.split(r"[-_.]+", name.lower()) if t}
+
+
+def _broad(names) -> list:
+    """Extras or groups that look like test or development ones by any of their words ("tests-unit", "dev-tools"), not only by the five exact names."""
+    return sorted(n for n in names if _tokens(n) & TEST_TOKENS and not _tokens(n) & {"docs", "doc", "lint", "typing", "mypy"})
+
+
+def _project_names(path: Path):
+    try:
+        d = tomllib.loads((path / "pyproject.toml").read_text()) if (path / "pyproject.toml").exists() else {}
+    except Exception:
+        d = {}
+    return d, sorted((d.get("project", {}).get("optional-dependencies") or {})), sorted(d.get("dependency-groups") or {})
+
+
+def discover(root: Path) -> dict:
+    """-> {"requirements": [relative paths], "subprojects": [{"path", "extras", "groups"}], "local_roots": [relative dirs]} for a repository checkout."""
+    root = Path(root)
+    reqs, subs = [], []
+    for dirpath, dirs, files in os.walk(root):
+        rel = Path(dirpath).relative_to(root)
+        depth = len(rel.parts)
+        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not d.startswith("."))[:60] if depth < MAX_DEPTH else []
+        for f in sorted(files):
+            if re.fullmatch(r"[\w.\-]*requirements?[\w.\-]*\.txt", f, re.I) or (rel.name.lower() in ("requirements", "reqs") and f.endswith(".txt")):
+                toks = _tokens(f[:-4]) | (_tokens(rel.name) if rel.name.lower() in ("requirements", "reqs") else set())
+                path = (rel / f).as_posix()
+                if toks <= REQ_TOKENS and path not in REQ_FILES and len(reqs) < MAX_REQ_FILES:
+                    reqs.append(path)
+        if depth and (("pyproject.toml" in files or "setup.py" in files or "setup.cfg" in files) and len(subs) < MAX_SUBPROJECTS):
+            d, extras, groups = _project_names(Path(dirpath))
+            if "pyproject.toml" in files and not (d.get("project") or d.get("tool", {}).get("poetry")) and "setup.py" not in files:
+                continue   # a tool configuration (black, ruff, ...) in a sub-folder, not a package
+            subs.append({"path": rel.as_posix(), "extras": _broad(extras), "groups": _broad(groups)})
+    roots = [s["path"] for s in subs]
+    return {"requirements": reqs, "subprojects": subs, "local_roots": roots}
+
+
 def make_venv(venv: Path, repo: Path, notes: list):
     """Create `venv` with the interpreter the repository says it supports (pyversion.choose; only with AGENTVOW_PYVERSION=1, otherwise the running interpreter is kept). -> the subprocess result of the final attempt."""
     py, ver, why = (sys.executable, None, "")
@@ -311,6 +361,15 @@ def build_env(repo: Path, venv: Path, home: Path, timeout: int = 300, max_venv: 
     for g in detect_groups(proj):
         steps.append((["install", "-q", "--group", g], f"dependency group {g}"))
     steps += [(["install", "-q", "-r", f], f) for f in REQ_FILES if (proj / f).exists()]
+    if os.environ.get("AGENTVOW_DISCOVER") == "1":
+        found = discover(proj)
+        if found["requirements"] or found["subprojects"]:
+            notes.append(f"discovered {len(found['subprojects'])} sub-project(s) and {len(found['requirements'])} requirements file(s) beyond the root")
+        for sp in found["subprojects"]:
+            target = str(proj / sp["path"]) + ("[" + ",".join(sp["extras"]) + "]" if sp["extras"] else "")
+            steps.append((["install", "-q", target], f"sub-project {sp['path']}"))
+            steps += [(["install", "-q", "--group", f"{sp['path']}/pyproject.toml:{g}"], f"dependency group {g} of {sp['path']}") for g in sp["groups"]]
+        steps += [(["install", "-q", "-r", f], f"requirements file {f}") for f in found["requirements"]]
     steps.append((["install", "-q", "pytest"], "pytest"))
     t_start = time.time()
     for args, label in steps:

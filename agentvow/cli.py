@@ -793,6 +793,8 @@ def _run_auto(a, repo, base, base_how, text):
                                   "setup_notes": [n[:200] for n in notes if "failed" in n or "left out" in n or "not read" in n][:4], "inputs": baseline.input_files(repo)}
             else:
                 py, notes, aborted = envsetup.build_env(repo, venv_root / "venv", venv_root / "home")
+                if os.environ.get("AGENTVOW_DISCOVER") == "1":   # the sub-projects' own source must win over any installed copy, as the root's does
+                    a._local_roots = envsetup.discover(repo)["local_roots"]
             a.python = py
             if py and not aborted and getattr(a, "changed_coverage", False):
                 _ensure_coverage(py, venv_root)
@@ -835,7 +837,8 @@ def _run(a, repo, base, base_how, text):
                 raise SystemExit(f"--test-cmd subdir must be inside the repo: {sub}")
             nat = getattr(a, "_native", None)
             suites.append((name, cmd.format(py=a.python).split(), sub, {"coverage": getattr(a, "changed_coverage", False),
-                                                                       **({"env_extra": nat.env, "pythonpath_rel": nat.local_roots} if nat else {})}))
+                                                                       **({"env_extra": nat.env, "pythonpath_rel": [*nat.local_roots, *getattr(a, "_local_roots", [])]} if nat else
+                                                                          {"pythonpath_rel": list(a._local_roots)} if getattr(a, "_local_roots", None) else {})}))
         collect_test_evidence(repo, base, suites, a.test_timeout)
     extra = ci.ci_evidence(repo, reality.snapshot(repo), sha=a.ci_sha, wait=a.ci_wait) if a.ci else []
     d = check(repo, base, text, extra, a.new_test_failures)
