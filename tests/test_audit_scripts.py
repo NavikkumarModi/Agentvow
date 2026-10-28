@@ -8,9 +8,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "research" / "audit"))
 import classify  # noqa: E402
-import draw  # noqa: E402
 
-import pandas as pd  # noqa: E402
+try:   # the draw script is a research tool that reads parquet tables; the product itself does not depend on pandas, so CI without it skips those tests
+    import pandas as pd  # noqa: E402
+    import draw  # noqa: E402
+except ImportError:
+    pd = draw = None
 
 TREE = {"pyproject.toml", "src/pkg/__init__.py", "tests/test_a.py"}
 PYPROJ = '[build-system]\nrequires = ["setuptools"]\nbuild-backend = "setuptools.build_meta"\n[project]\nname="p"\ndependencies=["requests"]\n[project.optional-dependencies]\ntest=["pytest"]\n'
@@ -60,6 +63,8 @@ class Classify(unittest.TestCase):
 
 
 def frame():
+    if pd is None:
+        return None
     rows = []
     for agent in ("A", "B"):
         for lang in ("python", "other"):
@@ -69,6 +74,7 @@ def frame():
     return pd.DataFrame(rows).sort_values("html_url").reset_index(drop=True)
 
 
+@unittest.skipIf(pd is None, "pandas is not installed (research tool only)")
 class Draw(unittest.TestCase):
     def test_deterministic_given_the_seed_and_different_for_another(self):
         d = frame()
