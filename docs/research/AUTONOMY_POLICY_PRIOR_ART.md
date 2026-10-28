@@ -1,5 +1,7 @@
 # Evidence-gated autonomy: prior art (2026-10-27)
 
+> Extended on 2026-10-28 by `EVIDENCE_RECORD_CONSUMER_PRIOR_ART.md` (adds FalseGreen, Belay, Assurance Envelopes, a verification-layer survey, message-code inconsistency, false-success studies, the AWS graduated-autonomy pattern and provenance-attestation proposals; narrows the remaining gap).
+
 Question: is "an independent evidence layer whose states map by policy to agent actions (continue / retry / restrict / escalate / stop)" already done? Gate: this must be settled before any autopilot mechanism is built (CLAUDE.md, research before implementation).
 
 Source status: `[read]` = full text fetched and the cited sections read; `[partial]` = full text fetched, only the cited passages read; `[snippet]` = search-result summary only (not citable as settled fact).
