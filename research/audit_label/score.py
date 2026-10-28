@@ -33,23 +33,14 @@ def gh(path, paginate=False):
     return out
 
 
-class FakeRepo:
-    def __init__(self, tree):
-        self.tree = set(tree)
-
-    def __truediv__(self, p):
-        return _Node(self.tree, str(p))
-
-
-class _Node:
-    def __init__(self, tree, p):
-        self.tree, self.p = tree, p
-
-    def exists(self):
-        return self.p in self.tree or any(t.startswith(self.p.rstrip("/") + "/") for t in self.tree)
-
-    def is_dir(self):
-        return any(t.startswith(self.p.rstrip("/") + "/") for t in self.tree)
+def materialise(tree, dest: Path):
+    """A directory holding an empty file for every path of the pull request's head tree, so the product's own `statements._exists` (which looks at the disk) sees the same files git would. Review finding 1: the earlier
+    FakeRepo made `_exists` always False, so a "removed X" claim about a file that still exists could never be flagged. `_ignored` is still stubbed (the .gitignore of each repository is not materialised): a path git
+    ignores would be UNKNOWN in the product but can be CONTRADICTED here."""
+    for t in tree:
+        f = dest / t
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.touch()
 
 
 def wilson(k, n, z=1.96):
@@ -81,7 +72,8 @@ def cluster_bootstrap(rows, success, n_boot=10000, seed=20261029):
             n += len(g)
         vals.append(k / n if n else 0.0)
     vals.sort()
-    return [round(vals[int(0.025 * n_boot)], 3), round(vals[int(0.975 * n_boot)], 3)]
+    lo, hi = round(vals[int(0.025 * n_boot)], 3), round(vals[int(0.975 * n_boot)], 3)
+    return None if lo == hi else [lo, hi]   # a degenerate interval (every row a success) is not an interval
 
 
 def verdicts_for(item):
@@ -89,16 +81,23 @@ def verdicts_for(item):
     owner, repo = item["repo"].split("/")
     pr = gh(f"repos/{owner}/{repo}/pulls/{item['number']}")
     files = gh(f"repos/{owner}/{repo}/pulls/{item['number']}/files?per_page=100", paginate=True)
-    ok = isinstance(pr, dict) and "head" in pr and isinstance(files, list) and 0 < len(files) < 3000
+    ok = isinstance(pr, dict) and "head" in pr and isinstance(files, list) and len(files) < 3000   # an empty change list is a real answer for an open pull request (a files claim is then certainly false)
     changed, tracked = [], []
     if ok:
         changed = sorted({f["filename"] for f in files} | {f["previous_filename"] for f in files if f.get("previous_filename")})
         tree = gh(f"repos/{owner}/{repo}/git/trees/{pr['head']['sha']}?recursive=1")
-        tracked = [t["path"] for t in tree.get("tree", [])] if isinstance(tree, dict) and "tree" in tree and not tree.get("truncated") else []
+        tracked = [t["path"] for t in tree.get("tree", []) if t.get("type") == "blob"] if isinstance(tree, dict) and "tree" in tree and not tree.get("truncated") else []
         if not tracked:
             ok = False
     out = {}
-    fake = FakeRepo(tracked)
+    import shutil
+    import tempfile
+    work = Path(tempfile.mkdtemp(prefix="score_tree_"))
+    if ok and len(tracked) <= 60000:
+        materialise(tracked, work)
+    else:
+        ok = False
+    fake = work
     statements._tracked = lambda repo_, t=tracked: t
     statements._ignored = lambda repo_, p: False
     for c in claims.extract(item["message"]):
@@ -110,6 +109,7 @@ def verdicts_for(item):
         elif c.kind == "docs_updated" and ok:
             v = statements.check_docs(changed, c.detail)[0]
         out[c.text] = (c.kind, v, ok)
+    shutil.rmtree(work, ignore_errors=True)
     return out
 
 
@@ -118,8 +118,10 @@ def main(argv=None):
     ap.add_argument("--labels", default="data/audit/labels")
     ap.add_argument("--items", default="data/audit/items")
     ap.add_argument("--out", default="data/audit/score_stage1.json")
+    ap.add_argument("--exclude", default="data/audit/broken_items.json", help="JSON list of item keys that could not be observed at all (repository or pull request gone); excluded and replaced by the next items in the seeded order, as the pre-registration says")
     a = ap.parse_args(argv)
-    items = {Path(f).stem: json.load(open(f)) for f in glob.glob(f"{a.items}/*.json")}
+    excluded = set(json.loads(Path(a.exclude).read_text())) if a.exclude and Path(a.exclude).exists() else set()
+    items = {Path(f).stem: json.load(open(f)) for f in glob.glob(f"{a.items}/*.json") if Path(f).stem not in excluded}
     rows = []
     for f in sorted(glob.glob(f"{a.labels}/*.json")):
         key = Path(f).stem
@@ -130,10 +132,12 @@ def main(argv=None):
         byn = {s["n"]: s for s in it["statements"]}
         for s in lab["statements"]:
             text = byn[s["n"]]["text"]
-            kind, verdict, ok = vd.get(text, ("unchecked", None, False))
+            if text not in vd:
+                raise SystemExit(f"join failure: item {key} statement {s['n']} not found among the extractor's statements: {text[:80]!r}")
+            kind, verdict, ok = vd[text]
             rows.append({"item": key, "repo": it["repo"], "n": s["n"], "kind": kind, "verdict": verdict, "checks_ran": ok, "step_a": s["step_a"], "label": s["label"], "judgment": s["judgment"], "confidence": s["confidence"]})
     kinds = sorted({r["kind"] for r in rows})
-    res = {"items_labelled": len({r["item"] for r in rows}), "statements": len(rows), "per_kind": {}}
+    res = {"excluded_unobservable_items": sorted(excluded), "items_labelled": len({r["item"] for r in rows}), "statements": len(rows), "per_kind": {}}
     for k in kinds:
         rk = [r for r in rows if r["kind"] == k]
         claims_ = [r for r in rk if r["step_a"] == "CLAIM"]

@@ -27,17 +27,21 @@ def kappa(pairs):
 def main():
     rows = json.load(open(ROOT / "data/audit/score_stage1.json"))["rows"]
     kind = {(r["item"], r["n"]): r["kind"] for r in rows}
+    broken = set(json.load(open(ROOT / "data/audit/broken_items.json")))
     pairs, per, dis = [], collections.defaultdict(list), []
     for f in sorted(glob.glob(str(ROOT / "data/audit/labels2/*.json"))):
         key = Path(f).stem
+        if key in broken:
+            continue
         l1 = {s["n"]: s for s in json.load(open(ROOT / "data/audit/labels" / (key + ".json")))["statements"]}
         for s in json.load(open(f))["statements"]:
             a, b = cat(l1[s["n"]]), cat(s)
             pairs.append((a, b))
-            per[kind.get((key, s["n"]), "?")].append((a, b))
+            per[kind[(key, s["n"])]].append((a, b))
             if a != b:
-                dis.append({"item": key, "n": s["n"], "kind": kind.get((key, s["n"]), "?"), "first": a, "second": b, "first_note": l1[s["n"]]["note"][:160], "second_note": s["note"][:160]})
-    out = {"items": len(set(d["item"] for d in dis)) if False else len(glob.glob(str(ROOT / "data/audit/labels2/*.json"))), "statements": len(pairs),
+                dis.append({"item": key, "n": s["n"], "kind": kind[(key, s["n"])], "first": a, "second": b, "first_note": l1[s["n"]]["note"][:160], "second_note": s["note"][:160]})
+    claims_only = [(a, b) for a, b in pairs if not (a == "NOT_A_CLAIM" and b == "NOT_A_CLAIM")]   # both passes called it not a claim: dropped so that easy agreement does not inflate the statistics
+    out = {"items": len({Path(f).stem for f in glob.glob(str(ROOT / "data/audit/labels2/*.json"))} - broken), "statements": len(pairs), "excluding_both_not_a_claim": {"n": len(claims_only), "agree": sum(a == b for a, b in claims_only), "kappa": kappa(claims_only)},
            "agreement": [sum(a == b for a, b in pairs), len(pairs)], "kappa": kappa(pairs),
            "per_kind": {k: {"n": len(v), "agree": sum(a == b for a, b in v), "kappa": kappa(v)} for k, v in sorted(per.items())}, "disagreements": dis}
     (ROOT / "data/audit/agreement.json").write_text(json.dumps(out, indent=1))

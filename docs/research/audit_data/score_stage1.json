@@ -1,47 +1,55 @@
 {
  "summary": {
+  "excluded_unobservable_items": [
+   "014_42c86d8cdc",
+   "033_76fe5b81af",
+   "072_8467773975",
+   "091_85c2d013fe",
+   "092_6795b088bd",
+   "098_297ee69006",
+   "127_f7597d310b"
+  ],
   "items_labelled": 150,
-  "statements": 266,
+  "statements": 263,
   "per_kind": {
    "backward_compatible": {
-    "n": 121,
+    "n": 117,
     "not_a_claim": 33,
     "extraction_precision": [
-     88,
-     121,
+     84,
+     117,
      [
-      0.642,
-      0.799
+      0.63,
+      0.792
      ]
     ],
     "extraction_precision_cluster_bootstrap": [
-     0.645,
-     0.808
+     0.63,
+     0.802
     ],
     "labels": {
      "TRUE": 38,
      "FALSE": 12,
-     "CANNOT_TELL": 38
+     "CANNOT_TELL": 34
     }
    },
    "docs_updated": {
-    "n": 27,
+    "n": 25,
     "not_a_claim": 1,
     "extraction_precision": [
-     26,
-     27,
+     24,
+     25,
      [
-      0.817,
+      0.805,
       0.993
      ]
     ],
     "extraction_precision_cluster_bootstrap": [
-     0.875,
+     0.864,
      1.0
     ],
     "labels": {
      "TRUE": 23,
-     "CANNOT_TELL": 2,
      "FALSE": 1
     },
     "verdicts_x_label": {
@@ -58,30 +66,27 @@
      ]
     ],
     "false_statements_not_flagged": 1,
-    "checks_not_run": 2
+    "checks_not_run": 0
    },
    "files_scope": {
-    "n": 35,
+    "n": 34,
     "not_a_claim": 0,
     "extraction_precision": [
-     35,
-     35,
+     34,
+     34,
      [
-      0.901,
+      0.898,
       1.0
      ]
     ],
-    "extraction_precision_cluster_bootstrap": [
-     1.0,
-     1.0
-    ],
+    "extraction_precision_cluster_bootstrap": null,
     "labels": {
      "TRUE": 26,
      "FALSE": 7,
-     "CANNOT_TELL": 2
+     "CANNOT_TELL": 1
     },
     "verdicts_x_label": {
-     "CONTRADICTED|FALSE": 3,
+     "CONTRADICTED|FALSE": 4,
      "NOT_CONTRADICTED|CANNOT_TELL": 1,
      "NOT_CONTRADICTED|FALSE": 1,
      "NOT_CONTRADICTED|TRUE": 24,
@@ -89,34 +94,31 @@
      "UNKNOWN|TRUE": 1
     },
     "mismatch_flag_precision": [
-     3,
-     3,
+     4,
+     4,
      [
-      0.438,
+      0.51,
       1.0
      ]
     ],
     "false_statements_not_flagged": 3,
-    "checks_not_run": 3
+    "checks_not_run": 1
    },
    "lint_clean": {
-    "n": 22,
+    "n": 23,
     "not_a_claim": 0,
     "extraction_precision": [
-     22,
-     22,
+     23,
+     23,
      [
-      0.851,
+      0.857,
       1.0
      ]
     ],
-    "extraction_precision_cluster_bootstrap": [
-     1.0,
-     1.0
-    ],
+    "extraction_precision_cluster_bootstrap": null,
     "labels": {
-     "TRUE": 8,
-     "CANNOT_TELL": 13,
+     "TRUE": 10,
+     "CANNOT_TELL": 12,
      "FALSE": 1
     }
    },
@@ -137,23 +139,23 @@
     }
    },
    "tests_pass": {
-    "n": 38,
+    "n": 41,
     "not_a_claim": 5,
     "extraction_precision": [
-     33,
-     38,
+     36,
+     41,
      [
-      0.727,
-      0.942
+      0.745,
+      0.947
      ]
     ],
     "extraction_precision_cluster_bootstrap": [
-     0.738,
-     0.974
+     0.756,
+     0.976
     ],
     "labels": {
-     "CANNOT_TELL": 24,
-     "TRUE": 9
+     "CANNOT_TELL": 26,
+     "TRUE": 10
     }
    },
    "unchecked": {
@@ -169,7 +171,7 @@
     ],
     "extraction_precision_cluster_bootstrap": [
      0.333,
-     0.778
+     0.786
     ],
     "labels": {
      "CANNOT_TELL": 9,
@@ -178,24 +180,24 @@
    }
   },
   "coverage": {
-   "claims": 218,
-   "with_a_verdict_path": 208,
+   "claims": 215,
+   "with_a_verdict_path": 205,
    "share": [
-    208,
-    218,
+    205,
+    215,
     [
-     0.918,
+     0.917,
      0.975
     ]
    ]
   },
   "cannot_tell_share": [
-   88,
-   218
+   82,
+   215
   ],
   "judgment_share": [
    66,
-   218
+   215
   ]
  },
  "rows": [
@@ -450,18 +452,6 @@
    "label": "CANNOT_TELL",
    "judgment": false,
    "confidence": "MEDIUM"
-  },
-  {
-   "item": "014_42c86d8cdc",
-   "repo": "Metta-AI/metta",
-   "n": 1,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "HIGH"
   },
   {
    "item": "015_27498a1ac0",
@@ -918,30 +908,6 @@
    "label": "TRUE",
    "judgment": false,
    "confidence": "MEDIUM"
-  },
-  {
-   "item": "033_76fe5b81af",
-   "repo": "antiwork/flexile",
-   "n": 1,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
-  },
-  {
-   "item": "033_76fe5b81af",
-   "repo": "antiwork/flexile",
-   "n": 2,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
   },
   {
    "item": "034_7b82dbe945",
@@ -1712,18 +1678,6 @@
    "confidence": "LOW"
   },
   {
-   "item": "072_8467773975",
-   "repo": "Metta-AI/metta",
-   "n": 1,
-   "kind": "docs_updated",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "HIGH"
-  },
-  {
    "item": "073_0a736a4bd9",
    "repo": "FastLED/FastLED",
    "n": 1,
@@ -2060,54 +2014,6 @@
    "confidence": "MEDIUM"
   },
   {
-   "item": "091_85c2d013fe",
-   "repo": "Catfriend1/syncthing-android",
-   "n": 1,
-   "kind": "files_scope",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
-  },
-  {
-   "item": "091_85c2d013fe",
-   "repo": "Catfriend1/syncthing-android",
-   "n": 2,
-   "kind": "docs_updated",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
-  },
-  {
-   "item": "091_85c2d013fe",
-   "repo": "Catfriend1/syncthing-android",
-   "n": 3,
-   "kind": "lint_clean",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
-  },
-  {
-   "item": "092_6795b088bd",
-   "repo": "appdotbuild/agent",
-   "n": 1,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
-  },
-  {
    "item": "093_0b95b96a01",
    "repo": "kexue-z/nonebot-plugin-htmlrender",
    "n": 1,
@@ -2250,18 +2156,6 @@
    "label": "FALSE",
    "judgment": false,
    "confidence": "HIGH"
-  },
-  {
-   "item": "098_297ee69006",
-   "repo": "antiwork/flexile",
-   "n": 1,
-   "kind": "lint_clean",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "LOW"
   },
   {
    "item": "099_46d845539c",
@@ -2592,8 +2486,8 @@
    "repo": "mlflow/mlflow",
    "n": 1,
    "kind": "files_scope",
-   "verdict": null,
-   "checks_ran": false,
+   "verdict": "CONTRADICTED",
+   "checks_ran": true,
    "step_a": "CLAIM",
    "label": "FALSE",
    "judgment": false,
@@ -2860,54 +2754,6 @@
    "checks_ran": true,
    "step_a": "NOT_A_CLAIM",
    "label": null,
-   "judgment": false,
-   "confidence": "HIGH"
-  },
-  {
-   "item": "127_f7597d310b",
-   "repo": "portiaAI/portia-sdk-python",
-   "n": 1,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "HIGH"
-  },
-  {
-   "item": "127_f7597d310b",
-   "repo": "portiaAI/portia-sdk-python",
-   "n": 2,
-   "kind": "backward_compatible",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "NOT_A_CLAIM",
-   "label": null,
-   "judgment": false,
-   "confidence": "HIGH"
-  },
-  {
-   "item": "127_f7597d310b",
-   "repo": "portiaAI/portia-sdk-python",
-   "n": 3,
-   "kind": "unchecked",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
-   "judgment": false,
-   "confidence": "HIGH"
-  },
-  {
-   "item": "127_f7597d310b",
-   "repo": "portiaAI/portia-sdk-python",
-   "n": 4,
-   "kind": "unchecked",
-   "verdict": null,
-   "checks_ran": false,
-   "step_a": "CLAIM",
-   "label": "CANNOT_TELL",
    "judgment": false,
    "confidence": "HIGH"
   },
@@ -3390,6 +3236,126 @@
    "label": "TRUE",
    "judgment": false,
    "confidence": "MEDIUM"
+  },
+  {
+   "item": "150_3105c430ac",
+   "repo": "onflow/flow-go",
+   "n": 1,
+   "kind": "backward_compatible",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "NOT_A_CLAIM",
+   "label": null,
+   "judgment": false,
+   "confidence": "HIGH"
+  },
+  {
+   "item": "150_3105c430ac",
+   "repo": "onflow/flow-go",
+   "n": 2,
+   "kind": "tests_pass",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "LOW"
+  },
+  {
+   "item": "151_71494ff033",
+   "repo": "DannyMac180/meta-agent",
+   "n": 1,
+   "kind": "tests_pass",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "LOW"
+  },
+  {
+   "item": "152_728dd0b576",
+   "repo": "ai-shifu/ai-shifu",
+   "n": 1,
+   "kind": "lint_clean",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "LOW"
+  },
+  {
+   "item": "152_728dd0b576",
+   "repo": "ai-shifu/ai-shifu",
+   "n": 2,
+   "kind": "unchecked",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "LOW"
+  },
+  {
+   "item": "152_728dd0b576",
+   "repo": "ai-shifu/ai-shifu",
+   "n": 3,
+   "kind": "unchecked",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "LOW"
+  },
+  {
+   "item": "153_7642327abc",
+   "repo": "bolna-ai/bolna",
+   "n": 1,
+   "kind": "backward_compatible",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "confidence": "MEDIUM"
+  },
+  {
+   "item": "154_7ace36bfee",
+   "repo": "web-infra-dev/rsbuild",
+   "n": 1,
+   "kind": "lint_clean",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "TRUE",
+   "judgment": false,
+   "confidence": "MEDIUM"
+  },
+  {
+   "item": "155_54ea7bbd1c",
+   "repo": "567-labs/instructor",
+   "n": 1,
+   "kind": "lint_clean",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "TRUE",
+   "judgment": false,
+   "confidence": "HIGH"
+  },
+  {
+   "item": "156_3e46cbfcf8",
+   "repo": "mochilang/mochi",
+   "n": 1,
+   "kind": "tests_pass",
+   "verdict": null,
+   "checks_ran": true,
+   "step_a": "CLAIM",
+   "label": "TRUE",
+   "judgment": false,
+   "confidence": "HIGH"
   }
  ]
 }

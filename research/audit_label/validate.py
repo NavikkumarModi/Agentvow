@@ -29,6 +29,8 @@ def check(item: dict, lab: dict) -> list:
             bad.append(f"n={s.get('n')}: bad confidence {s.get('confidence')!r}")
         if s.get("label") in ("TRUE", "FALSE") and not s.get("evidence"):
             bad.append(f"n={s.get('n')}: {s.get('label')} without evidence")
+        if s.get("label") in ("CANNOT_TELL", "FALSE") and not str(s.get("note", "")).strip():
+            bad.append(f"n={s.get('n')}: a note is mandatory for {s.get('label')}")
         if not isinstance(s.get("judgment"), bool):
             bad.append(f"n={s.get('n')}: judgment must be true or false")
     return bad

@@ -1,16 +1,21 @@
 {
- "items": 30,
- "statements": 62,
+ "items": 29,
+ "statements": 58,
+ "excluding_both_not_a_claim": {
+  "n": 46,
+  "agree": 40,
+  "kappa": 0.779
+ },
  "agreement": [
-  56,
-  62
+  52,
+  58
  ],
- "kappa": 0.863,
+ "kappa": 0.852,
  "per_kind": {
   "backward_compatible": {
-   "n": 32,
-   "agree": 28,
-   "kappa": 0.827
+   "n": 30,
+   "agree": 26,
+   "kappa": 0.818
   },
   "docs_updated": {
    "n": 9,
@@ -33,9 +38,9 @@
    "kappa": null
   },
   "unchecked": {
-   "n": 7,
-   "agree": 6,
-   "kappa": 0.72
+   "n": 5,
+   "agree": 4,
+   "kappa": 0.667
   }
  },
  "disagreements": [
