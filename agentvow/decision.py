@@ -272,10 +272,11 @@ def _compat(c, repo, base, changed) -> Finding:
     if not py:
         return Finding(c.text, c.kind, "UNKNOWN", "No changed non-test Python files were found, so the claim cannot be checked.")
     found, gaps = api_diff.diff(repo, base, py)
-    if found:
-        return Finding(c.text, c.kind, "CONTRADICTED",
-                       f"The agent said the change is backward compatible, but the public API changed in {len(found)} way(s).",
-                       evidence=found[:8])
+    if found:   # attention, not CONTRADICTED: on 40 real pull requests this check was right in 4 of 9 decisive flags (docs/research/AUDIT_STUDY_RESULTS_STAGE2.md); whether a changed API breaks anyone is a judgment
+        return Finding(c.text, c.kind, "UNKNOWN",
+                       f"The agent said the change is backward compatible, but the public API changed in {len(found)} way(s) (removed or renamed names or parameters, new required parameters, changed kinds). "
+                       "A person should check whether that breaks users: in a test on real pull requests this check was right in fewer than half of the cases a second reader could decide, so it does not decide by itself.",
+                       evidence=found[:8], attention=True, meta={"mismatch": True})
     if gaps:
         return Finding(c.text, c.kind, "UNKNOWN", "Some changed files could not be compared.", unknowns=gaps)
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",

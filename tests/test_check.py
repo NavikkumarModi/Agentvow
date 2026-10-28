@@ -150,13 +150,16 @@ class Compat(unittest.TestCase):
             d = decision.check(repo, "HEAD~1", claim)
             return next(f for f in d.findings if f.kind == claims.BACKCOMPAT)
 
-    def test_removed_function_contradicts(self):
-        self.assertEqual(self.run_with("MAX_RETRIES = 3\n").verdict, "CONTRADICTED")
+    def test_removed_function_needs_a_person_not_a_verdict(self):
+        f = self.run_with("MAX_RETRIES = 3\n")
+        self.assertEqual((f.verdict, f.attention, f.meta.get("mismatch")), ("UNKNOWN", True, True))   # measured: right in 4 of 9 decisive flags on real pull requests, so it never says CONTRADICTED
+        self.assertIn("removed", " ".join(f.evidence))
 
-    def test_new_required_param_contradicts(self):
+    def test_new_required_param_needs_a_person_not_a_verdict(self):
         f = self.run_with("MAX_RETRIES = 3\n\ndef should_retry(attempt, policy):\n    return True\n")
-        self.assertEqual(f.verdict, "CONTRADICTED")
+        self.assertEqual((f.verdict, f.attention), ("UNKNOWN", True))
         self.assertIn("new required", " ".join(f.evidence))
+        self.assertIn("does not decide by itself", f.why)
 
     def test_added_optional_param_is_not_contradicted(self):
         f = self.run_with("MAX_RETRIES = 3\n\ndef should_retry(attempt, policy=None):\n    return True\n")

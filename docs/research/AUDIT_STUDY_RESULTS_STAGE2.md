@@ -47,7 +47,7 @@ UNKNOWN causes: **005** ruff exited with status 2 and 20 other pre-commit hooks 
 | H5 reproducibility | not run (no second machine; run-to-run determinism on this machine was not checked either) |
 
 ## What this means for the product
-- The impact check's CONTRADICTED should be a prompt for a person to look, not a finding that a claim is false: precision 4 of 9 (3 of 8) on 6 pull requests, a recall-side miss rate of 29%, one defect found and fixed (conditional definitions), and one unresolved disagreement (011). The pre-registered rule says to withdraw it from CONTRADICTED. Today it is a full CONTRADICTED under the default policy; making it attention-only is a product change that needs your decision.
+- The impact check's CONTRADICTED should be a prompt for a person to look, not a finding that a claim is false: precision 4 of 9 (3 of 8) on 6 pull requests, a recall-side miss rate of 29%, one defect found and fixed (conditional definitions), and one unresolved disagreement (011). The pre-registered rule says to withdraw it from CONTRADICTED. The owner decided (2026-10-28) to make it attention-only; this is done on `main` (`decision._compat` returns UNKNOWN with attention and a mismatch flag; tests updated) and is a post-study change to the audited tool. `no_downstream_impact` still issues CONTRADICTED from an import graph and has only one evaluated case.
 - The lint check behaves as designed; its one disagreement with a labeller is a scope question the audit answered literally.
 - Tests: the audit could not produce a verdict on any of the four test claims, and the cause is not established.
 
