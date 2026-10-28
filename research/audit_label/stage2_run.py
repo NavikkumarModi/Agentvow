@@ -15,7 +15,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "data" / "audit" / "stage2.jsonl"
+OUT = ROOT / "data" / "audit" / "stage2.jsonl"   # --out overrides (a diagnostic re-run never touches the recorded results)
 SCRATCH = Path(os.environ.get("AUDIT_SCRATCH", "/private/tmp/claude-501/-Users-navikkumarmodi-Agentvow/a2f1ab05-5ca4-480e-95ed-6086282ef66a/scratchpad/stage2"))
 KINDS = {"tests_pass", "lint_clean", "backward_compatible", "no_downstream_impact"}
 TIMEOUT = 40 * 60
@@ -79,9 +79,9 @@ def run_one(t):
             o = json.loads(p.stdout)
         except ValueError:
             return {**rec, "outcome": "no_json", "exit": p.returncode, "why": (p.stdout + p.stderr)[-300:], "seconds": round(time.time() - start)}
-        return {**rec, "outcome": "ran", "exit": p.returncode, "status": o.get("status"), "seconds": round(time.time() - start), "scope": str(o.get("scope", ""))[:300],
-                "findings": [{"claim": f.get("claim"), "kind": f.get("kind"), "verdict": f.get("verdict"), "attention": f.get("attention"), "why": str(f.get("why", ""))[:400]} for f in o.get("findings", [])],
-                "stderr": p.stderr[-300:]}
+        return {**rec, "outcome": "ran", "exit": p.returncode, "status": o.get("status"), "seconds": round(time.time() - start), "scope": str(o.get("scope", ""))[:1500],
+                "findings": [{"claim": f.get("claim"), "kind": f.get("kind"), "verdict": f.get("verdict"), "attention": f.get("attention"), "why": str(f.get("why", ""))[:400], "evidence": [str(e)[:300] for e in (f.get("evidence") or [])[:12]]} for f in o.get("findings", [])],
+                "stderr": p.stderr[-1000:]}
     finally:
         shutil.rmtree(d, ignore_errors=True)
         shutil.rmtree(home, ignore_errors=True)
@@ -91,7 +91,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="*")
+    ap.add_argument("--out")
     a = ap.parse_args(argv)
+    global OUT
+    if a.out:
+        OUT = Path(a.out)
     done = {json.loads(l)["item"] for l in OUT.read_text().splitlines()} if OUT.exists() else set()
     n = 0
     for t in targets():

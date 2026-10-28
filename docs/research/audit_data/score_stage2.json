@@ -1,0 +1,365 @@
+{
+ "worst": {
+  "statements": 58,
+  "groups": {
+   "impact": {
+    "n": 46,
+    "labels": {
+     "TRUE": 19,
+     "FALSE": 9,
+     "CANNOT_TELL": 18
+    },
+    "verdict_x_label": {
+     "CONTRADICTED|CANNOT_TELL": 8,
+     "CONTRADICTED|FALSE": 4,
+     "CONTRADICTED|TRUE": 5,
+     "NOT_CONTRADICTED|CANNOT_TELL": 10,
+     "NOT_CONTRADICTED|FALSE": 5,
+     "NOT_CONTRADICTED|TRUE": 12,
+     "UNKNOWN|TRUE": 2
+    },
+    "contradicted_precision": [
+     4,
+     9,
+     [
+      0.189,
+      0.733
+     ],
+     [
+      0.133,
+      1.0
+     ]
+    ],
+    "contradicted_precision_by_pull_request": [
+     4,
+     6,
+     [
+      0.3,
+      0.903
+     ]
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     4,
+     5
+    ],
+    "contradicted_judgment_labels": [
+     4,
+     9
+    ],
+    "not_contradicted_but_labelled_false": [
+     5,
+     17,
+     [
+      0.133,
+      0.531
+     ]
+    ],
+    "labelled_false_total": 9,
+    "labelled_false_flagged": 4,
+    "unknown_but_labeller_decided": [
+     2,
+     28
+    ],
+    "verdict_produced": [
+     44,
+     46
+    ],
+    "pull_requests": 32
+   },
+   "lint": {
+    "n": 8,
+    "labels": {
+     "TRUE": 6,
+     "CANNOT_TELL": 1,
+     "FALSE": 1
+    },
+    "verdict_x_label": {
+     "CONTRADICTED|FALSE": 1,
+     "CONTRADICTED|TRUE": 1,
+     "NOT_CONTRADICTED|TRUE": 3,
+     "UNKNOWN|CANNOT_TELL": 1,
+     "UNKNOWN|TRUE": 2
+    },
+    "contradicted_precision": [
+     1,
+     2,
+     [
+      0.095,
+      0.905
+     ],
+     null
+    ],
+    "contradicted_precision_by_pull_request": [
+     1,
+     2,
+     [
+      0.095,
+      0.905
+     ]
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     1,
+     2
+    ],
+    "contradicted_judgment_labels": [
+     0,
+     2
+    ],
+    "not_contradicted_but_labelled_false": [
+     0,
+     3,
+     [
+      0.0,
+      0.562
+     ]
+    ],
+    "labelled_false_total": 1,
+    "labelled_false_flagged": 1,
+    "unknown_but_labeller_decided": [
+     2,
+     7
+    ],
+    "verdict_produced": [
+     5,
+     8
+    ],
+    "pull_requests": 8
+   },
+   "tests": {
+    "n": 4,
+    "labels": {
+     "TRUE": 3,
+     "CANNOT_TELL": 1
+    },
+    "verdict_x_label": {
+     "UNKNOWN|CANNOT_TELL": 1,
+     "UNKNOWN|TRUE": 3
+    },
+    "contradicted_precision": [
+     0,
+     0,
+     null,
+     null
+    ],
+    "contradicted_precision_by_pull_request": [
+     0,
+     0,
+     null
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     0,
+     0
+    ],
+    "contradicted_judgment_labels": [
+     0,
+     0
+    ],
+    "not_contradicted_but_labelled_false": [
+     0,
+     0,
+     null
+    ],
+    "labelled_false_total": 0,
+    "labelled_false_flagged": 0,
+    "unknown_but_labeller_decided": [
+     3,
+     3
+    ],
+    "verdict_produced": [
+     0,
+     4
+    ],
+    "pull_requests": 4
+   }
+  }
+ },
+ "own_kind": {
+  "statements": 58,
+  "groups": {
+   "impact": {
+    "n": 46,
+    "labels": {
+     "TRUE": 19,
+     "FALSE": 9,
+     "CANNOT_TELL": 18
+    },
+    "verdict_x_label": {
+     "CONTRADICTED|CANNOT_TELL": 8,
+     "CONTRADICTED|FALSE": 3,
+     "CONTRADICTED|TRUE": 5,
+     "NOT_CONTRADICTED|CANNOT_TELL": 10,
+     "NOT_CONTRADICTED|FALSE": 6,
+     "NOT_CONTRADICTED|TRUE": 12,
+     "UNKNOWN|TRUE": 2
+    },
+    "contradicted_precision": [
+     3,
+     8,
+     [
+      0.137,
+      0.694
+     ],
+     [
+      0.071,
+      1.0
+     ]
+    ],
+    "contradicted_precision_by_pull_request": [
+     3,
+     5,
+     [
+      0.231,
+      0.882
+     ]
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     3,
+     4
+    ],
+    "contradicted_judgment_labels": [
+     4,
+     8
+    ],
+    "not_contradicted_but_labelled_false": [
+     6,
+     18,
+     [
+      0.163,
+      0.563
+     ]
+    ],
+    "labelled_false_total": 9,
+    "labelled_false_flagged": 3,
+    "unknown_but_labeller_decided": [
+     2,
+     28
+    ],
+    "verdict_produced": [
+     44,
+     46
+    ],
+    "pull_requests": 32
+   },
+   "lint": {
+    "n": 8,
+    "labels": {
+     "TRUE": 6,
+     "CANNOT_TELL": 1,
+     "FALSE": 1
+    },
+    "verdict_x_label": {
+     "CONTRADICTED|FALSE": 1,
+     "CONTRADICTED|TRUE": 1,
+     "NOT_CONTRADICTED|TRUE": 3,
+     "UNKNOWN|CANNOT_TELL": 1,
+     "UNKNOWN|TRUE": 2
+    },
+    "contradicted_precision": [
+     1,
+     2,
+     [
+      0.095,
+      0.905
+     ],
+     null
+    ],
+    "contradicted_precision_by_pull_request": [
+     1,
+     2,
+     [
+      0.095,
+      0.905
+     ]
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     1,
+     2
+    ],
+    "contradicted_judgment_labels": [
+     0,
+     2
+    ],
+    "not_contradicted_but_labelled_false": [
+     0,
+     3,
+     [
+      0.0,
+      0.562
+     ]
+    ],
+    "labelled_false_total": 1,
+    "labelled_false_flagged": 1,
+    "unknown_but_labeller_decided": [
+     2,
+     7
+    ],
+    "verdict_produced": [
+     5,
+     8
+    ],
+    "pull_requests": 8
+   },
+   "tests": {
+    "n": 4,
+    "labels": {
+     "TRUE": 3,
+     "CANNOT_TELL": 1
+    },
+    "verdict_x_label": {
+     "UNKNOWN|CANNOT_TELL": 1,
+     "UNKNOWN|TRUE": 3
+    },
+    "contradicted_precision": [
+     0,
+     0,
+     null,
+     null
+    ],
+    "contradicted_precision_by_pull_request": [
+     0,
+     0,
+     null
+    ],
+    "contradicted_precision_non_judgment_labels": [
+     0,
+     0
+    ],
+    "contradicted_judgment_labels": [
+     0,
+     0
+    ],
+    "not_contradicted_but_labelled_false": [
+     0,
+     0,
+     null
+    ],
+    "labelled_false_total": 0,
+    "labelled_false_flagged": 0,
+    "unknown_but_labeller_decided": [
+     3,
+     3
+    ],
+    "verdict_produced": [
+     0,
+     4
+    ],
+    "pull_requests": 4
+   }
+  }
+ },
+ "run_status": {
+  "INSUFFICIENT EVIDENCE": 23,
+  "REVIEW REQUIRED": 15,
+  "NO CONTRADICTION FOUND (scoped, not a safety verdict)": 2
+ },
+ "seconds_median": 27,
+ "env_not_built_stderr": [
+  "005_9f9e25dd13",
+  "013_c84229a923",
+  "026_7d01db17c7",
+  "039_bb8741397c",
+  "120_6a7ab1bc65",
+  "142_6d54c22b23"
+ ],
+ "env_too_heavy_in_findings": []
+}

@@ -20,9 +20,28 @@ def _sig(fn):
     return {"pos": pos, "req": req, "kw": kw, "kwreq": kwreq, "var": a.vararg is not None, "varkw": a.kwarg is not None}
 
 
+def _module_nodes(body):
+    """Module-level statements, including those inside top-level if/try/with blocks (a name defined under `if sys.version_info >= ...:` or `try: import ... except ImportError:` is still part of the module's API). Function
+    and class bodies are not entered. Found by the audit study: a name moved into a version branch was reported as removed."""
+    for n in body:
+        if isinstance(n, ast.If):
+            yield from _module_nodes(n.body)
+            yield from _module_nodes(n.orelse)
+        elif isinstance(n, ast.Try):
+            yield from _module_nodes(n.body)
+            for h in n.handlers:
+                yield from _module_nodes(h.body)
+            yield from _module_nodes(n.orelse)
+            yield from _module_nodes(n.finalbody)
+        elif isinstance(n, (ast.With, ast.AsyncWith)):
+            yield from _module_nodes(n.body)
+        else:
+            yield n
+
+
 def public_api(source: str, is_init: bool = False) -> dict:
     api = {}
-    for n in ast.parse(source).body:
+    for n in _module_nodes(ast.parse(source).body):
         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and not n.name.startswith("_"):
             api[n.name] = _sig(n)
         elif isinstance(n, ast.ClassDef) and not n.name.startswith("_"):

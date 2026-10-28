@@ -1,0 +1,817 @@
+{
+ "rows": [
+  {
+   "item": "000_f7389e8a23",
+   "repo": "alexdej/puzpy",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "Some changed files could not be compared."
+  },
+  {
+   "item": "002_65caf2b3a9",
+   "repo": "getsentry/sentry",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "002_65caf2b3a9",
+   "repo": "getsentry/sentry",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "003_2379eb831f",
+   "repo": "AgentOps-AI/agentops",
+   "n": 1,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 2,
+   "why": "The agent said lint is clean, but ruff format (ruff 0.15.1) reports 1 finding(s) in the 29 file(s) it was given (the changed Python files). A different version of the tool may disagree; check the vers"
+  },
+  {
+   "item": "005_9f9e25dd13",
+   "repo": "mlflow/mlflow",
+   "n": 1,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The lint claim could not be fully checked. ruff check: ruff exited with status 2. Part of what the statement covers was not run. 20 other hook(s) were not run (blacken-docs, check-init-py, check-vcs-p"
+  },
+  {
+   "item": "007_4524d191b8",
+   "repo": "firecrawl/firecrawl",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "011_7ec367128b",
+   "repo": "TracecatHQ/tracecat",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 2 way(s)."
+  },
+  {
+   "item": "013_c84229a923",
+   "repo": "deepmodeling/deepmd-kit",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 4 way(s)."
+  },
+  {
+   "item": "020_6da8cb031a",
+   "repo": "hove-io/navitia",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "021_af9c6b0d9a",
+   "repo": "bolna-ai/bolna",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "025_773a6c5d41",
+   "repo": "airbytehq/PyAirbyte",
+   "n": 3,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 2,
+   "why": "The agent said lint is clean, but ruff format (ruff 0.15.1) reports 1 finding(s) in the 10 file(s) it was given (the changed Python files). A different version of the tool may disagree; check the vers"
+  },
+  {
+   "item": "025_773a6c5d41",
+   "repo": "airbytehq/PyAirbyte",
+   "n": 4,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "026_7d01db17c7",
+   "repo": "KosinskiLab/AlphaPulldown",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "026_7d01db17c7",
+   "repo": "KosinskiLab/AlphaPulldown",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "028_ded79f3ea0",
+   "repo": "mandiant/capa",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "032_f570774d52",
+   "repo": "dvershinin/lastversion",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "032_f570774d52",
+   "repo": "dvershinin/lastversion",
+   "n": 2,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "flake8 (7.1.1 (mccabe: 0.7.0, pycodestyle: 2.12.1, pyflakes: 3.2.0, ) reports no findings on the 2 file(s) it was given (the changed Python files), with this repository's configuration; files its conf"
+  },
+  {
+   "item": "039_bb8741397c",
+   "repo": "crewAIInc/crewAI",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "050_e3098d15c8",
+   "repo": "bentoml/BentoML",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "059_d822cf6ab6",
+   "repo": "reflex-dev/reflex-web",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "061_063ab11dd5",
+   "repo": "python-adaptive/adaptive",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "061_063ab11dd5",
+   "repo": "python-adaptive/adaptive",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "061_063ab11dd5",
+   "repo": "python-adaptive/adaptive",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "061_063ab11dd5",
+   "repo": "python-adaptive/adaptive",
+   "n": 5,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 1 way(s)."
+  },
+  {
+   "item": "062_6d3f993347",
+   "repo": "DannyMac180/meta-agent",
+   "n": 1,
+   "group": "tests",
+   "kinds": [
+    "tests_pass"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The test run was inconclusive (inconclusive: exit 1; ModuleNotFoundError: No module named 'pytest_asyncio.plugin'; 'pytest_asyncio' is not a package); it could not confirm or refute the claim."
+  },
+  {
+   "item": "068_939ec98a08",
+   "repo": "feast-dev/feast",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "076_fc732313e8",
+   "repo": "elementary-data/dbt-data-reliability",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No changed non-test Python files were found, so the claim cannot be checked."
+  },
+  {
+   "item": "077_a6e0ab9dd0",
+   "repo": "browser-use/browser-use",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "079_65a0f49186",
+   "repo": "weecology/DeepForest",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 3 way(s)."
+  },
+  {
+   "item": "085_4dc92eaf97",
+   "repo": "AstrBotDevs/AstrBot",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 226 way(s)."
+  },
+  {
+   "item": "093_0b95b96a01",
+   "repo": "kexue-z/nonebot-plugin-htmlrender",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "FALSE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "093_0b95b96a01",
+   "repo": "kexue-z/nonebot-plugin-htmlrender",
+   "n": 5,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "093_0b95b96a01",
+   "repo": "kexue-z/nonebot-plugin-htmlrender",
+   "n": 6,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "096_ddcc2a02dc",
+   "repo": "blorm-network/ZerePy",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 17 way(s)."
+  },
+  {
+   "item": "096_ddcc2a02dc",
+   "repo": "blorm-network/ZerePy",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 17 way(s)."
+  },
+  {
+   "item": "096_ddcc2a02dc",
+   "repo": "blorm-network/ZerePy",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 17 way(s)."
+  },
+  {
+   "item": "097_52ebf478aa",
+   "repo": "getsentry/sentry",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "099_46d845539c",
+   "repo": "allthingslinux/tux",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "107_f3cc963fbe",
+   "repo": "FalkorDB/QueryWeaver",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 2 way(s)."
+  },
+  {
+   "item": "116_4ceff928c4",
+   "repo": "bugsink/bugsink",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible",
+    "no_downstream_impact"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "FALSE",
+   "judgment": false,
+   "n_findings": 2,
+   "why": "The agent said there is no downstream impact, but 102 other module(s) depend on what changed: alerts/admin.py, alerts/forms.py, alerts/models.py, alerts/service_backends/slack.py, alerts/tasks.py, ale"
+  },
+  {
+   "item": "120_6a7ab1bc65",
+   "repo": "crewAIInc/crewAI",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "120_6a7ab1bc65",
+   "repo": "crewAIInc/crewAI",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "FALSE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "129_0cc47ea3d3",
+   "repo": "BoundaryML/baml",
+   "n": 1,
+   "group": "tests",
+   "kinds": [
+    "tests_pass"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The test run was inconclusive (inconclusive: missing dependency in Agentvow's environment: anthropic, assertpy, baml_client, baml_py (pass --python with the project's virtualenv, or use --setup auto))"
+  },
+  {
+   "item": "131_1ef97499ed",
+   "repo": "elementary-data/dbt-data-reliability",
+   "n": 1,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 4,
+   "why": "Agentvow can run ruff, black and flake8 to check a lint claim; it has no runner for 'isort', so this claim is unverified."
+  },
+  {
+   "item": "133_d849e5f081",
+   "repo": "567-labs/instructor",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "133_d849e5f081",
+   "repo": "567-labs/instructor",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "133_d849e5f081",
+   "repo": "567-labs/instructor",
+   "n": 5,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "133_d849e5f081",
+   "repo": "567-labs/instructor",
+   "n": 6,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "ruff check (ruff 0.15.1) reports no findings on the 4 file(s) it was given (the changed Python files), with this repository's configuration; files its configuration excludes are skipped silently. A di"
+  },
+  {
+   "item": "133_d849e5f081",
+   "repo": "567-labs/instructor",
+   "n": 7,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "138_77ed23ebd9",
+   "repo": "Kyrela/FixTweetBot",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "142_6d54c22b23",
+   "repo": "langchain-ai/langchain",
+   "n": 2,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "142_6d54c22b23",
+   "repo": "langchain-ai/langchain",
+   "n": 3,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": true,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "144_71dc1ca24d",
+   "repo": "karlicoss/HPI",
+   "n": 1,
+   "group": "tests",
+   "kinds": [
+    "tests_pass"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The test run was inconclusive (inconclusive: missing dependency in Agentvow's environment: browserexport, click, emfitexport, geopy (pass --python with the project's virtualenv, or use --setup auto));"
+  },
+  {
+   "item": "144_71dc1ca24d",
+   "repo": "karlicoss/HPI",
+   "n": 2,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "ruff check (ruff 0.15.1) reports no findings on the 1 file(s) it was given (the changed Python files), with this repository's configuration; files its configuration excludes are skipped silently. A di"
+  },
+  {
+   "item": "145_8699ff19c1",
+   "repo": "browser-use/browser-use",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "NOT_CONTRADICTED",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "No removed names or incompatible signature changes in changed Python files. Behaviour changes, other languages, config and runtime compatibility are not checked."
+  },
+  {
+   "item": "151_71494ff033",
+   "repo": "DannyMac180/meta-agent",
+   "n": 1,
+   "group": "tests",
+   "kinds": [
+    "tests_pass"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The test run was inconclusive (inconclusive: exit 1; ModuleNotFoundError: No module named 'pytest_asyncio.plugin'; 'pytest_asyncio' is not a package); it could not confirm or refute the claim."
+  },
+  {
+   "item": "153_7642327abc",
+   "repo": "bolna-ai/bolna",
+   "n": 1,
+   "group": "impact",
+   "kinds": [
+    "backward_compatible"
+   ],
+   "verdict": "CONTRADICTED",
+   "label": "CANNOT_TELL",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "The agent said the change is backward compatible, but the public API changed in 15 way(s)."
+  },
+  {
+   "item": "155_54ea7bbd1c",
+   "repo": "567-labs/instructor",
+   "n": 1,
+   "group": "lint",
+   "kinds": [
+    "lint_clean"
+   ],
+   "verdict": "UNKNOWN",
+   "label": "TRUE",
+   "judgment": false,
+   "n_findings": 1,
+   "why": "ruff check (ruff 0.15.1) reports nothing on the 1 file(s) it was given (the changed Python files), but this change also edits lint configuration or adds a file-level suppression (pyproject.toml), so a"
+  }
+ ]
+}
