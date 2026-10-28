@@ -13,7 +13,7 @@ The frozen audit (`agentvow check --setup auto --run-tests --json`, the pull req
 | CONTRADICTED (16) | 5 | 4 | 8 |
 | NOT_CONTRADICTED (27) | 12 | 5 | 10 |
 | UNKNOWN (2) | 2 | 0 | 0 |
-- **Precision of CONTRADICTED: 4 of 9 decisive flags (44%; Wilson 95%: 19 to 73%).** By pull request: 6 pull requests with a decisive flag, 4 right (67%; 30 to 93%). Five of the nine decisive flags are statements labelled TRUE; **four of those five are one pull request (061) whose four statements received the same finding**, so the effective number of independent wrong flags is 2 pull requests.
+- **Precision of CONTRADICTED: 4 of 9 decisive flags (44%; Wilson 95%: 19 to 73%).** By pull request: 6 pull requests with a decisive flag, 4 right (67%; Wilson 30 to 90%). Five of the nine decisive flags are statements labelled TRUE; **four of those five are one pull request (061) whose four statements received the same finding**, so the effective number of independent wrong flags is 2 pull requests.
 - **Recall of labelled-FALSE impact statements: 4 of 9** (the audit missed 5; they are NOT_CONTRADICTED). Eight further CONTRADICTED flags have no decisive label (CANNOT_TELL), so their correctness is unknown.
 - **Reach: 43 of 45 impact statements got a verdict** (the check is static and needs no environment).
 - The check reports "the public API changed in N ways" (a syntactic comparison of public names); whether that is breaking is a judgment (4 of the 9 decisive flagged labels are judgment-labelled). The flagged counts run from 1 to 226 changes, so the verdict does not separate additive from breaking changes.
