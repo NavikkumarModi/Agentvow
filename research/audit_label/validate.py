@@ -51,4 +51,12 @@ def main(items_dir="data/audit/items", labels_dir="data/audit/labels") -> int:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 5 and sys.argv[1] == "--file":   # validate.py --file ITEM.json LABEL.json
+        try:
+            lab = json.load(open(sys.argv[3]))
+        except ValueError as e:
+            print(f"invalid JSON: {e}"); sys.exit(1)
+        probs = check(json.load(open(sys.argv[2])), lab)
+        print("\n".join(probs) if probs else "valid")
+        sys.exit(1 if probs else 0)
     sys.exit(main(*sys.argv[1:3]))
