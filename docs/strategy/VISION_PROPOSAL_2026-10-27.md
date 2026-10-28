@@ -3,7 +3,7 @@
 Status: **a proposal for the owner, not a decision and not a research claim.** It follows an external review of `main` at 74de6cb. It does not replace `VISION_2026-10.md`; it narrows its option B. Per `CLAUDE.md`, nothing here is called novel: "Potential gap requiring further verification." The autonomy gate in `docs/research/NOVELTY_BOUNDARY.md` is **not passed**.
 
 ## Correction first
-"Evidence gates autonomy" is **not** a defensible novelty claim. Proof-or-Stop (July 2026 preprint, `[partial]` in `AUTONOMY_POLICY_PRIOR_ART.md`) already binds fresh, code-state evidence to lifecycle advance/retry/stop. ProofRun reruns checks on the exact pull-request head. ActPlane enforces agent policy at OS level. An autonomy budget or score alone does not distinguish Agentvow.
+"Evidence gates autonomy" is **not** a defensible novelty claim. Proof-or-Stop (July 2026 preprint; only partly read, so treated as `[snippet]` in `AUTONOMY_POLICY_PRIOR_ART.md`) already binds fresh, code-state evidence to lifecycle advance/retry/stop. ProofRun reruns checks on the exact pull-request head. ActPlane enforces agent policy at OS level. An autonomy budget or score alone does not distinguish Agentvow.
 
 ## Proposed vision
 Let teams delegate software changes to coding agents without reviewing every step, by requiring fresh, independently generated, source-bound evidence before each consequential lifecycle transition, and by stopping or escalating when critical evidence is missing or contradicted.
@@ -18,6 +18,9 @@ What supports it: E3 (18 replayable runs: capture reproduced 16, repository-deri
 Known limit on the reconstruction half: four experiments, 27 repository runs, zero verdicts gained on non-plain-pip third-party pull requests (`project-reconstruction-limits`). On such repositories the comparison often has one side only. A pilot should use plain-pip repositories or a repository that supplies its own environment.
 
 A captured bundle is **supplied and unauthenticated** (`TRUST_MODEL.md`): the verifier checks its binding to the code and replays it; it cannot establish that the agent used those packages.
+
+## Offline shadow results so far
+Run 1 of the offline study (`SHADOW_FAULTS_RESULTS.md`) was confounded and its reading is withdrawn as inconclusive; one thing it did show is a trade-off to measure: a context that can run the tests turns an honest "escalate" into "continue" on faults the tests do not see. Run 2 is pre-registered with controls.
 
 ## Obligations per transition (not one verdict, not a score)
 | Transition | Policy approach |

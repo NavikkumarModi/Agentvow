@@ -55,6 +55,24 @@ class Faults(unittest.TestCase):
         for n, t, new in faults.candidates("x = [1 < 2\n    ,3]\n", {1, 2}):
             ast.parse(faults.apply("x = [1 < 2\n    ,3]\n", (n, t, new)))
 
+    def test_strings_and_comments_are_never_edited(self):
+        src = 'def f(a):\n    s = "a == b"  # True == x\n    t = f"{a} == 1"\n    return a\n'
+        for n, t, new in faults.candidates(src, {2, 3}):
+            self.fail(f"mutated a string or comment line {n}: {new!r}")
+
+    def test_operator_next_to_a_string_is_still_edited_outside_it(self):
+        src = 'def f(a):\n    if a == "x == 1":\n        return 1\n'
+        flips = [new for n, t, new in faults.candidates(src, {2}) if t == "flip"]
+        self.assertEqual(flips, ['    if a != "x == 1":\n'])
+
+    def test_return_none_is_not_planted_in_a_generator(self):
+        src = "def g():\n    yield 1\n    return 2\n\n\ndef h():\n    return 2\n"
+        got = {n for n, t, _ in faults.candidates(src, {3, 7}) if t == "return_none"}
+        self.assertEqual(got, {7})
+
+    def test_while_true_is_not_flipped(self):
+        self.assertEqual([t for _, t, _ in faults.candidates("while True:\n    pass\n", {1}) if t == "constant"], [])
+
     def test_pick_is_deterministic_and_type_diverse(self):
         c = faults.candidates(SRC, set(range(1, SRC.count("\n") + 2)))
         a, b = faults.pick(c, "s", 3), faults.pick(c, "s", 3)

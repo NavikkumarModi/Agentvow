@@ -1,4 +1,6 @@
-"""Offline arms B (project-native) and C (captured context) of the shadow-mode study, on the B6 runs with the extended fault generator (research/shadow/faults.py). Pre-registration:
+"""VERSION 2 (after the adversarial review of the first run, docs/research/SHADOW_FAULTS_RESULTS.md): an unfaulted control per run and arm; a fresh AGENTVOW_HOME and a removed .agentvow before every
+check (no evidence can leak between arms or faults); arm order alternates; the mutated line and all findings are stored; harness failures (no test evidence for the state) are classified apart.
+Offline arms B (project-native) and C (freeze-recipe context: a recipe that installs the agent's pip freeze, not a capsule replay) of the shadow-mode study, on the B6 runs with the extended fault generator (research/shadow/faults.py). Pre-registration:
 docs/research/SHADOW_FAULTS_PREREG.md (frozen before this ran). Up to 3 faults of different types per run, one fault per check, claim "All tests pass.".
 Reuses the E5 harness (research/preconditions/b6_fault_injection.py, stageb_run). Resumable. Output: data/shadow/faults.jsonl. Clones third-party repositories and runs their tests in Agentvow's sandbox."""
 import json
@@ -17,10 +19,46 @@ import faults  # noqa: E402
 from agentvow import baseline, envsetup  # noqa: E402
 
 D = e5.D
-OUT = ROOT / "data" / "shadow" / "faults.jsonl"
-SEED = 20261028
+OUT = ROOT / "data" / "shadow" / "faults_v2.jsonl"
+SEED = 20261029
 PER_RUN = 3
 DECISION = {"CONTRADICTED": "stop", "UNKNOWN": "escalate", "NOT_CONTRADICTED": "continue", "SUPPORTED_BY_PRIOR_EVIDENCE": "continue"}   # frozen: see the pre-registration
+
+
+def harness_failure(detail: str) -> bool:
+    d = detail or ""
+    return "different commit or working-tree state" in d or "did not run the tests" in d or "No test result was found" in d
+
+
+def check(repo, base_sha, msg, recipe_path):
+    """Like the E5 check, but isolated: a fresh AGENTVOW_HOME and no .agentvow in the repository, so no earlier check's evidence can be seen. Keeps every finding."""
+    home = tempfile.mkdtemp(prefix="shadow_home_")
+    shutil.rmtree(Path(repo) / ".agentvow", ignore_errors=True)
+    env = {**os.environ, "AGENTVOW_HOME": home}
+    env.pop("PYTHONPATH", None)
+    try:
+        p = subprocess.run([sys.executable, "-m", "agentvow.cli", "check", "--repo", str(repo), "--base", base_sha, "--transcript", str(msg), "--json", "--new-test-failures", "review",
+                            "--recipe", str(recipe_path), "--test-timeout", "600"], cwd=ROOT, env=env, capture_output=True, text=True, timeout=1500)
+        try:
+            o = json.loads(p.stdout)
+            f = next(x for x in o["findings"] if x["kind"] == "tests_pass")
+            detail = str(f.get("why") or "")[:400]
+            return {"verdict": f["verdict"], "status": o.get("status"), "detail": detail, "harness_failure": harness_failure(detail), "exit": p.returncode,
+                    "findings": [{"kind": x.get("kind"), "verdict": x.get("verdict")} for x in o["findings"]]}
+        except (ValueError, StopIteration, KeyError):
+            return {"verdict": None, "status": None, "detail": (p.stdout + p.stderr)[-200:], "harness_failure": True, "exit": p.returncode, "findings": []}
+    except subprocess.TimeoutExpired:
+        return {"verdict": None, "status": None, "detail": "timeout", "harness_failure": True, "exit": None, "findings": []}
+    finally:
+        shutil.rmtree(home, ignore_errors=True)
+
+
+def both(repo, base_sha, msg, flip):
+    order = ("native", "captured") if flip else ("captured", "native")
+    res = {}
+    for arm in order:
+        res[arm] = check(repo, base_sha, msg, repo / (".fault-cap.json" if arm == "captured" else ".fault-native.json"))
+    return res["captured"], res["native"]
 
 
 def main():
@@ -73,18 +111,20 @@ def main():
             for f, n, t, new in cands:
                 by_file.setdefault(f, []).append((n, t, new))
             flat = [(f, n, t, new) for f, xs in sorted(by_file.items()) for n, t, new in xs]
+            cap0, nat0 = both(repo, base_sha, msg, False)
+            recs.append({**base_rec, "outcome": "control", "captured": cap0, "native": nat0})
+            print(key, "control captured", cap0["verdict"], "native", nat0["verdict"], flush=True)
             picked = faults.pick([(i, t, "") for i, (_f, _n, t, _new) in enumerate(flat)], f"{SEED}:{key}", PER_RUN)
-            for idx, t, _ in picked:
+            for i, (idx, t, _) in enumerate(picked):
                 f, n, t, new = flat[idx]
                 p = repo / f
                 orig = p.read_text(encoding="utf-8", errors="replace")
                 p.write_text(faults.apply(orig, (n, t, new)))
                 try:
-                    cap = e5.check(repo, base_sha, msg, repo / ".fault-cap.json")
-                    nat = e5.check(repo, base_sha, msg, repo / ".fault-native.json")
+                    cap, nat = both(repo, base_sha, msg, i % 2 == 1)
                 finally:
                     p.write_text(orig)
-                recs.append({**base_rec, "outcome": "ran", "fault": f"{f}:{n}", "type": t, "captured": cap, "native": nat,
+                recs.append({**base_rec, "outcome": "ran", "fault": f"{f}:{n}", "type": t, "mutated_line": new.rstrip("\n")[:200], "order": "native_first" if i % 2 else "captured_first", "captured": cap, "native": nat,
                              "decision_captured": DECISION.get(cap["verdict"], "escalate"), "decision_native": DECISION.get(nat["verdict"], "escalate")})
                 print(key, t, "captured", cap["verdict"], "native", nat["verdict"], flush=True)
         finally:
