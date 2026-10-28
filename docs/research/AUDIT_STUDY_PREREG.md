@@ -17,6 +17,9 @@ Design: `docs/strategy/AUDIT_STUDY_DESIGN_2026-10-28.md`. Labelling: `AUDIT_LABE
 - **Owner authorisation to clone and install third-party repositories:** given 2026-10-28 ("let's do all verifications ourselves with opensource repos"); scope in A1.
 - Reader capacity: replaced by a token and time budget with a stopping rule (A1).
 
+### 0.1 Draw record (2026-10-28, after amendment A1)
+Drawn with the frozen seed and the frozen parameters from the unchanged `agentvow/` and `research/audit/` (identical to commit `6cf7f3b`; the script recorded the later commit `a328836`, a documentation-only difference, `git diff 6cf7f3b a328836 -- agentvow research/audit` is empty). Result: **240 pull requests in 183 repositories** (120 Python, 120 other); per agent: Copilot 75, Devin 75, Cursor 33, Codex 32, Claude Code 24, Jules 1; 428 distinct extracted statements (438 claims before de-duplication within a message); population 14,074 after excluding 10,901 development pull requests. No Claude Code Python stratum exists in the corpus; Cursor and Codex Python strata have 9 pull requests each, and Jules has one pull request in all (all taken whole). Sample file: `docs/research/audit_sample/sample.json`, SHA-256 `d7165fcfb540d35c933f9d64e86a198defc2396ebef6a2ca4132e6cabb3d52f8`. CI for `6cf7f3b` and `e906d71` failed only because a new test imported pandas (fixed in `4f34e34`, tests only); the frozen paths were unaffected.
+
 ## 1. Hypotheses (directional, each with a falsifier)
 - **H1 (precision of CONTRADICTED).** Per statement kind, the held-out precision of CONTRADICTED is at least 80% (lower bound of the 95% interval). Falsified for a kind if the lower bound is below 80%.
 - **H2 (no hidden answers in UNKNOWN).** Among UNKNOWN verdicts, at most 10% are statements the reader settled as TRUE or FALSE from material the tool had access to. Falsified if the point estimate exceeds 10%.

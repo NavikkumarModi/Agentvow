@@ -1,0 +1,2986 @@
+{
+ "rules_version": "draw-v1",
+ "seed": 6883625825084806765,
+ "checker_commit": "a32883682d268ff6d5ef8eb5dea318186f256c05",
+ "dirty": false,
+ "target_prs": 240,
+ "max_per_repo": 3,
+ "max_agent_share": 0.4,
+ "python_share": 0.5,
+ "corpus_sha256": {
+  "pull_request.parquet": "c0b8e81e1d099905ef9ea420bf907d45179771ff5972afce6c219d8cafcef3e8",
+  "repository.parquet": "a08e34be4921c708be88a4ebd9e275b32f37fd442bb2770c0b69c94834dc6aa7"
+ },
+ "excluded_development_prs": 10901,
+ "population_after_exclusion": 14074,
+ "pool_per_stratum": {
+  "Claude_Code|other": 621,
+  "Copilot|other": 10979,
+  "Copilot|python": 491,
+  "Cursor|other": 214,
+  "Cursor|python": 9,
+  "Devin|other": 1471,
+  "Devin|python": 159,
+  "Google_Jules|other": 1,
+  "OpenAI_Codex|other": 120,
+  "OpenAI_Codex|python": 9
+ },
+ "selected": 240,
+ "selected_python": 120,
+ "selected_claims": 438,
+ "selected_per_agent": {
+  "Claude_Code": 24,
+  "Copilot": 75,
+  "Cursor": 33,
+  "Devin": 75,
+  "Google_Jules": 1,
+  "OpenAI_Codex": 32
+ },
+ "selected_repos": 183,
+ "sample": [
+  {
+   "pr": "https://github.com/githubnext/gh-aw/pull/1765",
+   "repo": "githubnext/gh-aw",
+   "number": 1765,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/onetimesecret/onetimesecret/pull/1818",
+   "repo": "onetimesecret/onetimesecret",
+   "number": 1818,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 1,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/twpayne/chezmoi/pull/4581",
+   "repo": "twpayne/chezmoi",
+   "number": 4581,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 2,
+   "kinds": [
+    "lint_clean",
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/evmts/guillotine/pull/386",
+   "repo": "evmts/guillotine",
+   "number": 386,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 3,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/evmts/guillotine/pull/589",
+   "repo": "evmts/guillotine",
+   "number": 589,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 4,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/sugyan/claude-code-webui/pull/54",
+   "repo": "sugyan/claude-code-webui",
+   "number": 54,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 5,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry-mcp/pull/501",
+   "repo": "getsentry/sentry-mcp",
+   "number": 501,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/ithacaxyz/account/pull/208",
+   "repo": "ithacaxyz/account",
+   "number": 208,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/xtclang/xvm/pull/306",
+   "repo": "xtclang/xvm",
+   "number": 306,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 8,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 5
+  },
+  {
+   "pr": "https://github.com/web-infra-dev/midscene/pull/1308",
+   "repo": "web-infra-dev/midscene",
+   "number": 1308,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 9,
+   "kinds": [
+    "docs_updated",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/elastic/elasticsearch/pull/132991",
+   "repo": "elastic/elasticsearch",
+   "number": 132991,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 10,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/agent-era/devteam/pull/59",
+   "repo": "agent-era/devteam",
+   "number": 59,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 11,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/sugyan/claude-code-webui/pull/31",
+   "repo": "sugyan/claude-code-webui",
+   "number": 31,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 12,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 5
+  },
+  {
+   "pr": "https://github.com/wvlet/wvlet/pull/1082",
+   "repo": "wvlet/wvlet",
+   "number": 1082,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 13,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/score-spec/score-compose/pull/337",
+   "repo": "score-spec/score-compose",
+   "number": 337,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 14,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/meshtastic/Meshtastic-Android/pull/3518",
+   "repo": "meshtastic/Meshtastic-Android",
+   "number": 3518,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 15,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/taikoxyz/taiko-mono/pull/20294",
+   "repo": "taikoxyz/taiko-mono",
+   "number": 20294,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 16,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/keylime/rust-keylime/pull/1139",
+   "repo": "keylime/rust-keylime",
+   "number": 1139,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 17,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/oven-sh/bun/pull/22491",
+   "repo": "oven-sh/bun",
+   "number": 22491,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 18,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/apache/superset/pull/34440",
+   "repo": "apache/superset",
+   "number": 34440,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 19,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/continuedev/continue/pull/6951",
+   "repo": "continuedev/continue",
+   "number": 6951,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 20,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/czlonkowski/n8n-mcp/pull/264",
+   "repo": "czlonkowski/n8n-mcp",
+   "number": 264,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 21,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/1mcp-app/agent/pull/101",
+   "repo": "1mcp-app/agent",
+   "number": 101,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 22,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/eyaltoledano/claude-task-master/pull/1114",
+   "repo": "eyaltoledano/claude-task-master",
+   "number": 1114,
+   "agent": "Claude_Code",
+   "stratum": "Claude_Code|other",
+   "rank": 23,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/githubnext/gh-aw/pull/1726",
+   "repo": "githubnext/gh-aw",
+   "number": 1726,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 0,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/web-infra-dev/rsbuild/pull/6382",
+   "repo": "web-infra-dev/rsbuild",
+   "number": 6382,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 1,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Catfriend1/syncthing-android/pull/1675",
+   "repo": "Catfriend1/syncthing-android",
+   "number": 1675,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 2,
+   "kinds": [
+    "docs_updated",
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/Apollon77/ioBroker.alexa2/pull/1235",
+   "repo": "Apollon77/ioBroker.alexa2",
+   "number": 1235,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 3,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/github-copilot-resources/copilot-metrics-viewer/pull/220",
+   "repo": "github-copilot-resources/copilot-metrics-viewer",
+   "number": 220,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/skyf0l/RsaCracker/pull/213",
+   "repo": "skyf0l/RsaCracker",
+   "number": 213,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 5,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/magicbug/Cloudlog/pull/3335",
+   "repo": "magicbug/Cloudlog",
+   "number": 3335,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/tokens-studio/figma-plugin/pull/3449",
+   "repo": "tokens-studio/figma-plugin",
+   "number": 3449,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible",
+    "lint_clean"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/komari-monitor/komari/pull/210",
+   "repo": "komari-monitor/komari",
+   "number": 210,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 8,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/skyvers/skyve/pull/192",
+   "repo": "skyvers/skyve",
+   "number": 192,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 9,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/githubnext/gh-aw/pull/1503",
+   "repo": "githubnext/gh-aw",
+   "number": 1503,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 10,
+   "kinds": [
+    "files_scope",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/dotnet/android/pull/10335",
+   "repo": "dotnet/android",
+   "number": 10335,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 11,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/dotnet/macios/pull/23313",
+   "repo": "dotnet/macios",
+   "number": 23313,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 12,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/microsoft/ebpf-for-windows/pull/4506",
+   "repo": "microsoft/ebpf-for-windows",
+   "number": 4506,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 13,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/wednesday-solutions/react-template/pull/208",
+   "repo": "wednesday-solutions/react-template",
+   "number": 208,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 14,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/dotnet/sdk/pull/51287",
+   "repo": "dotnet/sdk",
+   "number": 51287,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 15,
+   "kinds": [
+    "no_downstream_impact",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/jonathanpeppers/dotnes/pull/73",
+   "repo": "jonathanpeppers/dotnes",
+   "number": 73,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 16,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated",
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/dotnet/docs/pull/48297",
+   "repo": "dotnet/docs",
+   "number": 48297,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 17,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/thomhurst/TUnit/pull/3060",
+   "repo": "thomhurst/TUnit",
+   "number": 3060,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 18,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/microsoft/vscode/pull/259965",
+   "repo": "microsoft/vscode",
+   "number": 259965,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 20,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/dvcrn/mcp-server-siri-shortcuts/pull/8",
+   "repo": "dvcrn/mcp-server-siri-shortcuts",
+   "number": 8,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 21,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/microsoft/ApplicationInsights-Java/pull/4338",
+   "repo": "microsoft/ApplicationInsights-Java",
+   "number": 4338,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 22,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/owncast/owncast/pull/4413",
+   "repo": "owncast/owncast",
+   "number": 4413,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 23,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/hydro-project/hydro/pull/2005",
+   "repo": "hydro-project/hydro",
+   "number": 2005,
+   "agent": "Copilot",
+   "stratum": "Copilot|other",
+   "rank": 24,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/mlflow/mlflow/pull/17424",
+   "repo": "mlflow/mlflow",
+   "number": 17424,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 0,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/feincms/django-tree-queries/pull/93",
+   "repo": "feincms/django-tree-queries",
+   "number": 93,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 1,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/AzulGarza/timecopilot/pull/107",
+   "repo": "AzulGarza/timecopilot",
+   "number": 107,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 2,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/pyscout/Webscout/pull/92",
+   "repo": "pyscout/Webscout",
+   "number": 92,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 3,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Kyrela/FixTweetBot/pull/62",
+   "repo": "Kyrela/FixTweetBot",
+   "number": 62,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/deepmodeling/deepmd-kit/pull/4926",
+   "repo": "deepmodeling/deepmd-kit",
+   "number": 4926,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 5,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/spcl/dace/pull/2043",
+   "repo": "spcl/dace",
+   "number": 2043,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/microsoft/presidio/pull/1649",
+   "repo": "microsoft/presidio",
+   "number": 1649,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 7,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/SandAI-org/MagiAttention/pull/151",
+   "repo": "SandAI-org/MagiAttention",
+   "number": 151,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 8,
+   "kinds": [
+    "docs_updated",
+    "files_scope"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/openedx/edx-platform/pull/37517",
+   "repo": "openedx/edx-platform",
+   "number": 37517,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 9,
+   "kinds": [
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/microsoft/AzureTRE/pull/4630",
+   "repo": "microsoft/AzureTRE",
+   "number": 4630,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 10,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/vllm-project/vllm/pull/25116",
+   "repo": "vllm-project/vllm",
+   "number": 25116,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 11,
+   "kinds": [
+    "docs_updated",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/dvershinin/lastversion/pull/189",
+   "repo": "dvershinin/lastversion",
+   "number": 189,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 12,
+   "kinds": [
+    "backward_compatible",
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42127",
+   "repo": "Azure/azure-sdk-for-python",
+   "number": 42127,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 13,
+   "kinds": [
+    "backward_compatible",
+    "no_downstream_impact"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/drivendataorg/zamba/pull/388",
+   "repo": "drivendataorg/zamba",
+   "number": 388,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 14,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/AstrBotDevs/AstrBot/pull/2465",
+   "repo": "AstrBotDevs/AstrBot",
+   "number": 2465,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 15,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/BindsNET/bindsnet/pull/715",
+   "repo": "BindsNET/bindsnet",
+   "number": 715,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 16,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/microsoft/content-processing-solution-accelerator/pull/134",
+   "repo": "microsoft/content-processing-solution-accelerator",
+   "number": 134,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 17,
+   "kinds": [
+    "docs_updated",
+    "files_scope"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/vllm-project/vllm/pull/23385",
+   "repo": "vllm-project/vllm",
+   "number": 23385,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 18,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/langchain-ai/langchain/pull/32154",
+   "repo": "langchain-ai/langchain",
+   "number": 32154,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 19,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/mlflow/mlflow/pull/18406",
+   "repo": "mlflow/mlflow",
+   "number": 18406,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 20,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/dr5hn/countries-states-cities-database/pull/1140",
+   "repo": "dr5hn/countries-states-cities-database",
+   "number": 1140,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 21,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/microsoft/onnxscript/pull/2463",
+   "repo": "microsoft/onnxscript",
+   "number": 2463,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 22,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/microsoft/lisa/pull/3970",
+   "repo": "microsoft/lisa",
+   "number": 3970,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 23,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/wolph/mt940/pull/120",
+   "repo": "wolph/mt940",
+   "number": 120,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 24,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/kexue-z/nonebot-plugin-htmlrender/pull/120",
+   "repo": "kexue-z/nonebot-plugin-htmlrender",
+   "number": 120,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 25,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 6
+  },
+  {
+   "pr": "https://github.com/Azure/azure-sdk-for-python/pull/41422",
+   "repo": "Azure/azure-sdk-for-python",
+   "number": 41422,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 26,
+   "kinds": [
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42429",
+   "repo": "Azure/azure-sdk-for-python",
+   "number": 42429,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 27,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/alexdej/puzpy/pull/49",
+   "repo": "alexdej/puzpy",
+   "number": 49,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 28,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/onnx/onnx/pull/7128",
+   "repo": "onnx/onnx",
+   "number": 7128,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 29,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/feast-dev/feast/pull/5582",
+   "repo": "feast-dev/feast",
+   "number": 5582,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 30,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/Azure-Samples/chat-with-your-data-solution-accelerator/pull/1847",
+   "repo": "Azure-Samples/chat-with-your-data-solution-accelerator",
+   "number": 1847,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 31,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/bugsink/bugsink/pull/200",
+   "repo": "bugsink/bugsink",
+   "number": 200,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 33,
+   "kinds": [
+    "backward_compatible",
+    "no_downstream_impact"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/psincraian/pepy/pull/765",
+   "repo": "psincraian/pepy",
+   "number": 765,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 34,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/gerlero/foamlib/pull/447",
+   "repo": "gerlero/foamlib",
+   "number": 447,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 35,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/mlflow/mlflow/pull/16039",
+   "repo": "mlflow/mlflow",
+   "number": 16039,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 36,
+   "kinds": [
+    "backward_compatible",
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/DrewThomasson/ebook2audiobook/pull/1016",
+   "repo": "DrewThomasson/ebook2audiobook",
+   "number": 1016,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 37,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/mandiant/capa/pull/2715",
+   "repo": "mandiant/capa",
+   "number": 2715,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 38,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Azure-Samples/azure-search-openai-demo/pull/2648",
+   "repo": "Azure-Samples/azure-search-openai-demo",
+   "number": 2648,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 39,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/karlicoss/HPI/pull/465",
+   "repo": "karlicoss/HPI",
+   "number": 465,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 41,
+   "kinds": [
+    "lint_clean",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/viu-media/viu/pull/133",
+   "repo": "viu-media/viu",
+   "number": 133,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 42,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/KosinskiLab/AlphaPulldown/pull/533",
+   "repo": "KosinskiLab/AlphaPulldown",
+   "number": 533,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 43,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/python-adaptive/adaptive/pull/488",
+   "repo": "python-adaptive/adaptive",
+   "number": 488,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 44,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 5
+  },
+  {
+   "pr": "https://github.com/FalkorDB/QueryWeaver/pull/56",
+   "repo": "FalkorDB/QueryWeaver",
+   "number": 56,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 47,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Josverl/micropython-stubs/pull/841",
+   "repo": "Josverl/micropython-stubs",
+   "number": 841,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 48,
+   "kinds": [
+    "docs_updated",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/jeroenterheerdt/HAsmartirrigation/pull/590",
+   "repo": "jeroenterheerdt/HAsmartirrigation",
+   "number": 590,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 49,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/LedFx/LedFx/pull/1468",
+   "repo": "LedFx/LedFx",
+   "number": 1468,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 50,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/streamlit/streamlit/pull/11858",
+   "repo": "streamlit/streamlit",
+   "number": 11858,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 51,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/weecology/DeepForest/pull/1102",
+   "repo": "weecology/DeepForest",
+   "number": 1102,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 52,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/CTFd/CTFd/pull/2848",
+   "repo": "CTFd/CTFd",
+   "number": 2848,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 54,
+   "kinds": [
+    "files_scope",
+    "no_downstream_impact"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/allthingslinux/tux/pull/970",
+   "repo": "allthingslinux/tux",
+   "number": 970,
+   "agent": "Copilot",
+   "stratum": "Copilot|python",
+   "rank": 56,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/Codehagen/Badget/pull/295",
+   "repo": "Codehagen/Badget",
+   "number": 295,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/langfuse/langfuse/pull/9915",
+   "repo": "langfuse/langfuse",
+   "number": 9915,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 1,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/langfuse/langfuse/pull/9497",
+   "repo": "langfuse/langfuse",
+   "number": 9497,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 2,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/aldinokemal/go-whatsapp-web-multidevice/pull/315",
+   "repo": "aldinokemal/go-whatsapp-web-multidevice",
+   "number": 315,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 3,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/langfuse/langfuse/pull/8566",
+   "repo": "langfuse/langfuse",
+   "number": 8566,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible",
+    "no_downstream_impact",
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry-cocoa/pull/5640",
+   "repo": "getsentry/sentry-cocoa",
+   "number": 5640,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/modelcontextprotocol/inspector/pull/602",
+   "repo": "modelcontextprotocol/inspector",
+   "number": 602,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/elie222/inbox-zero/pull/765",
+   "repo": "elie222/inbox-zero",
+   "number": 765,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 8,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/4ian/GDevelop/pull/7770",
+   "repo": "4ian/GDevelop",
+   "number": 7770,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 9,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/KomodoPlatform/komodo-wallet/pull/3131",
+   "repo": "KomodoPlatform/komodo-wallet",
+   "number": 3131,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 10,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/reown-com/appkit/pull/4829",
+   "repo": "reown-com/appkit",
+   "number": 4829,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 11,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/oven-sh/bun/pull/20736",
+   "repo": "oven-sh/bun",
+   "number": 20736,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 12,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry-cocoa/pull/6018",
+   "repo": "getsentry/sentry-cocoa",
+   "number": 6018,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 13,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/katelya77/KatelyaTV/pull/6",
+   "repo": "katelya77/KatelyaTV",
+   "number": 6,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 14,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry-cocoa/pull/6006",
+   "repo": "getsentry/sentry-cocoa",
+   "number": 6006,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 15,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/odigos-io/odigos/pull/3175",
+   "repo": "odigos-io/odigos",
+   "number": 3175,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 17,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/selfxyz/self/pull/755",
+   "repo": "selfxyz/self",
+   "number": 755,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 18,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/AmoabaKelvin/ishortn.ink/pull/222",
+   "repo": "AmoabaKelvin/ishortn.ink",
+   "number": 222,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 20,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/ishaan1013/shadow/pull/23",
+   "repo": "ishaan1013/shadow",
+   "number": 23,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 23,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/colorstackorg/oyster/pull/852",
+   "repo": "colorstackorg/oyster",
+   "number": 852,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 24,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/BoundaryML/baml/pull/2467",
+   "repo": "BoundaryML/baml",
+   "number": 2467,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 25,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/zardoy/minecraft-web-client/pull/377",
+   "repo": "zardoy/minecraft-web-client",
+   "number": 377,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 26,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/FastLED/FastLED/pull/2023",
+   "repo": "FastLED/FastLED",
+   "number": 2023,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 27,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/RocketChat/Rocket.Chat/pull/36816",
+   "repo": "RocketChat/Rocket.Chat",
+   "number": 36816,
+   "agent": "Cursor",
+   "stratum": "Cursor|other",
+   "rank": 28,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry/pull/100820",
+   "repo": "getsentry/sentry",
+   "number": 100820,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/skypilot-org/skypilot/pull/6305",
+   "repo": "skypilot-org/skypilot",
+   "number": 6305,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 1,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/skypilot-org/skypilot/pull/7430",
+   "repo": "skypilot-org/skypilot",
+   "number": 7430,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 2,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/skypilot-org/skypilot/pull/6421",
+   "repo": "skypilot-org/skypilot",
+   "number": 6421,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 3,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Apocrathia/home-assistant-config/pull/101",
+   "repo": "Apocrathia/home-assistant-config",
+   "number": 101,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/browser-use/browser-use/pull/3036",
+   "repo": "browser-use/browser-use",
+   "number": 3036,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 5,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/browser-use/browser-use/pull/2782",
+   "repo": "browser-use/browser-use",
+   "number": 2782,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/WorkflowAI/WorkflowAI/pull/476",
+   "repo": "WorkflowAI/WorkflowAI",
+   "number": 476,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/getsentry/sentry/pull/99126",
+   "repo": "getsentry/sentry",
+   "number": 99126,
+   "agent": "Cursor",
+   "stratum": "Cursor|python",
+   "rank": 8,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/onflow/flow-go/pull/7601",
+   "repo": "onflow/flow-go",
+   "number": 7601,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/liam-hq/liam/pull/1191",
+   "repo": "liam-hq/liam",
+   "number": 1191,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 1,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/OpenRouterTeam/ai-sdk-provider/pull/75",
+   "repo": "OpenRouterTeam/ai-sdk-provider",
+   "number": 75,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 2,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/ismail9k/vue3-carousel/pull/526",
+   "repo": "ismail9k/vue3-carousel",
+   "number": 526,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 3,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/calcom/cal.com/pull/21978",
+   "repo": "calcom/cal.com",
+   "number": 21978,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 4,
+   "kinds": [
+    "files_scope",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/liam-hq/liam/pull/3186",
+   "repo": "liam-hq/liam",
+   "number": 3186,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 5,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/onlook-dev/onlook/pull/1576",
+   "repo": "onlook-dev/onlook",
+   "number": 1576,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/hasanharman/form-builder/pull/84",
+   "repo": "hasanharman/form-builder",
+   "number": 84,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/liam-hq/liam/pull/2648",
+   "repo": "liam-hq/liam",
+   "number": 2648,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 8,
+   "kinds": [
+    "docs_updated",
+    "lint_clean",
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/goat-sdk/goat/pull/218",
+   "repo": "goat-sdk/goat",
+   "number": 218,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 9,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/pyth-network/pyth-crosschain/pull/2948",
+   "repo": "pyth-network/pyth-crosschain",
+   "number": 2948,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 11,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/ethereum-optimism/optimism/pull/17787",
+   "repo": "ethereum-optimism/optimism",
+   "number": 17787,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 12,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/firecrawl/firecrawl/pull/2201",
+   "repo": "firecrawl/firecrawl",
+   "number": 2201,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 13,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/firecrawl/firecrawl/pull/2283",
+   "repo": "firecrawl/firecrawl",
+   "number": 2283,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 14,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/WalletConnect/walletconnect-monorepo/pull/6795",
+   "repo": "WalletConnect/walletconnect-monorepo",
+   "number": 6795,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 16,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/svapnil/iso20022.js/pull/42",
+   "repo": "svapnil/iso20022.js",
+   "number": 42,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 17,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/antiwork/flexile/pull/1189",
+   "repo": "antiwork/flexile",
+   "number": 1189,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 18,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/firecrawl/firecrawl/pull/1894",
+   "repo": "firecrawl/firecrawl",
+   "number": 1894,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 19,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/schemahero/schemahero/pull/1168",
+   "repo": "schemahero/schemahero",
+   "number": 1168,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 20,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/whitphx/vscode-emacs-mcx/pull/2145",
+   "repo": "whitphx/vscode-emacs-mcx",
+   "number": 2145,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 22,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/box/box-ui-elements/pull/3841",
+   "repo": "box/box-ui-elements",
+   "number": 3841,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 24,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/cloudflare/workers-sdk/pull/10748",
+   "repo": "cloudflare/workers-sdk",
+   "number": 10748,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 26,
+   "kinds": [
+    "backward_compatible",
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/antiwork/flexile/pull/346",
+   "repo": "antiwork/flexile",
+   "number": 346,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 27,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/ComposioHQ/composio/pull/1101",
+   "repo": "ComposioHQ/composio",
+   "number": 1101,
+   "agent": "Devin",
+   "stratum": "Devin|other",
+   "rank": 28,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI/pull/3536",
+   "repo": "crewAIInc/crewAI",
+   "number": 3536,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI/pull/3265",
+   "repo": "crewAIInc/crewAI",
+   "number": 3265,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 1,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI/pull/2624",
+   "repo": "crewAIInc/crewAI",
+   "number": 2624,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 2,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/airbytehq/airbyte/pull/62471",
+   "repo": "airbytehq/airbyte",
+   "number": 62471,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 4,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI-tools/pull/300",
+   "repo": "crewAIInc/crewAI-tools",
+   "number": 300,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 7,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/AgentOps-AI/agentops/pull/1264",
+   "repo": "AgentOps-AI/agentops",
+   "number": 1264,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 8,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/reflex-dev/reflex-web/pull/1322",
+   "repo": "reflex-dev/reflex-web",
+   "number": 1322,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 9,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/airbytehq/PyAirbyte/pull/698",
+   "repo": "airbytehq/PyAirbyte",
+   "number": 698,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 10,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/airbytehq/airbyte/pull/62130",
+   "repo": "airbytehq/airbyte",
+   "number": 62130,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 11,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/onyx-dot-app/onyx/pull/3924",
+   "repo": "onyx-dot-app/onyx",
+   "number": 3924,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 12,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/airbytehq/airbyte/pull/59155",
+   "repo": "airbytehq/airbyte",
+   "number": 59155,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 14,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/modal-labs/modal-client/pull/3592",
+   "repo": "modal-labs/modal-client",
+   "number": 3592,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 15,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/reflex-dev/reflex-web/pull/1545",
+   "repo": "reflex-dev/reflex-web",
+   "number": 1545,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 16,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/Metta-AI/metta/pull/2449",
+   "repo": "Metta-AI/metta",
+   "number": 2449,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 17,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/blorm-network/ZerePy/pull/107",
+   "repo": "blorm-network/ZerePy",
+   "number": 107,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 23,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/w-okada/ttsclient/pull/13",
+   "repo": "w-okada/ttsclient",
+   "number": 13,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 24,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/appdotbuild/agent/pull/168",
+   "repo": "appdotbuild/agent",
+   "number": 168,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 31,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/567-labs/instructor/pull/1584",
+   "repo": "567-labs/instructor",
+   "number": 1584,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 32,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/AgentOps-AI/agentops/pull/1096",
+   "repo": "AgentOps-AI/agentops",
+   "number": 1096,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 36,
+   "kinds": [
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 6
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI-tools/pull/391",
+   "repo": "crewAIInc/crewAI-tools",
+   "number": 391,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 40,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/bolna-ai/bolna/pull/226",
+   "repo": "bolna-ai/bolna",
+   "number": 226,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 41,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/reflex-dev/reflex-web/pull/1319",
+   "repo": "reflex-dev/reflex-web",
+   "number": 1319,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 44,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/AgentOps-AI/agentops/pull/1265",
+   "repo": "AgentOps-AI/agentops",
+   "number": 1265,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 45,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/airbytehq/PyAirbyte/pull/691",
+   "repo": "airbytehq/PyAirbyte",
+   "number": 691,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 46,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/elementary-data/dbt-data-reliability/pull/876",
+   "repo": "elementary-data/dbt-data-reliability",
+   "number": 876,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 49,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/crewAIInc/crewAI-tools/pull/202",
+   "repo": "crewAIInc/crewAI-tools",
+   "number": 202,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 50,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/ai-shifu/ai-shifu/pull/583",
+   "repo": "ai-shifu/ai-shifu",
+   "number": 583,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 51,
+   "kinds": [
+    "docs_updated",
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/567-labs/instructor/pull/1743",
+   "repo": "567-labs/instructor",
+   "number": 1743,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 53,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/dynamiq-ai/dynamiq/pull/374",
+   "repo": "dynamiq-ai/dynamiq",
+   "number": 374,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 57,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/elementary-data/dbt-data-reliability/pull/832",
+   "repo": "elementary-data/dbt-data-reliability",
+   "number": 832,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 61,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/plastic-labs/honcho/pull/113",
+   "repo": "plastic-labs/honcho",
+   "number": 113,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 63,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/567-labs/instructor/pull/1586",
+   "repo": "567-labs/instructor",
+   "number": 1586,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 65,
+   "kinds": [
+    "backward_compatible",
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 7
+  },
+  {
+   "pr": "https://github.com/port-labs/ocean/pull/1289",
+   "repo": "port-labs/ocean",
+   "number": 1289,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 69,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/portiaAI/portia-sdk-python/pull/630",
+   "repo": "portiaAI/portia-sdk-python",
+   "number": 630,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 77,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/atopile/atopile/pull/1435",
+   "repo": "atopile/atopile",
+   "number": 1435,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 79,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/bolna-ai/bolna/pull/218",
+   "repo": "bolna-ai/bolna",
+   "number": 218,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 89,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/appdotbuild/agent/pull/297",
+   "repo": "appdotbuild/agent",
+   "number": 297,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 90,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/codegen-sh/codegen/pull/1168",
+   "repo": "codegen-sh/codegen",
+   "number": 1168,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 94,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/blorm-network/ZerePy/pull/110",
+   "repo": "blorm-network/ZerePy",
+   "number": 110,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 98,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/airbytehq/PyAirbyte/pull/695",
+   "repo": "airbytehq/PyAirbyte",
+   "number": 695,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 100,
+   "kinds": [
+    "backward_compatible",
+    "files_scope",
+    "lint_clean"
+   ],
+   "n_claims": 5
+  },
+  {
+   "pr": "https://github.com/elementary-data/dbt-data-reliability/pull/875",
+   "repo": "elementary-data/dbt-data-reliability",
+   "number": 875,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 112,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/atopile/atopile/pull/1438",
+   "repo": "atopile/atopile",
+   "number": 1438,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 113,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/ai-shifu/ai-shifu/pull/588",
+   "repo": "ai-shifu/ai-shifu",
+   "number": 588,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 117,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/567-labs/kura/pull/77",
+   "repo": "567-labs/kura",
+   "number": 77,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 120,
+   "kinds": [
+    "files_scope"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/bentoml/BentoML/pull/5230",
+   "repo": "bentoml/BentoML",
+   "number": 5230,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 121,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/hove-io/navitia/pull/4450",
+   "repo": "hove-io/navitia",
+   "number": 4450,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 122,
+   "kinds": [
+    "backward_compatible",
+    "docs_updated"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/onyx-dot-app/onyx/pull/3816",
+   "repo": "onyx-dot-app/onyx",
+   "number": 3816,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 127,
+   "kinds": [
+    "backward_compatible",
+    "files_scope"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/langbot-app/LangBot/pull/1405",
+   "repo": "langbot-app/LangBot",
+   "number": 1405,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 131,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/onyx-dot-app/onyx/pull/3711",
+   "repo": "onyx-dot-app/onyx",
+   "number": 3711,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 142,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/langbot-app/LangBot/pull/1515",
+   "repo": "langbot-app/LangBot",
+   "number": 1515,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 145,
+   "kinds": [
+    "backward_compatible",
+    "lint_clean"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/typedef-ai/fenic/pull/264",
+   "repo": "typedef-ai/fenic",
+   "number": 264,
+   "agent": "Devin",
+   "stratum": "Devin|python",
+   "rank": 149,
+   "kinds": [
+    "lint_clean"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/reactivando/validations-br/pull/45",
+   "repo": "reactivando/validations-br",
+   "number": 45,
+   "agent": "Google_Jules",
+   "stratum": "Google_Jules|other",
+   "rank": 0,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/DannyMac180/meta-agent/pull/85",
+   "repo": "DannyMac180/meta-agent",
+   "number": 85,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 0,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/vinhnx/vtcode/pull/238",
+   "repo": "vinhnx/vtcode",
+   "number": 238,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 1,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/gluesql/glues/pull/191",
+   "repo": "gluesql/glues",
+   "number": 191,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 2,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/mochilang/mochi/pull/760",
+   "repo": "mochilang/mochi",
+   "number": 760,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 3,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4118",
+   "repo": "katspaugh/wavesurfer.js",
+   "number": 4118,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1228",
+   "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+   "number": 1228,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 5,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/ZantFoundation/Z-Ant/pull/403",
+   "repo": "ZantFoundation/Z-Ant",
+   "number": 403,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 6,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/jdereg/java-util/pull/125",
+   "repo": "jdereg/java-util",
+   "number": 125,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 7,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/opencv/opencv/pull/27441",
+   "repo": "opencv/opencv",
+   "number": 27441,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 8,
+   "kinds": [
+    "backward_compatible",
+    "tests_pass"
+   ],
+   "n_claims": 3
+  },
+  {
+   "pr": "https://github.com/gluesql/glues/pull/188",
+   "repo": "gluesql/glues",
+   "number": 188,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 9,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/mochilang/mochi/pull/4790",
+   "repo": "mochilang/mochi",
+   "number": 4790,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 10,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/vgmtrans/vgmtrans/pull/612",
+   "repo": "vgmtrans/vgmtrans",
+   "number": 612,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 11,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/DannyMac180/meta-agent/pull/84",
+   "repo": "DannyMac180/meta-agent",
+   "number": 84,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 12,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/usemarble/marble/pull/97",
+   "repo": "usemarble/marble",
+   "number": 97,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 13,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/pollinations/pollinations/pull/4193",
+   "repo": "pollinations/pollinations",
+   "number": 4193,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 14,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/wieslawsoltes/Dock/pull/498",
+   "repo": "wieslawsoltes/Dock",
+   "number": 498,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 15,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4162",
+   "repo": "katspaugh/wavesurfer.js",
+   "number": 4162,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 16,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/DannyMac180/meta-agent/pull/152",
+   "repo": "DannyMac180/meta-agent",
+   "number": 152,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 17,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 4
+  },
+  {
+   "pr": "https://github.com/seasonedcc/remix-forms/pull/366",
+   "repo": "seasonedcc/remix-forms",
+   "number": 366,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 18,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/mochilang/mochi/pull/341",
+   "repo": "mochilang/mochi",
+   "number": 341,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 19,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/giselles-ai/giselle/pull/1349",
+   "repo": "giselles-ai/giselle",
+   "number": 1349,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 20,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/prebid/Prebid.js/pull/13617",
+   "repo": "prebid/Prebid.js",
+   "number": 13617,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 22,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/readlite/readlite-plugin/pull/29",
+   "repo": "readlite/readlite-plugin",
+   "number": 29,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|other",
+   "rank": 23,
+   "kinds": [
+    "tests_pass"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/langchain-ai/langchain/pull/32105",
+   "repo": "langchain-ai/langchain",
+   "number": 32105,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 0,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/roboflow/inference/pull/1301",
+   "repo": "roboflow/inference",
+   "number": 1301,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 1,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/Metta-AI/metta/pull/2165",
+   "repo": "Metta-AI/metta",
+   "number": 2165,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 2,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/roboflow/inference/pull/1299",
+   "repo": "roboflow/inference",
+   "number": 1299,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 3,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 2
+  },
+  {
+   "pr": "https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2201",
+   "repo": "MontrealAI/AGI-Alpha-Agent-v0",
+   "number": 2201,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 4,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/MervinPraison/PraisonAI/pull/623",
+   "repo": "MervinPraison/PraisonAI",
+   "number": 623,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 5,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/TracecatHQ/tracecat/pull/1520",
+   "repo": "TracecatHQ/tracecat",
+   "number": 1520,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 6,
+   "kinds": [
+    "backward_compatible"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/pytorch/pytorch/pull/155686",
+   "repo": "pytorch/pytorch",
+   "number": 155686,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 7,
+   "kinds": [
+    "no_downstream_impact"
+   ],
+   "n_claims": 1
+  },
+  {
+   "pr": "https://github.com/MervinPraison/PraisonAI/pull/628",
+   "repo": "MervinPraison/PraisonAI",
+   "number": 628,
+   "agent": "OpenAI_Codex",
+   "stratum": "OpenAI_Codex|python",
+   "rank": 8,
+   "kinds": [
+    "docs_updated"
+   ],
+   "n_claims": 2
+  }
+ ]
+}
