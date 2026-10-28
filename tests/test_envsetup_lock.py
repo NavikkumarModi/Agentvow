@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -73,7 +74,9 @@ class ReadLock(unittest.TestCase):
         self.assertEqual(envsetup.read_lock(repo({"pyproject.toml": "[project]\nname='x'\n"})), ([], None))
         self.assertEqual(envsetup.read_lock(repo({"uv.lock": "this is [ not toml"})), ([], None))
         self.assertEqual(envsetup.read_lock(repo({"Pipfile.lock": "{"})), ([], None))
-        self.assertEqual(envsetup.read_lock(repo({"uv.lock": "#" * (21 * 1024**2)})), ([], None))
+        big = repo({"uv.lock": "#" * (21 * 1024**2)})
+        self.addCleanup(shutil.rmtree, big, True)
+        self.assertEqual(envsetup.read_lock(big), ([], None))
 
     def test_at_most_max_pins_and_a_later_lock_file_is_used_when_the_first_is_unusable(self):
         many = "".join(f'[[package]]\nname = "p{i}"\nversion = "1.{i}"\nsource = {{ registry = "https://pypi.org/simple" }}\n' for i in range(envsetup.MAX_PINS + 50))
