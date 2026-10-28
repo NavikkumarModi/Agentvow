@@ -1,0 +1,21 @@
+{
+  "schema": "agentvow-shadow-policy/1",
+  "note": "Frozen before any scoring (docs/research/SHADOW_EXPERIMENT_PREREG.md). Hypothetical decisions only: nothing acts. Applied to the list of findings the audit returns for one pull request; the pull-request decision is 'review' if ANY rule matches, otherwise 'proceed'. A finding is {kind, verdict, attention}.",
+  "policies": {
+    "strict": {
+      "review_if": [
+        {"verdict": "CONTRADICTED"},
+        {"attention": true},
+        {"verdict": "UNKNOWN", "kinds": ["tests_pass", "backward_compatible", "no_downstream_impact", "lint_clean"]},
+        {"no_checkable_claim": true}
+      ]
+    },
+    "lenient": {
+      "review_if": [
+        {"verdict": "CONTRADICTED"},
+        {"attention": true}
+      ]
+    }
+  },
+  "rule": "UNKNOWN is never read as support. A pull request with no findings from the audit has no checkable claim."
+}
