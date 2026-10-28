@@ -3,6 +3,7 @@
 For `docs/strategy/AUDIT_STUDY_DESIGN_2026-10-28.md` and `AUDIT_STUDY_PREREG.md`. These rules are written **before** any held-out statement is drawn or labelled. They come from the misreading classes found in the five hand-reviewed precision rounds (`CHECKERS_FILES_DOCS_LINT.md`). They are changed only by a dated, numbered amendment (end of file) made before labelling starts; after labelling starts they are frozen, and any gap is handled by CANNOT_TELL plus a note.
 
 ## 1. Who and what
+**Amendment A1 (2026-10-28): the "reader" is a labelling agent** (a fresh Claude subagent, no access to verdicts or checker code), not a person; see `AUDIT_STUDY_PREREG.md`, A1. Everything below applies unchanged; "discussion with the owner" is replaced by agent isolation; the time cap in section 5 is a budget; labels must cite observed evidence or be CANNOT_TELL; a label resting only on the labeller's reading of the sentence is flagged `judgment`.
 The reader is a person who did not write or tune the checkers and does not see the audit's verdicts. The reader labels **what the statement says against what the repository shows**. The reader never judges whether the work is good, safe or correct, only whether the sentence is true of this change.
 
 Per item the reader sees: the full message the statement came from; the statement span (highlighted); the pull request's diff and file list; the repository at the base and head commits; the CI result if one exists. The reader may run commands (tests, linters, git) in a throwaway checkout. The reader does **not** see: any Agentvow verdict, explanation, receipt, or the extractor's `kind`.
@@ -62,4 +63,4 @@ Write the one-sentence proposition first ("this change adds `x.py`"), then check
 `item_id, pr_id, repo, agent, kind_hidden_from_reader=true, span, proposition, step_a (CLAIM|NOT_A_CLAIM), label (TRUE|FALSE|CANNOT_TELL), confidence, note, evidence, minutes, reader_id, session_id, timestamp`. The audit's `kind` and verdict are joined by `item_id` only after labels are locked.
 
 ## Amendments
-(none; v1 draft 2026-10-28, not yet used)
+A1 (2026-10-28): labellers are agents, not people (see section 1 and the pre-registration). No rule text changed.

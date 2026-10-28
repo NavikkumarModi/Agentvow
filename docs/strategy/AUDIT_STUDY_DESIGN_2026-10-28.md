@@ -1,6 +1,6 @@
 # Audit study design: does Agentvow's claim audit give a human overseer a correct, useful record? (2026-10-28)
 
-Status: **design, not run, not yet pre-registered.** It supersedes `SHADOW_STUDY_DESIGN_2026-10-27.md` (autonomy-gating arms). Framing: Agentvow is an independent claim-verification audit for human oversight of semi-autonomous and autonomous coding systems (`VISION_AUDIT_2026-10-28.md`). It is not judged by safety or autonomy rates. Nothing in the study merges, approves or blocks anything.
+Status: **design; pre-registered and frozen in `docs/research/AUDIT_STUDY_PREREG.md`. Amendment A1 (2026-10-28): the owner has no human readers, so labelling is done by labelling agents, Q4 (the human reading study) is not run, and results are "against evidence-grounded LLM labels".** It supersedes `SHADOW_STUDY_DESIGN_2026-10-27.md` (autonomy-gating arms). Framing: Agentvow is an independent claim-verification audit for human oversight of semi-autonomous and autonomous coding systems (`VISION_AUDIT_2026-10-28.md`). It is not judged by safety or autonomy rates. Nothing in the study merges, approves or blocks anything.
 
 ## Questions (one study, four parts)
 - **Q1 Correctness.** When the audit says CONTRADICTED / SUPPORTED / NOT_CONTRADICTED, is it right?
