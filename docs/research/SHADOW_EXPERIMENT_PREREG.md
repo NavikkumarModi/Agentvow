@@ -11,7 +11,7 @@ Design and rationale: `docs/strategy/SHADOW_EXPERIMENT_DESIGN_2026-10-28.md`. Pr
 - Authorisation to clone and install these open-source repositories inside Agentvow's sandbox for arm 5 on Python pull requests: given by the owner on 2026-10-28 for the audit study (stage 2); **extended to this study by the owner's choice of the standard option** (confirm if in doubt).
 
 ### 0.1 Draw record (2026-10-28)
-Pool drawn with the frozen seed and parameters: **1,056 pull requests in 605 repositories** (Copilot 438, Devin 221, Claude Code 186, Cursor 125, Codex 86; 287 from Python-language repositories), population 13,834 after excluding 11,141; \`data/shadow2/pool.json\` SHA-256 \`82a403dd99c2fdbbe829045b33cf1295dafea16e0b934a6ebce3b611c7f3a6a1\`.
+Pool drawn with the frozen seed and parameters: **1,056 pull requests in 605 repositories** (Copilot 438, Devin 221, Claude Code 186, Cursor 125, Codex 86; 287 from Python-language repositories), population 13,834 after excluding 11,141; `data/shadow2/pool.json` SHA-256 `82a403dd99c2fdbbe829045b33cf1295dafea16e0b934a6ebce3b611c7f3a6a1`.
 
 ## 1. Hypotheses and decision rule (unchanged from the design)
 S1 (informative floor), S2 (at least 3 unique catches in at least 3 repositories over arms 1 and 3), S3 (lenient policy: review burden at most 30% and false-clear at most 25% of positives; strict reported), S4 (text triage versus arm 5 on non-Python). **Decision rule for an acting consumer:** it may be built (as engineering) only if S1 and S2 hold and the false-clear rate under the policy the owner would run is at most 25%; otherwise it is not built. Either outcome is reported with denominators. If fewer than 20 positives are found, the study reports mechanics only and does not apply the decision rule.
