@@ -1,0 +1,14 @@
+{
+ "id": "be60adbdb3",
+ "url": "https://github.com/wvlet/wvlet/pull/1082",
+ "repo": "wvlet/wvlet",
+ "number": 1082,
+ "message": "## Summary\nThis PR fixes parsing issues with schema.table notation and enhances support for using reserved keywords as unquoted identifiers in SQL queries.\n\n## Changes\n- Added support for CREATE SCHEMA and DROP SCHEMA statements in SQL parser and generator\n- Enhanced parser to properly handle schema.table dot notation\n- Improved handling of reserved keywords (TABLE, SCHEMA, KEY, SYSTEM) as unquoted identifiers\n- Refactored CREATE/DROP statement parsing for cleaner pattern matching\n- Added comprehensive test cases for schema operations and reserved keywords\n\n## Motivation\nPreviously, queries using schema.table notation or column names that happen to be SQL keywords would result in parsing errors. This change improves SQL compatibility by:\n1. Supporting standard schema operations\n2. Allowing common column names like \"key\" and \"table\" to be used without quotes\n3. Properly handling qualified table names with schema prefixes\n\n## Test Plan\n- [x] Added test cases in `spec/sql/basic/schema-dot-table.sql` for schema.table notation\n- [x] Added test cases in `spec/sql/basic/reserved-keywords.sql` for reserved keywords as identifiers\n- [x] Added test cases in `spec/sql/basic/create-schema.sql` for CREATE/DROP SCHEMA operations\n- [x] All existing tests pass\n\nFixes #1072\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] All existing tests pass"
+  }
+ ],
+ "order": "2ad0039db091b8d089f960a30d7a6c907154ceeb581d1a9fb93d824fd5d79b39"
+}

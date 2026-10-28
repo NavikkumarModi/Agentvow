@@ -1,0 +1,18 @@
+{
+ "id": "65caf2b3a9",
+ "url": "https://github.com/getsentry/sentry/pull/99126",
+ "repo": "getsentry/sentry",
+ "number": 99126,
+ "message": "<!-- Describe your PR here. -->\n\nThis PR modernizes the internal implementation of `bulk_raw_query` to leverage `bulk_snuba_queries`.\n\nPreviously, `bulk_raw_query` used an older query execution path. This change updates `bulk_raw_query` to act as a backward-compatible wrapper, calling a new internal helper function `_bulk_raw_query_to_snuba_queries`. This helper converts the legacy `SnubaQueryParams` into `Request` objects, which are then processed by the more efficient `bulk_snuba_queries`.\n\n**Key Benefits:**\n- **Internal Performance Improvement:** `bulk_raw_query` now utilizes the optimized `bulk_snuba_queries` execution path.\n- **Backward Compatibility:** No changes to the public API or behavior, ensuring existing code continues to function without modification.\n- **Future-Proofing:** Aligns `bulk_raw_query` with the modern Snuba query pipeline, facilitating future migrations.\n\nAll existing tests remain valid and pass, as the external interface of `bulk_raw_query` is unchanged.\n\n<!--\n\n  Sentry employees and contractors can delete or ignore the following.\n\n-->\n\n### Legal Boilerplate\n\nLook, I get it. The entity doing business as \"Sentry\" was incorporated in the State of Delaware in 2015 as Functional Software, Inc. and is gonna need some rights from me in order to utilize my contributions in this here PR. So here's the deal: I retain all rights, title and interest in and to my contributions, and by keeping this boilerplate intact I confirm that Sentry can use, modify, copy, and redistribute my contributions, under Sentry's choice of terms.\n\n---\n[Slack Thread](https://sentry.slack.com/archives/D09259VQFAP/p1757437466491439?thread_ts=1757437466.491439&cid=D09259VQFAP)\n\n<a href=\"https://cursor.com/background-agent?bcId=bc-a779a2f9-5dc2-4bce-9a85-867625d359a3\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-a779a2f9-5dc2-4bce-9a85-867625d359a3\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This change updates `bulk_raw_query` to act as a backward-compatible wrapper, calling a new internal helper function `_bulk_raw_query_to_snuba_queries`."
+  },
+  {
+   "n": 2,
+   "text": "- **Backward Compatibility:** No changes to the public API or behavior, ensuring existing code continues to function without modification."
+  }
+ ],
+ "order": "0228203933d034d3cdf9788a8f8f2ca1d028e938a32e00ff8a6144bac363262b"
+}

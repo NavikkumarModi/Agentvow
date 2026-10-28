@@ -1,0 +1,14 @@
+{
+ "id": "445d886486",
+ "url": "https://github.com/dvcrn/mcp-server-siri-shortcuts/pull/8",
+ "repo": "dvcrn/mcp-server-siri-shortcuts",
+ "number": 8,
+ "message": "This PR adds two new environment variable configuration options to control shortcut tool generation behavior:\n\n## New Configuration Options\n\n### `GENERATE_SHORTCUT_TOOLS` (default: `true`)\nControls whether dynamic shortcut tools are generated for each available shortcut. When set to `false`, only the base tools (`list_shortcuts`, `open_shortcut`, `run_shortcut`) will be available.\n\n### `INJECT_SHORTCUT_LIST` (default: `false`) \nWhen set to `true`, injects the list of available shortcuts with their identifiers into the `run_shortcut` tool description to help the LLM understand which shortcuts are available.\n\n## Usage Example\n\n```json\n{\n  \"mcpServers\": {\n    \"siri-shortcuts\": {\n      \"command\": \"npx\",\n      \"args\": [\"mcp-server-siri-shortcuts\"],\n      \"env\": {\n        \"GENERATE_SHORTCUT_TOOLS\": \"false\",\n        \"INJECT_SHORTCUT_LIST\": \"true\"\n      }\n    }\n  }\n}\n```\n\n## Implementation Details\n\n- Environment variables are read at module import time\n- `GENERATE_SHORTCUT_TOOLS` defaults to `true` unless explicitly set to `\"false\"`\n- `INJECT_SHORTCUT_LIST` defaults to `false` unless explicitly set to `\"true\"`\n- The tool list generation conditionally includes dynamic tools based on `GENERATE_SHORTCUT_TOOLS`\n- The `run_shortcut` description conditionally includes the shortcut list based on `INJECT_SHORTCUT_LIST`\n- Call tool handler respects the `GENERATE_SHORTCUT_TOOLS` setting when validating dynamic tool calls\n\nThe changes are minimal and maintain backward compatibility - existing installations will continue to work with the same behavior (all dynamic tools generated, no shortcut list injection).\n\nFixes #7.\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The changes are minimal and maintain backward compatibility - existing installations will continue to work with the same behavior (all dynamic tools generated, no shortcut list injection)."
+  }
+ ],
+ "order": "a0e9742f5036a3a50303c262e5595e937954c84deda30c6e8a040003e27e7ecf"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "244a02a7cd",
+ "url": "https://github.com/port-labs/ocean/pull/1289",
+ "repo": "port-labs/ocean",
+ "number": 1289,
+ "message": "# Slack Integration for Port Ocean\n\nThis PR introduces a new Slack integration for Port Ocean that enables synchronization of Slack channels and users with Port.\n\n## Features\n- Synchronize Slack channels and their properties\n- Synchronize Slack users (with PII data masking)\n- Track channel membership\n- Real-time updates via webhooks\n- Rate limit handling\n- Comprehensive test coverage\n\n## Testing\n- Unit tests cover:\n  - Initial sync functionality\n  - Rate limit handling\n  - Webhook event processing\n  - Error scenarios\n  - Pagination handling\n  - Channel member synchronization\n\n## Documentation\n- Added README with setup instructions\n- Included configuration examples\n- Documented PII data handling\n\nLink to Devin run: https://app.devin.ai/sessions/61397cc1a78e4967832be1f9708b4cd6\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added README with setup instructions"
+  }
+ ],
+ "order": "97e1e3b09564deac0a0344022bb5a7db7e8d27a4c4589e0f62de6886786fe00f"
+}

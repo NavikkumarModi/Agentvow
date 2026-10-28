@@ -1,0 +1,3 @@
+{"item_id": "dab29864fa", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "A section heading with no assertion in the span itself.", "label": null, "confidence": "MEDIUM", "judgment": true, "note": "The span is only the heading '## Backward Compatibility'; the assertion ('Fully maintained') is in the following line, outside the span. Judged as a heading, not a statement that the author did or verified something.", "evidence": ["item file statement text is exactly '## Backward Compatibility'"]}
+], "minutes_estimate": 1}

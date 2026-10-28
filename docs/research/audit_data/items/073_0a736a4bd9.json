@@ -1,0 +1,14 @@
+{
+ "id": "0a736a4bd9",
+ "url": "https://github.com/FastLED/FastLED/pull/2023",
+ "repo": "FastLED/FastLED",
+ "number": 2023,
+ "message": "Adds `FL_ALIGN_PROGMEM` to palette typedefs to fix unaligned PROGMEM DWORD reads on ESP8266.\n\nPreviously, `FASTLED_USE_PROGMEM` was set to `0` by default for ESP8266 due to runtime crashes caused by unaligned 32-bit (DWORD) reads from PROGMEM. The ESP8266 architecture requires 4-byte alignment for such reads, which the `TProgmemRGBPalette16` and similar structures lacked. This PR ensures these structures are properly aligned, resolving the underlying issue and allowing PROGMEM to be safely enabled if desired, though it remains disabled by default for backward compatibility.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-f964373d-75e1-4103-9f01-c7b98d32abb9\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-f964373d-75e1-4103-9f01-c7b98d32abb9\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This PR ensures these structures are properly aligned, resolving the underlying issue and allowing PROGMEM to be safely enabled if desired, though it remains disabled by default for backward compatibility."
+  }
+ ],
+ "order": "42836304d2dcb3ee8c9bbdbfe6e6c9783aa4b217198ef24f5fcc520d83e1b6bf"
+}

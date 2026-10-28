@@ -1,0 +1,21 @@
+{
+ "item_id": "983123e962",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "With default settings the bun replace functionality remains enabled, so existing behaviour is unchanged",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Default-on checked directly in the diff; the backward-compatibility inference follows from getBunCommand behaving as before when the setting is unset. Not run (Electron app), so settled by reading the diff only.",
+   "evidence": [
+    "diff packages/models/src/constants/editor.ts: DefaultSettings.EDITOR_SETTINGS gains enableBunReplace: true",
+    "diff apps/studio/electron/main/bun/index.ts: enableBunReplace = userSettings.editor?.enableBunReplace !== false, so unset (undefined) counts as enabled; only an explicit false returns the command unreplaced; otherwise replaceCommand(command, bunExecutable) as before",
+    "diff AdvancedTab: enableBunReplace ?? true, UI also defaults to On"
+   ]
+  }
+ ],
+ "minutes_estimate": 4
+}

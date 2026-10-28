@@ -1,0 +1,18 @@
+{
+ "id": "3d46de8b6e",
+ "url": "https://github.com/taikoxyz/taiko-mono/pull/20294",
+ "repo": "taikoxyz/taiko-mono",
+ "number": 20294,
+ "message": "## Summary\n\nApplied changes from PR #20275 to rename `nextProposalBlockId` to `lastProposalBlockId` and update its semantics from **\"next block where proposal can be made\"** to **\"last block where proposal was made\"**.\n\n## Changes Made\n\n### Contract Updates\n- Renamed field `nextProposalBlockId` \u2192 `lastProposalBlockId` in `IInbox.sol`\n- Updated genesis initialization: changed from `2` to `1` (representing last proposal at block 1)\n- Modified proposal logic: sets `lastProposalBlockId = block.number` (was `block.number + 1`)\n- Updated validation: requires `block.number > lastProposalBlockId` (was `>=`)\n\n### Library Updates\n- `LibHashOptimized.sol`: Updated field reference in core state hashing\n- `LibProposeInputDecoder.sol`: Updated encoding/decoding for the renamed field\n- `LibProposedEventEncoder.sol`: Updated event payload encoding/decoding\n\n### Test Updates\n- Fixed 18 test files to use new field name and semantics\n- Updated initialization values in test helpers\n- Corrected consecutive proposal logic in prove tests\n- Fixed origin block number calculations\n\n## Test Results\n\n\u2705 **All 456 layer 1 tests pass** with 0 failures and 0 skipped tests\n\n```\nforge test --match-path \"*layer1*\"\nRan 58 test suites: 456 tests passed, 0 failed, 0 skipped\n```\n\n## References\n- Original PR: #20275\n- This PR applies the same changes to the current main branch\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "\u2705 **All 456 layer 1 tests pass** with 0 failures and 0 skipped tests"
+  },
+  {
+   "n": 2,
+   "text": "Ran 58 test suites: 456 tests passed, 0 failed, 0 skipped"
+  }
+ ],
+ "order": "0877601838e2794648c393accf4bc08dd1cabb9d7a212486a54460c8bfc44204"
+}

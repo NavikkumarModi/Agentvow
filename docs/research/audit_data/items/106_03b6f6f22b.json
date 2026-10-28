@@ -1,0 +1,14 @@
+{
+ "id": "03b6f6f22b",
+ "url": "https://github.com/langbot-app/LangBot/pull/1405",
+ "repo": "langbot-app/LangBot",
+ "number": 1405,
+ "message": "# Add User Card and Logout Button to Sidebar\n\nThis PR adds a user card component to the bottom of the sidebar that displays the user's email, along with a logout button that removes the token from localStorage when clicked.\n\n## Changes\n\n- Added user card component to display user email at the bottom of the sidebar\n- Implemented logout button with functionality to remove token from localStorage\n- Updated CSS to ensure proper styling and layout of the new components\n- Added test code to set dummy values in localStorage for testing purposes\n\n## Testing\n\n- Tested locally by running the frontend and backend servers\n- Verified that the user card displays the email correctly\n- Confirmed that clicking the logout button removes the token and redirects to the login page\n- Ensured all lint checks pass\n\n## Screenshots\n\n![User Card and Logout Button](https://github.com/RockChinQ/LangBot/assets/devin-ai-integration/user-card-logout.png)\n\nLink to Devin run: https://app.devin.ai/sessions/13a00b17fffa44309714f8553aebda50\nRequested by: Junyan Qin (Chin) (rockchinq@gmail.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Ensured all lint checks pass"
+  }
+ ],
+ "order": "7595b6ee655524ac4591f47b43b93d6b3e0434e1281b35baa3c07aafcf9dbbdc"
+}

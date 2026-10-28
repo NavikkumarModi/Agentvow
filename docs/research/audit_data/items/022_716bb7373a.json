@@ -1,0 +1,14 @@
+{
+ "id": "716bb7373a",
+ "url": "https://github.com/owncast/owncast/pull/4413",
+ "repo": "owncast/owncast",
+ "number": 4413,
+ "message": "This PR enhances the admin sidebar by adding visual improvements to the upgrade menu item:\n\n1. **Download Icon**: Added the `DownloadOutlined` icon from Ant Design to the upgrade menu item, making it consistent with other menu items that have icons.\n\n2. **Line Divider**: Added a horizontal divider above the upgrade menu item to visually separate it from the main navigation items, creating better visual hierarchy.\n\n**Changes Made:**\n- Added dynamic import for `DownloadOutlined` icon following the existing pattern\n- Added divider menu item with `type: 'divider'` that appears conditionally when an upgrade is available\n- Added icon property to the upgrade menu item\n\n**Implementation Details:**\n- Both the divider and icon only appear when `upgradeVersion` is available\n- Maintains all existing functionality and conditional rendering logic\n- Uses existing code patterns for consistency\n- Passes all build, lint, and Storybook checks\n\nThe implementation follows the design suggestion from the issue comments, providing clear visual separation between the upgrade option and other menu items while adding the requested download icon.\n\n![Admin sidebar with download icon and divider](https://github.com/user-attachments/assets/e5049d10-1a43-44c7-a7b0-8e0ac0dead79)\n\nFixes #4098.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `storybook.js.org`\n>   - Triggering command: `node /home/REDACTED/work/owncast/owncast/web/node_modules/.bin/storybook build` (dns block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)\n>\n> </details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Passes all build, lint, and Storybook checks"
+  }
+ ],
+ "order": "12d4aa5b6465043d27b2763927f1a970495b3a5ab854b96cf4bdec545a068df7"
+}

@@ -1,0 +1,26 @@
+{
+ "id": "f7597d310b",
+ "url": "https://github.com/portiaAI/portia-sdk-python/pull/630",
+ "repo": "portiaAI/portia-sdk-python",
+ "number": 630,
+ "message": "# Add aliases field to Tool class for multiple identifiers\n\n## Summary\n\nThis PR adds support for tool aliases, allowing tools to be identified and retrieved by multiple names in addition to their primary ID. The implementation adds an `aliases: list[str]` field to the `Tool` base class and updates the `ToolRegistry` to support lookup by both primary IDs and aliases.\n\n**Key Changes:**\n- **Tool class**: Added `aliases` field with default empty list for backward compatibility\n- **ToolRegistry.get_tool()**: Now searches aliases when primary ID lookup fails  \n- **ToolRegistry.with_tool()**: Added comprehensive validation to prevent ID/alias conflicts\n- **Tool.__str__()**: Include aliases in string representation\n- **Tests**: Added 9 new test functions covering all alias functionality\n\n## Review & Testing Checklist for Human\n\n- [ ] **Test alias lookup end-to-end** - Create tools with aliases and verify they can be retrieved by both primary ID and aliases\n- [ ] **Verify alias uniqueness validation** - Test that duplicate aliases are properly rejected and conflicts between IDs/aliases are caught\n- [ ] **Test backward compatibility** - Ensure existing tools without aliases continue to work normally\n- [ ] **Run full test suite** - Check that no regressions were introduced in existing functionality\n- [ ] **Test with different registry types** - Verify aliases work correctly with PortiaToolRegistry, McpToolRegistry, and combined registries\n\n**Recommended Test Plan:**\n1. Create a tool with aliases: `MockTool(id=\"main\", aliases=[\"alt1\", \"alt2\"])`\n2. Verify lookup works: `registry.get_tool(\"main\")`, `registry.get_tool(\"alt1\")`, `registry.get_tool(\"alt2\")`\n3. Test conflict detection by trying to add tools with duplicate aliases or IDs that conflict with existing aliases\n4. Run the new test functions to verify all edge cases are covered\n\n---\n\n### Diagram\n\n```mermaid\n%%{ init : { \"theme\" : \"default\" }}%%\ngraph TD\n    Tool[\"portia/tool.py<br/>Tool class\"]:::major-edit\n    ToolRegistry[\"portia/tool_registry.py<br/>ToolRegistry class\"]:::major-edit\n    TestTool[\"tests/unit/test_tool.py<br/>Tool tests\"]:::context\n    TestRegistry[\"tests/unit/test_tool_registry.py<br/>ToolRegistry tests\"]:::major-edit\n    \n    Tool -->|\"inherits from\"| PortiaRemoteTool[\"PortiaRemoteTool\"]:::context\n    Tool -->|\"inherits from\"| PortiaMcpTool[\"PortiaMcpTool\"]:::context\n    ToolRegistry -->|\"manages\"| Tool\n    ToolRegistry -->|\"inherits from\"| PortiaToolRegistry[\"PortiaToolRegistry\"]:::context\n    \n    TestTool -->|\"tests\"| Tool\n    TestRegistry -->|\"tests\"| ToolRegistry\n    \n    subgraph Legend\n        L1[Major Edit]:::major-edit\n        L2[Minor Edit]:::minor-edit  \n        L3[Context/No Edit]:::context\n    end\n    \n    classDef major-edit fill:#90EE90\n    classDef minor-edit fill:#87CEEB\n    classDef context fill:#FFFFFF\n```\n\n### Notes\n\n\n**\u26a0\ufe0f Important**: I was unable to test these changes locally due to missing dependencies in the development environment. The implementation follows established patterns in the codebase and includes comprehensive test coverage, but human testing is critical to verify correctness.\n\nThe alias validation logic is intentionally strict to prevent conflicts:\n- No two tools can share the same alias\n- Tool aliases cannot conflict with existing tool IDs  \n- Tool IDs cannot conflict with existing aliases\n- The `overwrite=True` parameter bypasses these checks when needed\n\n**Link to Devin run**: https://app.devin.ai/sessions/272ac1e850364f67b2dadab39a12dea4  \n**Requested by**: Robbie Heywood (@robbie-portia)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Tool class**: Added `aliases` field with default empty list for backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] **Test backward compatibility** - Ensure existing tools without aliases continue to work normally"
+  },
+  {
+   "n": 3,
+   "text": "- Tool aliases cannot conflict with existing tool IDs"
+  },
+  {
+   "n": 4,
+   "text": "- Tool IDs cannot conflict with existing aliases"
+  }
+ ],
+ "order": "8f0474ab5e885012a58b691b608d9a7a50619ec532378dd505d96af95af8864e"
+}

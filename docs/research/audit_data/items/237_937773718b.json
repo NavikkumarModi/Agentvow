@@ -1,0 +1,14 @@
+{
+ "id": "937773718b",
+ "url": "https://github.com/psincraian/pepy/pull/765",
+ "repo": "psincraian/pepy",
+ "number": 765,
+ "message": "The `/api/v2/projects/<name>` endpoint was vulnerable to URL manipulation that allowed bypassing the intended 5-version limit. Users could craft URLs with unlimited versions like:\n\n```\nhttps://pepy.tech/projects/requests?versions=2.32.5,2.32.4,2.32.3,2.32.1,2.32.0,2.31.0,2.30.0,2.29.0,2.28.1,2.28.0,2.27.1,2.27.0,2.26.0,2.25.1,2.25.0\n```\n\nThis URL contains 15 versions when only 5 should be allowed, potentially causing performance issues or circumventing business logic restrictions.\n\n## Changes Made\n\n**API Endpoint Enhancement**: Modified `/api/v2/projects/<name>` to:\n- Accept optional `versions` query parameter for filtering\n- Validate that no more than 5 versions are requested\n- Return `400 Bad Request` with clear error message when limit exceeded\n\n**Data Filtering**: Updated `transform_project_v2()` to:\n- Filter download data to only include requested versions\n- Filter version list to only show requested versions that exist\n- Maintain natural sorting order of versions\n\n**Backward Compatibility**: \n- Existing API calls without `versions` parameter work unchanged\n- All existing functionality preserved\n\n## Example Usage\n\n```bash\n# Valid requests (1-5 versions)\nGET /api/v2/projects/requests?versions=2.32.5,2.32.4\nGET /api/v2/projects/requests?versions=2.32.5\n\n# Invalid request (>5 versions) - now blocked\nGET /api/v2/projects/requests?versions=1,2,3,4,5,6\n# Returns: 400 Bad Request \"Maximum of 5 versions allowed\"\n```\n\n## Test Coverage\n\nAdded comprehensive test scenarios covering:\n- Single version filtering\n- Multiple version filtering (2-5 versions)  \n- Boundary case (exactly 5 versions)\n- Error case (>5 versions returns 400)\n- Edge cases (whitespace, non-existent versions)\n\nFixes #764.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Backward Compatibility**:"
+  }
+ ],
+ "order": "fdd415144be6d27a994dd4628b7738c2323f6e8cf695e6763c32a0b2657e3c40"
+}

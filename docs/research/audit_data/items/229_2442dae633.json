@@ -1,0 +1,14 @@
+{
+ "id": "2442dae633",
+ "url": "https://github.com/onyx-dot-app/onyx/pull/3711",
+ "repo": "onyx-dot-app/onyx",
+ "number": 3711,
+ "message": "Show most recent documents by default in Document Explorer without requiring an initial search.\n\nChanges:\n- Modified admin_retrieval to support empty queries and time-based sorting\n- Updated admin_search to handle empty queries and return most recent docs\n- Updated Explorer.tsx to show documents immediately without requiring search\n\nLink to Devin run: https://app.devin.ai/sessions/3df7cea1d2e94a9da964090ecdffff50",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated admin_search to handle empty queries and return most recent docs"
+  }
+ ],
+ "order": "f0a9f37b494f7ef02e10bceb4fa7517a72efcb6fc4ea618faf4b3a5ad777636d"
+}

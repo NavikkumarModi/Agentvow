@@ -1,0 +1,14 @@
+{
+ "id": "a0ff050ad4",
+ "url": "https://github.com/elie222/inbox-zero/pull/765",
+ "repo": "elie222/inbox-zero",
+ "number": 765,
+ "message": "Add initial support for Microsoft Teams marketplace integration to allow users to manage emails directly from Teams.\n\nThis PR introduces a new `TeamsInstallation` database model and related API endpoints and UI components. All changes are additive, feature-flagged (`NEXT_PUBLIC_TEAMS_ENABLED`), and isolated, ensuring no breaking changes to existing application functionality or database schema.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-07570c20-fde0-4853-848b-1f743707cae4\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-07570c20-fde0-4853-848b-1f743707cae4\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All changes are additive, feature-flagged (`NEXT_PUBLIC_TEAMS_ENABLED`), and isolated, ensuring no breaking changes to existing application functionality or database schema."
+  }
+ ],
+ "order": "629b8be6d791c68ce50265e56e7b466c180c5243f2ef53c9dd4d08cfd1f0ebc3"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "dc9272342e",
+ "url": "https://github.com/mochilang/mochi/pull/341",
+ "repo": "mochilang/mochi",
+ "number": 341,
+ "message": "## Summary\n- add Registry type for extern objects\n- keep default package-level registry for backwards compatibility\n\n## Testing\n- `go test ./... --vet=off`\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68483f491e148320b436e6f5abc57045",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- keep default package-level registry for backwards compatibility"
+  }
+ ],
+ "order": "d8982499f5711f151b2b763ca2b8a6f8aae90a7885c79cb76248ffc8ea92de3b"
+}

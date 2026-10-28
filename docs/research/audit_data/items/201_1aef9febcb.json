@@ -1,0 +1,30 @@
+{
+ "id": "1aef9febcb",
+ "url": "https://github.com/AgentOps-AI/agentops/pull/1096",
+ "repo": "AgentOps-AI/agentops",
+ "number": 1096,
+ "message": "# Fix OpenAI Agents SDK guardrail span classification\n\n## Problem\nThe OpenAI Agents SDK integration was incorrectly classifying guardrail events as generic events or agent spans instead of properly mapping them to `GUARDRAIL` span types. This prevented proper observability and tracing of guardrail events in the AgentOps platform.\n\n## Root Cause\nTwo functions in the OpenAI Agents SDK instrumentation were missing handlers for `GuardrailSpanData`:\n\n1. `get_span_kind()` in `exporter.py` - didn't handle `GuardrailSpanData`, causing it to fall through to default `SpanKind.INTERNAL`\n2. `get_span_attributes()` in `attributes/common.py` - didn't have a case for `GuardrailSpanData`, so these spans didn't get proper AgentOps span kind attributes\n\n## Solution\nAdded proper `GuardrailSpanData` handling following the established patterns in the codebase:\n\n### Changes Made\n1. **Updated `get_span_kind()` function** in `exporter.py`:\n   - Added `GuardrailSpanData` to the `HandoffSpanData` case for `SpanKind.INTERNAL`\n\n2. **Added `GUARDRAIL_SPAN_ATTRIBUTES` mapping** in `attributes/common.py`:\n   - Consistent attribute extraction pattern for guardrail spans\n\n3. **Added `get_guardrail_span_attributes()` function** in `attributes/common.py`:\n   - Extracts attributes from `GuardrailSpanData` objects\n   - Sets proper `AGENTOPS_SPAN_KIND` to `GUARDRAIL` value\n   - Handles guardrail-specific attributes like `name` and `triggered`\n\n4. **Updated `get_span_attributes()` dispatcher** in `attributes/common.py`:\n   - Added `GuardrailSpanData` case to route to the new handler function\n\n## Testing\n\u2705 **Verified with OpenAI Agents SDK guardrail example**:\n- Ran `examples/openai_agents/agent_guardrails.py`\n- Successfully executed with \"Math homework guardrail tripped\" message\n- AgentOps session links generated, confirming instrumentation is active\n\n\u2705 **Lint checks**: Pre-commit hooks passed with automatic formatting applied\n\n## Impact\n- Guardrail events from OpenAI Agents SDK are now properly classified as `GUARDRAIL` spans\n- Maintains existing functionality for other span types (Agent, Function, Generation, etc.)\n- Follows established codebase patterns for consistency\n- Enables proper observability and tracing of guardrail events in AgentOps\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/0764439e61a6472fa04739fd1db8fb08\n\nRequested by: Alex (meta.alex.r@gmail.com)\n\nFixes #1105\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Updated `get_span_kind()` function** in `exporter.py`:"
+  },
+  {
+   "n": 2,
+   "text": "**Added `GUARDRAIL_SPAN_ATTRIBUTES` mapping** in `attributes/common.py`:"
+  },
+  {
+   "n": 3,
+   "text": "**Added `get_guardrail_span_attributes()` function** in `attributes/common.py`:"
+  },
+  {
+   "n": 4,
+   "text": "**Updated `get_span_attributes()` dispatcher** in `attributes/common.py`:"
+  },
+  {
+   "n": 5,
+   "text": "\u2705 **Lint checks**: Pre-commit hooks passed with automatic formatting applied"
+  }
+ ],
+ "order": "d1c43d168c31e13a3cea6f6f5ccc7b9743586f1ed6575871e5ffe67aaf96714c"
+}

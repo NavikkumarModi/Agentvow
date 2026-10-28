@@ -1,0 +1,4 @@
+{"item_id": "ac42a17627", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change deletes the file .devcontainer/scripts/porter-v1.sh.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "files_scope: verb 'deleted' agrees with status removed in the change list.", "evidence": ["gh api pulls/4630/files: removed .devcontainer/scripts/porter-v1.sh"]},
+{"n": 2, "step_a": "CLAIM", "proposition": "This change deletes the file resource_processor/scripts/porter-v1.sh.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "files_scope: verb 'deleted' agrees with status removed in the change list.", "evidence": ["gh api pulls/4630/files: removed resource_processor/scripts/porter-v1.sh"]}
+], "minutes_estimate": 2}

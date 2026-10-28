@@ -1,0 +1,14 @@
+{
+ "id": "d6bc9170a1",
+ "url": "https://github.com/DrewThomasson/ebook2audiobook/pull/1016",
+ "repo": "DrewThomasson/ebook2audiobook",
+ "number": 1016,
+ "message": "This PR fixes the PIPER TTS integration by adding the missing `--voice_model` command line argument that was causing test failures.\n\n## Issue Description\n\nThe PIPER TTS engine was properly integrated and functional, but the workflow tests were failing with:\n\n```\nError: Unrecognized option \"--voice_model\"\n```\n\nThis occurred because the tests and documentation referenced a `--voice_model` parameter for selecting specific PIPER voices, but the command line argument parsing didn't include this option.\n\n## Root Cause\n\nThe PIPER implementation in `coqui.py` correctly expected a `voice_model` session parameter and could handle different voice models, but the command line interface was missing the argument definition. The workflow tests were trying to use commands like:\n\n```bash\n./ebook2audiobook.sh --headless --ebook \"test.txt\" --tts_engine PIPER --voice_model \"en_US-lessac-medium\"\n```\n\nBut `--voice_model` wasn't recognized by the argument parser.\n\n## Solution\n\n**Added missing command line argument support:**\n- Added `--voice_model` to the options array in `app.py`\n- Added argument definition with appropriate help text for PIPER voice selection\n- Updated argument processing to pass `voice_model` to the session in `lib/functions.py`\n- Updated all subsequent option indices to accommodate the new parameter\n\n## Usage\n\n```bash\n# Basic usage with default voice\n./ebook2audiobook.sh --headless --ebook \"mybook.epub\" --tts_engine PIPER\n\n# With specific voice model  \n./ebook2audiobook.sh --headless --ebook \"mybook.epub\" --tts_engine PIPER --voice_model \"en_US-lessac-medium\"\n\n# Multi-language support\n./ebook2audiobook.sh --headless --ebook \"livre.epub\" --tts_engine PIPER --voice_model \"fr_FR-upmc-medium\"\n```\n\nThe PIPER synthesis functionality was already working correctly and returning proper numpy arrays - this fix only addresses the missing command line interface component.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added `--voice_model` to the options array in `app.py`"
+  }
+ ],
+ "order": "8ca7a095ee5fdeffd905997c9c14d5eac90503fc7e4bd71c2557de152b314192"
+}

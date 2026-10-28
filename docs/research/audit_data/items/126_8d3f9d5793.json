@@ -1,0 +1,18 @@
+{
+ "id": "8d3f9d5793",
+ "url": "https://github.com/langchain-ai/langchain/pull/32105",
+ "repo": "langchain-ai/langchain",
+ "number": 32105,
+ "message": "Thank you for contributing to LangChain! Follow these steps to mark your pull request as ready for review. **If any of these steps are not completed, your PR will not be considered for review.**\r\n\r\n- [ ] **PR title**: Follows the format: {TYPE}({SCOPE}): {DESCRIPTION}\r\n  - Examples:\r\n    - feat(core): add multi-tenant support\r\n    - fix(cli): resolve flag parsing error\r\n    - docs(openai): update API usage examples\r\n  - Allowed `{TYPE}` values:\r\n    - feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, release\r\n  - Allowed `{SCOPE}` values (optional):\r\n    - core, cli, langchain, standard-tests, docs, anthropic, chroma, deepseek, exa, fireworks, groq, huggingface, mistralai, nomic, ollama, openai, perplexity, prompty, qdrant, xai\r\n  - Note: the `{DESCRIPTION}` must not start with an uppercase letter.\r\n  - Once you've written the title, please delete this checklist item; do not include it in the PR.\r\n\r\n- [ ] **PR message**: ***Delete this entire checklist*** and replace with\r\n  - **Description:** a description of the change. Include a [closing keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) if applicable to a relevant issue.\r\n  - **Issue:** the issue # it fixes, if applicable (e.g. Fixes #123)\r\n  - **Dependencies:** any dependencies required for this change\r\n  - **Twitter handle:** if your PR gets announced, and you'd like a mention, we'll gladly shout you out!\r\n\r\n- [ ] **Add tests and docs**: If you're adding a new integration, you must include:\r\n  1. A test for the integration, preferably unit tests that do not rely on network access,\r\n  2. An example notebook showing its use. It lives in `docs/docs/integrations` directory.\r\n\r\n- [ ] **Lint and test**: Run `make format`, `make lint` and `make test` from the root of the package(s) you've modified. **We will not consider a PR unless these three are passing in CI.** See [contribution guidelines](https://python.langchain.com/docs/contributing/) for more.\r\n\r\nAdditional guidelines:\r\n\r\n- Make sure optional dependencies are imported within a function.\r\n- Please do not add dependencies to `pyproject.toml` files (even optional ones) unless they are **required** for unit tests.\r\n- Most PRs should not touch more than one package.\r\n- Changes should be backwards compatible.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**We will not consider a PR unless these three are passing in CI.** See [contribution guidelines](https://python.langchain.com/docs/contributing/) for more."
+  },
+  {
+   "n": 2,
+   "text": "- Changes should be backwards compatible."
+  }
+ ],
+ "order": "8cd15b53968943728b56d89e9df11b3c3b663e40dd4a1fc3f0beeb7357548828"
+}

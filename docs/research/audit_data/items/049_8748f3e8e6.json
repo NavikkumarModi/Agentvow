@@ -1,0 +1,14 @@
+{
+ "id": "8748f3e8e6",
+ "url": "https://github.com/ZantFoundation/Z-Ant/pull/403",
+ "repo": "ZantFoundation/Z-Ant",
+ "number": 403,
+ "message": "# Pull Request Template\r\n\r\n## Description\r\n\r\nPlease provide a clear and concise description of the changes made in this pull request. Explain the problem this PR solves or the feature it adds.\r\n\r\n**Related Issue:** Closes #issue_number\r\n\r\n## Type of Change\r\n\r\nPlease mark the options that are relevant:\r\n\r\n- [ ] Bug fix \ud83d\udc1b\r\n- [ ] New feature \ud83d\ude80\r\n- [ ] Documentation update \ud83d\udcda\r\n- [ ] Other (please describe):\r\n\r\n## Checklist\r\n\r\n- [ ] My code follows the project's coding style guidelines.\r\n- [ ] I have performed a self-review of my own code.\r\n- [ ] I have made corresponding updates to the documentation.\r\n- [ ] I have added tests that prove my fix is effective or that my feature works.\r\n- [ ] All new and existing tests pass.\r\n\r\n## Testing\r\n\r\nPlease describe the tests that you ran to verify your changes. Provide instructions so others can reproduce.\r\n\r\n## Screenshots (if applicable)\r\n\r\nIf applicable, add screenshots to help explain your changes.\r\n\r\n## Additional Information\r\n\r\nAdd any other context or information about the pull request here.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] All new and existing tests pass."
+  }
+ ],
+ "order": "25029169057b0e31329e0ad911d8f170b8a2be28c0f0b7fd4c07e5c4eb4c6514"
+}

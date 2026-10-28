@@ -1,0 +1,14 @@
+{
+ "id": "3b0461049d",
+ "url": "https://github.com/oven-sh/bun/pull/20736",
+ "repo": "oven-sh/bun",
+ "number": 20736,
+ "message": "\r\nThis PR automatically enables `--coverage` when the `--coverage-reporter` flag is used. This simplifies the command for users, as they no longer need to explicitly specify both `--coverage` and `--coverage-reporter` to generate coverage reports.\r\n\r\n- [ ] Documentation or TypeScript types (it's okay to leave the rest blank in this case)\r\n- [x] Code changes\r\n\r\n### How did you verify your code works%3F\r\n\r\n- [x] I included a test for the new code, or existing tests cover it\r\n- [x] I ran my tests locally and they pass (`bun-debug test test/cli/test/coverage.test.ts`)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] I ran my tests locally and they pass (`bun-debug test test/cli/test/coverage.test.ts`)"
+  }
+ ],
+ "order": "53871f59fea6d53bc09b03c60efe68614b48983bb2da40e63379e06448c9bcd1"
+}

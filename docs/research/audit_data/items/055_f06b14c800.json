@@ -1,0 +1,18 @@
+{
+ "id": "f06b14c800",
+ "url": "https://github.com/skypilot-org/skypilot/pull/6305",
+ "repo": "skypilot-org/skypilot",
+ "number": 6305,
+ "message": "```\n<!-- Describe the changes in this PR -->\nFixes a \"Cannot access 'startTour' before initialization\" ReferenceError in `useTour.js`.\n\nThe `startTour` function, defined as a `const` function expression, was called within a `useEffect` hook before its definition. This PR moves the `startTour` definition to before the `useEffect` that calls it, ensuring it's available when needed and resolving the hoisting issue. This bug typically manifests in production builds or fresh browser sessions.\n\n<!-- Describe the tests ran -->\n<!-- Unit tests (tests/test_*.py) are part of GitHub CI; below are tests that launch on the cloud. -->\n\nTested (run the relevant ones):\n\n- [x] Code formatting: install pre-commit (auto-check on commit) or `bash format.sh`\n- [x] Any manual or new tests for this PR (please specify below)\n  - Manually tested by clearing browser cache/using incognito mode to simulate a first visit, verifying the tour starts without error.\n- [ ] All smoke tests: `/smoke-test` (CI) or `pytest tests/test_smoke.py` (local)\n- [ ] Relevant individual tests: `/smoke-test -k test_name` (CI) or `pytest tests/test_smoke.py::test_name` (local)\n- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)\n\n<!-- CI commands (/-prefixed) can only be triggered by repo members -->\n```\n\n---\n\n**Open Background Agent:** \n\n[Web](https://www.cursor.com/agents?id=bc-04b49de8-a80f-484f-9dcb-a860599c9f86) \u00b7 [Cursor](https://cursor.com/background-agent?bcId=bc-04b49de8-a80f-484f-9dcb-a860599c9f86)\n\nRefer to [Background Agent docs](https://docs.cursor.com/background-agents)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Fixes a \"Cannot access 'startTour' before initialization\" ReferenceError in `useTour.js`."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)"
+  }
+ ],
+ "order": "2cb657bc3f620f433cf73e1f37aa61027eed8c1677579b8eef6d0a38602b8783"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "efd3aff752",
+ "url": "https://github.com/getsentry/sentry-mcp/pull/501",
+ "repo": "getsentry/sentry-mcp",
+ "number": 501,
+ "message": "## Summary\nFixes #499 by implementing URL path-based constraints that allow clients to connect to specific paths like `/mcp/{organizationSlug}/{projectSlug}` to restrict their MCP session to specific organizations and/or projects.\n\n### Key Changes\n- **URL path parsing**: Added router to extract constraints from `/mcp/*` and `/sse/*` paths\n- **Constraint-aware handlers**: Created wrappers that use OAuth provider's `startsWith` behavior to capture dynamic paths\n- **Header communication**: Pass constraints to Durable Object via custom headers (X-MCP-Constraint-*)\n- **Session persistence**: Store constraints in Durable Object storage across requests\n- **Tool validation**: Added constraint validation infrastructure enforced by find-projects and update-project tools\n- **Comprehensive testing**: Full test coverage for all constraint handling logic\n\n### Technical Approach\nThe implementation leverages the OAuth provider's `startsWith` path matching behavior. When a handler is registered for `/mcp`, it also matches `/mcp/org/project`. We use this to:\n1. Parse the URL path to extract organization and project constraints\n2. Pass constraints to the Durable Object via custom headers\n3. Store constraints in Durable Object storage for session persistence\n4. Include constraints in ServerContext for tool validation\n\n### Breaking Changes\nNone - this is fully backward compatible. Existing clients connecting to `/mcp` or `/sse` continue to work without constraints.\n\n### Dependencies\nNone - uses existing infrastructure\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "None - this is fully backward compatible."
+  }
+ ],
+ "order": "1edddda08c299063189a33688149dfecaebabcf4e85346e9c23185ce2f7fc3bc"
+}

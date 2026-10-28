@@ -1,0 +1,14 @@
+{
+ "id": "6336372974",
+ "url": "https://github.com/katspaugh/wavesurfer.js/pull/4118",
+ "repo": "katspaugh/wavesurfer.js",
+ "number": 4118,
+ "message": "## Short description\r\nResolves #4079\r\n\r\n## Implementation details\r\n- reset cached buffer and frequencies on decode event\r\n- clear cached data on plugin destroy\r\n\r\n## How to test it\r\n- `yarn lint`\r\n\r\n## Screenshots\r\n\r\n\r\n## Checklist\r\n* [ ] This PR is covered by e2e tests\r\n* [ ] It introduces no breaking API changes\r\n\r\n------\r\nhttps://chatgpt.com/codex/tasks/task_b_685aa55a94f8832faa0881417b46ba71",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* [ ] It introduces no breaking API changes"
+  }
+ ],
+ "order": "2ee9d704a2920903a2f09f1e320fe1fdb5ff059b352328fd2ab349567aa51abb"
+}

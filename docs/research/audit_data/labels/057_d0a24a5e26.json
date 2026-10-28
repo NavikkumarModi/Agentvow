@@ -1,0 +1,4 @@
+{"item_id": "d0a24a5e26", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox about changelog entry.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Unticked checkbox, template item (rule 2 class 2).", "evidence": ["PR message shows '- [ ] No breaking change or entry added to the changelog.' unticked"]},
+{"n": 2, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox about hybrid SDKs.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Unticked checkbox, template item (rule 2 class 2).", "evidence": ["PR message shows '- [ ] No breaking change for hybrid SDKs...' unticked"]}
+], "minutes_estimate": 1}

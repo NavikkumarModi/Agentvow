@@ -1,0 +1,14 @@
+{
+ "id": "9dc710fa77",
+ "url": "https://github.com/komari-monitor/komari/pull/210",
+ "repo": "komari-monitor/komari",
+ "number": 210,
+ "message": "This PR implements the requested functionality to trigger binary builds on pull requests to main and enable manual triggering.\n\n## Changes Made\n\nModified `.github/workflows/build.yml` to add two new trigger conditions:\n\n1. **Pull Request Trigger**: Binary builds now automatically run when pull requests are opened or updated against the `main` branch\n2. **Manual Trigger**: Added `workflow_dispatch` to enable manual execution via GitHub Actions UI\n\n## Implementation Details\n\nThe workflow now triggers on:\n- `push` to `main` branch (existing behavior - preserved)\n- `pull_request` targeting `main` branch (new)\n- `workflow_dispatch` for manual execution (new)\n\nAll existing build logic remains unchanged:\n- Cross-compilation matrix for Windows/Linux across multiple architectures (amd64, arm64, 386, riscv64)\n- Zig toolchain integration for static binary compilation\n- Frontend build integration from komari-web repository\n- Artifact upload functionality\n\n## Benefits\n\n- **Early Detection**: Catches build issues in PRs before they reach main\n- **Manual Control**: Developers can trigger builds on-demand for testing\n- **Zero Breaking Changes**: All existing functionality preserved\n- **Consistent Artifacts**: Same build process across all trigger types\n\nThis addresses the requirement \"pr\u5230main\u65f6\u4e5f\u89e6\u53d1build binary\uff0c\u540c\u65f6\u53ef\u4ee5\u624b\u52a8\u89e6\u53d1\" (PR to main should also trigger binary build, and it can be manually triggered).\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/komari-monitor/komari/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Modified `.github/workflows/build.yml` to add two new trigger conditions:"
+  }
+ ],
+ "order": "9279629f372f6ee53f5b62ebfed65175846079f9bf7899e4272120f1984003b6"
+}

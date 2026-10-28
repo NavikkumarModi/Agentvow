@@ -1,0 +1,14 @@
+{
+ "id": "cfec45ae0c",
+ "url": "https://github.com/ethereum-optimism/optimism/pull/17787",
+ "repo": "ethereum-optimism/optimism",
+ "number": 17787,
+ "message": "# refactor(test): improve ResourceMetering test coverage and quality\n\n## Summary\n\nThis PR enhances the ResourceMetering test file through mechanical refactoring to improve organization and efficiency:\n\n- **Converted duplicate tests to fuzz test**: Replaced 3 nearly identical empty block tests (`test_metered_updateOneEmptyBlock_succeeds`, `test_metered_updateTwoEmptyBlocks_succeeds`, `test_metered_updateTenEmptyBlocks_succeeds`) with a single fuzz test `testFuzz_metered_emptyBlocks_succeeds` that tests 1-1000 block differences\n- **Renamed helper contracts**: Updated `MeterUser` \u2192 `ResourceMetering_MeterUser_Harness` and `CustomMeterUser` \u2192 `ResourceMetering_CustomMeterUser_Harness` to follow naming conventions\n- **Reorganized test contracts**: Reordered test contracts to match source function declaration order (metered modifier tests before initialization tests)\n- **Renamed artifact test**: `ArtifactResourceMetering_Metered_Test` \u2192 `ResourceMetering_ArtifactGeneration_Test` for clarity\n\nAll tests pass (10 passed, 0 failed, 1 skipped) and pre-PR validation completed successfully.\n\n## Review & Testing Checklist for Human\n\n- [ ] **Verify fuzz test equivalence**: Confirm `testFuzz_metered_emptyBlocks_succeeds` with `bound(_blockDiff, 1, 1000)` provides equivalent coverage to the original 3 tests for 1, 2, and 10 blocks\n- [ ] **Check contract reference consistency**: Verify all references to renamed helper contracts were updated correctly throughout the file (especially in artifact generation test)\n- [ ] **Validate test organization**: Confirm test contract order now matches ResourceMetering.sol source function declaration order (metered modifier at line 66, init at line 168)\n\n### Notes\n\nNo behavioral changes to contract logic - this is purely test organization and efficiency improvements. The fuzz test runs 64 iterations by default, providing broader coverage than the original 3 specific test cases.\n\n**Link to Devin run**: https://app.devin.ai/sessions/8621d543458e4fda9841c542d99e6546  \n**Requested by**: Ariel Diaz (@aliersh)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All tests pass (10 passed, 0 failed, 1 skipped) and pre-PR validation completed successfully."
+  }
+ ],
+ "order": "e1fc2e5a6ea06781d1477b60a63451333a43501e81b23c5cd68b0f8ce4ef8a77"
+}

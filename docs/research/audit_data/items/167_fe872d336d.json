@@ -1,0 +1,26 @@
+{
+ "id": "fe872d336d",
+ "url": "https://github.com/langfuse/langfuse/pull/8566",
+ "repo": "langfuse/langfuse",
+ "number": 8566,
+ "message": "## What does this PR do?\n\nThis PR integrates `react-scan` into the application, providing a performance debugging overlay that can be activated and deactivated by users with `@langfuse.com` email addresses via a new toggle in the user avatar menu. The state of `react-scan` is persisted in `localStorage`, and the library is dynamically imported only when enabled, ensuring no impact on bundle size or performance for other users.\n\nFixes # N/A\n\n## Type of change\n\n- [ ] Bug fix (non-breaking change which fixes an issue)\n- [ ] Chore (refactoring code, technical debt, workflow improvements)\n- [x] New feature (non-breaking change which adds functionality)\n- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)\n- [ ] Refactor (does not change functionality, e.g. code style improvements, linting)\n- [ ] This change requires a documentation update\n\n## Mandatory Tasks\n\n- [x] Make sure you have self-reviewed the code. A decent size PR without self-review might be rejected.\n\n## Checklist\n\n- [x] I haven't read the [contributing guide](https://github.com/langfuse/langfuse/blob/main/CONTRIBUTING.md)\n- [x] My code doesn't follow the style guidelines of this project (`pnpm run format`)\n- [x] I haven't commented my code, particularly in hard-to-understand areas\n- [x] I haven't checked if my PR needs changes to the documentation\n- [x] I haven't checked if my changes generate no new warnings (`npm run lint`)\n- [ ] I haven't added tests that prove my fix is effective or that my feature works\n- [ ] I haven't checked if new and existing unit tests pass locally with my changes\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-268eddf3-96a5-4177-bbe1-29b8a8a3228f\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-268eddf3-96a5-4177-bbe1-29b8a8a3228f\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The state of `react-scan` is persisted in `localStorage`, and the library is dynamically imported only when enabled, ensuring no impact on bundle size or performance for other users."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 3,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 4,
+   "text": "- [ ] I haven't checked if new and existing unit tests pass locally with my changes"
+  }
+ ],
+ "order": "b2aec4440d59272a8dee241219d90e96f31f3b1269074b430d23ab0cf2d4ef9f"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "6d3f993347",
+ "url": "https://github.com/DannyMac180/meta-agent/pull/85",
+ "repo": "DannyMac180/meta-agent",
+ "number": 85,
+ "message": "## Summary\n- enable injection of extra bundle metadata via `BundleGenerator`\n- document custom metadata in `bundle_layout.md`\n- test passing custom metadata when generating a bundle\n\n## Testing\n- `ruff check . | head -n 20`\n- `black --check . | head -n 20`\n- `pytest -q 2>&1 | head -n 20`\n- `pytest -q 2>&1 | tail -n 20`\n- `mypy . | head -n 20`\n- `pyright | head -n 20`\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- test passing custom metadata when generating a bundle"
+  }
+ ],
+ "order": "36e65d27e33825911f0116ed3c21ae4065934d5122390c2479d24413428d4d2f"
+}

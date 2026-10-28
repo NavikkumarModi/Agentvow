@@ -1,0 +1,14 @@
+{
+ "id": "4ceff928c4",
+ "url": "https://github.com/bugsink/bugsink/pull/200",
+ "repo": "bugsink/bugsink",
+ "number": 200,
+ "message": "Adding support for hosting Bugsink at a subpath (e.g., https://example.com/bugsink/).\n\n## Plan\n\n- [x] Analyze current BASE_URL usage and identify hardcoded URLs in templates\n- [x] Create utility function to extract path prefix from BASE_URL  \n- [x] Update context processor to include path prefix\n- [x] Create template filter to prefix hardcoded URLs\n- [x] Update hardcoded URLs in templates to use the filter\n- [x] Set FORCE_SCRIPT_NAME when path prefix is detected\n- [x] Add tests for subpath functionality\n- [x] Test the functionality manually with a subpath setup\n- [x] Update all remaining hardcoded URLs in templates\n\n## Implementation Complete \u2705\n\n**Core functionality:**\n- \u2705 Added `get_path_prefix()` function to extract path from BASE_URL\n- \u2705 Updated context processor to include `path_prefix` variable  \n- \u2705 Created `with_prefix` template filter for hardcoded URLs\n- \u2705 Set `FORCE_SCRIPT_NAME` automatically when path prefix detected\n- \u2705 Added comprehensive tests that all pass\n\n**Template updates:**\n- \u2705 Updated all base templates (base.html, bare_base.html, barest_base.html)\n- \u2705 Fixed hardcoded URLs in navigation and authentication templates\n- \u2705 Updated issue and event related templates\n- \u2705 Fixed all user authentication flow templates\n- \u2705 Updated admin and debugging links\n\n**Testing:**\n- \u2705 8 focused unit tests covering all edge cases\n- \u2705 Manual testing confirms functionality works correctly\n- \u2705 Comprehensive testing of various subpath configurations\n- \u2705 All existing Django checks pass\n\n**Technical details:**\n- Handles various URL formats: `/bugsink`, `/bugsink/`, `/tools/bugsink`\n- Template filter only affects absolute URLs (starting with `/`)\n- Django's `{% url %}` tags work automatically via `FORCE_SCRIPT_NAME`\n- No changes to existing view logic needed - redirects work correctly\n- Backward compatible - no impact when BASE_URL has no path\n\n**Usage:**\nUsers can now set `BASE_URL = \"https://example.com/bugsink\"` in their configuration and all internal links will correctly include the `/bugsink` prefix.\n\nFixes #93.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Backward compatible - no impact when BASE_URL has no path"
+  }
+ ],
+ "order": "85810939c497ce6bf6e79e43ce9a852c6d2e3f0c633bf9a3d273e1014e7cca15"
+}

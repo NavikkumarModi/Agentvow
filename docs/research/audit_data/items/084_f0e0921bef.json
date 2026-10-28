@@ -1,0 +1,18 @@
+{
+ "id": "f0e0921bef",
+ "url": "https://github.com/vllm-project/vllm/pull/23385",
+ "repo": "vllm-project/vllm",
+ "number": 23385,
+ "message": "This PR removes `graph_pool` as a member variable of `VllmBackend` and as an argument to `CUDAGraphWrapper` and its base class `AbstractStaticGraphWrapper`. Instead, `CUDAGraphWrapper` now always obtains the graph pool directly from the platform using `current_platform.get_global_graph_pool()`.\n\n## Changes Made\n\n### 1. AbstractStaticGraphWrapper Protocol\n- Removed `graph_pool: Any` parameter from `__init__` method signature\n- Updated docstring to remove graph_pool documentation\n\n### 2. CUDAGraphWrapper\n- Removed `graph_pool: Any = None` parameter from constructor\n- Simplified initialization to always get graph pool from platform: \n  ```python\n  self.graph_pool = current_platform.get_global_graph_pool()\n  ```\n- Removed conditional logic that previously checked if `graph_pool` was None\n\n### 3. VllmBackend\n- Removed `self.graph_pool` member variable from `__init__`\n- Removed `graph_pool: Any` from class type annotations\n- Updated `PiecewiseCompileInterpreter` to not take or use `graph_pool` parameter\n- Updated static graph wrapper instantiation to not pass `graph_pool` argument\n\n## Rationale\n\nThis change simplifies the architecture by removing an unnecessary parameter that was being passed around when the graph pool can be obtained directly from the platform. The existing fallback logic in `CUDAGraphWrapper` already called `current_platform.get_global_graph_pool()` when `graph_pool=None`, so this change makes that the default behavior while eliminating the parameter passing overhead.\n\n## Backward Compatibility\n\nThis is a breaking change for any external code that:\n- Instantiates `CUDAGraphWrapper` with the `graph_pool` argument\n- Accesses the `graph_pool` member of `VllmBackend`\n- Implements `AbstractStaticGraphWrapper` with the old signature\n\nHowever, all internal usage has been updated and existing tests continue to work without modification.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/vllm-project/vllm/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated static graph wrapper instantiation to not pass `graph_pool` argument"
+  },
+  {
+   "n": 2,
+   "text": "## Backward Compatibility"
+  }
+ ],
+ "order": "55119cbff5e2b7c6117c9ad871027d8450451c4eca31d3a780efea96dfc0d137"
+}

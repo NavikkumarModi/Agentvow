@@ -1,0 +1,14 @@
+{
+ "id": "95cf25ea55",
+ "url": "https://github.com/apache/superset/pull/34440",
+ "repo": "apache/superset",
+ "number": 34440,
+ "message": "### SUMMARY\r\nThis PR fixes compatibility issues with urllib3 2.x in the webdriver utility by ensuring timeout values are properly converted to float types. The urllib3 library now requires strict type checking for timeout parameters, and string/invalid timeout values were causing failures.\r\nThe changes include:\r\n- Convert all timeout-related configuration values to float type\r\n- Handle None, \"None\", and \"null\" string values appropriately\r\n- Add validation and logging for invalid timeout values\r\n- Refactor the `create` method to reduce complexity (addressing ruff C901 error)\r\n\r\n### TESTING INSTRUCTIONS\r\n1. Configure Superset with webdriver timeout settings in your configuration:\r\n   \r\n```\r\nWEBDRIVER_CONFIGURATION = {\r\n\r\n\"timeout\": \"30\",\r\n\r\n\"connect_timeout\": \"10.5\",\r\n\r\n\"socket_timeout\": 20,\r\n\r\n\"read_timeout\": \"15.0\",\r\n\r\n}\r\n```\r\n2. Run screenshot/thumbnail generation tasks that use the webdriver\r\n3. Verify that timeout values are properly converted and no TypeError occurs\r\n4. Check logs for any warnings about invalid timeout values\r\nTo run the new unit tests:\r\nbash\r\n\r\npytest tests/unit_tests/utils/webdriver_test.py -v\r\n\r\n\r\n### ADDITIONAL INFORMATION\r\n- [ ] Has associated issue:\r\n- [ ] Required feature flags:\r\n- [ ] Changes UI\r\n- [ ] Includes DB Migration (follow approval process in [SIP-59](https://github.com/apache/superset/issues/13351))\r\n  - [ ] Migration is atomic, supports rollback & is backwards-compatible\r\n  - [ ] Confirm DB migration upgrade and downgrade tested\r\n  - [ ] Runtime estimates and downtime expectations provided\r\n- [ ] Introduces new feature or API\r\n- [ ] Removes existing feature or API\r\n\r\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\r\n\r\n\r\nCo-Authored-By: Claude",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Migration is atomic, supports rollback & is backwards-compatible"
+  }
+ ],
+ "order": "c93603c4b7031500e865e2f0196bd283728ffd15838dbb4c63dc9b9fee2ea996"
+}

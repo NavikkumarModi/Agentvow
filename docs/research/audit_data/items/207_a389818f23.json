@@ -1,0 +1,22 @@
+{
+ "id": "a389818f23",
+ "url": "https://github.com/CTFd/CTFd/pull/2848",
+ "repo": "CTFd/CTFd",
+ "number": 2848,
+ "message": "The `/api/v1/users/me` endpoint now includes the user's bracket name when they have a bracket assigned, making it easier to display bracket information without requiring additional API calls.\n\n## Changes Made\n\nModified the `UserSchema` in `CTFd/schemas/users.py` to include a `@post_dump` method that adds the bracket name to the response for the \"self\" view when a user has a bracket assigned.\n\n## API Response Changes\n\n**Before:**\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"user\",\n    \"bracket_id\": 2,\n    \"email\": \"user@example.com\",\n    ...\n  }\n}\n```\n\n**After:**\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"user\",\n    \"bracket_id\": 2,\n    \"bracket\": \"Advanced Players\",\n    \"email\": \"user@example.com\",\n    ...\n  }\n}\n```\n\n## Implementation Details\n\n- Only applies to the \"self\" view (when users query their own data via `/api/v1/users/me`)\n- Bracket name is only included when the user has a `bracket_id` assigned\n- Uses efficient lookup based on the existing `bracket_id` field\n- Gracefully handles edge cases like deleted brackets\n- No impact on other API endpoints or views\n\n## Testing\n\nAdded comprehensive tests in `tests/api/v1/users/test_bracket_name.py` that verify:\n- Users with brackets receive the bracket name in the response\n- Users without brackets do not receive the bracket field\n- Edge cases are handled correctly\n- No regression in existing functionality\n\nFixes #2843.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Modified the `UserSchema` in `CTFd/schemas/users.py` to include a `@post_dump` method that adds the bracket name to the response for the \"self\" view when a user has a bracket assigned."
+  },
+  {
+   "n": 2,
+   "text": "- No impact on other API endpoints or views"
+  },
+  {
+   "n": 3,
+   "text": "Added comprehensive tests in `tests/api/v1/users/test_bracket_name.py` that verify:"
+  }
+ ],
+ "order": "d7b4643153e635d20a7bcd0f69aeccaa5d0ecaf5418e9b81d40eff5cee11d818"
+}

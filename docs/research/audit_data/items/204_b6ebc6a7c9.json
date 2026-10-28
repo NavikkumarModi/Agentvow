@@ -1,0 +1,18 @@
+{
+ "id": "b6ebc6a7c9",
+ "url": "https://github.com/567-labs/kura/pull/77",
+ "repo": "567-labs/kura",
+ "number": 77,
+ "message": "# Refactor Visualization to Use Procedural API\n\n## Overview\nThis PR decouples the visualization system from the Kura instance, creating a new `BaseVisualizationModel` abstract base class and refactoring the `ClusterVisualizer` to accept clusters directly. This follows the procedural API pattern used in other parts of the codebase.\n\n## Changes\n- Created a new `BaseVisualizationModel` abstract base class in `kura/base_classes/visualization.py`\n- Updated `kura/base_classes/__init__.py` to include the new base class\n- Refactored `ClusterVisualizer` to inherit from `BaseVisualizationModel`\n- Removed dependency on Kura instance in the constructor\n- Made visualization methods accept clusters directly as parameters\n- Added helper methods for loading clusters from checkpoint files\n- Ensured methods are configurable with parameters instead of relying on instance state\n\n## Motivation\nThe previous implementation was tightly coupled with the Kura instance, making it difficult to use the visualization functionality independently. This refactoring follows the procedural API pattern used in other parts of the codebase, allowing for more flexible usage.\n\n## New API Usage\n```python\n# Create a visualizer\nvisualizer = ClusterVisualizer()\n\n# Visualize clusters directly\nvisualizer.visualize_clusters(clusters=my_clusters, style=\"rich\")\n\n# Or load from checkpoint\nvisualizer.visualize_clusters(checkpoint_path=\"path/to/checkpoint.jsonl\", style=\"enhanced\")\n```\n\n## Testing\nThe implementation maintains the same visualization capabilities while providing a more flexible API. The code has been tested to ensure it compiles without errors.\n\n[Link to Devin run](https://app.devin.ai/sessions/1e2af9867a874fd6882c9d18f46155ec)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Created a new `BaseVisualizationModel` abstract base class in `kura/base_classes/visualization.py`"
+  },
+  {
+   "n": 2,
+   "text": "- Updated `kura/base_classes/__init__.py` to include the new base class"
+  }
+ ],
+ "order": "d431afd59df381886f585cb82bcb8cadbef10f50d7f8e0b6a3494ef208cabdd2"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "bc7c6e8e96",
+ "url": "https://github.com/Azure/azure-sdk-for-python/pull/41422",
+ "repo": "Azure/azure-sdk-for-python",
+ "number": 41422,
+ "message": "## Summary\n\nFixed a mypy type checking error in `sdk/openai/azure-openai/samples/images_aoai_quickstart.py` where the code was attempting to index into `result.data` without checking if it could be `None`.\n\n## Issue\n\nThe mypy error occurred at line 65:\n```\nsamples/images_aoai_quickstart.py:65: error: Value of type \"list[Image] | None\" is not indexable  [index]\n```\n\nThe problematic code was:\n```python\nimage_url = result.data[0].url  # extract image URL from response\n```\n\nSince `result.data` has type `Optional[list[Image]]` (equivalent to `list[Image] | None`), attempting to index into it without a null check is unsafe and causes the type checking error.\n\n## Solution\n\nAdded a null check and length validation before accessing the array elements:\n\n```python\n# Before\nimage_url = result.data[0].url  # extract image URL from response\nif image_url:\n    # ... rest of the logic\n\n# After  \nif result.data and len(result.data) > 0:\n    image_url = result.data[0].url  # extract image URL from response\n    if image_url:\n        # ... rest of the logic\nelse:\n    print(\"No image data available in the response\")\n```\n\n## Changes\n\n- Added null and empty array check: `if result.data and len(result.data) > 0:`\n- Indented the existing image processing logic inside the null check\n- Added an informative error message when no image data is available\n- Preserves all existing functionality while making the code type-safe\n\n## Testing\n\n- Verified the fix resolves the mypy error: `mypy samples/images_aoai_quickstart.py` now passes\n- Confirmed the code compiles without syntax errors\n- The change is minimal and surgical (13 lines added, 10 removed)\n\nThis fix ensures the sample code is type-safe while maintaining the same functionality and providing better error handling when the API response doesn't contain image data.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `http://168.63.129.16:80/machine/`\n>   - Triggering command: `/usr/bin/python3 -u bin/WALinuxAgent-2.13.1.1-py3.9.egg -collect-logs ` (http block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)\n>\n> </details>\n\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Fixed a mypy type checking error in `sdk/openai/azure-openai/samples/images_aoai_quickstart.py` where the code was attempting to index into `result.data` without checking if it could be `None`."
+  },
+  {
+   "n": 2,
+   "text": "- Verified the fix resolves the mypy error: `mypy samples/images_aoai_quickstart.py` now passes"
+  }
+ ],
+ "order": "c3499dcf28e8384934bccb3d0b7f9b0c629c9cdc9d4b9929dd6b044195c2df55"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "abff8432f1",
+ "url": "https://github.com/microsoft/ebpf-for-windows/pull/4506",
+ "repo": "microsoft/ebpf-for-windows",
+ "number": 4506,
+ "message": "This PR adds missing test cases for map-in-map functionality to ensure comprehensive coverage of different inner map types as requested in the issue.\n\n## Changes Made\n\n### 1. Hash of Maps with ANY inner map type (without static initializer)\nAdded test cases in `tests/unit/libbpf_test.cpp` that test `BPF_MAP_TYPE_HASH_OF_MAPS` with various inner map types:\n- `BPF_MAP_TYPE_HASH`\n- `BPF_MAP_TYPE_ARRAY` \n- `BPF_MAP_TYPE_PERCPU_HASH`\n- `BPF_MAP_TYPE_PERCPU_ARRAY`\n- `BPF_MAP_TYPE_LRU_HASH`\n- `BPF_MAP_TYPE_LRU_PERCPU_HASH`\n- `BPF_MAP_TYPE_LPM_TRIE`\n- `BPF_MAP_TYPE_QUEUE`\n- `BPF_MAP_TYPE_STACK`\n- `BPF_MAP_TYPE_RINGBUF`\n\n### 2. Array of Maps with ANY inner map type (with static initializer)\nAdded test cases using `DECLARE_JIT_TEST_CASES` pattern for `BPF_MAP_TYPE_ARRAY_OF_MAPS` with the same comprehensive set of inner map types.\n\n### 3. API Test Coverage\nExtended `tests/api_test/api_test.cpp` with corresponding API-level tests for both Hash of Maps and Array of Maps with different inner map types.\n\n## Implementation Details\n\n- **Parameter adjustments**: Special handling for map types with different requirements:\n  - `BPF_MAP_TYPE_LPM_TRIE`: Uses 64-bit keys and increased max_entries\n  - `BPF_MAP_TYPE_QUEUE` and `BPF_MAP_TYPE_STACK`: Uses key_size=0 as they don't use keys\n- **Error handling**: Consistent with existing tests using `== 0` pattern\n- **Test structure**: Follows existing patterns with proper cleanup using `Platform::_close()` and `_close()`\n- **Test categories**: Uses appropriate test tags `[libbpf]` and `[map_in_map]`\n\n## Test Coverage\n\nThe implementation adds **30 new test cases** total:\n- 10 Hash of Maps tests (no static initializer)\n- 10 Array of Maps tests (with static initializer) \n- 10 API tests for both outer map types\n\nThis ensures that the expectation \"Inner map can be **ANY map**\" is thoroughly validated for both `BPF_MAP_TYPE_HASH_OF_MAPS` and `BPF_MAP_TYPE_ARRAY_OF_MAPS`.\n\nFixes #2891.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added test cases in `tests/unit/libbpf_test.cpp` that test `BPF_MAP_TYPE_HASH_OF_MAPS` with various inner map types:"
+  },
+  {
+   "n": 2,
+   "text": "Extended `tests/api_test/api_test.cpp` with corresponding API-level tests for both Hash of Maps and Array of Maps with different inner map types."
+  }
+ ],
+ "order": "0ec8d63023b3ce9f8701fe3b01bd90628fe0413fd314a03f812fe21ccd6b4dba"
+}

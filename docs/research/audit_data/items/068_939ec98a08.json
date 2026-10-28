@@ -1,0 +1,18 @@
+{
+ "id": "939ec98a08",
+ "url": "https://github.com/feast-dev/feast/pull/5582",
+ "repo": "feast-dev/feast",
+ "number": 5582,
+ "message": "The `PolarsBackend` class in Feast's local compute engine had an incomplete implementation of the `columns()` method, which was preventing proper functionality when using Polars DataFrames for feature processing.\n\n## Problem\n\nThe `columns()` method in `PolarsBackend` was not implemented (contained only `pass`), causing failures when the local compute engine attempted to check for column existence during timestamp filtering:\n\n```python\n# This code in LocalEntityTimestampFilterNode would fail with Polars backend\nif ENTITY_TS_ALIAS in self.backend.columns(df):\n    # filter where feature.ts <= entity.event_timestamp\n    df = df[df[timestamp_column] <= df[ENTITY_TS_ALIAS]]\n```\n\n## Solution\n\nImplemented the missing `columns()` method to return a list of column names, maintaining consistency with the `PandasBackend` interface:\n\n```python\n# Before (broken)\ndef columns(self, df):\n    pass\n\n# After (working)\ndef columns(self, df: pl.DataFrame) -> list[str]:\n    return df.columns\n```\n\nThe implementation leverages Polars' native `df.columns` property, which returns a `list[str]` that matches the behavior of pandas' `df.columns.tolist()`.\n\n## Testing\n\nAdded comprehensive test coverage for the new functionality:\n- Basic functionality with multiple columns\n- Edge cases (empty DataFrames, single columns)\n- The specific use case for entity timestamp column detection\n- Interface consistency validation between Pandas and Polars backends\n\n## Impact\n\nThis completes the dataframe abstraction layer, enabling:\n- Seamless use of Polars DataFrames with Feast's local compute engine\n- Proper timestamp-based filtering with Polars backend\n- Consistent interface across different dataframe backends\n\nThe change is minimal and additive, maintaining full backward compatibility while completing the missing functionality in the dataframe abstraction framework.\n\nFixes #5581.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/feast-dev/feast/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The `columns()` method in `PolarsBackend` was not implemented (contained only `pass`), causing failures when the local compute engine attempted to check for column existence during timestamp filtering:"
+  },
+  {
+   "n": 2,
+   "text": "The change is minimal and additive, maintaining full backward compatibility while completing the missing functionality in the dataframe abstraction framework."
+  }
+ ],
+ "order": "3dae0a6de641777c2b709a43a94d8b6901f8fcb7ea3237750ea45a4045c1adea"
+}

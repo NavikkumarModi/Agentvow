@@ -1,0 +1,14 @@
+{
+ "id": "8898c9f7d5",
+ "url": "https://github.com/pollinations/pollinations/pull/4193",
+ "repo": "pollinations/pollinations",
+ "number": 4193,
+ "message": "## Summary\n- move io.net and BytePlus near the top of the frontend supporter list configuration\n- add io.net and BytePlus to the README supporters section for visibility\n\n## Testing\n- npm test -- --watchAll=false --passWithNoTests\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68d3534dd6c4832eb9a66ba1071b3c26",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- npm test -- --watchAll=false --passWithNoTests"
+  }
+ ],
+ "order": "ac8032951468cc86be4d66744a86acd3e4612f641fe15430387288dd8701877c"
+}

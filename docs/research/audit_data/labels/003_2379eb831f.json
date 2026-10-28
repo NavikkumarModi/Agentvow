@@ -1,0 +1,23 @@
+{
+ "item_id": "2379eb831f",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "ruff check and ruff format pass on the Python code this change fixes (the Agno instrumentor, the PR's stated core change)",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Scope ambiguity: the PR also changes 30 Python files under app/ (unrelated churn, flagged by the PR itself). The repo's pre-commit (ruff v0.12.9) excludes app/, and app/ has its own ruff.toml; under ruff 0.12.9 those app/ files show 25 lint errors and 18 would be reformatted, but they are outside the root-configured lint scope and the claim is in the context of the instrumentor fix. Labelled by root config / pre-commit scope. If the statement meant every changed Python file, it would be FALSE.",
+   "evidence": [
+    "PR 1264 head 56aa8d6; change list has 48 files incl. agentops/instrumentation/agentic/agno/instrumentor.py (modified) and 31 .py files, 30 under app/",
+    "pyproject.toml [tool.ruff] line-length 120; .pre-commit-config.yaml ruff+ruff-format rev v0.12.9, exclude ^app/",
+    "sandboxed ruff 0.12.9: 'ruff check agentops/instrumentation/agentic/agno/instrumentor.py' -> All checks passed; 'ruff format --check' -> 1 file already formatted",
+    "sandboxed ruff 0.12.9 on whole agentops/ package: check passed, 159 files already formatted",
+    "app/ changed .py files with their own app/ruff.toml: ruff check 25 errors, format --check 18 files would reformat (outside pre-commit scope)"
+   ]
+  }
+ ],
+ "minutes_estimate": 12
+}

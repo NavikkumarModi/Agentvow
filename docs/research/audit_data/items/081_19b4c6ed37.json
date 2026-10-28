@@ -1,0 +1,14 @@
+{
+ "id": "19b4c6ed37",
+ "url": "https://github.com/ishaan1013/shadow/pull/23",
+ "repo": "ishaan1013/shadow",
+ "number": 23,
+ "message": "## Branch Changes Summary\r\n\r\n### Type System Refactoring\r\n- **Renamed `ToolStatusType` to `ToolExecutionStatusType`** across multiple files for better semantic clarity\r\n- **Updated imports and type references** in:\r\n  - `apps/frontend/components/chat/tools/run-terminal-cmd.tsx`\r\n  - `apps/frontend/components/task/task-content.tsx`\r\n  - `packages/types/src/index.ts`\r\n\r\n### Database Integration Cleanup\r\n- **Simplified import in `create-task.ts`** - combined `prisma` and `Task` imports with `MessageRole` from `@repo/db`\r\n\r\n### Type Definitions Enhancement\r\n- **Removed redundant `MessageRole` enum** from `packages/types/src/index.ts` (likely moved to database package)\r\n- **Clarified tool execution status** with better naming and documentation comments\r\n\r\nThe changes focus on improving type safety, cleaning up imports, and adding testing infrastructure while maintaining backward compatibility.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The changes focus on improving type safety, cleaning up imports, and adding testing infrastructure while maintaining backward compatibility."
+  }
+ ],
+ "order": "52ec06dcc24697fdd372e15b4c2af010ba19775ea5b843921b1af36e8eb69c3e"
+}

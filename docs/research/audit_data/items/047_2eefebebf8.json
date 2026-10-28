@@ -1,0 +1,26 @@
+{
+ "id": "2eefebebf8",
+ "url": "https://github.com/microsoft/content-processing-solution-accelerator/pull/134",
+ "repo": "microsoft/content-processing-solution-accelerator",
+ "number": 134,
+ "message": "## Issue\n\nUsers were experiencing HTTP 401 (Unauthorized) errors when attempting to authenticate to the API using Azure CLI. The specific error:\n\n```\nAADSTS650057: Invalid resource. List of valid resources from app registration: . (the list is empty)\n```\n\nThis error occurs when the API App Registration doesn't have any exposed scopes, preventing clients from obtaining valid tokens.\n\n## Changes Made\n\n1. Updated `ConfigureAppAuthentication.md`:\n   - Added explicit instructions to create and expose the required `user_impersonation` scope in the API application\n   - Added warnings about the importance of this step to prevent authentication failures\n   - Improved the numbering/structure of the document to emphasize this critical step\n\n2. Updated `ManualAppRegistrationConfiguration.md`:\n   - Enhanced the \"Expose an API\" section with clearer instructions and details\n   - Added more specific information about scope configuration requirements\n\n3. Added new sections to both documentation files:\n   - \"Authenticating Using Azure CLI\" section with example commands showing the proper scope format\n   - \"Troubleshooting\" section that specifically addresses the AADSTS650057 error and provides solutions\n\n## How This Fixes the Issue\n\nThe updated documentation now clearly explains the need to expose the `user_impersonation` scope in the API app registration and provides the correct format for authentication commands:\n\n```bash\naz login --scope api://<api_client_id>/user_impersonation\n```\n\nor\n\n```bash\naz account get-access-token --scope api://<api_client_id>/user_impersonation\n```\n\nUsers following these instructions will properly configure their API app registration and avoid the authentication errors.\n\nFixes #132.\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Updated `ConfigureAppAuthentication.md`:"
+  },
+  {
+   "n": 2,
+   "text": "Updated `ManualAppRegistrationConfiguration.md`:"
+  },
+  {
+   "n": 3,
+   "text": "Added new sections to both documentation files:"
+  },
+  {
+   "n": 4,
+   "text": "The updated documentation now clearly explains the need to expose the `user_impersonation` scope in the API app registration and provides the correct format for authentication commands:"
+  }
+ ],
+ "order": "2426fb807957dda3cc96e69f859d98b8681eb51fe480423cca5902235e3fce9d"
+}

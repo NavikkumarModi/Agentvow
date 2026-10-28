@@ -1,0 +1,14 @@
+{
+ "id": "0693e1d68e",
+ "url": "https://github.com/dotnet/android/pull/10335",
+ "repo": "dotnet/android",
+ "number": 10335,
+ "message": "This PR adds nullable reference type (NRT) annotations to C# files in the `src\\Xamarin.Android.Build.Tasks\\Utilities\\` directory while maintaining compatibility with existing MSBuild scenarios and tests.\r\n\r\n## Key Changes\r\n\r\n**Nullable Reference Type Enablement:**\r\n- Added `#nullable enable` directive to 51 utility files that were missing nullable annotations\r\n- Converted `FileResourceParser.cs` from `#nullable disable` to `#nullable enable` with proper nullable annotations\r\n- Fixed nullable reference type violations for variables, return types, and parameters\r\n\r\n**Cross-Project Compatibility:**\r\n- Used `String.IsNullOrEmpty()` instead of extension methods in shared utility files to avoid compilation errors across different project namespaces\r\n- Ensured MonoAndroidHelper files work correctly across multiple consuming projects\r\n\r\n**MSBuild Task Compatibility:**\r\n- Made `JavaResgenInputFile` property in `GenerateResourceDesigner` task optional (nullable) to maintain compatibility with existing tests and managed resource generator usage\r\n- Added proper null validation only when the JavaResourceParser path is used, preserving the dual-mode functionality (ManagedResourceParser vs JavaResourceParser)\r\n- Fixed MSBuild test failures while maintaining backward compatibility\r\n\r\n**Cleanup:**\r\n- Reverted `JavaResourceParser.cs` completely per reviewer feedback\r\n\r\nThe changes improve type safety through proper nullable reference type annotations while ensuring all existing functionality continues to work correctly, including unit tests and cross-project compilation scenarios.\r\n\r\nContext: #10326\r\n\r\n<!-- START COPILOT CODING AGENT TIPS -->\r\n---\r\n\r\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Fixed MSBuild test failures while maintaining backward compatibility"
+  }
+ ],
+ "order": "29e609e72b8587c8530143c80bd2bf307079cf4fe50ed3091abfaf3d11525f6e"
+}

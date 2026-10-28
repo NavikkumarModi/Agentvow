@@ -1,0 +1,18 @@
+{
+ "id": "ce87a8c7e6",
+ "url": "https://github.com/vllm-project/vllm/pull/25116",
+ "repo": "vllm-project/vllm",
+ "number": 25116,
+ "message": "## Problem\n\nUsers frequently ask \"How do you load weights from CPU?\" but this functionality was already implemented via the `pt_load_map_location` parameter, which was poorly documented and hard to discover.\n\n## Solution\n\nThis PR adds comprehensive documentation and examples for the existing CPU weight loading functionality:\n\n### \ud83d\udcda Enhanced Documentation\n\nAdded a detailed FAQ section explaining how to use `pt_load_map_location` for CPU weight loading, including:\n\n```bash\n# Load weights from CPU\nvllm serve meta-llama/Llama-2-7b-hf --pt-load-map-location cpu\n\n# Load with device mapping\nvllm serve meta-llama/Llama-2-7b-hf --pt-load-map-location '{\"cuda:1\": \"cuda:0\"}'\n```\n\n```python\n# Python API usage\nllm = LLM(\n    model=\"meta-llama/Llama-2-7b-hf\",\n    pt_load_map_location=\"cpu\"\n)\n```\n\n### \ud83d\udd27 New Example\n\nCreated `examples/offline_inference/basic/cpu_weight_loading.py` demonstrating:\n- Explicit CPU weight loading (default behavior)\n- Device mapping syntax for multi-GPU setups\n- Memory management use cases\n- Integration with existing vLLM patterns\n\n### \ud83d\udcd6 Updated Example Documentation\n\nEnhanced the basic examples README with CPU weight loading information and CLI usage examples.\n\n## Technical Details\n\n- **Parameter**: `pt_load_map_location` (defaults to `\"cpu\"`)\n- **CLI Flag**: `--pt-load-map-location` \n- **Compatibility**: Same values as PyTorch's `torch.load(map_location=...)`\n- **Scope**: Affects PyTorch `.pt`/`.bin` checkpoint files\n- **Use Cases**: Memory management, device mapping, explicit CPU loading\n\n## Impact\n\nThis change makes the existing CPU weight loading functionality easily discoverable and provides clear guidance for users who need to:\n- Manage memory usage during model initialization\n- Load weights from specific devices or device mappings\n- Understand the default weight loading behavior\n\nNo functional changes were made - this purely improves documentation and discoverability of existing features.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Created `examples/offline_inference/basic/cpu_weight_loading.py` demonstrating:"
+  },
+  {
+   "n": 2,
+   "text": "### \ud83d\udcd6 Updated Example Documentation"
+  }
+ ],
+ "order": "fed389127e65702c4ba9cbe22be371aac2435dcdfdb054c8286859a98b46cd54"
+}

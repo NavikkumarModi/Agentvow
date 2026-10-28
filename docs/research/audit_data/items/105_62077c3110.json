@@ -1,0 +1,14 @@
+{
+ "id": "62077c3110",
+ "url": "https://github.com/wieslawsoltes/Dock/pull/498",
+ "repo": "wieslawsoltes/Dock",
+ "number": 498,
+ "message": "## Summary\n- support docking all tabs or a single tab by improving drag source selection\n- use new `GetDragSource` helper when validating and executing window drag/drop\n\n## Testing\n- `dotnet test -c Release` *(fails to reach telemetry servers but tests pass)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68664902adf08321a497f8e89ecb45ce",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `dotnet test -c Release` *(fails to reach telemetry servers but tests pass)*"
+  }
+ ],
+ "order": "706fb7a17fc50297c0c883af92b18503899618b18048fca0570f5ce30e3ab97c"
+}

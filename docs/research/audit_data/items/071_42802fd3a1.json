@@ -1,0 +1,18 @@
+{
+ "id": "42802fd3a1",
+ "url": "https://github.com/AmoabaKelvin/ishortn.ink/pull/222",
+ "repo": "AmoabaKelvin/ishortn.ink",
+ "number": 222,
+ "message": "# Description\n\nThis PR updates the password-protected link verification pages to dynamically display the custom domain name instead of the hardcoded \"iShortn\" label when a custom domain is in use.\n\nPreviously, both `verify-password/[linkId]/page.tsx` and `[linkAlias]/link-password-verification.tsx` displayed \"iShortn\" for all links. This change fetches the link's domain information and, if a custom domain is present and not `ishortn.ink`, it displays the custom domain. This improves branding consistency for users utilizing custom domains.\n\nFixes # (issue)\n\n## Type of change\n- [ ] Bug fix (non-breaking change which fixes an issue)\n- [x] New feature (non-breaking change which adds functionality)\n- [ ] This change requires a documentation update\n- [ ] This change requires installing new dependencies",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "3fbef4dd444fda3e1c2004ed899068efec82e046c32313f53fde13ee2b3ce934"
+}

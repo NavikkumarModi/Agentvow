@@ -1,0 +1,14 @@
+{
+ "id": "5d50ebbb1b",
+ "url": "https://github.com/mochilang/mochi/pull/4790",
+ "repo": "mochilang/mochi",
+ "number": 4790,
+ "message": "## Summary\n- regenerate dataset/job IR outputs using `update_job`\n- confirm JOB VM tests pass without optimization\n\n## Testing\n- `MOCHI_NO_OPT=1 go test ./tests/vm -run TestVM_JOB -tags=slow -count=1`\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_686615657e9c8320b147448f1e5947ca",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- confirm JOB VM tests pass without optimization"
+  }
+ ],
+ "order": "3948fff019af0a811df23c476b78cd4254475adbefa4a0ecad60968e0fa9a3ed"
+}

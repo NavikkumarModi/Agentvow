@@ -1,0 +1,18 @@
+{
+ "id": "1e9e9aad4b",
+ "url": "https://github.com/vgmtrans/vgmtrans/pull/612",
+ "repo": "vgmtrans/vgmtrans",
+ "number": 612,
+ "message": "Replace stringstream usages in format files with std::string and fmt::format().\r\n\r\nThis PR was initially created as a test of OpenAI's new Codex service. After many prompts, I have coaxed Codex into performing an extensive refactor. I have now reviewed the changes and made additional commits to improve some of the interpolation (forcing unsigned chars to int format) and code formatting. I expect this PR fixes many instances of event descriptions which print parameters as ASCII characters instead of integers.\r\n\r\nI have done basic testing, but nothing extensive given the scope of the refactor.\r\n\r\n## Types of changes\r\n<!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->\r\n- [ ] Bug fix (non-breaking change which fixes an issue)\r\n- [ ] New feature (non-breaking change which adds functionality)\r\n- [ ] Breaking change (fix or feature that would cause existing functionality to change)\r\n- [x] Refactor\r\n\r\n## Checklist:\r\n<!--- Go over all the following points, and put an `x` in all the boxes that apply. -->\r\n<!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->\r\n- [x] My code follows the code style of this project.\r\n- [x] I have read the **CONTRIBUTING** document.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "6d7edb90cbc5eb930615bb680a14a5aedcb16f953c89dc55c693507827f81ab5"
+}

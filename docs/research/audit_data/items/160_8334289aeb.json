@@ -1,0 +1,14 @@
+{
+ "id": "8334289aeb",
+ "url": "https://github.com/pytorch/pytorch/pull/155686",
+ "repo": "pytorch/pytorch",
+ "number": 155686,
+ "message": "**Description**\r\n\r\n    Cleans up unused nonlocal declarations in _infer_device_type and get_device_states within torch/utils/checkpoint.py.\r\n\r\n    Drops unused nonlocal op in the register function in torch/library.py.\r\n\r\n    These changes have no effect on runtime behavior and improve code clarity.\r\n\r\n**Testing**\r\n\r\n    Verified both files compile with python -m py_compile.\r\n\r\n    No logic was altered; only redundant code was removed.\r\n\r\nIf anything needs more detail, happy to update!\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "These changes have no effect on runtime behavior and improve code clarity."
+  }
+ ],
+ "order": "ac7b0b6b1a85996e4cbc78534f007d24bd7f51329924fb188a7dccf6a82ddc31"
+}

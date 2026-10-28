@@ -1,0 +1,14 @@
+{
+ "id": "5781534049",
+ "url": "https://github.com/gluesql/glues/pull/188",
+ "repo": "gluesql/glues",
+ "number": 188,
+ "message": "## Summary\n- use `clone_from` when updating note name and directory IDs\n- remove stray semicolon after opening a note tab\n\n## Testing\n- `cargo clippy --all-targets -- -D warnings`\n- `cargo test`\n\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68ba6db4c53c832ab3259c6da0074aa9\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n- Refactor\n  - Optimized in-memory updates when renaming notes and moving notes between directories to reduce allocations and improve efficiency across open tabs.\n  - Performance and behavior remain unchanged for end-users; operations may feel slightly smoother under heavy usage.\n\n- Style\n  - Minor formatting cleanup with no impact on functionality.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Minor formatting cleanup with no impact on functionality."
+  }
+ ],
+ "order": "3f170a5e9cc7ded9a5679bd417036f126feec7f4bf97695ac3fe405f4db1aa85"
+}

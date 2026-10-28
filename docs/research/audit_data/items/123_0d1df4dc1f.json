@@ -1,0 +1,14 @@
+{
+ "id": "0d1df4dc1f",
+ "url": "https://github.com/elastic/elasticsearch/pull/132991",
+ "repo": "elastic/elasticsearch",
+ "number": 132991,
+ "message": "## Summary\n\nThis PR fixes issue #107873 by adding retry logic to the `checkForMissingDataIfNecessary` method in `DatafeedJob`. The change improves resilience when checking for missing data encounters transient failures.\n\n## Problem\n\nThe datafeed's missing data check could fail due to transient issues (network problems, temporary unavailability of indices, etc.), causing the entire check to be skipped. This meant that delayed data detection would not work properly during these transient failures.\n\n## Solution\n\nImplemented a retry mechanism with exponential backoff that:\n- Retries up to 3 times when `detectMissingData()` throws an exception\n- Uses exponential backoff delays (100ms, 200ms, 400ms) between retries\n- Logs warnings on each retry attempt for observability\n- Issues an audit warning if all retries fail\n- Allows the datafeed to continue operating even if the missing data check ultimately fails\n\n## Changes\n\n- **DatafeedJob.java**: Added retry logic with exponential backoff in `checkForMissingDataIfNecessary()` method\n- **DatafeedJobRetryTests.java**: Added comprehensive unit tests covering:\n  - Successful retry after initial failures\n  - Failure after exhausting all retries\n  - Immediate success without retries\n  - Exponential backoff delay verification\n\n## Testing\n\nAdded unit tests that verify:\n- \u2705 Retry mechanism triggers on failure\n- \u2705 Exponential backoff delays are applied correctly\n- \u2705 Appropriate warnings are logged\n- \u2705 Datafeed continues operation even if all retries fail\n\n## Related Issues\n\nFixes #107873\n\n## Checklist\n\n- [x] I have signed the [Contributor License Agreement](https://www.elastic.co/contributor-agreement/)\n- [x] I have run the tests locally and they pass\n- [x] I have added tests that prove my fix is effective\n- [x] My changes follow the existing code style\n- [x] I have added appropriate logging for observability\n\n## Notes\n\nThe retry mechanism is conservative with a maximum of 3 retries and relatively short backoff delays to avoid significantly delaying the datafeed operation. The total maximum delay from retries is approximately 700ms (100 + 200 + 400ms).\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] I have run the tests locally and they pass"
+  }
+ ],
+ "order": "87efbc27ff66acf341937716a06c84c4d1e0d28c6eafb7a796417d24af78397c"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "94b3098392",
+ "url": "https://github.com/katelya77/KatelyaTV/pull/6",
+ "repo": "katelya77/KatelyaTV",
+ "number": 6,
+ "message": "Rebrand the project from MoonTV to KatelyaTV, including code and data migration, to establish it as a derivative project.\n\nThis PR updates UI text, default configurations, and internal keys/symbols. Backward compatibility for user data (play records, favorites, search history, cache) stored in localStorage and Upstash Redis is implemented to ensure a smooth transition for existing users. Version check URLs are also made configurable while retaining upstream MoonTV as a fallback.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-555efa3d-eddb-47dc-a795-735f30252642\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-555efa3d-eddb-47dc-a795-735f30252642\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Backward compatibility for user data (play records, favorites, search history, cache) stored in localStorage and Upstash Redis is implemented to ensure a smooth transition for existing users."
+  }
+ ],
+ "order": "c2ffff926f4025ede3c732437f087562652e83d0b65d4d644334d06d91c98350"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "6da8cb031a",
+ "url": "https://github.com/hove-io/navitia/pull/4450",
+ "repo": "hove-io/navitia",
+ "number": 4450,
+ "message": "# feat(places): add poi_types[] filter (Option B) with strict validation and Bragi forwarding\n\n## Summary\n\nImplements autocomplete filtering by POI types on the `/v1/places` endpoint. This adds a new `poi_types[]` parameter that allows filtering returned POIs by their type identifiers (e.g., `poi_type:amenity:bicycle_rental`).\n\n**Key Implementation Details:**\n- **Option B (Strict)**: `poi_types[]` requires `type[]=poi` to be present, otherwise returns HTTP 400\n- **Bragi Integration**: Parameter is forwarded as-is to Bragi, leveraging existing POI filtering capabilities in mimirsbrunn\n- **Kraken Compatibility**: Parameter is ignored for Kraken-backed autocomplete (documented behavior)\n\n**Files Changed:**\n- `Places.py`: Added parameter parsing and strict validation logic\n- `geocodejson.py`: Added parameter forwarding to Bragi client  \n- `autocomplete.md`: Added documentation for the new parameter\n- Added unit tests for both validation and parameter forwarding\n\n## Review & Testing Checklist for Human\n\n- [ ] **End-to-end testing**: Verify the feature works with a real Bragi instance by testing queries like `/v1/places?q=bike&type[]=poi&poi_types[]=poi_type:amenity:bicycle_rental&_autocomplete=bragi`\n- [ ] **Validation testing**: Confirm that requests with `poi_types[]` but without `type[]=poi` return HTTP 400 with the expected error message\n- [ ] **Parameter forwarding**: Test that valid requests properly forward multiple `poi_types[]` values to Bragi and return filtered results\n- [ ] **Edge cases**: Test behavior with empty `poi_types[]` arrays and invalid POI type values\n- [ ] **Documentation accuracy**: Verify the updated documentation matches the actual implementation behavior\n\n**Recommended Test Plan**: Set up a local Navitia instance with Bragi backend, then test both valid filtering requests and invalid requests that should return 400 errors.\n\n---\n\n### Diagram\n\n```mermaid\n%%{ init : { \"theme\" : \"default\" }}%%\ngraph TD\n    Client[\"Client Request<br/>/v1/places?poi_types[]=...\"]\n    Places[\"Places.py<br/>Endpoint Handler\"]:::major-edit\n    GeocodeJson[\"geocodejson.py<br/>Bragi Client\"]:::major-edit\n    Bragi[\"Bragi/Mimirsbrunn<br/>Autocomplete Service\"]:::context\n    Docs[\"autocomplete.md<br/>Documentation\"]:::minor-edit\n    Tests1[\"places_tests.py<br/>Validation Tests\"]:::minor-edit  \n    Tests2[\"geocodejson_test.py<br/>Forwarding Tests\"]:::minor-edit\n\n    Client --> Places\n    Places -->|\"Validates poi_types[]<br/>requires type[]=poi\"| GeocodeJson\n    Places -->|\"HTTP 400 if invalid\"| Client\n    GeocodeJson -->|\"Forwards poi_types[]<br/>parameters\"| Bragi\n    Bragi --> GeocodeJson\n    GeocodeJson --> Places\n    Places --> Client\n\n    subgraph Legend\n        L1[\"Major Edit\"]:::major-edit\n        L2[\"Minor Edit\"]:::minor-edit\n        L3[\"Context/No Edit\"]:::context\n    end\n\n    classDef major-edit fill:#90EE90\n    classDef minor-edit fill:#ADD8E6  \n    classDef context fill:#FFFFFF\n```\n\n### Notes\n\n- **Session Info**: Requested by Wassim (@wassimbenaissa) - [Devin Session](https://app.devin.ai/sessions/75bacc64f4d5488689509684884eb0cc)\n- **No Mimirsbrunn Changes**: This feature leverages existing POI filtering capabilities in Bragi's DSL, so no changes to mimirsbrunn were required\n- **Backward Compatibility**: This is a new optional parameter, so existing API clients are unaffected\n- **Testing Limitation**: Unit tests were added but end-to-end testing with a live Bragi instance was not performed during development",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `autocomplete.md`: Added documentation for the new parameter"
+  },
+  {
+   "n": 2,
+   "text": "**Recommended Test Plan**: Set up a local Navitia instance with Bragi backend, then test both valid filtering requests and invalid requests that should return 400 errors."
+  },
+  {
+   "n": 3,
+   "text": "- **Backward Compatibility**: This is a new optional parameter, so existing API clients are unaffected"
+  }
+ ],
+ "order": "109f189307c00e2c213a9be3857c844482b9ab2c67da5501dc20199e074e9a98"
+}

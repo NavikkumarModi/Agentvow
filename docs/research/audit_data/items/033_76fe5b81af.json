@@ -1,0 +1,18 @@
+{
+ "id": "76fe5b81af",
+ "url": "https://github.com/antiwork/flexile/pull/346",
+ "repo": "antiwork/flexile",
+ "number": 346,
+ "message": "# Multiple Pay Rates Support for Contractors\n\nThis PR refactors the pay rate system to support multiple pay rates per contractor by:\n\n## Database Changes\n- \u2705 Created new `pay_rates` table with `amount`, `currency`, `type` fields\n- \u2705 Removed `payRateType`, `payRateInSubunits`, `payRateCurrency` from `company_contractors` table\n- \u2705 Added proper Rails migration with data migration from old to new structure\n- \u2705 Fixed migration timestamp to run after `company_contractors` table creation\n\n## Backend Changes\n- \u2705 Created `PayRate` model with proper validations and associations\n- \u2705 Updated `CompanyWorker` model to use `has_many :pay_rates` relationship\n- \u2705 Updated all presenters, services, and controllers to handle multiple pay rates\n- \u2705 Updated factory and test files to work with new pay rates structure\n- \u2705 Maintained backward compatibility by using first pay rate for legacy fields\n\n## Frontend Changes\n- \u2705 Updated Drizzle schema with new `payRates` table and relationships\n- \u2705 Refactored `FormFields` component to support dynamic multiple pay rate inputs\n- \u2705 Added \"Add pay rate\" and \"Remove\" buttons for managing multiple rates\n- \u2705 Updated contractor creation and editing forms to handle pay rates array\n- \u2705 Updated tRPC routes to create/update multiple pay rates\n- \u2705 Maintained existing UI patterns and validation\n\n## Key Features\n- Contractors can now have multiple pay rates (e.g., \"$200/hour\", \"$1000/month\", \"$500/video\")\n- Dynamic UI allows adding/removing pay rate entries\n- Proper form validation ensures at least one pay rate is required\n- Backward compatibility maintained for existing contractors\n- Type-safe implementation with proper TypeScript support\n\n## Testing Notes\n\u26a0\ufe0f **Local testing was blocked by environment issues:**\n- Rails server failed due to unrelated enum issue in Invoice model\n- Frontend dev server has Vercel configuration problems\n- Migration timestamp was corrected to run after company_contractors table\n\nThe implementation follows existing codebase patterns and maintains all functionality while adding the requested multiple pay rates feature.\n\n**Link to Devin run:** https://app.devin.ai/sessions/4534af4f52b04fa9b9e02874992dbd5b\n\n**Requested by:** sahil.lavingia@gmail.com\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 Maintained backward compatibility by using first pay rate for legacy fields"
+  },
+  {
+   "n": 2,
+   "text": "- Backward compatibility maintained for existing contractors"
+  }
+ ],
+ "order": "1a1bca3b848cb39bae1a0b8454dd193e95d60544ba8a746d85a5884567da9964"
+}

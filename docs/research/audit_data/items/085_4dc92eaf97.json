@@ -1,0 +1,22 @@
+{
+ "id": "4dc92eaf97",
+ "url": "https://github.com/AstrBotDevs/AstrBot/pull/2465",
+ "repo": "AstrBotDevs/AstrBot",
+ "number": 2465,
+ "message": "This PR implements a better topic isolation strategy for Telegram groups with multiple topics, allowing the bot to share conversations across topics while maintaining topic context awareness.\n\n## Problem\n\nPreviously, each Telegram topic created its own separate session and conversation:\n- Bot in topic A couldn't see messages from topic B\n- Cross-topic conversations were impossible\n- Users referencing discussions from other topics couldn't be understood by the bot\n\n## Solution\n\nThe new implementation shares conversations across all topics in the same group while providing topic context to the LLM:\n\n### Key Changes\n\n1. **Shared Session Management**: All topics in a group now use the base `group_id` as `session_id` instead of `group_id#topic_id`, enabling shared conversations.\n\n2. **Topic Context Injection**: When making LLM requests, topic information is automatically added to the system prompt:\n   ```\n   [Context: This message is from Telegram topic #42 in group -123456789]\n   ```\n\n3. **Preserved Message Routing**: The `group_id` still includes topic information (`group_id#topic_id`) to ensure messages are sent to the correct topic.\n\n## Benefits\n\n- **Cross-Topic Awareness**: Bot can reference conversations from any topic in the group\n- **Topic Context**: LLM knows which topic the current message originated from\n- **Better Understanding**: Handles cases where users chat across topics\n- **Backward Compatible**: No breaking changes to existing functionality\n\n## Implementation Details\n\n- Modified `tg_adapter.py` to use base group ID for session management\n- Added topic information storage as extra event data\n- Enhanced LLM request decorator to include topic context\n- Fixed message thread ID usage in `tg_event.py`\n\nThe implementation is minimal and surgical, affecting only the necessary components while maintaining full compatibility with existing telegram functionality.\n\nFixes #978.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/AstrBotDevs/AstrBot/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward Compatible**: No breaking changes to existing functionality"
+  },
+  {
+   "n": 2,
+   "text": "- Modified `tg_adapter.py` to use base group ID for session management"
+  },
+  {
+   "n": 3,
+   "text": "- Fixed message thread ID usage in `tg_event.py`"
+  }
+ ],
+ "order": "55735e2904d8e524f985c1f5982659059c7539dda3fe2fc4fea4539cb84e7e15"
+}

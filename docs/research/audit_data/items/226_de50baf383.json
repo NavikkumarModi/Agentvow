@@ -1,0 +1,14 @@
+{
+ "id": "de50baf383",
+ "url": "https://github.com/1mcp-app/agent/pull/101",
+ "repo": "1mcp-app/agent",
+ "number": 101,
+ "message": "## Summary\n\nThis PR enhances the MCP agent's tag filtering capabilities with advanced boolean expressions and improves middleware handling:\n\n\u2022 **Advanced Tag Filtering**: Introduces `--tag-filter` parameter supporting boolean expressions like `(web,api)+prod-test`\n\u2022 **Multiple Syntaxes**: Supports compact, natural language, and symbol-based filtering syntaxes  \n\u2022 **Middleware Enhancement**: Improves tag extraction and validation in HTTP middleware\n\u2022 **Documentation**: Comprehensive updates including character handling and deprecation notices\n\u2022 **Backward Compatibility**: Maintains existing `--tags` parameter while marking as deprecated\n\n## Key Features\n\n- Boolean expression parsing with AND (`+`), OR (`,`), and grouping `()`\n- Natural language syntax support (e.g., \"web AND api OR database\")\n- Enhanced tag character validation and extraction\n- Improved error handling and user feedback\n- Comprehensive test coverage for new filtering logic\n\n## Migration Path\n\nThe existing `--tags` parameter continues to work but is now deprecated in favor of the more powerful `--tag-filter` option.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "\u2022 **Backward Compatibility**: Maintains existing `--tags` parameter while marking as deprecated"
+  }
+ ],
+ "order": "ea2efa8c5a423f04a75870617243d28f642888be885efcdc33e9409c4d8266d4"
+}

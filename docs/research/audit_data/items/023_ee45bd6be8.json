@@ -1,0 +1,22 @@
+{
+ "id": "ee45bd6be8",
+ "url": "https://github.com/sugyan/claude-code-webui/pull/54",
+ "repo": "sugyan/claude-code-webui",
+ "number": 54,
+ "message": "## Type of Change\n\n- [ ] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)\n- [x] \u2728 `feature` - New feature (non-breaking change which adds functionality)\n- [ ] \ud83d\udca5 `breaking` - Breaking change\n- [ ] \ud83d\udcda `documentation` - Documentation update\n- [ ] \u26a1 `performance` - Performance improvement\n- [ ] \ud83d\udd28 `refactor` - Code refactoring\n- [ ] \ud83e\uddea `test` - Adding or updating tests\n- [ ] \ud83d\udd27 `chore` - Maintenance, dependencies, tooling\n\n## Summary\n\nThis PR implements a comprehensive permission handling system that addresses issue #53. When Claude Code tools require permissions, the system now:\n\n- \u2728 **Auto-detects permission errors** from tool_result with `is_error: true`\n- \ud83d\uded1 **Automatically aborts execution** when permission errors occur  \n- \ud83d\udcac **Shows intuitive permission dialog** with three clear options\n- \ud83d\udd04 **Maintains session continuity** when resuming after permission grant\n- \ud83d\udcbe **Persists permissions** throughout the chat session\n\n## Key Features\n\n### Permission Dialog Options\n1. **\"Yes\"** - Grant permission once for this request\n2. **\"Yes, and don't ask again for [Tool]\"** - Grant permanent permission for tool pattern\n3. **\"No, and tell Claude what to do differently\"** - Deny with optional feedback\n\n### Tool Pattern System\n- Uses pattern-based permissions like `Bash(ls:*)` for granular control\n- Supports wildcards for file-based tools like `Read(*)`\n- Permanent permissions apply to entire tool categories\n\n### User Experience\n- **Instant feedback**: Permission errors are caught immediately \n- **No interruption**: Seamless flow from error to resolution\n- **Clear messaging**: Users understand exactly what permissions are requested\n- **Responsive design**: Works across desktop and mobile\n\n## Technical Implementation\n\n### Frontend Changes\n- **PermissionDialog.tsx**: New modal component with 3-option interface\n- **App.tsx**: Permission state management and error handling integration\n- **useClaudeStreaming.ts**: Enhanced to detect permission errors and cache tool context\n- **types.ts**: Updated ChatRequest interface to include allowedTools\n\n### Backend Changes  \n- **main.ts**: Updated to pass allowedTools to Claude Code SDK\n- **ChatRequest**: Extended to include optional allowedTools array\n\n### Architecture\n- **Error Detection**: Monitors streaming responses for permission-related tool_result errors\n- **Context Preservation**: Caches tool_use information to match with tool_result errors\n- **State Management**: Tracks allowed tools throughout chat session\n- **SDK Integration**: Leverages Claude Code SDK's built-in allowedTools support\n\n## Test Plan\n\n- [ ] Permission dialog appears when tool requires permissions\n- [ ] \"Yes\" option grants one-time permission and continues execution\n- [ ] \"Yes, don't ask again\" grants permanent permission for tool pattern\n- [ ] \"No\" option allows providing alternative instructions\n- [ ] Permissions persist throughout chat session\n- [ ] Multiple permission requests are handled correctly\n- [ ] UI works across different screen sizes\n- [ ] Error handling works for various tool types (Bash, Read, Edit, etc.)\n\n## User Flow Example\n\n1. User: \"list files with ls -l\"\n2. Claude attempts to use Bash tool\n3. Permission error detected \u2192 execution auto-aborted\n4. Permission dialog shows: \"Claude wants to use Bash(ls:*) tool\"\n5. User selects \"Yes, and don't ask again for Bash\"\n6. Execution resumes with permission granted\n7. Future Bash commands work without prompts\n\n## Breaking Changes\nNone - this is a pure enhancement that's backward compatible.\n\n## Related Issues\nFixes #53\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] \u2728 `feature` - New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 3,
+   "text": "None - this is a pure enhancement that's backward compatible."
+  }
+ ],
+ "order": "1335ed9b8731229afb353500be7646d5359ca62f94f31cd56be6ea4ce6ec210e"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "b90da658ea",
+ "url": "https://github.com/AgentOps-AI/agentops/pull/1265",
+ "repo": "AgentOps-AI/agentops",
+ "number": 1265,
+ "message": "## \ud83d\udce5 Pull Request\n\n**\ud83d\udcd8 Description**\n\nFixes #1262 - Resolves `TypeError: 'async for' requires an object with __aiter__ method, got coroutine` when using Agno v2 async streaming with AgentOps instrumentation.\n\n**Root Cause**: When `Team.arun(stream=True)` is called, it returns an async generator directly. The previous wrapper was defined as `async def`, which caused Python to wrap the returned async generator in a coroutine, breaking `async for` loops.\n\n**Solution**:\n1. Added `AsyncStreamingResultWrapper` class that properly implements the async iteration protocol (`__aiter__` and `__anext__`)\n2. Changed `create_team_async_wrapper` from `async def wrapper` to `def wrapper` - this allows async generators to be returned directly without coroutine wrapping\n3. Added `inspect.isasyncgen()` checks to detect and properly wrap async generators\n4. Updated `create_streaming_agent_async_wrapper` to check for `__aiter__` before `__iter__` for correct async detection\n\n**\ud83e\uddea Testing**\n\nCreated test script `examples/agno/test_async_streaming_team.py` that reproduces the original issue:\n- \u2705 Async iteration successfully started (no more coroutine error)\n- \u2705 Received `RunStartedEvent` confirming async streaming works\n- \u2705 Linting passed: `ruff check` and `ruff format`\n- \u26a0\ufe0f Hit OpenAI quota during full test (unrelated to fix)\n\n**\ud83d\udd0d Human Review Checklist**\n\n**Critical items:**\n1. Verify `inspect.isasyncgen(result)` is the correct check for detecting async generators at runtime\n2. Confirm the synchronous wrapper pattern (non-async function returning async generator) is correct\n3. Review cleanup logic in `AsyncStreamingResultWrapper.__anext__` - does span cleanup happen correctly in all cases?\n4. Check if other async wrappers (e.g., `create_workflow_async_wrapper`) need similar fixes\n\n**Additional considerations:**\n5. Verify context attachment/detachment is correct and doesn't leak contexts\n6. Consider if this pattern change should have automated tests added\n\n---\n\n**Session Info**: \n- Devin session: https://app.devin.ai/sessions/bbe4d6d6f4954f82ba3ed1ae15ce6667\n- Requested by: Alex (meta.alex.r@gmail.com) / @areibman",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 Linting passed: `ruff check` and `ruff format`"
+  }
+ ],
+ "order": "b0de291f8cfaf36abee142dc76680a0f402beaa27d57e82ba4d7566b9a8419ae"
+}

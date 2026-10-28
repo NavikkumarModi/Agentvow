@@ -1,0 +1,18 @@
+{
+ "id": "2d5d5179f7",
+ "url": "https://github.com/thomhurst/TUnit/pull/3060",
+ "repo": "thomhurst/TUnit",
+ "number": 3060,
+ "message": "- [x] Initial plan and analysis of tuple compilation issue  \n- [x] Enhanced IsConcreteType() filtering logic to detect open generic types\n- [x] Added defensive string-based safety checks for type parameter detection  \n- [x] Fixed CS0246 compilation errors with tuple types in AotTupleProcessorGenerator\n- [x] Resolve merge conflict by updating .NET SDK to 9.0.305 to match main branch\n- [x] Verified fix works with .NET 9 and source generator tests pass\n\n## Completed Work\n\nThe AotTupleProcessorGenerator was generating invalid C# code when encountering tuple types with unresolved generic type parameters. The fix includes:\n\n1. **Enhanced type filtering**: Added checks for `TypeKind.Error`, unbound generic types, and recursive validation of type arguments\n2. **Defensive string-based checks**: Added safety checks to prevent any remaining cases where type parameter names slip through  \n3. **Conflict resolution**: Updated global.json to use .NET SDK 9.0.305 to resolve merge conflicts with main branch\n\nThe fix ensures that generic tuple types like `IEnumerable<(T, U)>` are properly filtered out while concrete tuple types like `(int, string)` generate valid code. All source generator tests pass on .NET 9.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Verified fix works with .NET 9 and source generator tests pass"
+  },
+  {
+   "n": 2,
+   "text": "All source generator tests pass on .NET 9."
+  }
+ ],
+ "order": "cf5669e87f3bda658c0ce2a4e9be5040720570951b89f3609273170c423287ce"
+}

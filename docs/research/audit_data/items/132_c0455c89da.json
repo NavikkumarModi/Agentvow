@@ -1,0 +1,18 @@
+{
+ "id": "c0455c89da",
+ "url": "https://github.com/Josverl/micropython-stubs/pull/841",
+ "repo": "Josverl/micropython-stubs",
+ "number": 841,
+ "message": "## Summary\n\nThis PR adds a new GitHub Actions workflow that runs weekly to automatically update documentation and generated JSON files in the repository.\n\n## Changes\n\nAdded `.github/workflows/weekly_automation.yml` which:\n\n- **Runs weekly** on Sundays at 02:00 UTC via cron schedule\n- **Can be manually triggered** via workflow_dispatch for on-demand execution\n- **Executes three automation tasks** in sequence:\n  1. `python update_all_modules.py` - Generates `all_modules.json` containing a list of all modules across all MicroPython boards and ports\n  2. `python docs/update_docs.py` - Updates firmware documentation files (`docs/firmware_flat.md` and `docs/firmware_grp.md`)\n  3. `python data/package_db_to_json.py` - Exports package database to `data/stub-packages.json`\n- **Commits and pushes changes** automatically using the existing `.github/actions/commit` action\n\n## Implementation Details\n\nThe workflow follows existing patterns from `update_docs.yml` and `update_stubs.yml`:\n- Uses `actions/checkout@v4` for repository checkout\n- Sets up Python with `actions/setup-python@v5`\n- Installs dependencies via `uv` for fast package installation\n- Installs required Python packages: `jsons`, `packaging`, `tomli`, and the `docs` extra from `pyproject.toml`\n- Includes clear comments and step names for maintainability\n\n## Benefits\n\n- Keeps documentation and generated files up-to-date automatically\n- Reduces manual maintenance burden\n- Ensures consistency across documentation and package metadata\n- Provides manual trigger option for immediate updates when needed\n\nCloses #<issue_number>\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> \n> ----\n> \n> *This section details on the original issue you should resolve*\n> \n> <issue_title>updated automation for documentation and .json</issue_title>\n> <issue_description>Once a week  run: a GitHub action to\n> \n> - run `python update_all_modules.py`\n> - docs/update docs \n> - `data/package_db_to_json.py`\n> \n> And check in the updates </issue_description>\n> \n> ## Comments on the Issue (you are @copilot in this section)\n> \n> <comments>\n> </comments>\n> \n\n\n</details>\n\nFixes Josverl/micropython-stubs#820\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added `.github/workflows/weekly_automation.yml` which:"
+  },
+  {
+   "n": 2,
+   "text": "> <issue_title>updated automation for documentation and .json</issue_title>"
+  }
+ ],
+ "order": "95170811a9bbef27637c23dfae0d2432a9d0ba8410446d942c06351152fe9727"
+}

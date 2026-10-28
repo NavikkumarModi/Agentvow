@@ -1,0 +1,14 @@
+{
+ "id": "0e2e4e1117",
+ "url": "https://github.com/reactivando/validations-br/pull/45",
+ "repo": "reactivando/validations-br",
+ "number": 45,
+ "message": "This commit updates all dependencies to their latest versions, migrates the project from yarn to pnpm, and updates the Node.js version to 22. It also includes the necessary code and configuration changes to fix all breaking changes and ensure that all tests pass.\n\nThe ESLint configuration has been migrated to the new flat config format, and the GitHub Actions workflow has been updated to use pnpm and the new Node.js version.\n\nA new GitHub Actions workflow has been added to automate publishing to npm when a new tag is pushed.\n\n---\n*PR created automatically by Jules for task [3921662558133784802](https://jules.google.com/task/3921662558133784802)*",
+ "statements": [
+  {
+   "n": 1,
+   "text": "It also includes the necessary code and configuration changes to fix all breaking changes and ensure that all tests pass."
+  }
+ ],
+ "order": "6db74c0c0109f69359e8c62c5cfbdb1c4c0bb0c9df1566044f902e31e8b401ac"
+}

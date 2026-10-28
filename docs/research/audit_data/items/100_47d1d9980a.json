@@ -1,0 +1,14 @@
+{
+ "id": "47d1d9980a",
+ "url": "https://github.com/box/box-ui-elements/pull/3841",
+ "repo": "box/box-ui-elements",
+ "number": 3841,
+ "message": "# Description\nThis PR adds an `onSelection` callback to the ContentUploader component to allow developers to control file selection before upload begins. This implements the suggestion from issue #3839.\n\n## Changes\n- Added `onSelection` prop to ContentUploader component\n- Added TypeScript and Flow type definitions\n- Implemented file selection validation in UploadInput component\n- Added comprehensive test coverage for the new callback\n\n## Usage\n```jsx\n<ContentUploader\n  onSelection={(files) => {\n    // Return false to prevent upload\n    // Return true to allow upload to proceed\n    return files.length <= 5; // Example: Only allow up to 5 files\n  }}\n  {...otherProps}\n/>\n```\n\n## Testing\n- Added unit tests for UploadInput component\n- Verified all tests pass\n- Ran lint checks via precommit hooks\n\nLink to Devin run: https://app.devin.ai/sessions/acbecd8da4154ad8aba8d8d81d7bd661\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Verified all tests pass"
+  }
+ ],
+ "order": "6b3472b945dbb1d1809a25885ef3d5bdc9f5e7d26419af53c97994ae17168b56"
+}

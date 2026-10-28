@@ -1,0 +1,22 @@
+{
+ "id": "6a7ab1bc65",
+ "url": "https://github.com/crewAIInc/crewAI/pull/3536",
+ "repo": "crewAIInc/crewAI",
+ "number": 3536,
+ "message": "# feat: Add prompt caching support for AWS Bedrock and Anthropic models\n\n## Summary\n\nThis PR implements prompt caching support for CrewAI to reduce costs when using `kickoff_for_each()` and `kickoff_async()` with repetitive context. The implementation leverages LiteLLM's existing prompt caching capabilities and adds two new parameters to the `LLM` class:\n\n- `enable_prompt_caching: bool = False` - Enables prompt caching (disabled by default for backward compatibility)\n- `cache_control: dict[str, Any] | None = None` - Custom cache control parameters (defaults to `{\"type\": \"ephemeral\"}`)\n\n**Key implementation details:**\n- **Provider support**: OpenAI (GPT-4o), Anthropic (Claude), AWS Bedrock, and Deepseek models\n- **Anthropic-specific handling**: Adds `cache_control` to the last system message content as required by Anthropic's API\n- **Backward compatibility**: Feature is disabled by default, existing code continues to work unchanged\n- **Cost optimization**: Particularly beneficial for workflows with repetitive agent context in `kickoff_for_each()` scenarios\n\n## Review & Testing Checklist for Human\n\n**\u26a0\ufe0f 4 critical items requiring human verification:**\n\n- [ ] **Integration testing with real API keys** - Test the examples with actual Anthropic (`ANTHROPIC_API_KEY`), OpenAI (`OPENAI_API_KEY`), and Bedrock credentials to verify end-to-end functionality. I couldn't complete this due to missing API keys.\n  \n- [ ] **Backward compatibility verification** - Run existing CrewAI workflows (especially with Anthropic models) to ensure the modified message formatting doesn't break existing functionality.\n- [ ] **Message formatting logic review** - Carefully examine the `_format_messages_for_provider` method changes, particularly the interaction between Anthropic's placeholder user message logic and the new cache control formatting.\n- [ ] **Cost optimization validation** - Test `kickoff_for_each()` with prompt caching enabled on a real workflow to verify actual cost savings and performance benefits.\n\n**Recommended test plan:**\n1. Run `python examples/prompt_caching_example.py` with real API keys\n2. Test existing Anthropic-based crews to ensure no regressions\n3. Verify cache control appears correctly in API calls (check LiteLLM debug logs)\n4. Test edge cases: multiple system messages, list-format content, unsupported models\n\n### Notes\n\n- **Session details**: Requested by Jo\u00e3o (joao@crewai.com) via Slack\n- **Session URL**: https://app.devin.ai/sessions/908459ecad3046dfadc03c5ad0666380\n- **Type annotations**: Updated many type hints from `Optional[X]` to `X | None` style - these are incidental changes that came with the implementation\n- **Provider detection**: Uses string prefix matching to detect model types - may need refinement for edge cases\n- **LiteLLM dependency**: Relies on LiteLLM's prompt caching implementation, so any upstream changes could affect functionality\n\nThe implementation addresses issue #3535 and follows CrewAI's established patterns for LLM parameter handling.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `enable_prompt_caching: bool = False` - Enables prompt caching (disabled by default for backward compatibility)"
+  },
+  {
+   "n": 2,
+   "text": "- **Backward compatibility**: Feature is disabled by default, existing code continues to work unchanged"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] **Backward compatibility verification** - Run existing CrewAI workflows (especially with Anthropic models) to ensure the modified message formatting doesn't break existing functionality."
+  }
+ ],
+ "order": "868116cc2c5bceea36295cd1e52bf197589d3de7762c50a1e9102e1841185245"
+}

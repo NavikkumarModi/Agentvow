@@ -1,0 +1,14 @@
+{
+ "id": "bf81fd050c",
+ "url": "https://github.com/hydro-project/hydro/pull/2005",
+ "repo": "hydro-project/hydro",
+ "number": 2005,
+ "message": "## Add dockable Style Tuner panel to interactively adjust visual styles\n\nCreating a dockable UI component that lets users interactively change key visual properties (nodes/edges/containers) and immediately see the changes in the renderer.\n\n### Completed:\n- [x] Analyze current StyleTunerPanel implementation - \u2705 Already exists with all controls\n- [x] Analyze current FlowGraph and edge rendering - \u2705 Edge styles work, but arrowhead color is hardcoded \n- [x] Identify issue: ReactFlowBridge hardcodes markerEnd.color to '#999' instead of using edgeColor\n- [x] Add tooltips/labels to StyleTunerPanel for better UX\n- [x] Implement setEdgeAppearance API on ReactFlowConverter/ReactFlowBridge \n- [x] Wire through edge arrowhead color in FlowGraph when edgeColor changes\n- [x] Add simple tests for edge style selection and marker color\n- [x] Update documentation with Style Tuner usage\n\n### Remaining:\n- [ ] Test the UI changes manually and take screenshots to verify functionality\n- [ ] Validate that edge arrowhead colors now match edge colors in the live UI\n\n### Key Changes Made:\n\n1. **StyleTunerPanel UX improvements**: Added tooltips and labels for all controls to improve usability\n2. **EdgeAppearance API**: Added `setEdgeAppearance({ color })` method to ReactFlowBridge and ReactFlowConverter\n3. **FlowGraph integration**: Added useEffect to call `converter.setEdgeAppearance()` when `config.edgeColor` changes\n4. **Arrowhead color sync**: Modified ReactFlowBridge to use `this.edgeAppearance.color || '#999'` for markerEnd color\n5. **Tests**: Added comprehensive tests for edge style selection and marker color functionality\n6. **Documentation**: Added Style Tuner usage section to README\n\nThe key fix is that edge arrowheads now use the same color as the edge lines instead of being hardcoded to gray (#999).\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Documentation**: Added Style Tuner usage section to README"
+  }
+ ],
+ "order": "3a563b449d3f87f5ba03b464cfb5fe0d39207c70bc74ca08f625630b808e93a7"
+}

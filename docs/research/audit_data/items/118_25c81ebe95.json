@@ -1,0 +1,18 @@
+{
+ "id": "25c81ebe95",
+ "url": "https://github.com/oven-sh/bun/pull/22491",
+ "repo": "oven-sh/bun",
+ "number": 22491,
+ "message": "## Summary\nFixes #22483 - Adds Redis 5 compatibility by implementing a RESP2 fallback when the HELLO command is not supported.\n\n## Problem\nRedis 5 servers don't support the `HELLO` command (introduced in Redis 6 for RESP3 protocol negotiation). When Bun's Redis client tries to connect to Redis 5, it fails with:\n```\nERR unknown command `HELLO`\n```\n\n## Solution\nImplemented a graceful fallback mechanism that:\n1. Attempts `HELLO 3` for RESP3 protocol (Redis 6+)\n2. If it fails with \"unknown command\", falls back to RESP2 protocol\n3. Uses traditional `AUTH` command for authentication\n4. Continues working with all Redis operations\n\nThis approach matches how other popular Redis clients (ioredis, node-redis) handle backward compatibility.\n\n## Changes\n- **`src/valkey/valkey.zig`**: \n  - Added `is_using_resp2_fallback` flag to track when using RESP2\n  - Modified `handleHelloResponse` to detect \"unknown command\" errors\n  - Added `authenticateWithoutHello` function for RESP2-style authentication\n  - Updated `handleResponse` to handle AUTH responses in RESP2 mode\n\n- **Tests**: Added comprehensive Redis 5 compatibility tests\n  - `test/js/valkey/valkey-redis5.test.ts` - Full integration test\n  - `test/js/valkey/docker-redis5/` - Docker setup for Redis 5 testing\n\n## Testing\nThe test suite verifies:\n- \u2705 Redis 5 compatibility (RESP2 fallback)\n- \u2705 Redis 6+ still works with RESP3\n- \u2705 All Redis operations work (SET/GET, Hashes, Lists, Sets, Transactions, etc.)\n- \u2705 Authentication works with both protocols\n\n### How to test locally\n```bash\n# Start Redis 5\ndocker run -d --name redis5 -p 6379:6379 redis:5-alpine\n\n# Run tests\nbun test test/js/valkey/valkey-redis5.test.ts\n\n# Cleanup\ndocker rm -f redis5\n```\n\n## Compatibility\n- \u2705 **Redis 5**: Uses RESP2 protocol (fallback)\n- \u2705 **Redis 6+**: Uses RESP3 protocol (via HELLO)\n- \u2705 **No breaking changes** for existing users\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This approach matches how other popular Redis clients (ioredis, node-redis) handle backward compatibility."
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 **No breaking changes** for existing users"
+  }
+ ],
+ "order": "85aabbab23d791e30dad97acef86ae9b9938599b3345b580bcc183303666a904"
+}

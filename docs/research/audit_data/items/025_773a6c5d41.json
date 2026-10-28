@@ -1,0 +1,26 @@
+{
+ "id": "773a6c5d41",
+ "url": "https://github.com/airbytehq/PyAirbyte/pull/695",
+ "repo": "airbytehq/PyAirbyte",
+ "number": 695,
+ "message": "## Notes from AJ (@aaronsteers)\r\n\r\nMost of the implementation appears read to go when the below features is added.\r\n\r\n## ~~\ud83d\udfe5 Blocked~~\r\n\r\nAs of now, it appears UPDATE/MERGE are not yet supported:\r\n\r\n- https://github.com/duckdb/ducklake/issues/66\r\n\r\nWorkaround found: First DELETE, then INSERT.\r\n\r\n- https://github.com/duckdb/ducklake/discussions/95\r\n\r\n# Add DuckLakeCache implementation\r\n\r\n## Summary\r\nThis PR implements a new `DuckLakeCache` as a subclass of `DuckDBCache` to support the DuckLake table format in PyAirbyte. The implementation follows the established patterns from MotherDuck cache and provides minimal configuration requirements.\r\n\r\n## Changes\r\n- **New cache implementation**: `airbyte/caches/ducklake.py`\r\n  - `DuckLakeConfig` class extending `DuckDBConfig` with DuckLake-specific fields\r\n  - `DuckLakeCache` class extending `DuckDBCache` with minimal configuration\r\n  - Sensible defaults using existing cache_dir pattern\r\n- **Module exports**: Updated `airbyte/caches/__init__.py` to export new classes\r\n- **Example script**: Added `examples/run_faker_to_ducklake.py` demonstrating usage\r\n\r\n## Configuration Parameters\r\n- `metadata_connection_string`: Connection string for DuckLake metadata database (defaults to `sqlite:metadata.db`)\r\n- `data_path`: Local directory for Parquet data files (defaults to `data` subdirectory)\r\n- `catalog_name`: Name for attached DuckLake catalog (defaults to `ducklake_catalog`)\r\n- `storage_credentials`: Optional dict for storage credentials (defaults to None)\r\n\r\n## Key Features\r\n- **Minimal configuration**: Only `catalog_name` required, all other fields have sensible defaults\r\n- **Cache directory integration**: Uses existing `.cache` directory pattern for default paths\r\n- **DuckDB compatibility**: Maintains compatibility with existing DuckDB destination pairing\r\n- **Local storage focus**: Uses SQLite for metadata and local directories for data storage\r\n\r\n## Usage Example\r\n```python\r\nfrom airbyte.caches import DuckLakeCache\r\n\r\n# Minimal configuration - only catalog_name required\r\ncache = DuckLakeCache(catalog_name=\"my_ducklake_catalog\")\r\n\r\n# Full configuration example\r\ncache = DuckLakeCache(\r\n    metadata_connection_string=\"sqlite:./metadata.db\",\r\n    data_path=\"./ducklake_data/\",\r\n    catalog_name=\"my_catalog\",\r\n    schema_name=\"myschema\",\r\n)\r\n```\r\n\r\n## Testing\r\n- \u2705 Example script runs successfully with minimal configuration\r\n- \u2705 All linting and formatting checks pass (`ruff format`, `ruff check`)\r\n- \u2705 Import verification test confirms proper defaults\r\n- \u2705 Processes 20,100 records across 3 streams in example run\r\n\r\n## Implementation Notes\r\n- Follows the same inheritance pattern as MotherDuckCache\r\n- Uses standard DuckDBSqlProcessor (no custom processor needed initially)\r\n- Provides foundation for future DuckLake ATTACH statement implementation\r\n- Maintains backward compatibility with existing cache infrastructure\r\n\r\n## Link to Devin run\r\nhttps://app.devin.ai/sessions/1a262eb5a472438ba8f04088ad0b91bb\r\n\r\n## Requested by\r\nAJ Steers (aj@airbyte.io)\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Module exports**: Updated `airbyte/caches/__init__.py` to export new classes"
+  },
+  {
+   "n": 2,
+   "text": "- **Example script**: Added `examples/run_faker_to_ducklake.py` demonstrating usage"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 All linting and formatting checks pass (`ruff format`, `ruff check`)"
+  },
+  {
+   "n": 4,
+   "text": "- Maintains backward compatibility with existing cache infrastructure"
+  }
+ ],
+ "order": "15a2c9caa0813de0248055be19b135957ef4725b7da7b2fe3f62b1326a9d78ce"
+}

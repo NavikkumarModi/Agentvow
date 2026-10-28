@@ -1,0 +1,20 @@
+{
+ "item_id": "87305bdce1",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change modifies linter.py and rules/__init__.py (under dev/clint) to register the new rule",
+   "label": "FALSE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "The pull request's change list is empty: it contains one commit with zero file changes, so neither linter.py nor rules/__init__.py was modified in this change. PR closed, not merged. No clone needed.",
+   "evidence": [
+    "gh api pulls/17424/files returned no files; pull object shows changed_files 0, additions 0, deletions 0, commits 1, state closed, merged false",
+    "gh api compare base e096a165...head a252a435: status ahead, total_commits 1, files length 0"
+   ]
+  }
+ ],
+ "minutes_estimate": 3
+}

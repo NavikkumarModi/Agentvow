@@ -1,0 +1,14 @@
+{
+ "id": "d57e842328",
+ "url": "https://github.com/airbytehq/airbyte/pull/59155",
+ "repo": "airbytehq/airbyte",
+ "number": 59155,
+ "message": "# Change \"Next\" to \"Cloud / Next version\" in version dropdown\n\n## Description\nThis PR modifies the Docusaurus component to override the default term for the next version, changing \"Next\" to \"Cloud / Next version\" in the version dropdown.\n\n## Changes\n- Modified `docusaurus/src/theme/NavbarItem/DocsVersionDropdownNavbarItem.js` to intercept and modify the dropdown items\n- Used a wrapper component approach to replace the \"Next\" label with \"Cloud / Next version\"\n\n## Testing\n- Attempted to build locally to verify changes\n\n## Requested by\nIan Alton (@ian-at-airbyte)\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/7aece7783a0f4fec8a77ffb9e7eae487\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Modified `docusaurus/src/theme/NavbarItem/DocsVersionDropdownNavbarItem.js` to intercept and modify the dropdown items"
+  }
+ ],
+ "order": "795bb626ee28444aa83be14c8b5aff89fca74618521b288a3e66e351101b061d"
+}

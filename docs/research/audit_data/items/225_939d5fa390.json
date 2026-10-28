@@ -1,0 +1,22 @@
+{
+ "id": "939d5fa390",
+ "url": "https://github.com/onyx-dot-app/onyx/pull/3816",
+ "repo": "onyx-dot-app/onyx",
+ "number": 3816,
+ "message": "# Make SearchTool Optional but Enabled by Default for Slack Bots\n\n[x] Override Linear Check\n\n## Changes\n- Modified `handle_regular_answer.py` to respect SearchTool configuration\n  - Added check for SearchTool in persona's tools\n  - Changed search behavior to AS_NEEDED/DISABLED based on tool presence\n- Updated `slack_channel_config.py` to include SearchTool by default\n  - SearchTool remains in default tool_ids for new Slack bots\n  - Can be removed through UI if desired\n\n## Why\nThis change provides flexibility in Slack bot configuration while maintaining the default behavior. Admins can now:\n1. Keep using SearchTool (default behavior)\n2. Disable SearchTool for specific bots through the UI\n\n## Testing\n- Verified UI supports optional tool configuration\n- Confirmed backward compatibility for existing bots\n- Tested dynamic SearchTool behavior in message handling\n\n## Impact\n- Existing Slack bots: No changes (SearchTool remains enabled)\n- New Slack bots: SearchTool enabled by default but removable\n- Message handling: Respects bot's tool configuration\n\nLink to Devin run: https://app.devin.ai/sessions/37f11c36c07441f29c2438c5736fb197\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Modified `handle_regular_answer.py` to respect SearchTool configuration"
+  },
+  {
+   "n": 2,
+   "text": "- Updated `slack_channel_config.py` to include SearchTool by default"
+  },
+  {
+   "n": 3,
+   "text": "- Confirmed backward compatibility for existing bots"
+  }
+ ],
+ "order": "e9dc93c7fde33452baaeb39ef40f26a0b45c984fe824d46da40366fe6fc8f225"
+}

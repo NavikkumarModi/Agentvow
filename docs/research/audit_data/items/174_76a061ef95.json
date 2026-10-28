@@ -1,0 +1,14 @@
+{
+ "id": "76a061ef95",
+ "url": "https://github.com/aldinokemal/go-whatsapp-web-multidevice/pull/315",
+ "repo": "aldinokemal/go-whatsapp-web-multidevice",
+ "number": 315,
+ "message": "## Context\n- This PR introduces the ability to send videos by providing a URL, similar to existing image and audio URL sending features.\n- It includes backend logic for downloading and validating videos from URLs, updates to the OpenAPI specification, and a new input field in the frontend UI.\n\n## Test Results\n- All backend tests pass (`go test ./...`).\n- Manually tested sending videos using both file upload and URL input from the updated frontend UI.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All backend tests pass (`go test ./...`)."
+  }
+ ],
+ "order": "bf2d074cb4c2d2e109210458f5e5955331f46813ab6142fc13fb4f42d584c393"
+}

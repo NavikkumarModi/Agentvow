@@ -1,0 +1,14 @@
+{
+ "id": "c827721695",
+ "url": "https://github.com/Azure-Samples/azure-search-openai-demo/pull/2648",
+ "repo": "Azure-Samples/azure-search-openai-demo",
+ "number": 2648,
+ "message": "This PR fixes the failing CI in Dependabot PR #2466 by upgrading the `scheduler` package to the highest compatible version.\n\n## Problem\n\nThe original Dependabot PR attempted to upgrade `scheduler` from 0.20.2 to 0.26.0, but this caused CI failures due to peer dependency conflicts. Multiple FluentUI components require `scheduler` to be within the range `>=0.19.0 <=0.23.0`, making version 0.26.0 incompatible.\n\n## Solution\n\n- Upgraded `scheduler` from 0.20.2 to 0.23.0 (resolves to 0.23.2)\n- This is the highest version compatible with FluentUI peer dependency constraints\n- All FluentUI components now use `scheduler@0.23.0` consistently\n- Maintains the security/update benefits while ensuring compatibility\n\n## Verification\n\nVerified that the following commands succeed (as per the original issue instructions):\n- `npm install` - installs dependencies without peer dependency conflicts\n- `npx prettier --check .` - passes CI formatting checks\n- `npm run build` - builds successfully\n\nThe upgrade accomplishes the same goal as the original Dependabot PR while passing all CI checks.\n\nFixes #2647.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `npx prettier --check .` - passes CI formatting checks"
+  }
+ ],
+ "order": "228347c4bc47a760372b8f5ccf0848ef3503b4a95723889527ca43655bcbf980"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "5bd4be122d",
+ "url": "https://github.com/colorstackorg/oyster/pull/852",
+ "repo": "colorstackorg/oyster",
+ "number": 852,
+ "message": "## Description \u270f\ufe0f\r\n\r\nThis PR migrates to using `bun` as a package manager, script runner and test runner.\r\n- Updates all internal package references to use the `workspace:*` syntax.\r\n- Removes `vitest` in favor of `bun`.\r\n- Removes the turbo command `start`.\r\n- Updates the `ci.yml` workflow to use bun.\r\n- Fixes some type issues that arose since `typescript` got upgraded (after deleting the `yarn.lock` file and doing a fresh install).\r\n\r\n## Type of Change \ud83d\udc1e\r\n\r\n- [ ] Feature - A non-breaking change which adds functionality.\r\n- [ ] Fix - A non-breaking change which fixes an issue.\r\n- [ ] Refactor - A change that neither fixes a bug nor adds a feature.\r\n- [x] Documentation - A change only to in-code or markdown documentation.\r\n- [ ] Tests - A change that adds missing unit/integration tests.\r\n- [x] Chore - A change that is likely none of the above.\r\n\r\n## Checklist \u2705\r\n\r\n- [x] I have done a self-review of my code.\r\n- [x] I have manually tested my code (if applicable).\r\n- [ ] I have added/updated any relevant documentation (if applicable).\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Feature - A non-breaking change which adds functionality."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Fix - A non-breaking change which fixes an issue."
+  }
+ ],
+ "order": "847c8f3145d47ddb4f25f6e38c12768ec21a8d2b17401335534b109d0d693588"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "04cfc78ff1",
+ "url": "https://github.com/odigos-io/odigos/pull/3175",
+ "repo": "odigos-io/odigos",
+ "number": 3175,
+ "message": "## Description\n\nThis PR fixes a critical bug where Kubernetes metrics collected via the `kubeletstats` receiver were not being routed through data streams, leading to their loss.\n\nThe solution modifies the Odigos router connector to:\n- Identify system-level metrics (e.g., `kubeletstats`, `hostmetrics`) by checking for the absence of workload-specific attributes.\n- Route these system metrics to *all* configured data streams that support metrics, ensuring their comprehensive collection regardless of specific application routing.\n\n## How Has This Been Tested?\n\n- [ ] Added Unit Tests\n- [ ] Updated e2e Tests\n- [X] Manual Testing\n- [ ] Manual Load Test\n\n**Details**:\n- Unit tests for the `odigosrouterconnector` were run and passed, validating the new routing logic for system metrics.\n- The `nodecollector` unit tests were updated to correctly initialize `ControllerConfig` and `CollectorsGroup`, resolving previous test failures and ensuring the collector configuration generation is correct.\n\n## Kubernetes Checklist\n\n- [X] Changes how Odigos interacts with Kubernetes\n- [ ] Introduces additional calls to the API Server (potential performance impact)\n- [ ] New Query/feature supported in all the k8s versions supported by Odigos\n- [ ] Modifies Odigos manifests (addressed in both CLI and Helm)\n- [ ] Changes RBAC permissions\n\n## User Facing Changes\n\n- [ ] Users need to take action before upgrading\n- [ ] Automatic migration will modify existing objects (backward compatible)\n- [ ] Changes UI, CLI, or K8s Manifests aspects in a way that users need to be aware of\n- [ ] Documentation updated accordingly\n\n---\n\n[Slack Thread](https://keyval.slack.com/archives/D092GB8T4Q4/p1752412509233679?thread_ts=1752412509.233679&cid=D092GB8T4Q4)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Automatic migration will modify existing objects (backward compatible)"
+  }
+ ],
+ "order": "502da764d8832b6601eae02a397fa3eebbce5b4d9fff04d7610ed39f76363b59"
+}

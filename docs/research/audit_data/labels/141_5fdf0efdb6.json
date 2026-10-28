@@ -1,0 +1,3 @@
+{"item_id": "5fdf0efdb6", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change introduces no breaking changes to the public API.", "label": "TRUE", "confidence": "MEDIUM", "judgment": false, "note": "Ticked checkbox, so a claim. The change list shows a purely additive new public method on WebAudioPlayer; nothing is removed, renamed or re-signatured. Settled by the diff alone, no code was run.", "evidence": ["gh api pulls/4162/files: one file, modified src/webaudio.ts, hunk @@ -229,6 +229,32 adds only lines (public removeAttribute(attrName: string) method), zero deletions", "No existing member's name, signature or visibility appears in the patch as changed"]}
+], "minutes_estimate": 3}

@@ -1,0 +1,3 @@
+{"item_id": "ded79f3ea0", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "The change keeps the existing ILException handling in extract_stackstring intact (the new None check is added after it without altering it).", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "Diff is 3 added lines only; the 'except ILException: return' context lines are unchanged and the new 'if mlil is None: return' follows them.", "evidence": ["gh api pulls/2715/files: single modified file capa/features/extractors/binja/function.py, patch @@ -197,6 +197,9 @@ adds only 'if mlil is None: return' after the unchanged 'except ILException: return'", "no lines removed in the patch"]}
+], "minutes_estimate": 3}

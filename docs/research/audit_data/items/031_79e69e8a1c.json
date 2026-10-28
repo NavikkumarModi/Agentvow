@@ -1,0 +1,18 @@
+{
+ "id": "79e69e8a1c",
+ "url": "https://github.com/onnx/onnx/pull/7128",
+ "repo": "onnx/onnx",
+ "number": 7128,
+ "message": "The Elu operator schema incorrectly documented input and output tensors as being restricted to 1D shapes, when the operator actually supports tensors of any dimensionality.\r\n\r\nProblem\r\nAccording to the ONNX documentation at https://onnx.ai/onnx/operators/onnx__Elu.html, the Elu operator was documented as only accepting 1D input tensors. However, this restriction was incorrect - the operator should support tensors of any shape, as evidenced by:\r\n\r\nExisting tests already use multi-dimensional tensors (e.g., np.random.randn(3, 4, 5))\r\nThe reference implementation uses element-wise NumPy operations that work on any shape\r\nThe function body uses element-wise ONNX operations that support broadcasting\r\nSolution\r\nCreated a new opset 24 definition with corrected documentation while preserving all original definitions for backward compatibility:\r\n\r\nOpset 24 (new): Uses \"Input tensor\" and \"Output tensor\" instead of the incorrect \"1D input tensor\" and \"1D output tensor\"\r\nOpset 22 and earlier: Moved to old.cc with original documentation preserved unchanged\r\nThis approach ensures backward compatibility while introducing the corrected documentation in the latest opset version.\r\n\r\nExample\r\n\r\n```\r\nimport numpy as np\r\n\r\n# This already works correctly despite the documentation saying it shouldn't\r\nx = np.random.randn(3, 4, 5).astype(np.float32)  # 3D tensor\r\nalpha = 2.0\r\ny = np.clip(x, 0, np.inf) + (np.exp(np.clip(x, -np.inf, 0)) - 1) * alpha\r\n# Output shape: (3, 4, 5) - same as input\r\n```\r\n\r\nNo functional changes were made - this is purely a documentation fix to align the schema with the actual implementation behavior, implemented as a new opset version for proper versioning.\r\n\r\nFixes #7119.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Created a new opset 24 definition with corrected documentation while preserving all original definitions for backward compatibility:"
+  },
+  {
+   "n": 2,
+   "text": "This approach ensures backward compatibility while introducing the corrected documentation in the latest opset version."
+  }
+ ],
+ "order": "19651c9672cafd4f71eb335b01f781c148a257915437c8e247997deed51a5fa1"
+}

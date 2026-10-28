@@ -1,0 +1,14 @@
+{
+ "id": "a6e0ab9dd0",
+ "url": "https://github.com/browser-use/browser-use/pull/2782",
+ "repo": "browser-use/browser-use",
+ "number": 2782,
+ "message": "Introduce `wait_for_user_input` action to enable interactive agent workflows that pause for user clarification and resume with their input.\n\n---\n[Slack Thread](https://browser-use.slack.com/archives/D092QUQD6KA/p1756064891885299?thread_ts=1756064891.885299&cid=D092QUQD6KA)\n\n<a href=\"https://cursor.com/background-agent?bcId=bc-126cdedc-7a54-462f-8322-4658c9d593b1\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-126cdedc-7a54-462f-8322-4658c9d593b1\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n\n    \n<!-- This is an auto-generated description by cubic. -->\n---\n\n## Summary by cubic\nAdds a new wait_for_user_input action that pauses the agent to ask the user a question and resumes when input is provided. Enables interactive follow-up tasks without breaking existing flows.\n\n- New Features\n  - Registered wait_for_user_input in Controller with WaitForUserInputAction(question) and metadata to signal waiting.\n  - Agent detects waiting metadata, exits the run loop, and exposes is_waiting_for_user_input().\n  - add_new_task clears the waiting flag and resumes execution.\n  - Updated all system prompts with usage guidance.\n  - Updated example to demonstrate asking, collecting input, and resuming.\n  - Added FOLLOW_UP_TASKS_IMPLEMENTATION.md.\n\n- Migration\n  - No breaking changes.\n  - To resume: check is_waiting_for_user_input(), collect the user\u2019s reply, call add_new_task(\"User responded: ... Continue ...\"), then run again.\n\n<!-- End of auto-generated description by cubic. -->\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- No breaking changes."
+  }
+ ],
+ "order": "4d4f0a08a3fbef3e9af9d868dc9a43291465556e36f8c797ac2645bef3dc2021"
+}

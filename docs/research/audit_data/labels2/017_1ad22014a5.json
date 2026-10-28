@@ -1,0 +1,4 @@
+{"item_id": "1ad22014a5", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox 'Bug fix (non-breaking change that fixes an issue)'.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Rule 2.2: an unticked checkbox in an unfilled PR template is not a claim.", "evidence": ["Item message: line reads '- [ ] ... Bug fix ...' (unticked) under the template's 'Types of Changes' section; all template sections are unfilled"]},
+{"n": 2, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox 'New feature (non-breaking change that adds functionality)'.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Rule 2.2: an unticked checkbox in an unfilled PR template is not a claim.", "evidence": ["Item message: line reads '- [ ] ... New feature ...' (unticked) under 'Types of Changes'"]}
+], "minutes_estimate": 1}

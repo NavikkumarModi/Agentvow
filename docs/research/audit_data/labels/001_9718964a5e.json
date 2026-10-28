@@ -1,0 +1,47 @@
+{
+ "item_id": "9718964a5e",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change adds error handling, logging and documentation for the Elasticsearch tool.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "The whole tool is new in this PR, so 'improved' documentation is really new documentation; plain reading of the claim is satisfied.",
+   "evidence": [
+    "PR file list: added elasticsearch_adapter.py (+196), added elasticsearch_tool/README.md (+113), added elasticsearch_tool/__init__.py, added elasticsearch_tool/elasticsearch_tool.py, modified tools/__init__.py",
+    "Patch of elasticsearch_adapter.py: try/except for ConnectionError, AuthenticationError, NotFoundError re-raised as RuntimeError; logger.debug/info/warning/error calls throughout",
+    "README.md added with Index Configuration, Authentication and Error Handling sections"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "This change adds documentation for index configuration (README).",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "",
+   "evidence": [
+    "PR file list: added elasticsearch_adapter.py (+196), added elasticsearch_tool/README.md (+113), added elasticsearch_tool/__init__.py, added elasticsearch_tool/elasticsearch_tool.py, modified tools/__init__.py",
+    "README.md patch contains '## Index Configuration' section with the dense_vector index mapping for 'documents'"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "This change adds an error handling section to a README.",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "README is new in this PR, so section is added with the file.",
+   "evidence": [
+    "PR file list: added elasticsearch_adapter.py (+196), added elasticsearch_tool/README.md (+113), added elasticsearch_tool/__init__.py, added elasticsearch_tool/elasticsearch_tool.py, modified tools/__init__.py",
+    "README.md patch contains '## Error Handling' section listing connection, authentication, index-not-found, bulk errors"
+   ]
+  }
+ ],
+ "minutes_estimate": 4
+}

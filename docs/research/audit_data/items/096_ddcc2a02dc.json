@@ -1,0 +1,22 @@
+{
+ "id": "ddcc2a02dc",
+ "url": "https://github.com/blorm-network/ZerePy/pull/110",
+ "repo": "blorm-network/ZerePy",
+ "number": 110,
+ "message": "This PR adds Pydantic models and strict type checking to the ZerePy codebase:\n\n- Added base config models for different connection types (LLM, Blockchain, etc.)\n- Updated all connection classes to use type-safe Pydantic models\n- Added agent config models for better type safety\n- Updated connection manager to handle Pydantic models\n- Maintained backward compatibility throughout\n\n## Example Configurations\n\n### LLM Connection\n```python\nfrom src.types.connections import OpenAIConfig\n\nconfig = OpenAIConfig(\n    name=\"openai\",\n    model=\"gpt-4\",\n    temperature=0.7,\n    max_tokens=1000,\n    api_key=\"your-api-key\"\n)\n```\n\n### Blockchain Connection\n```python\nfrom src.types.connections import EthereumConfig\n\nconfig = EthereumConfig(\n    name=\"ethereum\",\n    network=\"mainnet\",\n    rpc_url=\"https://eth-mainnet.g.alchemy.com/v2/your-api-key\",\n    gas_limit=500000,\n    private_key=\"your-private-key\"\n)\n```\n\n### Social Connection\n```python\nfrom src.types.connections import TwitterConfig\n\nconfig = TwitterConfig(\n    name=\"twitter\",\n    api_key=\"your-api-key\",\n    api_secret=\"your-api-secret\",\n    timeline_read_count=20,\n    access_token=\"your-access-token\",\n    access_token_secret=\"your-access-token-secret\"\n)\n```\n\n## Using Pydantic Models\n\nThe new Pydantic models provide automatic validation and type checking:\n\n1. Configuration validation:\n```python\n# Will raise ValidationError if fields are missing or invalid\nconfig = OpenAIConfig(model=\"gpt-4\")  # Error: api_key is required\n\n# Correct usage with all required fields\nconfig = OpenAIConfig(\n    model=\"gpt-4\",\n    api_key=\"your-api-key\"\n)\n```\n\n2. Type safety in connection classes:\n```python\n# Connection classes now use type-safe configs\nconnection = OpenAIConnection(config)\n\n# Backward compatibility maintained\nconnection = OpenAIConnection({\n    \"model\": \"gpt-4\",\n    \"api_key\": \"your-api-key\"\n})\n```\n\n## Testing\nChanges have been tested through:\n- Comprehensive type checking with mypy\n- Validation of all configuration models\n- Backward compatibility verification\n- Unit tests for connection classes\n\nAll connection classes maintain their existing functionality while adding type safety.\n\nLink to Devin run: https://app.devin.ai/sessions/2f5be13f3f1a42d8b5a8361367a61eeb\nRequested by: ayoub@blorm.xyz",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintained backward compatibility throughout"
+  },
+  {
+   "n": 2,
+   "text": "# Backward compatibility maintained"
+  },
+  {
+   "n": 3,
+   "text": "- Backward compatibility verification"
+  }
+ ],
+ "order": "63a4714893f5ed87c11b6dc526d42379f429e441a8b07e77652fed361a50e5ad"
+}

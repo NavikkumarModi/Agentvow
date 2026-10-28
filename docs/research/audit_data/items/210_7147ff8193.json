@@ -1,0 +1,22 @@
+{
+ "id": "7147ff8193",
+ "url": "https://github.com/reown-com/appkit/pull/4829",
+ "repo": "reown-com/appkit",
+ "number": 4829,
+ "message": "# Description\n\nThis PR introduces the `getBuyStatus` and `waitUntilComplete` methods to the `ExchangeController` to manage the lifecycle of exchange payments. Comprehensive unit tests have been added to ensure the reliability of payment status tracking, event emission, and retry mechanisms.\n\n## Type of change\n\n- [ ] Chore (non-breaking change that addresses non-functional tasks, maintenance, or code quality improvements)\n- [ ] Bug fix (non-breaking change which fixes an issue)\n- [x] New feature (non-breaking change which adds functionality)\n- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)\n\n# Associated Issues\n\nN/A\n\n# Showcase (Optional)\n\nN/A\n\n# Checklist\n\n- [x] Code in this PR is covered by automated tests (Unit tests, E2E tests)\n- [ ] My changes generate no new warnings\n- [x] I have reviewed my own code\n- [x] I have filled out all required sections\n- [ ] I have tested my changes on the preview link\n- [ ] Approver of this PR confirms that the changes are tested on the preview link\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-80925924-debf-4b0e-81eb-c92b7b48115d\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-80925924-debf-4b0e-81eb-c92b7b48115d\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Chore (non-breaking change that addresses non-functional tasks, maintenance, or code quality improvements)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 3,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "d955bddf11be370461d10f4d7ec013d602c0cff95ecfaaea1816ca08e6bd92c2"
+}

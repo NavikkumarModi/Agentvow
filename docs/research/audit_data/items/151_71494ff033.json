@@ -1,0 +1,14 @@
+{
+ "id": "71494ff033",
+ "url": "https://github.com/DannyMac180/meta-agent/pull/84",
+ "repo": "DannyMac180/meta-agent",
+ "number": 84,
+ "message": "## Summary\n- parse license information from package metadata classifiers\n- ensure pinned dependency resolution test passes\n\n## Testing\n- `ruff check src/meta_agent/dependency_manager.py`\n- `black --check src/meta_agent/dependency_manager.py tests/test_dependency_manager.py`\n- `mypy src/meta_agent/dependency_manager.py`\n- `pyright src/meta_agent/dependency_manager.py`\n- `pytest tests/test_dependency_manager.py -v`\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- ensure pinned dependency resolution test passes"
+  }
+ ],
+ "order": "a4621dcdf081816417dd27e51e2c5fa70f83f608c6ba99f04154e05738f05ae0"
+}

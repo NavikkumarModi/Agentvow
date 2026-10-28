@@ -1,0 +1,33 @@
+{
+ "item_id": "2977c16a97",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change adds a JSDoc comment to the emitSessionRequest method explaining its deduplication",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": true,
+   "note": "The statement names a method and 'documentation', which here is a JSDoc on that method; the method-level docstring is the only sensible reading, so applied by judgment (rule: docstring-only docs claims).",
+   "evidence": [
+    "gh api pulls/6795/files: modified packages/sign-client/src/controllers/engine.ts",
+    "patch adds a /** ... */ block directly above `private emitSessionRequest = ...` reading 'Emits a session request event with built-in deduplication ... implements deduplication using emittedSessionRequests set'"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "This change adds a JSDoc comment to the addSessionRequestToSessionRequestQueue method explaining queue-based deduplication",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": true,
+   "note": "Same reading as statement 1: documentation means the added JSDoc on the named method.",
+   "evidence": [
+    "gh api pulls/6795/files: modified packages/sign-client/src/controllers/engine.ts",
+    "patch adds a /** ... */ block directly above `private addSessionRequestToSessionRequestQueue = ...` reading 'The queue provides built-in deduplication and sequential processing'"
+   ]
+  }
+ ],
+ "minutes_estimate": 3
+}

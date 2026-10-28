@@ -1,0 +1,14 @@
+{
+ "id": "3e46cbfcf8",
+ "url": "https://github.com/mochilang/mochi/pull/760",
+ "repo": "mochilang/mochi",
+ "number": 760,
+ "message": "## Summary\n- reimplement Binary Tree Maximum Path Sum without using union types or match\n- keep helpful language tips at bottom of the file\n- ensure tests pass for the updated implementation\n\n## Testing\n- `~/bin/mochi test examples/leetcode/124/binary-tree-maximum-path-sum.mochi`\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_684e8e64022483209fc52ad19efe1372",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- ensure tests pass for the updated implementation"
+  }
+ ],
+ "order": "abb23792121b843df20a9be1dc23e4cd662d6ef42175f31fa060c203fadfe2ee"
+}

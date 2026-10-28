@@ -1,0 +1,14 @@
+{
+ "id": "bd3e483819",
+ "url": "https://github.com/WorkflowAI/WorkflowAI/pull/476",
+ "repo": "WorkflowAI/WorkflowAI",
+ "number": 476,
+ "message": "A new directory `.discussions` was created at the root to house team discussions.\r\n\r\nA new file, `.discussions/mcp-tool-token-limits.md`, was then created within this directory. This file serves as a discussion document to brainstorm solutions for MCP tool responses exceeding the 25,000 token limit.\r\n\r\nThe file outlines:\r\n*   The problem statement regarding tool response token limits.\r\n*   Specific observed errors for `workflowai:list_agents` (249,108 tokens) and `list_available_models` (32,007 tokens).\r\n*   Dedicated discussion points for each problematic tool, proposing strategies like pagination, filtering, and data optimization to reduce response sizes.\r\n*   General solution approaches, key questions for team discussion (e.g., backwards compatibility, default behavior), and next steps to guide the brainstorming process.\r\n\r\nThe document is structured as a first pass for team input, avoiding premature assumptions about specific solutions.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "*   General solution approaches, key questions for team discussion (e.g., backwards compatibility, default behavior), and next steps to guide the brainstorming process."
+  }
+ ],
+ "order": "b79e2e58720baa9e112b618906a1371beb57d2ca7b93d541ad39255fb3692df0"
+}

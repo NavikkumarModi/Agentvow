@@ -1,0 +1,14 @@
+{
+ "id": "8ffa4a8dff",
+ "url": "https://github.com/crewAIInc/crewAI-tools/pull/300",
+ "repo": "crewAIInc/crewAI-tools",
+ "number": 300,
+ "message": "# Fix issue #2783: Allow FirecrawlScrapeWebsiteTool to handle URL in constructor\n\nFixes crewaiinc/crewai#2783\n\n## Description\n\nThis PR fixes an issue where the FirecrawlScrapeWebsiteTool fails when a URL is passed to the constructor rather than the run method. The documentation on the CrewAI website shows users passing the URL to the constructor, but the tool doesn't handle this parameter correctly, resulting in the error: \"FirecrawlApp.scrape_url() takes 2 positional arguments but 3 were given\".\n\n## Changes\n\n- Modified the FirecrawlScrapeWebsiteTool to accept and store a URL parameter in the constructor\n- Modified the _run method to use the URL from run() if provided, otherwise use the URL from the constructor\n- Updated the README.md to show both usage patterns\n- Added tests to verify the fix works correctly\n\n## Testing\n\nCreated tests to verify:\n- URL can be passed to the constructor\n- URL can be passed to the run method\n- URL in run method overrides URL in constructor\n- Error is raised if no URL is provided\n\nLink to Devin run: https://app.devin.ai/sessions/006b12b0476e4bfba670ecfbe3c2e75a\nRequested by: Joe Moura (joao@crewai.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated the README.md to show both usage patterns"
+  }
+ ],
+ "order": "df30f6dfeaa9c302ac108a5b5e898a31928b8d40fb9528daefcd2b91fb75ee36"
+}

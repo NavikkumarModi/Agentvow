@@ -1,0 +1,5 @@
+{"item_id": "28ca86efe9", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"NOT_A_CLAIM","proposition":"Unticked template checkbox 'Bug fix'.","label":null,"confidence":"HIGH","judgment":false,"note":"Rules section 2 class 2: unticked checkbox is a template, not a claim.","evidence":["message text: '- [ ] Bug fix (non-breaking change which fixes an issue)' is unticked"]},
+{"n":2,"step_a":"NOT_A_CLAIM","proposition":"Unticked template checkbox 'New feature'.","label":null,"confidence":"HIGH","judgment":false,"note":"Rules section 2 class 2: unticked checkbox is a template, not a claim.","evidence":["message text: '- [ ] New feature (non-breaking change which adds functionality)' is unticked"]},
+{"n":3,"step_a":"NOT_A_CLAIM","proposition":"Unticked template checkbox about unit tests passing locally.","label":null,"confidence":"HIGH","judgment":false,"note":"Rules section 2 class 2: unticked checkbox (template, with an inverted 'I haven't' wording) asserts nothing about this change.","evidence":["message text: '- [ ] I haven't checked if new and existing unit tests pass locally with my changes' is unticked"]}
+],"minutes_estimate":1}

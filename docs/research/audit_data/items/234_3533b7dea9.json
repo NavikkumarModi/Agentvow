@@ -1,0 +1,18 @@
+{
+ "id": "3533b7dea9",
+ "url": "https://github.com/atopile/atopile/pull/1435",
+ "repo": "atopile/atopile",
+ "number": 1435,
+ "message": "<!--\nEnsure PR title follows the correct format:\n- Test PR workflow - dummy change\n-->\n\n## Description\n\nThis PR adds a simple test line to the bottom of the README.md file to verify that the pull request creation workflow is functioning correctly. The change adds a single line: \"*This is a dummy change to test the PR workflow - added by Devin*\"\n\n## Motivation\n\nThis change was requested to verify that Devin can:\n- Access the atopile/atopile repository\n- Run lint checks successfully  \n- Create a draft PR with a simple change\n\n**This is a test PR and should not be merged.** It was created solely to demonstrate and verify the PR workflow functionality.\n\n## Human Review Checklist\n\n- [x] Confirm this PR successfully demonstrates the workflow capabilities\n- [x] Verify the branch was created with proper naming convention (`devin/{timestamp}-dummy-change-test`)\n- [x] Check that lint passed (should show \"All checks passed!\")\n- [ ] **Important: Close this PR without merging** - this is a test change only\n\n---\n\n**Link to Devin run:** https://app.devin.ai/sessions/a4cfb0cfd2e94468a53b0749c812108d\n\n**Requested by:** Narayan Powderly (@napowderly)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Run lint checks successfully"
+  },
+  {
+   "n": 2,
+   "text": "- [x] Check that lint passed (should show \"All checks passed!\")"
+  }
+ ],
+ "order": "f853f03770cc3c6d5b1c2d8eea46fa14c25c5c64b348a9b91cf3bf239c48911b"
+}

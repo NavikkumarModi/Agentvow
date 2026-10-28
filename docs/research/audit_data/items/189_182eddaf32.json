@@ -1,0 +1,14 @@
+{
+ "id": "182eddaf32",
+ "url": "https://github.com/modal-labs/modal-client/pull/3592",
+ "repo": "modal-labs/modal-client",
+ "number": 3592,
+ "message": "## Describe your changes\n\nAdds an optional `default` parameter to `Dict.pop()` method to match the behavior of Python's built-in `dict.pop()`. When a key is not found:\n- If `default` is provided, return the default value\n- If no `default` is provided, raise `KeyError` (preserves existing behavior)\n\nUses a custom sentinel class `_NoDefaultSentinel` instead of `Ellipsis` to provide a cleaner function signature display (`default=...` rather than `default=Ellipsis`).\n\n**Key changes:**\n- Modified `Dict.pop()` signature and implementation in `modal/dict.py`  \n- Added test coverage in `test/dict_test.py`\n- Updated mock servicer to implement missing `DictPop` and `DictContains` gRPC methods\n\n<details> <summary>Checklists</summary>\n\n---\n\n## Compatibility checklist\n\n- [x] Client+Server: this change is compatible with old servers (uses existing gRPC protocol)\n- [x] Client forward compatibility: this change ensures client can accept data intended for later versions of itself\n\n---\n\n</details>\n\n**Link to Devin run:** https://app.devin.ai/sessions/d8c766ed53a84a6480297fa34757b19a  \n**Requested by:** @ehdr\n\n## Changelog\n\n- `Dict.pop()` now accepts an optional `default` parameter, matching Python's `dict.pop()` behavior.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added test coverage in `test/dict_test.py`"
+  }
+ ],
+ "order": "c7fe9bbe3a0f29c42c013b9571742a33389e3e0c4ff66918f6f445e57a66edf6"
+}

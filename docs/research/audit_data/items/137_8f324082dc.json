@@ -1,0 +1,26 @@
+{
+ "id": "8f324082dc",
+ "url": "https://github.com/airbytehq/airbyte/pull/62130",
+ "repo": "airbytehq/airbyte",
+ "number": 62130,
+ "message": "# chore: Upgrade DuckDB from 1.1.2 to 1.3.1 for deprecation compliance\r\n\r\n## Summary\r\n\r\nThis PR upgrades the DuckDB dependency from version 1.1.2 to 1.3.1 across three repositories to address the upcoming deprecation of DuckDB versions older than 1.2. According to the DuckDB team's announcement, client versions older than 1.2 will be deprecated and unable to connect after **July 15, 2025**.\r\n\r\n**Changes made:**\r\n- **airbyte-embedded**: Updated `backend/pyproject.toml` to specify `duckdb = \"1.3.1\"`\r\n- **PyAirbyte**: Updated `pyproject.toml` to specify `duckdb = \"^1.3.1\"`\r\n- **destination-motherduck**: Updated `pyproject.toml` to specify `duckdb = \"1.3.1\"`\r\n- Regenerated `poetry.lock` files in all three repositories with updated dependency versions\r\n\r\n## Review & Testing Checklist for Human\r\n\r\n- [ ] **Test core DuckDB functionality end-to-end**: Verify that applications can successfully connect, create tables, insert data, and query DuckDB databases (not just imports)\r\n- [ ] **Review poetry.lock changes**: Examine the lock file diffs for any concerning transitive dependency updates that came with the DuckDB upgrade\r\n- [ ] **Verify DuckDB 1.3.1 compatibility**: Check DuckDB 1.3.1 release notes for any breaking changes that might affect the specific use cases in each repository\r\n- [ ] **Test key workflows locally**: Run through the main user flows that involve DuckDB operations in each repository to catch regressions\r\n- [ ] **Confirm virtual environments are updated**: Verify that `poetry run python -c \"import duckdb; print(duckdb.__version__)\"` shows 1.3.1 in all repositories\r\n\r\n**Recommended test plan:** Install dependencies locally with `poetry install`, run the test suites, and manually test core DuckDB operations like database connections, data loading, and queries in each repository.\r\n\r\n---\r\n\r\n### Diagram\r\n\r\n```mermaid\r\ngraph TD\r\n    A[airbyte-embedded/backend/pyproject.toml]:::major-edit --> B[DuckDB 1.3.1]\r\n    A --> C[airbyte-embedded/backend/poetry.lock]:::minor-edit\r\n    \r\n    D[PyAirbyte/pyproject.toml]:::major-edit --> E[DuckDB ^1.3.1]\r\n    D --> F[PyAirbyte/poetry.lock]:::minor-edit\r\n    \r\n    G[destination-motherduck/pyproject.toml]:::major-edit --> H[DuckDB 1.3.1]\r\n    G --> I[destination-motherduck/poetry.lock]:::minor-edit\r\n    \r\n    B --> J[Backend Database Operations]:::context\r\n    E --> K[PyAirbyte DuckDB Integration]:::context\r\n    H --> L[MotherDuck Connector]:::context\r\n    \r\n    subgraph Legend\r\n        L1[Major Edit]:::major-edit\r\n        L2[Minor Edit]:::minor-edit\r\n        L3[Context/No Edit]:::context\r\n    end\r\n\r\n    classDef major-edit fill:#90EE90\r\n    classDef minor-edit fill:#87CEEB\r\n    classDef context fill:#FFFFFF\r\n```\r\n\r\n### Notes\r\n\r\n- This change is required to prevent connectivity issues after July 15, 2025 when older DuckDB versions are deprecated\r\n- The poetry.lock files show updates to many dependencies beyond just DuckDB, which is normal when updating dependencies but should be reviewed for potential conflicts\r\n- During testing, basic imports worked but some environments showed inconsistent version reporting, suggesting thorough testing of actual DuckDB operations is critical\r\n- This upgrade affects three different repositories with potentially different DuckDB usage patterns, requiring comprehensive testing across all use cases\r\n- DuckDB 1.3.1 should be backward compatible based on semantic versioning, but minor version bumps can still introduce behavioral changes\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **airbyte-embedded**: Updated `backend/pyproject.toml` to specify `duckdb = \"1.3.1\"`"
+  },
+  {
+   "n": 2,
+   "text": "- **PyAirbyte**: Updated `pyproject.toml` to specify `duckdb = \"^1.3.1\"`"
+  },
+  {
+   "n": 3,
+   "text": "- **destination-motherduck**: Updated `pyproject.toml` to specify `duckdb = \"1.3.1\"`"
+  },
+  {
+   "n": 4,
+   "text": "- DuckDB 1.3.1 should be backward compatible based on semantic versioning, but minor version bumps can still introduce behavioral changes"
+  }
+ ],
+ "order": "99109c0068c5cbc5b5e2b63570a900129b091fbdedcb6a870345590605154ab6"
+}

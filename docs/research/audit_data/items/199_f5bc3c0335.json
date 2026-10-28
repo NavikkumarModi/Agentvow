@@ -1,0 +1,18 @@
+{
+ "id": "f5bc3c0335",
+ "url": "https://github.com/calcom/cal.com/pull/21978",
+ "repo": "calcom/cal.com",
+ "number": 21978,
+ "message": "# Fix: Filter embed query parameter from external success redirects\n\n## Summary\nThis PR implements a fix for Cal.com's embed success page redirect to prevent breaking WordPress pages by filtering out the `embed` query parameter while preserving other necessary parameters when redirecting to external URLs.\n\n## Problem\nWhen Cal.com embeds redirect to external success pages (like WordPress sites), the `embed` query parameter was being included in the redirect URL. This parameter can break WordPress pages and other external sites that don't expect or handle this parameter correctly.\n\n## Solution\n- **Added `isExternalUrl()` utility function** in `packages/lib/getSafeRedirectUrl.ts` to detect non-Cal.com domains\n- **Updated redirect logic** in both Next.js Pages Router (`apps/web/lib/withEmbedSsr.tsx`) and App Router (`apps/web/app/WithEmbedSSR.tsx`) implementations\n- **Conditional parameter handling**: \n  - For external URLs: Filter out `embed` parameter, preserve `layout` and other query parameters\n  - For internal Cal.com URLs: Keep existing behavior with all parameters including `embed`\n- **Comprehensive unit tests** added to verify the new behavior works correctly\n\n## Key Changes\n1. **`packages/lib/getSafeRedirectUrl.ts`**: Added `isExternalUrl()` function that checks against Cal.com domains (.cal.com, .cal.dev, .cal.eu, .cal.qa, .cal.local) and the current webapp URL\n2. **`apps/web/lib/withEmbedSsr.tsx`**: Updated redirect logic to conditionally include embed parameter based on URL destination\n3. **`apps/web/app/WithEmbedSSR.tsx`**: Applied same logic for App Router implementation\n4. **Test files**: Added comprehensive test cases covering external URL filtering behavior\n\n## Testing\n- \u2705 All existing unit tests pass\n- \u2705 New unit tests added for external URL filtering\n- \u2705 TypeScript type checking passes\n- \u2705 Both Pages Router and App Router implementations tested\n\n## Behavior\n- **Internal Cal.com URLs**: Continue to receive `/embed` path and `embed` query parameter (no change)\n- **External URLs**: Receive clean URLs without `/embed` path or `embed` parameter, but preserve `layout` and other necessary parameters\n\n## Fixes\nFixes #20469\n\n---\n\n**Link to Devin run**: https://app.devin.ai/sessions/c0d20faaecef4a5f80643c2820776dbf\n\n**Requested by**: hariom@cal.com\n\n    \n<!-- This is an auto-generated description by cubic. -->\n---\n\n## Summary by cubic\nFiltered the embed query parameter from external success redirect URLs to prevent issues on sites like WordPress, while keeping other parameters intact.\n\n- **Bug Fixes**\n  - Added logic to detect external URLs and remove the embed parameter from redirects.\n  - Preserved layout and other query parameters for external redirects.\n  - Updated both Pages Router and App Router implementations.\n  - Added unit tests to verify correct behavior.\n\n<!-- End of auto-generated description by cubic. -->\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Added `isExternalUrl()` utility function** in `packages/lib/getSafeRedirectUrl.ts` to detect non-Cal.com domains"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All existing unit tests pass"
+  }
+ ],
+ "order": "d03091dee4ebdf51bd5737b88c71da32e7adefbfe8eaa06d141727a7113d50bd"
+}

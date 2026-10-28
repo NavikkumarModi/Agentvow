@@ -1,0 +1,18 @@
+{
+ "id": "b7de01b081",
+ "url": "https://github.com/gerlero/foamlib/pull/447",
+ "repo": "gerlero/foamlib",
+ "number": 447,
+ "message": "This PR refactors the internal storage mechanism of the `_parsing.Parsed` class to use a nested dictionary structure with string keys instead of a flattened structure with tuple keys, while maintaining 100% backward compatibility of the public interface.\n\n## Changes Made\n\nThe `Parsed` class previously stored all entries in a flat dictionary where keys were tuples like `(\"my_dict\", \"nested\", \"key\")` mapping to `(start_pos, data, end_pos)` tuples:\n\n```python\n# Before: Flattened structure\n{\n    (\"my_dict\",): (10, ..., 50),\n    (\"my_dict\", \"version\"): (15, 2.0, 30),\n    (\"my_dict\", \"nested\"): (30, ..., 48),\n    (\"my_dict\", \"nested\", \"key\"): (35, \"value\", 45)\n}\n```\n\nNow it uses a nested dictionary structure with string keys:\n\n```python\n# After: Nested structure  \n{\n    \"my_dict\": {\n        \"__info__\": (10, ..., 50),\n        \"version\": (15, 2.0, 30),\n        \"nested\": {\n            \"__info__\": (30, ..., 48),\n            \"key\": (35, \"value\", 45)\n        }\n    }\n}\n```\n\n## Implementation Details\n\n- **New helper methods**: Added `_add_nested_result()`, `_set_nested_entry()`, `_get_nested_entry()`, `_has_nested_entry()`, `_iter_nested_keys()`, and location/modification helpers\n- **Modified all public methods** (`__getitem__`, `__setitem__`, `__delitem__`, `__contains__`, `__iter__`, `__len__`, `entry_location`, `as_dict`) to work with the nested structure\n- **Preserved location tracking**: The nested structure still maintains start/end position information needed for content modification\n- **Special handling for dictionary markers**: Uses `__info__` entries to store ellipsis markers that indicate dictionary boundaries\n\n## Backward Compatibility\n\nThe public interface remains identical:\n\n```python\n# All of these continue to work exactly as before\nparsed[(\"my_dict\", \"nested\", \"key\")]  # Access nested values\n(\"my_dict\", \"nested\") in parsed       # Check existence  \nlist(parsed)                          # Iterate over all keys\nlen(parsed)                           # Get total count\nparsed.put((\"key\",), value, content)  # Modify content\ndel parsed[(\"key\",)]                  # Delete entries\n```\n\n## Testing\n\nComprehensive validation was performed including:\n- All existing test patterns from the test suite\n- Complex nested dictionary structures\n- Mixed content (dictionaries, lists, simple values)\n- Modification operations (put, delete)\n- Edge cases (empty dicts, deeply nested structures)\n- Location tracking accuracy\n\nThe refactoring is purely internal - no changes to the public API or external behavior.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This PR refactors the internal storage mechanism of the `_parsing.Parsed` class to use a nested dictionary structure with string keys instead of a flattened structure with tuple keys, while maintaining 100% backward compatibility of the public interface."
+  },
+  {
+   "n": 2,
+   "text": "## Backward Compatibility"
+  }
+ ],
+ "order": "e40200a5577e447ef9823207524c528fe8ce6e988c6c9fca3ee5e28b6bd58778"
+}

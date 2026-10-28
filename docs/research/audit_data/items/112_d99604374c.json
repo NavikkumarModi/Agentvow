@@ -1,0 +1,22 @@
+{
+ "id": "d99604374c",
+ "url": "https://github.com/modelcontextprotocol/inspector/pull/602",
+ "repo": "modelcontextprotocol/inspector",
+ "number": 602,
+ "message": "## Motivation and Context\r\n\r\nUpdate structured output validation to align with spec allowing multiple unstructured content blocks.\r\n\r\nPreviously, the inspector incorrectly validated that unstructured output must contain *only* a single text block with JSON matching the structured output. This PR updates the validation to correctly reflect the spec, which allows unstructured output to include a JSON text block matching the structured output, alongside any number of other content blocks (text, image, linked/embedded resources, etc.) in any order, as clarified in modelcontextprotocol/modelcontextprotocol#889.\r\n\r\n## How Has This Been Tested?\r\n\r\nRan it locally with my own MCP server:\r\n\r\n<img width=\"757\" height=\"146\" alt=\"image\" src=\"https://github.com/user-attachments/assets/23ab01aa-223a-4ec4-a054-eda9981a8c47\" />\r\n\r\n<img width=\"761\" height=\"758\" alt=\"image\" src=\"https://github.com/user-attachments/assets/0c329c65-bd1b-40b6-99b9-6b54d79cb550\" />\r\n\r\nAlso, the tests have been updated and are passing.\r\n\r\n## Breaking Changes\r\n\r\nNo.\r\n\r\n## Types of changes\r\n<!-- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->\r\n- [x] Bug fix (non-breaking change which fixes an issue)\r\n- [ ] New feature (non-breaking change which adds functionality)\r\n- [ ] Breaking change (fix or feature that would cause existing functionality to change)\r\n- [ ] Documentation update\r\n\r\n## Checklist\r\n<!-- Go over all the following points, and put an `x` in all the boxes that apply. -->\r\n- [x] I have read the [MCP Documentation](https://modelcontextprotocol.io)\r\n- [x] My code follows the repository's style guidelines\r\n- [x] New and existing tests pass locally\r\n- [x] I have added appropriate error handling\r\n- [x] I have added or updated documentation as needed\r\n\r\n## Additional context\r\n\r\nThis was written by Cursor Agents, but reviewed and run by me.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 3,
+   "text": "- [x] New and existing tests pass locally"
+  }
+ ],
+ "order": "7b9642a73fb5f53af4db2c42f0e705ab65a13b45d71a71104257d77216b04683"
+}

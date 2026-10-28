@@ -1,0 +1,14 @@
+{
+ "id": "b5600af1c2",
+ "url": "https://github.com/gluesql/glues/pull/191",
+ "repo": "gluesql/glues",
+ "number": 191,
+ "message": "## Summary\n- avoid cloning note names when rendering notebook tabs\n\n## Testing\n- `cargo clippy --all-targets -- -D warnings`\n- `cargo test`\n- `cargo fmt`\n\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68ba765c91cc832a88ca734449458e55\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Refactor**\n  * Streamlined tab label rendering in the notebook editor to eliminate redundant allocations, improving efficiency without changing appearance or behavior.\n  * Slightly reduces memory overhead and can make tab switching and navigation feel more responsive, especially with many tabs or larger notebooks.\n  * Internal cleanup only; no impact on user settings or workflows.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* Internal cleanup only; no impact on user settings or workflows."
+  }
+ ],
+ "order": "9139cf4be9595cf34a6e8b30c765fb77d7e714f43f2156036d6affcc2e534e77"
+}

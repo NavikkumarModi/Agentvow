@@ -1,0 +1,14 @@
+{
+ "id": "297ee69006",
+ "url": "https://github.com/antiwork/flexile/pull/1189",
+ "repo": "antiwork/flexile",
+ "number": 1189,
+ "message": "# Fix billing_entity_name nullable validation in payouts page\n\n## Summary\nFixes page crashes on `/settings/payouts` for users with null `billing_entity_name` values by updating the Zod validation schema and TypeScript type definitions to allow null values.\n\n**Changes made:**\n- Changed `billing_entity_name: z.string()` to `billing_entity_name: z.string().nullable()` in payouts page schema\n- Updated `BillingDetails` type definition to allow `billing_entity_name: string | null`\n\nThis addresses the reported issue where 3 users experienced failures on the payouts page, likely due to validation errors when their `billing_entity_name` was null.\n\n## Review & Testing Checklist for Human\n- [ ] **Test payouts page with null billing_entity_name**: Verify that users with null billing entity names can now successfully load `/settings/payouts` without crashes\n- [ ] **Test bank account creation/editing**: Ensure that adding and editing bank accounts still works properly when billing_entity_name is null\n- [ ] **Check for downstream impacts**: Verify that other parts of the system that use billing_entity_name handle null values correctly (payment processing, form submissions, etc.)\n\n### Notes\n- \u26a0\ufe0f **Testing limitation**: Unable to test changes locally due to Vercel authentication requirements blocking dev server\n- Found another instance of `billing_entity_name: z.string()` in `app/(dashboard)/invoices/Edit.tsx` but left unchanged as it appears to be a different context/schema\n- Lint checks passed successfully\n\n**Session**: https://app.devin.ai/sessions/26aa5aefd9bd4322846c9d6df249153f  \n**Requested by**: maya@elf.dev",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Lint checks passed successfully"
+  }
+ ],
+ "order": "641a807497ac30641941f5189af786535008720b1b6384013033ad77d234f2bc"
+}

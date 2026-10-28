@@ -1,0 +1,63 @@
+{
+ "item_id": "34c49ffcc5",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "make test passes (author ran it) at the head of this change",
+   "label": "CANNOT_TELL",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Claim is that the author ran this and it passed. Change is docs-only (one .md file), so the Go tests/linter are unaffected by it, but no CI result exists and no Go toolchain was built, so the run cannot be observed.",
+   "evidence": [
+    "gh api pulls/4581/files: 1 file only, modified assets/chezmoi.io/docs/user-guide/tools/merge.md (+25/-0); no Go code changed",
+    "gh api commits/<head>/check-runs: total_count 0; gh pr checks: no checks reported",
+    "go and golangci-lint not installed in the environment; no CI result to consult"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "make lint passes (author ran it) at the head of this change",
+   "label": "CANNOT_TELL",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Claim is that the author ran this and it passed. Change is docs-only (one .md file), so the Go tests/linter are unaffected by it, but no CI result exists and no Go toolchain was built, so the run cannot be observed.",
+   "evidence": [
+    "gh api pulls/4581/files: 1 file only, modified assets/chezmoi.io/docs/user-guide/tools/merge.md (+25/-0); no Go code changed",
+    "gh api commits/<head>/check-runs: total_count 0; gh pr checks: no checks reported",
+    "go and golangci-lint not installed in the environment; no CI result to consult"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "golangci-lint reports no issues at the head of this change",
+   "label": "CANNOT_TELL",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Claim is that the author ran this and it passed. Change is docs-only (one .md file), so the Go tests/linter are unaffected by it, but no CI result exists and no Go toolchain was built, so the run cannot be observed.",
+   "evidence": [
+    "gh api pulls/4581/files: 1 file only, modified assets/chezmoi.io/docs/user-guide/tools/merge.md (+25/-0); no Go code changed",
+    "gh api commits/<head>/check-runs: total_count 0; gh pr checks: no checks reported",
+    "go and golangci-lint not installed in the environment; no CI result to consult"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "CLAIM",
+   "proposition": "All tests passed when run at the head of this change",
+   "label": "CANNOT_TELL",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Claim is that the author ran this and it passed. Change is docs-only (one .md file), so the Go tests/linter are unaffected by it, but no CI result exists and no Go toolchain was built, so the run cannot be observed.",
+   "evidence": [
+    "gh api pulls/4581/files: 1 file only, modified assets/chezmoi.io/docs/user-guide/tools/merge.md (+25/-0); no Go code changed",
+    "gh api commits/<head>/check-runs: total_count 0; gh pr checks: no checks reported",
+    "go and golangci-lint not installed in the environment; no CI result to consult"
+   ]
+  }
+ ],
+ "minutes_estimate": 4
+}

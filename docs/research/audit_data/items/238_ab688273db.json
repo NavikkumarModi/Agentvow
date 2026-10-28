@@ -1,0 +1,14 @@
+{
+ "id": "ab688273db",
+ "url": "https://github.com/schemahero/schemahero/pull/1168",
+ "repo": "schemahero/schemahero",
+ "number": 1168,
+ "message": "## Description\nThis PR removes the unnecessary replace directive for github.com/prometheus/client_golang that was limiting it to v1.11.1.\n\nThe project now indirectly depends on v1.19.1 of this package, which means the replace directive is no longer needed.\n\nFixes #871\n\n## Testing\n- Ran `make fmt && make vet` successfully\n- Ran `make test` successfully\n\nLink to Devin run: https://app.devin.ai/sessions/b4293b5ba8d34f1284f25778edee4ee0\nRequested by: Marc Campbell (marc@schemahero.io)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Ran `make test` successfully"
+  }
+ ],
+ "order": "fe41bd02060bfd6e12ac0779c8e607d15c597e62e2fc70a5e6c17d7e2fd52f64"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "85c2d013fe",
+ "url": "https://github.com/Catfriend1/syncthing-android/pull/1675",
+ "repo": "Catfriend1/syncthing-android",
+ "number": 1675,
+ "message": "This PR centralizes the Android command line tools version reference to establish a single source of truth and eliminate version duplication across the repository.\r\n\r\n## Problem\r\nThe Android cmdline-tools version \"11076708\" was hardcoded in multiple locations:\r\n- `scripts/install_minimum_android_sdk_prerequisites.py`\r\n- `.github/workflows/build-app.yaml`\r\n- `.github/workflows/release-app.yaml`\r\n\r\nThis created maintenance overhead and risk of version inconsistencies when updating the tools.\r\n\r\n## Solution\r\nAdded `android-cmdline-tools = \"11076708\"` to `gradle/libs.versions.toml` and updated all consumers to read from this central location:\r\n\r\n**Python Script Changes:**\r\n- Added `get_android_cmdline_tools_version()` function to read from libs.versions.toml\r\n- Included robust fallback mechanism for error handling\r\n- Added clear documentation directing maintainers to update only the version catalog\r\n\r\n**GitHub Workflows Changes:**\r\n- Added steps to extract version dynamically from libs.versions.toml using grep\r\n- Updated SDK installation steps to use the extracted version\r\n- Applied to both build-app.yaml and release-app.yaml workflows\r\n\r\n## Benefits\r\n- **Single source of truth:** All version references now come from gradle/libs.versions.toml\r\n- **Easier maintenance:** Future cmdline-tools updates require changing only one file\r\n- **Consistency:** Eliminates risk of version mismatches across different components\r\n- **Documentation:** Clear comments guide future maintainers\r\n\r\n## Testing\r\n- Verified Python script correctly reads version from libs.versions.toml\r\n- Tested workflow version extraction using grep commands\r\n- Confirmed gradle lint task runs successfully with changes\r\n- Validated fallback mechanism in Python script works as expected\r\n\r\nFuture Android cmdline-tools version updates now only require editing the version in `gradle/libs.versions.toml`.\r\n\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added `android-cmdline-tools = \"11076708\"` to `gradle/libs.versions.toml` and updated all consumers to read from this central location:"
+  },
+  {
+   "n": 2,
+   "text": "- Added clear documentation directing maintainers to update only the version catalog"
+  },
+  {
+   "n": 3,
+   "text": "- Confirmed gradle lint task runs successfully with changes"
+  }
+ ],
+ "order": "5b71f5f49176daa5aa86275cf54f4554b921080c739f8c47856c3f2d9c6c9055"
+}

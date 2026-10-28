@@ -1,0 +1,30 @@
+{
+ "id": "705d4ee207",
+ "url": "https://github.com/sugyan/claude-code-webui/pull/31",
+ "repo": "sugyan/claude-code-webui",
+ "number": 31,
+ "message": "## Description\n\nImplements bottom-to-top message flow where newest messages appear at the bottom, creating a modern chat experience similar to Slack and other messaging applications. This builds upon the existing auto-scroll functionality from PR #27.\n\n## Type of Change\n\nPlease add the appropriate label(s) to this PR and check the relevant box(es):\n\n- [ ] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)\n- [x] \u2728 `feature` - New feature (non-breaking change which adds functionality)  \n- [ ] \ud83d\udca5 `breaking` - Breaking change (fix or feature that would cause existing functionality to not work as expected)\n- [ ] \ud83d\udcda `documentation` - Documentation update\n- [ ] \u26a1 `performance` - Performance improvement\n- [ ] \ud83d\udd28 `refactor` - Code refactoring\n- [ ] \ud83e\uddea `test` - Adding or updating tests\n- [ ] \ud83d\udd27 `chore` - Maintenance, dependencies, tooling\n\n## Changes Made\n\n- **Bottom-anchored layout**: Added flexbox layout with spacer (`<div className=\"flex-1\"></div>`) to push messages to bottom of chat container\n- **Empty state improvement**: Centered the \"Start a conversation\" message using flexbox layout (`flex items-center justify-center`)\n- **Message container enhancement**: Added `flex flex-col` classes to support vertical flexbox layout\n- **Conditional rendering**: Split message rendering into empty state and messages state for better layout control\n- **Preserved functionality**: Maintains all existing auto-scroll functionality from PR #27\n\n## Testing\n\n- [x] Tests pass locally (`make test`)\n- [x] Code is formatted (`make format`)\n- [x] Code is linted (`make lint`) \n- [x] Type checking passes (`make typecheck`)\n- [x] All quality checks pass (`make check`)\n- [x] Manual testing performed:\n  - \u2705 Messages start at bottom of chat container\n  - \u2705 New messages stack upward from bottom\n  - \u2705 Empty state displays centered in container\n  - \u2705 Auto-scroll functionality preserved from existing implementation\n  - \u2705 Works with both light and dark themes\n  - \u2705 Compatible with streaming message updates\n  - \u2705 Responsive design maintained\n\n## Checklist\n\n- [x] My code follows the project's style guidelines\n- [x] I have performed a self-review of my own code\n- [x] I have commented my code, particularly in hard-to-understand areas\n- [x] I have made corresponding changes to the documentation\n- [x] I have added/updated tests for my changes\n- [x] All tests pass\n\n## Screenshots (if applicable)\n\n**Before**: Messages started at top and flowed downward with auto-scroll\n**After**: Messages start at bottom and flow upward (modern chat experience) with auto-scroll\n\n## Additional Notes\n\nThis resolves issue #29 and is part of the larger effort (#10) to enhance the frontend UI with a Slack-like chat experience. The implementation:\n\n- **Builds on existing work**: Leverages the auto-scroll functionality from PR #27 rather than reimplementing it\n- **Minimal changes**: Uses flexbox spacer technique for optimal performance and simplicity  \n- **Backward compatible**: Maintains all existing functionality while adding the bottom-to-top flow\n- **Standards compliant**: Uses standard CSS flexbox layout techniques\n\nKey technical decisions:\n- Used flexbox spacer instead of CSS transforms for better performance and simplicity\n- Maintained existing auto-scroll logic to avoid conflicts and regressions\n- Split rendering logic for empty vs populated states for cleaner layout control\n- Preserved all existing theme system and responsive design features\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] \u2728 `feature` - New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 3,
+   "text": "- [x] Tests pass locally (`make test`)"
+  },
+  {
+   "n": 4,
+   "text": "- [x] All tests pass"
+  },
+  {
+   "n": 5,
+   "text": "- **Backward compatible**: Maintains all existing functionality while adding the bottom-to-top flow"
+  }
+ ],
+ "order": "f48c2bf95f0ee20520d50795433d4bc1ae6cdc8c141a988d6099286bab5318d6"
+}

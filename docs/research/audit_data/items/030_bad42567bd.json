@@ -1,0 +1,14 @@
+{
+ "id": "bad42567bd",
+ "url": "https://github.com/4ian/GDevelop/pull/7770",
+ "repo": "4ian/GDevelop",
+ "number": 7770,
+ "message": "Add a line height property to Text and BBText objects for multiline text, with backward compatibility.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-0207268c-02b9-4784-8bd2-282017a9e5a8\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-0207268c-02b9-4784-8bd2-282017a9e5a8\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Add a line height property to Text and BBText objects for multiline text, with backward compatibility."
+  }
+ ],
+ "order": "18e85240db1e8f60ffacc87674b3396f746d73d5678662bac08e67e070ad9307"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "de9348ff3b",
+ "url": "https://github.com/skypilot-org/skypilot/pull/6421",
+ "repo": "skypilot-org/skypilot",
+ "number": 6421,
+ "message": "<!-- Describe the changes in this PR -->\nThis PR enables `sky serve` to use relative paths (including `~` expansion) for `tls.keyfile` and `tls.certfile` in service manifests. This makes manifests more portable and easier to commit, aligning their behavior with `workdir`. File existence validation is also added.\n\n<!-- Describe the tests ran -->\n<!-- Unit tests (tests/test_*.py) are part of GitHub CI; below are tests that launch on the cloud. -->\n\nTested (run the relevant ones):\n\n- [x] Code formatting: install pre-commit (auto-check on commit) or `bash format.sh`\n- [x] Any manual or new tests for this PR (please specify below)\n  - Manual test: Verified `sky serve up` with a manifest using relative TLS paths and `~` expansion, confirming successful deployment and correct file validation.\n- [ ] All smoke tests: `/smoke-test` (CI) or `pytest tests/test_smoke.py` (local)\n- [ ] Relevant individual tests: `/smoke-test -k test_name` (CI) or `pytest tests/test_smoke.py::test_name` (local)\n- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)\n\n<!-- CI commands (/-prefixed) can only be triggered by repo members -->\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-941484f8-5998-4f6a-87d5-831b9556dc70\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-941484f8-5998-4f6a-87d5-831b9556dc70\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n<sub>[Learn more](https://docs.cursor.com/background-agent/web-and-mobile) about Cursor Agents</sub>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)"
+  }
+ ],
+ "order": "e3d4c01142b098c404c8601a4102f078eb79d179227209a25071acef9d2f47fa"
+}

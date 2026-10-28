@@ -1,0 +1,38 @@
+{
+ "id": "d849e5f081",
+ "url": "https://github.com/567-labs/instructor/pull/1586",
+ "repo": "567-labs/instructor",
+ "number": 1586,
+ "message": "# Add verbose parameter to control schema printing in Gemini LLM\n\n## Description\n\nThis PR implements a `verbose` parameter for the `from_gemini()` function to control schema printing to the console when using Gemini LLM with `GEMINI_TOOLS` mode. This addresses GitHub issue #1573 where users reported unwanted schema output being printed to the screen.\n\n## Changes Made\n\n### Core Implementation\n- **Added `verbose` parameter to `from_gemini()` function** with default value `True` for backward compatibility\n- **Modified `handle_gemini_tools()` function** to conditionally suppress schema output using context managers (`redirect_stdout` and `redirect_stderr`)\n- **Updated both `Instructor` and `AsyncInstructor` classes** to accept and store the `verbose` parameter\n- **Enhanced `handle_kwargs()` method** to pass the verbose parameter through the client architecture\n\n### Files Modified\n- `instructor/client_gemini.py` - Added verbose parameter to function signatures and client creation\n- `instructor/process_response.py` - Modified schema handling to respect verbose setting\n- `instructor/client.py` - Updated client classes to support verbose parameter\n\n### Documentation\n- **Created `docs/concepts/verbose-control.md`** - Comprehensive documentation explaining the verbose control feature with usage examples\n\n### Testing\n- **Created comprehensive test script** to verify verbose controller functionality\n- **Verified backward compatibility** - existing code continues to work unchanged\n- **Tested both verbose modes** - confirmed schema suppression works when `verbose=False`\n\n## Usage Examples\n\n```python\nimport instructor\nimport google.generativeai as genai\n\nclient = genai.GenerativeModel(\"gemini-pro\")\n\n# Suppress schema output (new feature)\ninstructor_client = instructor.from_gemini(\n    client=client,\n    mode=instructor.Mode.GEMINI_TOOLS,\n    verbose=False,  # Prevents schema from being printed\n)\n\n# Default behavior (backward compatible)\ninstructor_client = instructor.from_gemini(\n    client=client,\n    mode=instructor.Mode.GEMINI_TOOLS,\n    verbose=True,   # Allows schema to be printed (default)\n)\n```\n\n## Implementation Details\n\n- Uses Python's `redirect_stdout` and `redirect_stderr` context managers for clean output suppression\n- Maintains full functionality while preventing unwanted console output\n- Default `verbose=True` ensures no breaking changes for existing users\n- Parameter is properly propagated through the entire instructor client architecture\n\n## Testing\n\n- \u2705 All lint checks pass (`uv run ruff check .`)\n- \u2705 Verbose controller functionality verified\n- \u2705 Backward compatibility confirmed\n- \u2705 Documentation updated and accurate\n\n## Resolves\n\nCloses #1573\n\n---\n\n**Link to Devin run:** https://app.devin.ai/sessions/68a28e5a91c745ffbdf49f623e04b216\n\n**Requested by:** Jason Liu (work@jxnl.co)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Added `verbose` parameter to `from_gemini()` function** with default value `True` for backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "- **Created `docs/concepts/verbose-control.md`** - Comprehensive documentation explaining the verbose control feature with usage examples"
+  },
+  {
+   "n": 3,
+   "text": "- **Verified backward compatibility** - existing code continues to work unchanged"
+  },
+  {
+   "n": 4,
+   "text": "# Default behavior (backward compatible)"
+  },
+  {
+   "n": 5,
+   "text": "- Default `verbose=True` ensures no breaking changes for existing users"
+  },
+  {
+   "n": 6,
+   "text": "- \u2705 All lint checks pass (`uv run ruff check .`)"
+  },
+  {
+   "n": 7,
+   "text": "- \u2705 Backward compatibility confirmed"
+  }
+ ],
+ "order": "9789885803b9b37e7fa248c8be12fbd373d0728206690a8e2ccb0a928bca14fa"
+}

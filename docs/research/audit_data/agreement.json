@@ -1,0 +1,97 @@
+{
+ "items": 30,
+ "statements": 62,
+ "agreement": [
+  56,
+  62
+ ],
+ "kappa": 0.863,
+ "per_kind": {
+  "backward_compatible": {
+   "n": 32,
+   "agree": 28,
+   "kappa": 0.827
+  },
+  "docs_updated": {
+   "n": 9,
+   "agree": 9,
+   "kappa": null
+  },
+  "files_scope": {
+   "n": 11,
+   "agree": 11,
+   "kappa": 1.0
+  },
+  "lint_clean": {
+   "n": 2,
+   "agree": 1,
+   "kappa": 0.0
+  },
+  "tests_pass": {
+   "n": 1,
+   "agree": 1,
+   "kappa": null
+  },
+  "unchecked": {
+   "n": 7,
+   "agree": 6,
+   "kappa": 0.72
+  }
+ },
+ "disagreements": [
+  {
+   "item": "002_65caf2b3a9",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE",
+   "first_note": "bulk_raw_query keeps its signature, but a new public function convert_snuba_params_to_requests is added and callers (raw_query, search executors, eventstore, ru",
+   "second_note": "Static check, not run (Sentry tests need Snuba/Postgres services). Previously raw_query and the migrated callers went through bulk_raw_query, which builds Snuba"
+  },
+  {
+   "item": "038_efd3aff752",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE",
+   "first_note": "Mixed evidence, not settled by a concrete check. For end-user clients: at base, ServerContext.organizationSlug was only assigned (mcp-transport, chat, sentry-oa",
+   "second_note": "Impact claim settled by a changed public type: ServerContext (packages/mcp-server/src/types.ts) drops the required field organizationSlug and adds a required fi"
+  },
+  {
+   "item": "054_73631563a1",
+   "n": 1,
+   "kind": "lint_clean",
+   "first": "CANNOT_TELL",
+   "second": "TRUE",
+   "first_note": "The change is one .sql file (two-line edit), while the configured hooks are black, isort, flake8 (Python only), prettier (no SQL parser by default), typos and a",
+   "second_note": "Judged from the repository's own CI pre-commit job on the head SHA, not a local run (an earlier attempt in this batch to run repository code was denied by the p"
+  },
+  {
+   "item": "060_d1764b7f70",
+   "n": 1,
+   "kind": "unchecked",
+   "first": "CANNOT_TELL",
+   "second": "TRUE",
+   "first_note": "Static evidence strongly suggests the fix (name absent from crewai_tools/__init__.py at base, added at head; module files exist at base; tavily import guarded b",
+   "second_note": "Settled by static inspection of the import chain, not by running the import (no environment built; network installs in the sandbox were refused by the permissio"
+  },
+  {
+   "item": "093_0b95b96a01",
+   "n": 5,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL",
+   "first_note": "template_to_pic's page navigation URL changed for existing callers: previously always file://{template_path}; now file://{getcwd()} when pages is omitted, and t",
+   "second_note": "Signatures and names are unchanged and the removed file:// check only loosens html_to_pic. But there is a concrete default-behaviour change: template_to_pic cal"
+  },
+  {
+   "item": "096_ddcc2a02dc",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "TRUE",
+   "first_note": "The span is a code comment in an example whose code builds OpenAIConnection from a dict. Read narrowly (dict construction still works), it looks true: OpenAICon",
+   "second_note": "Read narrowly as the code example's claim that OpenAIConnection({...dict...}) still constructs; static reading only (runtime probe blocked). Judgment: if read a"
+  }
+ ]
+}

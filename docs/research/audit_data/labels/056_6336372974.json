@@ -1,0 +1,3 @@
+{"item_id": "6336372974", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox about no breaking API changes.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Unticked checkbox, template item (rule 2 class 2).", "evidence": ["PR message shows '* [ ] It introduces no breaking API changes' unticked"]}
+], "minutes_estimate": 1}

@@ -1,0 +1,14 @@
+{
+ "id": "3e574e7c35",
+ "url": "https://github.com/seasonedcc/remix-forms/pull/366",
+ "repo": "seasonedcc/remix-forms",
+ "number": 366,
+ "message": "## Notes\n- Extracted `coerceToForm` into its own module for clarity.\n- Updated imports in `schema-form` and corresponding test.\n- No behavioral changes; all tests pass.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- No behavioral changes; all tests pass."
+  }
+ ],
+ "order": "d3c2b758c5f9514ad90b9aecd1e1b103ef2bb816b91e48af64a1ffe46734b1e9"
+}

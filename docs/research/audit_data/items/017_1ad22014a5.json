@@ -1,0 +1,18 @@
+{
+ "id": "1ad22014a5",
+ "url": "https://github.com/usemarble/marble/pull/97",
+ "repo": "usemarble/marble",
+ "number": 97,
+ "message": "## Description\r\n\r\n<!--- Clearly describe what this PR changes. Include relevant details. -->\r\n\r\n## Motivation and Context\r\n\r\n<!--- Why is this change needed? What problem does it solve? -->\r\n<!--- If applicable, link to related GitHub issues with `Closes #issue_number` -->\r\n\r\n## How to Test\r\n\r\n<!--- Provide step-by-step instructions on how to verify your changes work as expected. -->\r\n<!--- Include any setup or test cases if needed. -->\r\n\r\n## Screenshots (if applicable)\r\n\r\n<!--- Add screenshots to illustrate UI changes. -->\r\n\r\n## Video Demo (if applicable)\r\n\r\n<!--- Show screen recordings of the issue or feature. -->\r\n\r\n## Types of Changes\r\n\r\n<!--- Mark all that apply with an `x` -->\r\n\r\n- [ ] \ud83d\udc1b Bug fix (non-breaking change that fixes an issue)\r\n- [ ] \u2728 New feature (non-breaking change that adds functionality)\r\n- [ ] \u26a0\ufe0f Breaking change (fix or feature that alters existing functionality)\r\n- [ ] \ud83c\udfa8 UI/UX Improvements\r\n- [ ] \u26a1 Performance Enhancement\r\n- [ ] \ud83d\udcd6 Documentation (updates to README, docs, or comments)\r\n\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n## Summary by CodeRabbit\n\n* **New Features**\n  * API responses now include stale-if-error=3600 in Cache-Control headers, appended without removing existing directives.\n  * Allows CDNs/clients to serve cached content for up to one hour when the origin errors, improving resilience and perceived availability.\n  * No changes to routes or public API behavior.\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] \ud83d\udc1b Bug fix (non-breaking change that fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] \u2728 New feature (non-breaking change that adds functionality)"
+  }
+ ],
+ "order": "0e40d45784ce55d11ee80eccd8fe9d178dfa135521db2ce9d23b1271f300c136"
+}

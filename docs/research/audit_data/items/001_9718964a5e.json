@@ -1,0 +1,22 @@
+{
+ "id": "9718964a5e",
+ "url": "https://github.com/crewAIInc/crewAI-tools/pull/202",
+ "repo": "crewAIInc/crewAI-tools",
+ "number": 202,
+ "message": "Added error handling, logging, and improved documentation for the Elasticsearch integration tool.\n\nChanges:\n- Added comprehensive error handling for connection, authentication, and indexing issues\n- Added logging throughout the adapter for better debugging\n- Added input validation for configuration parameters\n- Enhanced connection management with better error messages\n- Added detailed documentation for index configuration\n- Added error handling section to README\n\nLink to Devin run: https://app.devin.ai/sessions/64f786d368ee4bc4b84c451eedcaa302",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added error handling, logging, and improved documentation for the Elasticsearch integration tool."
+  },
+  {
+   "n": 2,
+   "text": "- Added detailed documentation for index configuration"
+  },
+  {
+   "n": 3,
+   "text": "- Added error handling section to README"
+  }
+ ],
+ "order": "0073493931fa530b5016469036b7e6af498b6190e4fbaf87bc34c0d9d7e9452b"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "a12709a4f1",
+ "url": "https://github.com/Azure/azure-sdk-for-python/pull/42127",
+ "repo": "Azure/azure-sdk-for-python",
+ "number": 42127,
+ "message": "## Key Changes\r\n\r\n1. **Enhanced `UserAgentSingleton` class** (`_user_agent.py`):\r\n   - Added support for red team context with `__REDTEAM_USER_AGENT` constant\r\n   - Introduced `redteam_context()` context manager for thread-safe user agent switching\r\n   - Modified `value` property to return appropriate user agent based on context\r\n\r\n2. **Updated Red Team scan method** (`red_team/_red_team.py`):\r\n   - Wrapped entire scan operation with `UserAgentSingleton.redteam_context()`\r\n   - Ensures all RAI service calls use red team user agent\r\n\r\n### Usage Example\r\n\r\n```python\r\nfrom azure.ai.evaluation._user_agent import UserAgentSingleton\r\n\r\n# Default behavior (unchanged)\r\nprint(UserAgentSingleton().value)  # \"azure-ai-evaluation/1.0.0\"\r\n\r\n# Red team context\r\nwith UserAgentSingleton.redteam_context():\r\n    print(UserAgentSingleton().value)  # \"azure-ai-evaluation-redteam/1.0.0\"\r\n```\r\n\r\n### RAI Service Call Coverage\r\n\r\nAll RAI service calls from red team operations now use the red team user agent:\r\n- `GeneratedRAIClient` methods (attack objectives, jailbreak prefixes)\r\n- `evaluate_with_rai_service` calls (conversation evaluation)\r\n- All HTTP requests to RAI service endpoints\r\n\r\n## Benefits\r\n\r\n\u2705 **Minimal Changes**: Surgical modifications with no breaking changes  \r\n\u2705 **Leverages Existing Infrastructure**: Uses established user agent patterns  \r\n\u2705 **Thread-Safe**: Context manager ensures proper state management  \r\n\u2705 **Automatic Restoration**: User agent reverts after red team operations  \r\n\u2705 **Future-Proof**: Covers all current and future RAI calls from red team  \r\n\u2705 **Backward Compatible**: Existing tests and functionality unaffected  \r\n\r\n## Testing\r\n\r\nComprehensive testing validates:\r\n- User agent context switching works correctly\r\n- All red team RAI calls use the red team user agent\r\n- Normal operations continue to use standard user agent\r\n- Context is properly restored after red team operations\r\n- No impact on existing test suite",
+ "statements": [
+  {
+   "n": 1,
+   "text": "\u2705 **Minimal Changes**: Surgical modifications with no breaking changes"
+  },
+  {
+   "n": 2,
+   "text": "\u2705 **Backward Compatible**: Existing tests and functionality unaffected"
+  },
+  {
+   "n": 3,
+   "text": "- No impact on existing test suite"
+  }
+ ],
+ "order": "e49b45295353158a9651c094ed66b62f4b8fc57a45306f67e0912e9f695d1a73"
+}

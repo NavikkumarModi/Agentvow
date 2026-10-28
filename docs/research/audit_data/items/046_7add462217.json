@@ -1,0 +1,14 @@
+{
+ "id": "7add462217",
+ "url": "https://github.com/czlonkowski/n8n-mcp/pull/264",
+ "repo": "czlonkowski/n8n-mcp",
+ "number": 264,
+ "message": "## Summary\nImplements Phase 6B of the integration testing plan: comprehensive tests for workflow autofix operations.\n\nCompletes Phase 6 by adding tests for the handleAutofixWorkflow MCP handler, which automatically detects and fixes common workflow issues.\n\n## Test Coverage (16 scenarios)\n\n### Preview Mode (2 tests)\n- Preview fixes without applying (expression-format)\n- Preview multiple fix types\n\n### Apply Mode (2 tests)\n- Apply expression-format fixes\n- Apply webhook-missing-path fixes\n\n### Fix Type Filtering (2 tests)\n- Filter to specific fix types\n- Handle multiple fix type filters\n\n### Confidence Threshold (3 tests)\n- High confidence threshold filtering\n- Medium confidence threshold (high + medium)\n- Low confidence threshold (all fixes)\n\n### Max Fixes Parameter (1 test)\n- Limit number of fixes via maxFixes parameter\n\n### No Fixes Available (1 test)\n- Handle workflows with no fixable issues\n\n### Error Handling (3 tests)\n- Non-existent workflow ID\n- Invalid fixTypes parameter\n- Invalid confidence threshold\n\n### Response Format Verification (2 tests)\n- Complete preview mode response structure\n- Complete apply mode response structure\n\n## Test Results\n- \u2705 All 99 integration tests passing\n- \u2705 Phase 1-6 complete\n- \u2705 Autofix tests cover all fix types, modes, and edge cases\n\n## Autofix Fix Types Tested\n\nThe autofix engine handles these specific fix types:\n1. **expression-format**: Missing = prefix for resource locators\n2. **typeversion-correction**: Outdated typeVersion values\n3. **error-output-config**: Error output configuration issues\n4. **node-type-correction**: Incorrect node types\n5. **webhook-missing-path**: Missing webhook path parameters\n\n## Implementation Details\n\nAll tests follow the MCP handler testing pattern:\n- Tests call handleAutofixWorkflow (MCP handler), not raw API client\n- Tests verify McpToolResponse format (success, data, error)\n- Tests handle both cases: fixes available and no fixes available\n- Tests verify actual workflow modifications when applyFixes=true\n\n## Phase 6 Status\n- **Phase 6A (Validation)**: \u2705 Complete (PR #263)\n- **Phase 6B (Autofix)**: \u2705 Complete (this PR)\n\n## Next Phase\nPhase 7: Execution Management Tests (webhook triggers, get/list/delete executions)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 All 99 integration tests passing"
+  }
+ ],
+ "order": "24031d6b871f7f656ffd69539106c200a3d7b80e128f51a31c32dc24054a5401"
+}

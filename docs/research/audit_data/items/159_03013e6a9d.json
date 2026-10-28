@@ -1,0 +1,14 @@
+{
+ "id": "03013e6a9d",
+ "url": "https://github.com/readlite/readlite-plugin/pull/29",
+ "repo": "readlite/readlite-plugin",
+ "number": 29,
+ "message": "## Summary\n- document new features like text highlighting and inline translation\n- add installation instructions, testing steps, and contributing guidelines\n- provide matching updates in Chinese README\n- fix broken image links by using extension icon in both READMEs\n\n## Testing\n- `npm test -- --passWithNoTests`\n- `npm run lint` *(fails: ESLint couldn't find a configuration file)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_689ef6d7ff8c83279a2501f920007b97",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `npm test -- --passWithNoTests`"
+  }
+ ],
+ "order": "ac402e6c0a684d0d1a9843bd400cc0d7dd5e14cfe5817e25e7acff91a16171a6"
+}

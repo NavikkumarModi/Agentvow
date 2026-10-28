@@ -1,0 +1,18 @@
+{
+ "id": "0a196f91da",
+ "url": "https://github.com/getsentry/sentry-cocoa/pull/6006",
+ "repo": "getsentry/sentry-cocoa",
+ "number": 6006,
+ "message": "## :scroll: Description\r\n\r\nThis PR migrates the `lint-swift-formatting.yml` workflow to use the `dorny/paths-filter` action for conditional execution. It removes the `on.pull_request.paths` filter and introduces a `files-changed` job to detect relevant file changes. The main `lint` job is now conditional based on the output of `files-changed`. A new `lint_swift_formatting-required-check` job is added to serve as a reliable required check for branch protection rules, ensuring the workflow always provides a status. A new filter `run_lint_swift_formatting_for_prs` has been added to `.github/file-filters.yml`.\r\n\r\n## :bulb: Motivation and Context\r\n\r\nThis change is part of a broader initiative to migrate all workflows using `on.[event].paths` filtering to a `files-changed` job with `dorny/paths-filter`. This allows us to enforce required checks more efficiently by only running the full workflow when relevant files are modified, thus reducing unnecessary CI runs. This implementation follows the pattern established in #5893 for `tests.yml` and `api-stability.yml`.\r\n\r\nFixes #5962\r\n\r\n## :green_heart: How did you test it?\r\n\r\nThe changes were verified by confirming the correct structure and logic of the modified workflow files and the added file filter, ensuring they align with the established pattern.\r\n\r\n## :pencil: Checklist\r\n\r\nYou have to check all boxes before merging:\r\n\r\n- [ ] I added tests to verify the changes.\r\n- [ ] No new PII added or SDK only sends newly added PII if `sendDefaultPII` is enabled.\r\n- [ ] I updated the docs if needed.\r\n- [ ] I updated the wizard if needed.\r\n- [ ] Review from the native team if needed.\r\n- [ ] No breaking change or entry added to the changelog.\r\n- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs.\r\n\r\n#skip-changelog",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] No breaking change or entry added to the changelog."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs."
+  }
+ ],
+ "order": "c23d5d2c87bae9e1a8e2ac6b159debb5404466eb288ac35238c9bb71549fbec1"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "ab3bd61cd8",
+ "url": "https://github.com/langfuse/langfuse/pull/9915",
+ "repo": "langfuse/langfuse",
+ "number": 9915,
+ "message": "## What does this PR do?\n\nThe default 5MB part size for S3 multipart uploads was causing large CSV exports to exceed AWS's 10,000 part limit, leading to upload failures. This PR resolves the issue by increasing the S3 multipart upload part size to 100MB and configuring a queue size of 4 for concurrent uploads. This change supports file uploads up to ~1TB, well within AWS limits, and improves upload efficiency.\n\nFixes #LFE-7333\n\n## Type of change\n\n- [x] Bug fix (non-breaking change which fixes an issue)\n\n## Mandatory Tasks\n\n- [x] Make sure you have self-reviewed the code. A decent size PR without self-review might be rejected.\n\n## Checklist\n\n- [ ] This change requires a documentation update\n- [ ] I haven't added tests that prove my fix is effective or that my feature works\n\n---\nLinear Issue: [LFE-7333](https://linear.app/langfuse/issue/LFE-7333/s3-multi-part-upload-exceeds-aws-limit-of-10k)\n\n<a href=\"https://cursor.com/background-agent?bcId=bc-6025e591-bc76-4eef-8410-7ff3d08cd41b\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-6025e591-bc76-4eef-8410-7ff3d08cd41b\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Bug fix (non-breaking change which fixes an issue)"
+  }
+ ],
+ "order": "f26e71e9c6cc02e3e6d3fe5740dc6bde43688e5f7e9ebf7d4fa4a74e5e03567b"
+}

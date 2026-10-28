@@ -1,0 +1,18 @@
+{
+ "id": "27498a1ac0",
+ "url": "https://github.com/evmts/guillotine/pull/386",
+ "repo": "evmts/guillotine",
+ "number": 386,
+ "message": "## Summary\n\nThis PR implements batch validation infrastructure for block-based execution optimization. This is the second step in the block-based optimization effort (following #384 which added BlockMetadata structures).\n\n## Changes\n\n### Batch Validation Infrastructure\n- **batch_validation.zig**: Core validation functions\n  - `validate_block()`: Validates gas and stack requirements for entire block\n  - `consume_block_gas()`: Consumes gas for entire block at once\n  - Comprehensive tests for all edge cases\n\n### Block-Based Interpreter\n- **interpret_block.zig**: New interpreter using batch validation\n  - Pre-validates blocks before execution\n  - Skips per-instruction validation within blocks\n  - Falls back to regular interpreter if no block metadata available\n  \n### Fast Path Optimization\n- **fast_block.zig**: Fast execution path for simple blocks\n  - `can_use_fast_path()`: Detects blocks without jumps/calls/state changes\n  - `execute_fast_block()`: Executes simple blocks with minimal overhead\n  - Inspired by EVMOne's fast path optimization\n\n### Integration\n- **interpret_dispatch.zig**: Routes between interpreters based on available metadata\n- **Frame.block_mode**: New flag to indicate block-based execution\n- **jump_table.execute()**: Updated to skip validation in block mode\n\n## Implementation Details\n\nThe optimization works in three layers:\n\n1. **Block Validation**: When entering a new block, validate gas and stack requirements once\n2. **Batch Execution**: Execute all instructions in the block without per-instruction checks\n3. **Fast Path**: For blocks without control flow, use the fastest possible execution\n\n## Performance Impact\n\n**Expected**: 20-30% improvement for contracts with good block structure\n**Current**: Infrastructure only - actual performance gains require the block analysis from #384 to be integrated\n\nThe implementation is designed to be safe and backward-compatible:\n- Falls back to regular interpreter if no block metadata\n- All validation still happens, just batched\n- Comprehensive test coverage ensures correctness\n\n## Testing\n\nAdded extensive tests for:\n- Gas validation (insufficient, sufficient, edge cases)\n- Stack validation (underflow, overflow, exact requirements)\n- Fast path detection (various opcode combinations)\n- Complex block scenarios\n\nAll tests pass: `zig build test` \u2705\n\n## Next Steps\n\n1. Integrate with block analysis from #384\n2. Add block metadata to more contracts\n3. Measure performance improvements\n4. Further optimize the fast path\n\n## Related Issues\n\n- Part of #340 (Block-based execution optimization)\n- Builds on #384 (BlockMetadata structures)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The implementation is designed to be safe and backward-compatible:"
+  },
+  {
+   "n": 2,
+   "text": "All tests pass: `zig build test` \u2705"
+  }
+ ],
+ "order": "0d3e633e73af0206d745bfb639c02d49c1d858deaeb13d024ed677bd612ef070"
+}

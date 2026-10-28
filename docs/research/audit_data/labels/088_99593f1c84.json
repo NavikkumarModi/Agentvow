@@ -1,0 +1,3 @@
+{"item_id": "99593f1c84", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"CLAIM","proposition":"This change adds documentation (a README for the new 1inch Python plugin).","label":"TRUE","confidence":"HIGH","judgment":false,"note":"Ticked checkbox so a claim. Documentation is a new README.md directly about the plugin; quality not judged.","evidence":["file list: added python/src/plugins/1inch/README.md +52-0 (change also adds __init__.py, parameters.py, service.py, pyproject.toml)"]}
+],"minutes_estimate":2}

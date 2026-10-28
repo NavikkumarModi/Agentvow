@@ -1,0 +1,18 @@
+{
+ "id": "a875acaa8e",
+ "url": "https://github.com/mlflow/mlflow/pull/16039",
+ "repo": "mlflow/mlflow",
+ "number": 16039,
+ "message": "- [x] Analyze current implementation of `dev/update_changelog.py`\n- [x] Understand the performance issue: currently fetches PRs one by one with REST API calls\n- [x] Explore existing codebase for GraphQL usage patterns\n- [x] Design GraphQL query to batch-fetch PR data (author, labels) for multiple PR numbers\n- [x] Implement GraphQL client functionality to replace individual REST API calls\n- [x] Update `main()` function to collect all PR numbers first, then batch-fetch data\n- [x] Add chunking support for large numbers of PRs (max 50 per GraphQL query)\n- [x] Add proper error handling for missing/invalid PRs\n- [x] Format and lint the code according to project standards\n- [x] Test the implementation to ensure it produces the same results\n- [x] Verify performance improvement\n- [x] Add comprehensive documentation explaining the improvement\n\n## Summary\n\nSuccessfully implemented batch PR fetching with GraphQL API in `dev/update_changelog.py`, providing significant performance improvement while maintaining exact same functionality.\n\n### Key Changes Made:\n\n1. **Added `batch_fetch_prs_graphql()`** - Main function that orchestrates batch fetching\n2. **Added `_fetch_pr_chunk_graphql()`** - Helper that handles individual GraphQL requests  \n3. **Modified `main()` function** - Changed from sequential individual API calls to batch approach:\n   - Extract all PR numbers from git log first\n   - Batch fetch all PR data with GraphQL\n   - Create PullRequest objects from batch results\n\n### Performance Improvement:\n\n- **Before**: N individual REST API calls (GET `/repos/mlflow/mlflow/pulls/{pr_num}`)\n- **After**: \u2308N/50\u2309 batch GraphQL calls (POST `/graphql` with up to 50 PRs per request)\n- **Typical improvement**: 5-50x fewer API calls depending on release size\n- **Example**: 100 PRs now requires 2 API calls instead of 100 (50x improvement)\n\n### Technical Details:\n\n- Uses GitHub GraphQL API with dynamic query generation and aliases\n- Chunks large requests (>50 PRs) to respect API limits\n- Maintains same output format for compatibility\n- Includes proper error handling for missing/invalid PRs\n- All existing functionality and CLI interface preserved unchanged\n\n### Validation:\n\n- \u2705 All imports and syntax correct\n- \u2705 CLI interface unchanged\n- \u2705 Core functionality preserved  \n- \u2705 Performance characteristics validated\n- \u2705 Code passes all linting/formatting checks\n- \u2705 Handles edge cases (empty lists, missing PRs)\n\nThe implementation is backward-compatible and ready for production use.\n\nFixes #16038.\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 Code passes all linting/formatting checks"
+  },
+  {
+   "n": 2,
+   "text": "The implementation is backward-compatible and ready for production use."
+  }
+ ],
+ "order": "bc9329e46ac9e84c667ba5c9065dca7f49cecce07b6d7e22336decb0c562fdd2"
+}

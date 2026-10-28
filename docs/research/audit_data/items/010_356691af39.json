@@ -1,0 +1,14 @@
+{
+ "id": "356691af39",
+ "url": "https://github.com/crewAIInc/crewAI/pull/2624",
+ "repo": "crewAIInc/crewAI",
+ "number": 2624,
+ "message": "# Fix OpenTelemetry version conflict with OpenLit\n\n## Description\nThis PR fixes the version conflict between OpenTelemetry packages required by OpenLit (v1.32.1) and CrewAI (>=1.30.0) as reported in issue #2623. By pinning the OpenTelemetry package versions to 1.32.1, users can now use both libraries together without conflicts.\n\n## Changes\n- Updated OpenTelemetry dependencies in `pyproject.toml` to use exact version 1.32.1\n- Added tests to verify compatibility between CrewAI and OpenLit\n\n## Testing\n- Added specific tests for OpenLit compatibility\n- Verified that OpenLit 1.33.19 can be installed alongside CrewAI with the updated dependencies\n\nFixes #2623\n\nLink to Devin run: https://app.devin.ai/sessions/de90c4fecc934055826acffd5f518b0c\nRequested by: Joe Moura\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated OpenTelemetry dependencies in `pyproject.toml` to use exact version 1.32.1"
+  }
+ ],
+ "order": "0ae6213149cfdfea9266a76f03c19cb22bf71efd744a0adef1723f8c8f735bf4"
+}

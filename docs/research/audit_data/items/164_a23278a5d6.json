@@ -1,0 +1,18 @@
+{
+ "id": "a23278a5d6",
+ "url": "https://github.com/keylime/rust-keylime/pull/1139",
+ "repo": "keylime/rust-keylime",
+ "number": 1139,
+ "message": "This change enables TLS-based communication with the Registrar service in the push model agent, providing secure registration and activation. The implementation separates Registrar TLS configuration from Verifier TLS configuration, allowing each service to be secured independently based on deployment requirements.\r\n\r\nKey changes:\r\n- Added registrar_tls_enabled, registrar_tls_ca_cert, registrar_tls_client_cert, and registrar_tls_client_key configuration options with empty defaults for backwards compatibility\r\n- Updated RegistrarClientBuilder to accept TLS configuration parameters (ca_certificate, certificate, key, insecure, timeout)\r\n- Modified RegistrarClient to use HTTPS client when TLS is configured, falling back to plain HTTP when TLS parameters are not provided\r\n- Refactored to use single ResilientClient for all HTTP/HTTPS requests instead of maintaining separate client instances\r\n- Added RegistrarTlsConfig struct in push model agent to manage TLS configuration from config file\r\n- Updated StateMachine to accept and pass registrar_tls_config to registration functions\r\n\r\nBackwards compatibility:\r\n- Defaults to plain HTTP when registrar_tls_enabled is false (default)\r\n- Defaults to plain HTTP when TLS certificate paths are empty (default)\r\n- TLS only enabled when all three certificate paths are provided AND registrar_tls_enabled is true\r\n- Pull model agent unchanged - maintains existing behavior with None values for all new TLS fields\r\n\r\nAdd Mockoon-based registration tests:\r\n- This change introduces a suite of integration tests for the registrar\r\nclient using Mockoon to simulate a registrar server. These tests provide\r\ncoverage for HTTP and HTTPS interactions, including agent registration,\r\nactivation, and API version retrieval.\r\n- New GitHub Actions Workflow: A dedicated workflow,\r\nmockoon-registrar-tests, has been added to mockoon.yaml to run the new\r\nregistrar tests in CI. [cite_start]This workflow installs and runs the\r\nMockoon CLI with a new data file.\r\n- Mockoon Registrar Configuration: A new JSON file, registrar.json,\r\ndefines the mock registrar's API endpoints, including /version, /v1.2/agents/{uuid}\r\nfor registration and activation, and their TLS-secured counterparts.\r\n- Rust Integration Tests: New tests have been added to registrar_client.rs\r\nto cover:\r\n- HTTP agent registration and activation.\r\n  - API version endpoint retrieval.\r\n  - Client behavior with retry configurations.\r\n  - Verification of the TLS code path during client build.\r\n  - Test Execution Script: The mockoon_registrar_tests.sh script manages the\r\nsetup and teardown of the testing environment. It starts the\r\nMockoon server on port 3001, handles certificate generation\r\nand executes the Cargo tests. It also includes\r\ncleanup logic to stop the Mockoon server after the test run.\r\n\r\nAssisted-by: Gemini <gemini@google.com>\r\nCo-Authored-By: Claude <noreply@anthropic.com>\r\nSigned-off-by: Sergio Arroutbi <sarroutb@redhat.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added registrar_tls_enabled, registrar_tls_ca_cert, registrar_tls_client_cert, and registrar_tls_client_key configuration options with empty defaults for backwards compatibility"
+  },
+  {
+   "n": 2,
+   "text": "Backwards compatibility:"
+  }
+ ],
+ "order": "b0bc96a037db275b8c20d11d5d4faa87a3ef84a2503e40c5236c00084d8b3897"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "7d01db17c7",
+ "url": "https://github.com/KosinskiLab/AlphaPulldown/pull/533",
+ "repo": "KosinskiLab/AlphaPulldown",
+ "number": 533,
+ "message": "This PR adds a new `--dropout_during_inference` flag to the `run_structure_prediction.py` script that enables dropout during inference for improved uncertainty estimation. The flag is supported across all available backends: AlphaFold, AlphaFold3, AlphaLink, and UniFold.\n\n## Problem\n\nCurrently, there's no way to enable dropout during inference in AlphaPulldown, which limits the ability to obtain uncertainty estimates for predictions. Dropout during inference can provide valuable insights into model confidence and prediction reliability.\n\n## Solution\n\nAdded a new boolean flag `--dropout_during_inference` that:\n\n- Defaults to `False` to maintain backward compatibility\n- When enabled, sets `eval_dropout=True` in the respective model configurations\n- Is passed through to all backend `setup()` functions via the existing parameter passing mechanism\n\n## Implementation Details\n\nThe implementation follows the pseudocode specified in the issue:\n\n```python\nfrom alphafold.model import config\ncfg = config.model_config(<model_name>)\ncfg.model.global_config.eval_dropout = True \n```\n\n### Changes Made\n\n1. **`run_structure_prediction.py`**: Added flag definition and included it in `default_model_flags`\n2. **`alphafold_backend.py`**: Added parameter to `setup()` and logic to set `model_config.model.global_config.eval_dropout = True`\n3. **`alphafold3_backend.py`**: Added parameter and logic in `make_model_config()` to set `config.global_config.eval_dropout = True`\n4. **`alphalink_backend.py`**: Added parameter and logic with fallback handling for different config structures\n5. **`unifold_backend.py`**: Added parameter and logic with proper error handling and logging\n6. **`backend/__init__.py`**: Updated available backends list to include alphalink\n\n### Error Handling\n\nThe implementation includes proper error handling with `hasattr()` checks and warning messages when `global_config` is not available, ensuring compatibility across different model configurations.\n\n## Usage\n\n```bash\n# Enable dropout during inference for any backend\npython alphapulldown/scripts/run_structure_prediction.py \\\n    --input protein1.fasta \\\n    --output_directory ./results \\\n    --data_directory /path/to/weights \\\n    --features_directory /path/to/features \\\n    --fold_backend alphafold \\\n    --dropout_during_inference\n```\n\n## Testing\n\nAdded comprehensive tests in `test/test_dropout_during_inference.py` that verify:\n- Flag is properly defined and documented\n- All backend `setup()` functions accept the parameter\n- Logic is correctly implemented in all backends\n\nThe changes are minimal (132 insertions, 2 deletions) and maintain full backward compatibility.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/KosinskiLab/AlphaPulldown/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Defaults to `False` to maintain backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "Added comprehensive tests in `test/test_dropout_during_inference.py` that verify:"
+  },
+  {
+   "n": 3,
+   "text": "The changes are minimal (132 insertions, 2 deletions) and maintain full backward compatibility."
+  }
+ ],
+ "order": "1652908feaf89a06e42483ab9c305d4ec76cc7c8f62608e1982f84f30f0fdfb5"
+}

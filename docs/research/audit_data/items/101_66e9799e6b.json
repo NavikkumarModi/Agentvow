@@ -1,0 +1,18 @@
+{
+ "id": "66e9799e6b",
+ "url": "https://github.com/svapnil/iso20022.js/pull/42",
+ "repo": "svapnil/iso20022.js",
+ "number": 42,
+ "message": "# Description\nAllow SEPA payments to be created without providing BIC (agent) while maintaining IBAN requirement, as requested in issue #41.\n\n## Changes\n- Modified SEPA payment initiation to handle missing BIC\n- Added test cases for BIC-less payments\n- Maintained XML schema validation\n\n## Testing\n- All 37 tests passing\n- XML schema validation passes for both BIC and BIC-less payments\n- Backward compatibility maintained for payments with BIC\n\nLink to Devin run: https://app.devin.ai/sessions/19622e7c01064916b0ee631166df05c8\nRequested by: Svapnil\n\nResolves #41",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All 37 tests passing"
+  },
+  {
+   "n": 2,
+   "text": "- Backward compatibility maintained for payments with BIC"
+  }
+ ],
+ "order": "6bc342e3e47a99a7d54ca89b87f32a890a31c0d19c0a6907d453875b8b3b526d"
+}

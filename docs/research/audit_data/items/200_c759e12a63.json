@@ -1,0 +1,14 @@
+{
+ "id": "c759e12a63",
+ "url": "https://github.com/microsoft/presidio/pull/1649",
+ "repo": "microsoft/presidio",
+ "number": 1649,
+ "message": "Updates the version field in the `[project]` section of three pyproject.toml files to align with the latest release version 2.2.359:\n\n- **presidio-image-redactor/pyproject.toml**: Updated from `0.0.56` to `2.2.359`\n- **presidio-analyzer/pyproject.toml**: Updated from `2.2.358` to `2.2.359`\n- **presidio-anonymizer/pyproject.toml**: Updated from `2.2.358` to `2.2.359`\n\n## Changes Made\n- Only modified the `version` field in each file's `[project]` section\n- No other modifications were made to maintain consistency with project structure\n- All TOML files remain valid after the changes\n\n## Validation\n- \u2705 All three pyproject.toml files validated as valid TOML syntax\n- \u2705 Only version numbers changed, no other fields modified\n- \u2705 Changes are minimal and surgical (3 lines changed total)\n\nThis update ensures all Presidio packages are aligned with the 2.2.359 release version as documented in the CHANGELOG.md.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This update ensures all Presidio packages are aligned with the 2.2.359 release version as documented in the CHANGELOG.md."
+  }
+ ],
+ "order": "d16cd65ea9097c69965621d08431a7d44400c3a1ce0d8015c985ce7eeb01187f"
+}

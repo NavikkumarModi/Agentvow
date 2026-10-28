@@ -1,0 +1,18 @@
+{
+ "id": "d0a24a5e26",
+ "url": "https://github.com/getsentry/sentry-cocoa/pull/5640",
+ "repo": "getsentry/sentry-cocoa",
+ "number": 5640,
+ "message": "```\n## :scroll: Description\n\nConditionally removes the `userSegment` property and parameter from `SentryTraceContext` and `SentryBaggage` initializers and related methods when `SDK_V9` is enabled. Updates call sites in `SentryNetworkTracker.m` and `SentryClient.m` to reflect this change.\n\n## :bulb: Motivation and Context\n\nIn `SDK_V9`, the `userSegment` concept is deprecated. Previously, `nil` was explicitly passed to `userSegment` arguments when `SDK_V9` was enabled, which was unnecessary. This change completely removes `userSegment` from the API and internal implementation for `SDK_V9` builds using conditional compilation, resulting in a cleaner, more type-safe API and eliminating redundant `nil` passing.\n\n## :green_heart: How did you test it?\n\nVerified through conditional compilation that the `userSegment` property and its references are entirely excluded when `SDK_V9` is enabled. Ensured the code compiles correctly with and without `SDK_V9` enabled.\n\n## :pencil: Checklist\n\nYou have to check all boxes before merging:\n\n- [ ] I added tests to verify the changes.\n- [ ] No new PII added or SDK only sends newly added PII if `sendDefaultPII` is enabled.\n- [ ] I updated the docs if needed.\n- [ ] I updated the wizard if needed.\n- [ ] Review from the native team if needed.\n- [ ] No breaking change or entry added to the changelog.\n- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs.\n```\n\n---\n\n[Slack Thread](https://sentry.slack.com/archives/C095WL15DDY/p1752592788473609?thread_ts=1752592788.473609&cid=C095WL15DDY)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] No breaking change or entry added to the changelog."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs."
+  }
+ ],
+ "order": "2f017e552717c2c636b7c0147e6d9b653c58ab31dcaaf64970c24726c437c3ee"
+}

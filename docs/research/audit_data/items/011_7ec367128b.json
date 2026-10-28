@@ -1,0 +1,14 @@
+{
+ "id": "7ec367128b",
+ "url": "https://github.com/TracecatHQ/tracecat/pull/1520",
+ "repo": "TracecatHQ/tracecat",
+ "number": 1520,
+ "message": "## Summary\n- add ORM schemas and migration for case relations and merge tracking\n- extend case service and API to manage similar/merged cases with cascade status handling and filtering\n- document the new endpoints and add unit tests covering relation and merge workflows\n\n## Testing\n- pytest tests/unit/test_case_relations.py *(fails: ModuleNotFoundError: No module named 'tracecat_registry')*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68e97a29d66c83339b1e444c733f933d\n    \n<!-- This is an auto-generated description by cubic. -->\n---\n\n## Summary by cubic\nAdds case-to-case relations and merge workflows to the Cases API. You can mark cases as similar, merge duplicates into a primary with status cascading, and control visibility of merged cases in listings.\n\n- **New Features**\n  - Added case_relations and case_merges tables with constraints and indexes (Alembic migration).\n  - New endpoints: POST/DELETE /cases/{id}/similar and POST/DELETE /cases/{id}/merge (includes unmerge).\n  - Listing and search exclude merged secondaries by default; pass include_merged=true to show them.\n  - Case reads now include relation summaries: similar_cases, merged_cases, merged_into_case; minimal reads add merged_case_count, merged_into_case_id, is_merged.\n  - Service enforces rules: no self-relations, uniqueness, prevent status changes on merged secondaries, and cascades primary status to merged cases; short_id falls back to UUID when case_number is missing.\n  - Docs updated; unit tests cover relation and merge workflows.\n\n- **Migration**\n  - Run Alembic upgrade to create new tables.\n  - No breaking API changes; visibility of merged cases is opt-in via include_merged=true.\n  - Note: merged secondaries\u2019 status is read-only; unmerge to edit their status.\n\n<!-- End of auto-generated description by cubic. -->\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- No breaking API changes; visibility of merged cases is opt-in via include_merged=true."
+  }
+ ],
+ "order": "0c03b7e8f81abb208c5f18103f74b8000ca187543fd768cdd9a8bb3edea0bfd2"
+}

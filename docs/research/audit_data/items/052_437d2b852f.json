@@ -1,0 +1,26 @@
+{
+ "id": "437d2b852f",
+ "url": "https://github.com/Codehagen/Badget/pull/295",
+ "repo": "Codehagen/Badget",
+ "number": 295,
+ "message": "## Description\nImplements Plaid integration to allow users to connect bank accounts, import transactions, and synchronize account balances. This feature provides a modal for bank connection, flexible transaction import options, and visual indicators for connected accounts.\n\n## Type of Change\n- [x] New feature (non-breaking change which adds functionality)\n\n## Changes Made\n- [x] Added `PlaidItem` and `PlaidAccount` models to the Prisma schema, with relations to `Family` and `FinancialAccount`.\n- [x] Created new server actions (`src/actions/plaid-actions.ts`) for Plaid API interactions, including `createLinkToken`, `exchangePublicToken`, `importTransactions`, and `syncAccountBalances`.\n- [x] Developed new UI components: `PlaidLinkModal` for a secure bank connection flow and `TransactionImportButton` for managing import periods and balance synchronization.\n- [x] Integrated the new Plaid components into `src/components/financial/accounts-header.tsx`.\n- [x] Added necessary Plaid environment variable placeholders to `.env.example`.\n- [x] Included a comprehensive setup guide (`PLAID_SETUP.md`) for easy configuration.\n- [x] Created a basic API route (`src/app/api/plaid/route.ts`) to expose Plaid functionality.\n- [x] Enhanced the `data-table.tsx` component to display Plaid connection status for accounts.\n- [x] Added new dependencies: `plaid`, `react-plaid-link`, and `@types/react-plaid-link`.\n\n## Testing\n- [ ] Unit tests pass\n- [ ] Integration tests pass\n- [x] Manual testing completed (Verified bank connection, transaction import, and balance sync in a development environment.)\n- [x] Tested on different screen sizes (UI components are responsive.)\n- [x] Tested authentication flows (Plaid Link connection flow was tested.)\n- [x] Tested with different user roles (Plaid items are linked to `Family` for multi-tenancy support.)\n\n## Screenshots (if applicable)\nPlease add screenshots of any UI changes:\n\n**Before:**\n<!-- Add screenshot -->\n\n**After:**\n<!-- Add screenshot -->\n\n## Database Changes\n- [x] Database migration required (include migration details)\n  - New tables: `plaid_items` and `plaid_accounts` are created.\n  - Relationships are established between `plaid_items`, `plaid_accounts`, `families`, and `financial_accounts`.\n- [x] New Prisma schema changes (run `pnpm db:generate` and `pnpm db:push`)\n\n## Checklist\n- [x] My code follows the project's style guidelines\n- [x] I have performed a self-review of my code\n- [x] I have commented my code, particularly in hard-to-understand areas\n- [x] I have made corresponding changes to the documentation (See `PLAID_SETUP.md`)\n- [x] My changes generate no new warnings\n- [x] I have added tests that prove my fix is effective or that my feature works (Manual testing performed)\n- [x] New and existing unit tests pass locally with my changes\n- [x] Any dependent changes have been merged and published\n\n## Additional Notes\nThis PR delivers a complete and secure Plaid integration, enabling users to manage their financial data directly within the application. The `IMPLEMENTATION_SUMMARY_PLAID.md` file provides a detailed overview of the features and technical implementation. To get started, ensure Plaid API keys are configured in `.env` and run `npx prisma db push` for the database migration.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Unit tests pass"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] Integration tests pass"
+  },
+  {
+   "n": 4,
+   "text": "- [x] New and existing unit tests pass locally with my changes"
+  }
+ ],
+ "order": "2a7c6bb50de76ab0d22fdb843690a6dac5cfabe8caa33c223063537d78d7d558"
+}

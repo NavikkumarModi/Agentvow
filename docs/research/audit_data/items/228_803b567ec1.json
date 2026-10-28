@@ -1,0 +1,14 @@
+{
+ "id": "803b567ec1",
+ "url": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1228",
+ "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+ "number": 1228,
+ "message": "## Description\r\n\r\nAlternative implementation to #1203. Adds CLI option for generating only schemas to the specified output directory.\r\n\r\n## Motivation and Context\r\n\r\nIn support of use cases where users only need/want the schemas to be generated without having to modify the plugin config for the given API.\r\n\r\n## How Has This Been Tested?\r\n\r\nTBD\r\n\r\n## Types of changes\r\n\r\n<!--- What types of changes does your code introduce? -->\r\n<!--- PICK ONE: -->\r\n\r\n- New feature (non-breaking change which adds functionality)\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "eefae98db8060b7e6ac022caee55bf99365ecbfb6fd20a5c03709f529ed56a64"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "8467773975",
+ "url": "https://github.com/Metta-AI/metta/pull/2449",
+ "repo": "Metta-AI/metta",
+ "number": 2449,
+ "message": "# feat: add simple RL demo and README documentation\n\n## Summary\nAdds a standalone demo file and comprehensive documentation to help users get started with the MettaGrid RL environment. The demo shows basic environment usage with random actions, while the README provides examples for writing custom RL loops with both single-agent (Gymnasium) and multi-agent (PettingZoo) interfaces.\n\n**Key Changes:**\n- **New demo file**: `mettagrid/simple_rl_demo.py` - executable script demonstrating basic RL loop with random actions\n- **Updated README**: `mettagrid/README.md` - added \"Quick Start with RL Environment\" section with comprehensive usage examples\n\n## Review & Testing Checklist for Human\n- [ ] **Test demo in isolation**: Run `./simple_rl_demo.py` from the mettagrid directory to verify it works correctly in the filtered repository context without the broader metta codebase\n- [ ] **Verify documentation examples**: Test the code examples in the README, particularly the PettingZoo multi-agent example, to ensure they work as documented\n- [ ] **Check dependencies**: Review the script dependencies in the shebang header to ensure they're complete and don't conflict with your environment setup\n- [ ] **Confirm file placement**: Verify that placing files in `mettagrid/` directory is correct for your downstream filtering system to the separate mettagrid repository\n\n### Notes\nThe demo was tested successfully from both the main repo root and the mettagrid subdirectory during development. However, since this is intended for users of the filtered mettagrid repository, human verification of the isolation testing is critical.\n\nLink to Devin run: https://app.devin.ai/sessions/87ac14353fb0459280f486b18d6c4ad6\nRequested by: @dominik3141",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Updated README**: `mettagrid/README.md` - added \"Quick Start with RL Environment\" section with comprehensive usage examples"
+  }
+ ],
+ "order": "4046c194ceede896f71bf741d99466b349d1ee0361312cc5fe0a82767592f087"
+}

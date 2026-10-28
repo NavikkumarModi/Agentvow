@@ -1,0 +1,22 @@
+{
+ "id": "46d845539c",
+ "url": "https://github.com/allthingslinux/tux/pull/970",
+ "repo": "allthingslinux/tux",
+ "number": 970,
+ "message": "Resolves the TODO comment in `tux/utils/constants.py` by moving configurable embed data to external TOML files in `assets/data/`.\n\n## Changes Made\n\n- **Created `assets/data/embed_colors.toml`**: Contains all 8 embed color definitions previously hardcoded in the Constants class\n- **Created `assets/data/embed_icons.toml`**: Contains all 16 embed icon URLs previously hardcoded in the Constants class  \n- **Updated `Constants` class**: Now loads colors and icons from TOML files using Python's built-in `tomllib` module\n- **Maintained backward compatibility**: All existing code continues to work unchanged - both `Constants.EMBED_COLORS` and `CONST.EMBED_COLORS` access patterns work identically\n- **Preserved technical constants**: Discord API limits and other technical constraints remain in Python code where they belong\n\n## Benefits\n\n- **Separation of concerns**: Configuration data is now separate from code logic\n- **Easier maintenance**: Colors and icons can be updated without code changes\n- **Consistency**: Follows the existing pattern of storing data in `assets/data/` (like `facts.toml`)\n- **Type safety**: All constants retain their original types and values\n\n## Example\n\n```python\n# Before and after - identical usage\nfrom tux.utils.constants import CONST\n\ncolor = CONST.EMBED_COLORS[\"DEFAULT\"]  # Still works exactly the same\nicon = CONST.EMBED_ICONS[\"INFO\"]       # Still works exactly the same\n```\n\nThe data files use clean TOML format:\n```toml\n# assets/data/embed_colors.toml\n[colors]\nDEFAULT = 16044058\nINFO = 12634869\n# ...\n```\n\nFixes #950.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Created `assets/data/embed_colors.toml`**: Contains all 8 embed color definitions previously hardcoded in the Constants class"
+  },
+  {
+   "n": 2,
+   "text": "- **Created `assets/data/embed_icons.toml`**: Contains all 16 embed icon URLs previously hardcoded in the Constants class"
+  },
+  {
+   "n": 3,
+   "text": "- **Maintained backward compatibility**: All existing code continues to work unchanged - both `Constants.EMBED_COLORS` and `CONST.EMBED_COLORS` access patterns work identically"
+  }
+ ],
+ "order": "64d4f2ade2056c47c1c8118feb047b4673d3583211c4174e84a5e3208a5e50d3"
+}

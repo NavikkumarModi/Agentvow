@@ -1,0 +1,26 @@
+{
+ "id": "1fd451507a",
+ "url": "https://github.com/DannyMac180/meta-agent/pull/152",
+ "repo": "DannyMac180/meta-agent",
+ "number": 152,
+ "message": "## Summary\n- add provider compatibility flags to template metadata\n- filter template search results by available provider capabilities\n- test metadata flags and search filtering\n\n## Testing\n- `ruff check .`\n- `black --check .` *(fails: would reformat many files)*\n- `pytest -v --cov=src/meta_agent tests` *(fails: unrecognized arguments --cov)*\n- `pytest -v tests` *(partial pass: 6 passed)*\n- `pytest -v tests` *(full suite: 29 failed, 304 passed, 3 skipped)*\n- `mypy src/meta_agent` *(fails: found 53 errors)*\n- `pyright` *(fails: 100 errors)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68402ab73c08832f864ded0fad0f0e69",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `pytest -v tests` *(partial pass: 6 passed)*"
+  },
+  {
+   "n": 2,
+   "text": "- `pytest -v tests` *(full suite: 29 failed, 304 passed, 3 skipped)*"
+  },
+  {
+   "n": 3,
+   "text": "- `mypy src/meta_agent` *(fails: found 53 errors)*"
+  },
+  {
+   "n": 4,
+   "text": "- `pyright` *(fails: 100 errors)*"
+  }
+ ],
+ "order": "afd231ea267779390718c26034f783b60e656a343f41edab6ca695c4608d9f7b"
+}

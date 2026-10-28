@@ -1,0 +1,26 @@
+{
+ "id": "3e68fa40fb",
+ "url": "https://github.com/drivendataorg/zamba/pull/388",
+ "repo": "drivendataorg/zamba",
+ "number": 388,
+ "message": "Adds a new `--validate-images` CLI option that enables PIL-based image validation to filter out corrupt or invalid image files during processing.\n\n## Problem\n\nWhen processing image datasets, users may encounter corrupt or invalid image files that cause processing to fail. Currently, zamba only checks if files exist and have non-zero size, but doesn't validate that they are actually valid images that can be opened and processed.\n\n## Solution\n\nThis PR adds a new CLI option `--validate-images` that:\n- Attempts to open each image file with PIL (Python Imaging Library)\n- Filters out images that cannot be opened or decoded\n- Logs appropriate warning messages about filtered files\n- Continues processing with only valid images\n\n## Usage\n\n### Command Line Interface\n\nFor image prediction:\n```bash\nzamba image predict --data-dir /path/to/images --validate-images\n```\n\nFor image training:\n```bash\nzamba image train --data-dir /path/to/images --labels /path/to/labels.csv --validate-images\n```\n\n### Python API\n\n```python\nfrom zamba.images.config import ImageClassificationPredictConfig\n\nconfig = ImageClassificationPredictConfig(\n    data_dir=\"/path/to/images\",\n    validate_images=True\n)\n```\n\n## Implementation Details\n\n- **Backward Compatible**: Feature is disabled by default (`validate_images=False`)\n- **Comprehensive Logging**: Distinguishes between file existence failures and PIL validation failures\n- **Efficient Processing**: Uses parallel processing for training validation\n- **Robust Error Handling**: Gracefully handles all PIL-related exceptions\n\n## Changes Made\n\n1. **CLI Enhancement**: Added `--validate-images` option to both `predict` and `train` commands\n2. **Configuration**: Added `validate_images: bool = False` parameter to both config classes\n3. **Validation Logic**: Implemented `_validate_filepath_with_pil()` function using PIL\n4. **Integration**: Enhanced existing validation methods to use PIL when enabled\n5. **Logging**: Added specific messages for PIL validation failures\n6. **Tests**: Comprehensive test suite covering all functionality\n7. **Documentation**: Added detailed usage examples and documentation\n\n## Example Output\n\nWith validation enabled, users will see:\n```\nINFO     | Validating image files exist and can be opened with PIL\nWARNING  | 2 files in provided labels file do not exist on disk or cannot be opened with PIL; ignoring those files. Example: ['corrupt_image.jpg', 'invalid_file.jpg']...\n```\n\nThis feature is particularly useful when working with datasets from external sources or when data integrity is uncertain.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Filters out images that cannot be opened or decoded"
+  },
+  {
+   "n": 2,
+   "text": "- **Backward Compatible**: Feature is disabled by default (`validate_images=False`)"
+  },
+  {
+   "n": 3,
+   "text": "**Documentation**: Added detailed usage examples and documentation"
+  },
+  {
+   "n": 4,
+   "text": "WARNING  | 2 files in provided labels file do not exist on disk or cannot be opened with PIL; ignoring those files."
+  }
+ ],
+ "order": "dc1f3f2f93b283ca8b66a73e43c012ce40d0b34ec66b8d189db6ea27fcdd9e52"
+}

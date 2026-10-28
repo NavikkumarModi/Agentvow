@@ -1,0 +1,14 @@
+{
+ "id": "7b82dbe945",
+ "url": "https://github.com/continuedev/continue/pull/6951",
+ "repo": "continuedev/continue",
+ "number": 6951,
+ "message": "## Summary\n\nThis PR adds a new built-in tool called **\"Search Continue Docs\"** that allows users to search the Continue documentation directly from within the application. This eliminates the need for the external MCP server package and provides native access to documentation search.\n\n## Changes Made\n\n### Core Implementation\n- **New tool implementation**: `core/tools/implementations/searchContinueDocs.ts`\n  - Uses the `trieve-ts-sdk` to search Continue documentation\n  - Matches the exact functionality of the original MCP search tool\n  - Provides formatted search results with titles, content, and links\n\n- **New tool definition**: `core/tools/definitions/searchContinueDocs.ts`\n  - Defines the tool interface and parameters\n  - Includes dynamic config.yaml path information using `getConfigYamlPath()`\n  - Sets up proper system message descriptions for AI assistants\n\n### Integration\n- **Updated built-in tools enum**: Added `SearchContinueDocs` to `BuiltInToolNames`\n- **Registered tool**: Added to tool definitions and call handlers\n- **Added dependency**: Installed `trieve-ts-sdk` package for API communication\n\n### Testing\n- **Comprehensive tests**: `core/tools/implementations/searchContinueDocs.test.ts`\n  - Tests successful search results\n  - Tests error handling for configuration failures\n  - Tests handling of empty search results\n  - Uses proper mocking for the TrieveSDK\n\n## Key Features\n\n1. **Native Integration**: No external MCP server required\n2. **Real-time Search**: Direct access to Continue documentation\n3. **Error Handling**: Graceful degradation when search fails\n4. **Config Path Helper**: Shows users where their config.yaml is located\n5. **TDD Approach**: Implementation driven by comprehensive tests\n\n## Technical Details\n\nThe tool replicates the functionality from `package/src/search.js` but as a built-in tool:\n- Uses the same Trieve API configuration and endpoints\n- Maintains identical search parameters (score_threshold: 1, fulltext search)\n- Returns the same structured results format\n- Handles the same error cases\n\n## Testing\n\n```bash\nnpm test -- searchContinueDocs.test.ts\nnpm run tsc:check\n```\n\nAll tests pass and TypeScript compilation is successful.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All tests pass and TypeScript compilation is successful."
+  }
+ ],
+ "order": "1a94b5316dbb124b58402a900566c0ea4299703230a32404e36323c49bbcc20b"
+}

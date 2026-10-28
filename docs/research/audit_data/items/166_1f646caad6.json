@@ -1,0 +1,18 @@
+{
+ "id": "1f646caad6",
+ "url": "https://github.com/OpenRouterTeam/ai-sdk-provider/pull/75",
+ "repo": "OpenRouterTeam/ai-sdk-provider",
+ "number": 75,
+ "message": "# Fix null validation for prompt_tokens_details and completion_tokens_details\n\nFixes #73\n\n## Problem\nThe OpenRouter API can return `null` for `prompt_tokens_details` and `completion_tokens_details` fields (e.g., with models like `deepseek/deepseek-chat-v3-0324:free`), but the current Zod schema validation only allows these fields to be objects or undefined with `.optional()`. This causes type validation errors:\n\n```\nExpected object, received null\npath: [\"usage\", \"prompt_tokens_details\"]\n```\n\n## Solution\nChanged both `prompt_tokens_details` and `completion_tokens_details` in `OpenRouterChatCompletionBaseResponseSchema` from `.optional()` to `.nullish()` to allow `null`, `undefined`, or the object values.\n\n## Changes\n- Updated schema in `src/openrouter-chat-language-model.ts` lines 732-742\n- Both fields now use `.nullish()` instead of `.optional()`\n\n## Testing\n- Existing tests continue to pass with object values\n- Schema now accepts null values from OpenRouter API responses\n- No breaking changes to existing functionality\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/2bcf790816c649e1ae7b047c64262726\n\nRequested by: Louis (louis@openrouter.ai)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated schema in `src/openrouter-chat-language-model.ts` lines 732-742"
+  },
+  {
+   "n": 2,
+   "text": "- No breaking changes to existing functionality"
+  }
+ ],
+ "order": "b114f17e24268cb327d6bbd4e21eb03f06c727aa19ee9db3b8568d75816cdc2d"
+}

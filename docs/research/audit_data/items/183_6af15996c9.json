@@ -1,0 +1,14 @@
+{
+ "id": "6af15996c9",
+ "url": "https://github.com/selfxyz/self/pull/755",
+ "repo": "selfxyz/self",
+ "number": 755,
+ "message": "  Prevents Cursor AI from accessing sensitive files (keys, credentials,\r\n  deployment configs) and large generated artifacts that slow down indexing.\r\n  Keeps source code accessible while excluding build outputs, node_modules,\r\n  and circuit/contract compilation artifacts across the monorepo.\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Chores**\n  * Added a configuration file to improve handling of sensitive and unnecessary files in the development environment. No impact on application features or user experience.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "No impact on application features or user experience."
+  }
+ ],
+ "order": "c514fadb1efb29434849bc4f259fd32d5e0921f50db21a7ca242e0b1e6518142"
+}

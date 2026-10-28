@@ -1,0 +1,14 @@
+{
+ "id": "c5721144e0",
+ "url": "https://github.com/roboflow/inference/pull/1301",
+ "repo": "roboflow/inference",
+ "number": 1301,
+ "message": "## Summary\r\n\r\n**NOTE**: Do not merge this until the next version of [Trackers](https://github.com/roboflow/trackers) is released. It's developed against their @main branch & PyPi won't let us link to a GitHub commit in our requirements. (Marked as non-draft to ensure CI passes.) We also need to add support for using other reid models via Inference.\r\n\r\n- add SORT and DeepSORT tracker blocks with UI manifests\r\n- update requirements for trackers 2.0.1\r\n- implement base tracker cache fixes\r\n- add unit tests for trackers\r\n- pin trackers to 2.0.1 to avoid upcoming API change\r\n\r\n## Type of change\r\n\r\n-   [x] New feature (non-breaking change which adds functionality)\r\n\r\n## How has this change been tested, please provide a testcase or example of how you tested the change?\r\n\r\n- `pytest -q tests/workflows/unit_tests/core_steps/trackers/test_sort_tracker_v1.py tests/workflows/unit_tests/core_steps/trackers/test_deep_sort_tracker_v1.py`\r\n- Github Actions\r\n- Manually (WIP)\r\n\r\n## Any specific deployment considerations\r\n\r\nWIP\r\n\r\n## Docs\r\n\r\n-   [x] Docs updated? What were the changes: Should be self-documenting from the Manifest\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "-   [x] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "cb895e53717c704d206e3700ea74b2f6c20d5975de28aa3d503ca596b1625225"
+}

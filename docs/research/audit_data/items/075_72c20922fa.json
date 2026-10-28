@@ -1,0 +1,14 @@
+{
+ "id": "72c20922fa",
+ "url": "https://github.com/liam-hq/liam/pull/1191",
+ "repo": "liam-hq/liam",
+ "number": 1191,
+ "message": "## Issue\n\n- resolve: Removing unused Storybook dependencies\n\n## Why is this change needed?\nStorybook is currently not being used in the project, so we're removing all dependencies to clean up the codebase.\n\n## What would you like reviewers to focus on?\nPlease verify that removing these dependencies doesn't break any functionality.\n\n## Testing Verification\nConfirmed that Storybook dependencies were removed and ran lint checks to verify no issues.\n\npr_agent:summary\n\npr_agent:walkthrough\n\n## Additional Notes\nNo additional notes.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Confirmed that Storybook dependencies were removed and ran lint checks to verify no issues."
+  }
+ ],
+ "order": "441f4bfad6adca007aad93e06393dcbfa570306c9c1e1f5e6420fd7b3e759485"
+}

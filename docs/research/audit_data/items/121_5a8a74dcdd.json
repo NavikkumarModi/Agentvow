@@ -1,0 +1,14 @@
+{
+ "id": "5a8a74dcdd",
+ "url": "https://github.com/liam-hq/liam/pull/3186",
+ "repo": "liam-hq/liam",
+ "number": 3186,
+ "message": "This PR enables the Biome rule correctness.noUnusedImports across the monorepo and fixes all resulting unused import violations.\n\n- Issue: https://github.com/liam-hq/liam/issues/2315\n- Requested by: Hirotaka Miyagi (@MH4GF)\n- Link to Devin run: https://app.devin.ai/sessions/6de6d025e08c4175a87963aafac13405\n\nChanges:\n- Enable noUnusedImports=\"error\" in frontend/internal-packages/configs/biome.jsonc\n- Remove unused imports in:\n  - frontend/packages/erd-core/src/features/erd/components/ERDRenderer/DiffMode.stories.tsx\n  - frontend/packages/erd-core/src/features/erd/components/ERDRenderer/ErdRenderer.stories.tsx\n  - frontend/packages/cli/src/cli/erdCommand/runPreprocess.test.ts\n  - frontend/apps/app/components/SessionDetailPage/components/Chat/components/TimelineItem/components/QueryResultMessage/QueryResultMessage.tsx\n  - frontend/apps/app/app/(app)/app/(with-project-and-branch)/projects/[projectId]/ref/[branchOrCommit]/layout.tsx\n\nNotes:\n- Lint (pnpm lint) passes locally after these changes.\n- PR remains in Draft as requested.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Lint (pnpm lint) passes locally after these changes."
+  }
+ ],
+ "order": "86a2412ca1ccd43ea235336c8cd158930e7a1f728c390c72880189cfc2563eb1"
+}

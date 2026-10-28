@@ -1,0 +1,14 @@
+{
+ "id": "b9c16e3e15",
+ "url": "https://github.com/zardoy/minecraft-web-client/pull/377",
+ "repo": "zardoy/minecraft-web-client",
+ "number": 377,
+ "message": "- Renamed renderer/viewer/lib/worldDataEmitter.ts to WorldView.ts\r\n- Renamed WorldDataEmitter class to WorldView (kept WorldDataEmitterWorker unchanged)\r\n- Updated all imports and references throughout the codebase:\r\n  - src/watchOptions.ts\r\n  - src/globals.d.ts\r\n  - src/appViewer.ts\r\n  - renderer/playground/baseScene.ts\r\n  - renderer/viewer/three/panorama.ts\r\n  - renderer/viewer/lib/worldrendererCommon.ts\r\n- Maintained backward compatibility for WorldDataEmitterWorker class\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Refactor**\n  * Updated references and naming from \"WorldDataEmitter\" to \"WorldView\" throughout the application for consistency.\n  * Adjusted related type annotations and imports to align with the new naming.\n  * No changes to application logic or user-facing behavior.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintained backward compatibility for WorldDataEmitterWorker class"
+  }
+ ],
+ "order": "5aa916d6ec538ae99e0f59acf7bcf27f8945898851dbd75e1d3a2a807b7c0cd9"
+}

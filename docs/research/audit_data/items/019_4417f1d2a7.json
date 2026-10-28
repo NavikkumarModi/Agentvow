@@ -1,0 +1,22 @@
+{
+ "id": "4417f1d2a7",
+ "url": "https://github.com/opencv/opencv/pull/27441",
+ "repo": "opencv/opencv",
+ "number": 27441,
+ "message": "### Pull Request Description\r\n**Overview**\r\n\r\nThis PR introduces support for a new diamond-shaped structuring element in OpenCV\u2019s morphology module. The addition enables users to perform morphological operations (e.g., erosion, dilation, opening, closing) using a diamond-shaped kernel, which is defined by Manhattan distance from the center.\r\nDetailed Changes\r\n\r\n    New Enum Values:\r\n\r\n        Added MORPH_DIAMOND to MorphShapes in modules/imgproc/include/opencv2/imgproc.hpp and CV_SHAPE_DIAMOND to MorphShapes_c in modules/imgproc/include/opencv2/imgproc/types_c.h.\r\n\r\n    Kernel Generation Logic:\r\n\r\n     Updated getStructuringElement in modules/imgproc/src/morph.dispatch.cpp to:\r\n\r\n      Accept MORPH_DIAMOND as a valid shape.\r\n\r\n       Generate a diamond-shaped mask, where each pixel is included if its Manhattan distance from the center is within the kernel radius.\r\n\r\n    Unit Test:\r\n\r\n        Added a dedicated test (modules/imgproc/test/test_structuring_element.cpp) that:\r\n\r\n        Verifies the correctness of the diamond kernel for a standard size (5x5).\r\n\r\n        Ensures consistency and protects against regression.\r\n\r\n**Motivation**\r\n\r\nDiamond-shaped structuring elements are widely used in image processing, particularly where neighborhood connectivity is defined by Manhattan distance (e.g., certain denoising, thinning, or skeletonization tasks). By supporting this shape natively, OpenCV expands its flexibility and applicability to new classes of problems.\r\nBackward Compatibility\r\n\r\nThis change is fully backward compatible and does not alter any existing functionality or APIs. It only adds a new option for kernel shape selection.\r\nUsage Example\r\n\r\n`cv::Mat diamondKernel = cv::getStructuringElement(cv::MORPH_DIAMOND, cv::Size(5, 5));`\r\n\r\nTesting\r\n\r\n    The PR includes comprehensive unit tests for the new diamond shape.\r\n\r\n    All existing tests pass, and the new test verifies the mask generation logic.\r\n\r\n**Checklist**\r\n\r\n\r\nAdded new enum values for the diamond shape.\r\n\r\nImplemented diamond kernel logic in morphology dispatch.\r\n\r\n    Added and validated unit tests.\r\n\r\n**Closing**\r\n\r\nThis PR fills a gap in OpenCV\u2019s morphological toolkit by providing a commonly-used structuring element. Please let me know if further changes or documentation are needed.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Backward Compatibility"
+  },
+  {
+   "n": 2,
+   "text": "This change is fully backward compatible and does not alter any existing functionality or APIs."
+  },
+  {
+   "n": 3,
+   "text": "All existing tests pass, and the new test verifies the mask generation logic."
+  }
+ ],
+ "order": "1089aa6b0311a898f0def8042ea40cb0480970dd31478cc593d73a00f41c2e85"
+}

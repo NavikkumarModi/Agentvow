@@ -1,0 +1,26 @@
+{
+ "id": "4cd641a5ba",
+ "url": "https://github.com/liam-hq/liam/pull/2648",
+ "repo": "liam-hq/liam",
+ "number": 2648,
+ "message": "## Issue\n\n- resolve: #2644\n\n## Why is this change needed?\n\nThis change fixes a type inconsistency in the deepModeling workflow where `organizationId` was typed as optional in TypeScript despite the database schema enforcing `NOT NULL` constraints on `organization_id` columns. This mismatch led to unnecessary defensive programming and potential type safety issues.\n\n## What changed\n\n### Type Definitions Made Consistent\n- **DeepModelingParams**: Changed `organizationId?: string` to `organizationId: string`\n- **WorkflowState**: Changed `organizationId?: string | undefined` to `organizationId: string`  \n- **LangGraph annotations**: Changed `Annotation<string | undefined>` to `Annotation<string>`\n\n### Defensive Programming Removed\n- **Chat API route**: Simplified `organizationId: organizationId ?? undefined` to `organizationId: organizationId` since the value is guaranteed to be non-null\n\n### Test Files Updated\n- Updated all workflow test files to provide `organizationId: 'test-org-id'` in mock `WorkflowState` objects\n- Fixed TypeScript compilation errors caused by the type changes\n\n### Documentation Updated\n- Updated workflow README.md to reflect the organizationId type changes\n\n## Review Focus Areas\n\n**\u26a0\ufe0f Critical Items to Verify:**\n1. **Database schema verification**: Confirm that `organization_id` columns are indeed `NOT NULL` in relevant tables (`design_sessions`, `projects`, etc.)\n2. **Defensive programming removal safety**: Verify that removing `organizationId ?? undefined` in the chat API route is safe - organizationId should always be provided based on the workflow logic\n3. **Type safety impact**: Check that all callers of these types actually provide organizationId (no existing code should break)\n\n**Additional Review Items:**\n- Verify I didn't miss any other locations that still treat organizationId as optional\n- Confirm test changes are appropriate and don't mask real issues\n- Check that the deepModeling workflow actually requires organizationId in practice\n\n## Testing\n\n- \u2705 All existing tests pass (45/45 in agent package)\n- \u2705 TypeScript compilation successful \n- \u2705 Lint checks pass (turbo lint, syncpack, knip)\n- \u2705 Pre-commit hooks successful\n\n---\n\n**Link to Devin run**: https://app.devin.ai/sessions/f0080cd6629145b893c3e594d3457dc3  \n**Requested by**: @MH4GF (hirotaka.miyagi@route06.co.jp)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated workflow README.md to reflect the organizationId type changes"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All existing tests pass (45/45 in agent package)"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 Lint checks pass (turbo lint, syncpack, knip)"
+  },
+  {
+   "n": 4,
+   "text": "- \u2705 Pre-commit hooks successful"
+  }
+ ],
+ "order": "3b5243b1cc2eaedad7c0b10177e1ad71eff44fb3ab79d7bb0f3525cd206d8e91"
+}

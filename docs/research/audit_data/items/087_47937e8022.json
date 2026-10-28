@@ -1,0 +1,14 @@
+{
+ "id": "47937e8022",
+ "url": "https://github.com/KomodoPlatform/komodo-wallet/pull/3131",
+ "repo": "KomodoPlatform/komodo-wallet",
+ "number": 3131,
+ "message": "Implement `disallowed_features` from the bouncer endpoint to enable granular feature blocking (e.g., trading, privacy coins) based on user location and mark ARRR as a privacy coin.\n\nThe bouncer endpoint now provides a `disallowed_features` array (e.g., `['TRADING', 'PRIVACY_COINS']`) instead of a simple `blocked` boolean. This PR updates the application to consume this new API, allowing specific features like trading or privacy coin access to be restricted. The legacy `blocked` flag is retained for backward compatibility as a fallback. This change is crucial for the ARRR release to enforce privacy coin restrictions in certain regions, such as UAE. The `GEO_BLOCK=disabled` environment variable continues to override all geo-blocking.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-61d9e9dc-3dd4-43d3-8ef2-da3e4d553e52\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-61d9e9dc-3dd4-43d3-8ef2-da3e4d553e52\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The legacy `blocked` flag is retained for backward compatibility as a fallback."
+  }
+ ],
+ "order": "568c7a45b7d88fb53e29885329446b73db2e35af740d1c8b7a39a1fecbb4cd12"
+}

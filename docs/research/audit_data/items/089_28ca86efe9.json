@@ -1,0 +1,22 @@
+{
+ "id": "28ca86efe9",
+ "url": "https://github.com/langfuse/langfuse/pull/9497",
+ "repo": "langfuse/langfuse",
+ "number": 9497,
+ "message": "## What does this PR do?\n\nRemoves redundant text \"Enable AI powered features for your organization\" from the description of the AI feature settings, as this text was already present in the title. This improves UI clarity by eliminating repetition.\n\nFixes # (issue)\n\n## Type of change\n\n- [ ] Bug fix (non-breaking change which fixes an issue)\n- [ ] Chore (refactoring code, technical debt, workflow improvements)\n- [ ] New feature (non-breaking change which adds functionality)\n- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)\n- [x] Refactor (does not change functionality, e.g. code style improvements, linting)\n- [ ] This change requires a documentation update\n\n## Mandatory Tasks\n\n- [x] Make sure you have self-reviewed the code. A decent size PR without self-review might be rejected.\n\n## Checklist\n\n- [ ] I haven't read the [contributing guide](https://github.com/langfuse/langfuse/blob/main/CONTRIBUTING.md)\n- [ ] My code doesn't follow the style guidelines of this project (`pnpm run format`)\n- [ ] I haven't commented my code, particularly in hard-to-understand areas\n- [ ] I haven't checked if my PR needs changes to the documentation\n- [ ] I haven't checked if my changes generate no new warnings (`npm run lint`)\n- [x] I haven't added tests that prove my fix is effective or that my feature works\n- [ ] I haven't checked if new and existing unit tests pass locally with my changes\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-436c3434-8169-4b8d-8e33-dc6470870fc9\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-436c3434-8169-4b8d-8e33-dc6470870fc9\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n\n<!-- ELLIPSIS_HIDDEN -->\n\n----\n\n> [!IMPORTANT]\n> Removes redundant sentence from AI feature settings description in `AIFeatureSwitch.tsx` to improve UI clarity.\n> \n>   - **UI Improvement**:\n>     - Removes redundant sentence \"Enable AI powered features for your organization\" from the description in `AIFeatureSwitch.tsx`.\n>     - The sentence was already present in the title, improving clarity by eliminating repetition.\n> \n> <sup>This description was created by </sup>[<img alt=\"Ellipsis\" src=\"https://img.shields.io/badge/Ellipsis-blue?color=175173\">](https://www.ellipsis.dev?ref=langfuse%2Flangfuse&utm_source=github&utm_medium=referral)<sup> for 2f39a7fb73e2fe65bd573a72e2a84cdbe155ccc6. You can [customize](https://app.ellipsis.dev/langfuse/settings/summaries) this summary. It will automatically update as commits are pushed.</sup>\n\n<!-- ELLIPSIS_HIDDEN -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] I haven't checked if new and existing unit tests pass locally with my changes"
+  }
+ ],
+ "order": "591df570a61b11a1b06bb8f4831228bfb22765e5f2dc9c41d2dea3ee6ee50720"
+}

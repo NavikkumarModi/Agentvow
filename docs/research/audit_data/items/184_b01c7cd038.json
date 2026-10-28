@@ -1,0 +1,14 @@
+{
+ "id": "b01c7cd038",
+ "url": "https://github.com/skypilot-org/skypilot/pull/7430",
+ "repo": "skypilot-org/skypilot",
+ "number": 7430,
+ "message": "<!-- Describe the changes in this PR -->\nAdds a new smoke test for SkyServe on Kubernetes to verify volume mounting functionality. This addresses a gap where no existing test covered Kubernetes volumes for SkyServe.\n\nA new YAML file (`kubernetes_volumes.yaml`) is introduced with a `volumes` section, and a corresponding test function (`test_skyserve_kubernetes_volumes`) is added to `test_sky_serve.py`. The test verifies both service functionality and successful volume attachment and usage by checking service logs.\n\n<!-- Describe the tests ran -->\n<!-- Unit tests (tests/test_*.py) are part of GitHub CI; below are tests that launch on the cloud. -->\n\nTested (run the relevant ones):\n\n- [x] Code formatting: install pre-commit (auto-check on commit) or `bash format.sh`\n- [x] Any manual or new tests for this PR (please specify below)\n  - `pytest tests/smoke_tests/test_sky_serve.py::test_skyserve_kubernetes_volumes --kubernetes`\n- [ ] All smoke tests: `/smoke-test` (CI) or `pytest tests/test_smoke.py` (local)\n- [ ] Relevant individual tests: `/smoke-test -k test_name` (CI) or `pytest tests/test_smoke.py::test_name` (local)\n- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)\n\n<!-- CI commands (/-prefixed) can only be triggered by repo members -->\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-89a3f7eb-9e48-47b9-9489-6f26f90c581e\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-89a3f7eb-9e48-47b9-9489-6f26f90c581e\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Backward compatibility: `/quicktest-core` (CI) or `pytest tests/smoke_tests/test_backward_compat.py` (local)"
+  }
+ ],
+ "order": "c5d47bb8bcce74bdb23c6ebde7d15ff6046176297697a605c6028244c85cf3b6"
+}

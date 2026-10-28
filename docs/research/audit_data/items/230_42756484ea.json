@@ -1,0 +1,14 @@
+{
+ "id": "42756484ea",
+ "url": "https://github.com/reflex-dev/reflex-web/pull/1319",
+ "repo": "reflex-dev/reflex-web",
+ "number": 1319,
+ "message": "# Add Documentation for Async Computed Vars\n\nThis PR adds documentation for async computed vars, an undocumented feature in Reflex. The documentation includes:\n\n- Explanation of what async computed vars are and when to use them\n- Simple example showing basic usage with `@rx.var` and an async function\n- Example demonstrating caching with async computed vars\n- Explanation of use cases (API calls, database operations, file I/O)\n\n## Implementation Details\n\n- Added a new section to the existing computed vars documentation\n- Included practical examples with proper type annotations\n- Demonstrated how caching works with async computed vars\n- Maintained consistent style with existing documentation\n\n## Testing\n\n**Note:** Unable to test locally due to environment issues with the flexdown module. The documentation follows the same patterns as existing documentation and should render correctly.\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/6268d59ca2e8480c9309306af1619832\n\nRequested by: Alek Petuskey (alek@reflex.dev)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added a new section to the existing computed vars documentation"
+  }
+ ],
+ "order": "f0c32993745beff35de253aff4a74d02ca542e59ff27634ddf0e27a6fdf04759"
+}

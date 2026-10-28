@@ -1,0 +1,22 @@
+{
+ "id": "63d743ee14",
+ "url": "https://github.com/tokens-studio/figma-plugin/pull/3449",
+ "repo": "tokens-studio/figma-plugin",
+ "number": 3449,
+ "message": "## Summary\n\nAdds a manual theme preference setting to the plugin's Settings UI, allowing users to override the automatic Figma theme detection and choose between Auto (follow Figma), Light, and Dark modes.\n\n## Background\n\nThe plugin previously only supported automatic theme detection based on Figma's current theme. Users requested the ability to manually set their preferred theme independently of Figma's setting.\n\n## Changes\n\n### Core Implementation\n- **Settings State**: Added `themePreference` field to `SettingsState` with values `'auto' | 'light' | 'dark'`\n- **Theme Logic**: Created `useEffectiveTheme` hook that combines user preference with Figma's automatic detection\n- **UI Component**: Added `ThemePreferenceSelector` component in Settings UI with dropdown for theme selection\n- **Integration**: Updated `AppContainer` to use the new theme logic instead of direct Figma theme detection\n\n### User Experience\n- Theme selector appears in Settings alongside the Language selector\n- Three options available:\n  - **Auto (Follow Figma)** - Default behavior, follows Figma's theme\n  - **Light** - Forces light theme regardless of Figma setting  \n  - **Dark** - Forces dark theme regardless of Figma setting\n- User preferences are persisted and respected across sessions\n- Backward compatible - existing behavior unchanged when set to \"Auto\"\n\n### Technical Details\n- Leverages existing Stitches theme infrastructure (`lightThemeMode`, `darkThemeMode`)\n- Clean separation of concerns with dedicated selectors and hooks\n- Proper state management integration with Redux/Rematch\n- Translation support for all theme option labels\n\n## Testing\n\n- \u2705 Comprehensive unit tests for `useEffectiveTheme` hook\n- \u2705 Component tests for `ThemePreferenceSelector` \n- \u2705 Integration with existing Settings tests\n- \u2705 Build and lint checks pass\n- \u2705 Backward compatibility verified\n\n## Screenshots\n\nThe theme selector appears in the Settings UI:\n\n```\nSettings\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Language          [English \u25bc]  \u2502\n\u2502 Theme             [Auto \u25bc]     \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\nWith dropdown options:\n- Auto (Follow Figma)\n- Light  \n- Dark\n\nFixes the \"Add a dark mode\" requirement by providing users full control over theme preferences while maintaining the existing automatic behavior as the default.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Backward compatible - existing behavior unchanged when set to \"Auto\""
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Build and lint checks pass"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 Backward compatibility verified"
+  }
+ ],
+ "order": "7958e2ede393ca6c56ba889534c4d2a8677713df7fa79dafc4b371dc7dcd3105"
+}

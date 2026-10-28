@@ -1,0 +1,22 @@
+{
+ "id": "53c1c9f973",
+ "url": "https://github.com/githubnext/gh-aw/pull/1503",
+ "repo": "githubnext/gh-aw",
+ "number": 1503,
+ "message": "Fixed a bug where HTML comments in imported workflow files were not being properly removed when they contained code blocks, causing documentation (including frontmatter examples) to appear in generated prompts.\n\n## Problem\n\nWhen workflows imported shared files (like `shared/genaiscript.md` or `shared/simonw-llm.md`), HTML comments containing YAML code blocks showing usage examples were being included in the final prompt sent to AI agents. This happened because the XML comment removal logic checked for code blocks before processing XML comments, causing code blocks within HTML comments to be preserved instead of removed.\n\n## Changes Made\n\n### Bug Fix\n- **Updated `pkg/workflow/xml_comments.go`**: Modified the comment removal logic to properly handle nested structures:\n  - Code blocks that start BEFORE XML comments are preserved (existing behavior)\n  - Code blocks that are INSIDE XML comments are now removed (bug fix)\n  - XML comments that are INSIDE code blocks are still preserved (existing behavior)\n\n### Test Suite\n- **Added extensive test coverage in `pkg/workflow/xml_comments_test.go`** (572 lines):\n  - `TestRemoveXMLCommentsCodeBlocksInComments` - Tests the specific bug fix with real-world examples\n  - `TestRemoveXMLCommentsEdgeCases` - 11 boundary condition tests\n  - `TestExtractCodeBlockMarker` - 12 marker extraction tests\n  - `TestIsValidCodeBlockMarker` - 12 validation tests\n  - `TestIsMatchingCodeBlockMarker` - 11 matching logic tests\n  - `TestRemoveXMLCommentsFromLine` - 8 single-line processing tests\n  - `TestRemoveXMLCommentsComplexNesting` - 4 complex nesting scenario tests\n  - **Total**: 60+ test cases covering all functions and edge cases\n\n### Workflow Updates\n- Recompiled affected workflows (`smoke-genaiscript.lock.yml`, `issue-triage-llm.lock.yml`) to remove the documentation code blocks from generated prompts\n\n## Impact\n\nThe generated prompts now contain only the actual workflow instructions without the frontmatter documentation from imported files. This ensures AI agents receive clean, focused prompts without extraneous documentation.\n\n## Testing\n\n- \u2705 All unit tests pass (6,000+ tests)\n- \u2705 Workflows compile successfully\n- \u2705 New test suite provides comprehensive coverage of the fix and prevents regressions\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Updated `pkg/workflow/xml_comments.go`**: Modified the comment removal logic to properly handle nested structures:"
+  },
+  {
+   "n": 2,
+   "text": "- **Added extensive test coverage in `pkg/workflow/xml_comments_test.go`** (572 lines):"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 All unit tests pass (6,000+ tests)"
+  }
+ ],
+ "order": "563aab01c7cecccbf6e20113b1bbb75e6fff0ceeffd445f28c32a73ea5d45183"
+}

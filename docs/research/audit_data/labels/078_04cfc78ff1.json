@@ -1,0 +1,3 @@
+{"item_id": "04cfc78ff1", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox in the 'User Facing Changes' section about automatic migration.", "label": null, "confidence": "HIGH", "judgment": false, "note": "Unticked checkbox, template boilerplate (rule 2 class 2).", "evidence": ["Span begins with '- [ ]' in the pull request message"]}
+], "minutes_estimate": 1}

@@ -1,0 +1,22 @@
+{
+ "id": "e5d96dcead",
+ "url": "https://github.com/appdotbuild/agent/pull/297",
+ "repo": "appdotbuild/agent",
+ "number": 297,
+ "message": "# Add Binary File Support to TypeSpec API Definition\n\n## Overview\nThis PR adds simplified binary file support to the Agent Server API by extending the TypeSpec definitions in `agent_api.tsp`. This enables transmission of binary files through Server-Sent Events (SSE) in both `allFiles` and `unifiedDiff` fields.\n\n## Changes Made\n\n### FileEntry Model Extensions\n- **`mimeType: string`** - MIME type detection (e.g., 'text/plain', 'image/png', 'application/pdf')\n- **`contentBase64?: string`** - Base64-encoded content for binary files (null for text files)\n- **Updated `content` field documentation** - Clarifies UTF-8 text for text files, empty for binary files\n\n### DiffStatEntry Model Extensions  \n- **`isBinary?: boolean`** - Indicates whether the file contains binary content\n\n## Implementation Strategy\n\n### Binary File Detection\n- Use Python's built-in `mimetypes` module for MIME type detection\n- Fallback to extension-based detection for common binary formats\n- Text files: populate `content` field as before\n- Binary files: populate `contentBase64` field, leave `content` empty\n\n### Unified Diff Generation\n- Text files: standard unified diff format\n- Binary files: Git-style markers like \"Binary files a/path b/path differ\"\n- Enhanced diff statistics track binary vs text file changes\n\n### SSE Event Transmission\n- Existing `unifiedDiff` string field includes binary file markers\n- `allFiles` array contains both text and binary files with appropriate fields populated\n- Backwards compatible - existing clients continue to work with text files\n\n## Benefits\n- **Backwards Compatible**: Existing text file handling unchanged\n- **Standards Compliant**: Uses Git-style binary diff markers\n- **Efficient**: Base64 encoding only for binary content\n- **Comprehensive**: Supports binary files in both file snapshots and diffs\n- **Simple**: Minimal API surface changes, easy to implement\n\n## Next Steps\nAfter this TypeSpec change is approved:\n1. Update Python Pydantic models in `models.py`\n2. Modify file reading logic in `agent_api_client.py` \n3. Update diff generation to handle binary files\n4. Add client-side binary file decoding support\n\n## Testing\n- Verify TypeSpec syntax is valid\n- Ensure backwards compatibility with existing text file workflows\n- Test binary file transmission through SSE events\n- Validate MIME type detection accuracy\n\n---\n\n**Link to Devin run**: https://app.devin.ai/sessions/dba13df5987b446b8bcfaede8657af12  \n**Requested by**: evgenii@neon.tech\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Backwards compatible - existing clients continue to work with text files"
+  },
+  {
+   "n": 2,
+   "text": "- **Backwards Compatible**: Existing text file handling unchanged"
+  },
+  {
+   "n": 3,
+   "text": "- Ensure backwards compatibility with existing text file workflows"
+  }
+ ],
+ "order": "d587a33c05ae9a5a066a50bba511fbd62ffb8c5169896bc5d77da9b20b46b171"
+}

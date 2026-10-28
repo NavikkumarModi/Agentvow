@@ -1,0 +1,22 @@
+{
+ "id": "c09cdb5715",
+ "url": "https://github.com/getsentry/sentry-cocoa/pull/6018",
+ "repo": "getsentry/sentry-cocoa",
+ "number": 6018,
+ "message": "## :scroll: Description\r\n\r\nMigrates the `integration-test.yml` workflow to use `dorny/paths-filter` for conditional execution on pull requests. This involves:\r\n- Adding a `files-changed` job to detect relevant file changes based on a new `run_integration_test_for_prs` filter in `.github/file-filters.yml`.\r\n- Making the main `test` job conditional on the `files-changed` output.\r\n- Removing the `on.pull_request.paths` filter from the workflow.\r\n- Introducing an `integration_test-required-check` job that always runs to provide a reliable status for branch protection rules.\r\n\r\n## :bulb: Motivation and Context\r\n\r\nThis change is part of a larger effort (see #5951) to migrate all workflows using `on.[event].paths` filtering to `dorny/paths-filter`. The goal is to:\r\n- Optimize CI by running the \"Test CocoaPods\" integration tests only when relevant files are modified in a pull request.\r\n- Provide a consistent and reliable required check (`integration_test-required-check`) that can be used in branch protection rules, indicating whether the integration tests passed or were appropriately skipped.\r\n- This implementation follows the pattern established in #5893 for `tests.yml` and `api-stability.yml`.\r\n\r\nFixes #5957 \r\n\r\n## :green_heart: How did you test it?\r\n\r\nThe changes are to the CI workflow itself. Verification will be done by observing the behavior of the `integration-test.yml` workflow on subsequent pull requests and pushes to `main`.\r\n\r\n## :pencil: Checklist\r\n\r\nYou have to check all boxes before merging:\r\n\r\n- [ ] I added tests to verify the changes.\r\n- [ ] No new PII added or SDK only sends newly added PII if `sendDefaultPII` is enabled.\r\n- [ ] I updated the docs if needed.\r\n- [ ] I updated the wizard if needed.\r\n- [ ] Review from the native team if needed.\r\n- [ ] No breaking change or entry added to the changelog.\r\n- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs.\r\n\r\n---\r\n<a href=\"https://cursor.com/background-agent?bcId=bc-32a005ad-1f84-4931-98ba-4d2cedc031ef\">\r\n  <picture>\r\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\r\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\r\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\r\n  </picture>\r\n</a>\r\n<a href=\"https://cursor.com/agents?id=bc-32a005ad-1f84-4931-98ba-4d2cedc031ef\">\r\n  <picture>\r\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\r\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\r\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\r\n  </picture>\r\n</a>\r\n\r\n#skip-changelog",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Provide a consistent and reliable required check (`integration_test-required-check`) that can be used in branch protection rules, indicating whether the integration tests passed or were appropriately skipped."
+  },
+  {
+   "n": 2,
+   "text": "- [ ] No breaking change or entry added to the changelog."
+  },
+  {
+   "n": 3,
+   "text": "- [ ] No breaking change for hybrid SDKs or communicated to hybrid SDKs."
+  }
+ ],
+ "order": "abd4a8242fd0435ef8f69ae33ed107634d1eabdda2d3739948daae96a63acdb0"
+}

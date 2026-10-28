@@ -1,0 +1,14 @@
+{
+ "id": "d5a4730b05",
+ "url": "https://github.com/microsoft/ApplicationInsights-Java/pull/4338",
+ "repo": "microsoft/ApplicationInsights-Java",
+ "number": 4338,
+ "message": "This PR updates the JmxMetric smoke test to use the new assertion framework introduced in #4141, making the test more readable and maintainable while preserving all existing functionality.\n\n## Changes Made\n\n### 1. Extended MetricAssert Framework\n- Added `hasNoInternalAttributes()` method to verify that metric properties don't start with \"applicationinsights.internal.\"\n- This provides a cleaner way to validate internal attribute constraints\n\n### 2. Updated JmxMetricTest\n- Modified `verifyJmxMetricsSentToBreeze()` method to use MetricAssert instances instead of direct assertThat() calls\n- Replaced manual assertion logic with fluent assertion methods:\n  - `hasValue(5)` for NameWithDot metric\n  - `hasValue(1.0)` for BooleanJmxMetric  \n  - `hasNoInternalAttributes()` for all metrics\n- Preserved all existing comments and complex GC metric validation logic\n- Removed unused `verifyNoInternalAttributes()` helper method\n\n### 3. Minimal Impact Changes\nThe changes are surgical and maintain:\n- All existing test coverage and behavior\n- Complex wildcard and GC metric validation logic\n- Java version-specific handling for metrics\n- Existing comments explaining metric behavior\n\n## Example of Changes\n\n**Before:**\n```java\nif (metricName.equals(\"NameWithDot\")) {\n  assertThat(value).isEqualTo(5);\n}\nif (metricName.equals(\"BooleanJmxMetric\")) {\n  assertThat(value).isEqualTo(1.0);\n}\nassertThat(verifyNoInternalAttributes(envelope)).isTrue();\n```\n\n**After:**\n```java\n// Create MetricAssert for this envelope and use it for validation\nMetricAssert metricAssert = new MetricAssert(envelope);\n\n// Common validation - all metrics should have no internal attributes\nmetricAssert.hasNoInternalAttributes();\n\nif (metricName.equals(\"NameWithDot\")) {\n  metricAssert.hasValue(5);\n}\nif (metricName.equals(\"BooleanJmxMetric\")) {\n  metricAssert.hasValue(1.0);\n}\n```\n\n## Testing\n- All JmxMetric smoke tests pass successfully\n- Ran `./gradlew spotlessApply` to ensure proper formatting\n- Verified the assertion framework extension works correctly\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All JmxMetric smoke tests pass successfully"
+  }
+ ],
+ "order": "3fbbd21d82e52872ad876be3b91e08bb6cea00b95e16e123e4e19f609ae3108e"
+}

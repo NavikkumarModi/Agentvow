@@ -1,0 +1,18 @@
+{
+ "id": "9becfa42e1",
+ "url": "https://github.com/plastic-labs/honcho/pull/113",
+ "repo": "plastic-labs/honcho",
+ "number": 113,
+ "message": "# DEV-692: Utility Endpoint to `get_context`\n\nThis PR implements a new utility endpoint at `/apps/{app_id}/users/{user_id}/sessions/{session_id}/context` that returns the latest summary metamessage and messages that occurred after that summary.\n\n## Changes\n- Added a new `SessionContextResponse` schema in `src/schemas.py`\n- Implemented a new GET endpoint in `src/routers/sessions.py`\n- The endpoint returns:\n  - The latest summary metamessage (or None if no summary exists)\n  - All messages that occurred after that summary (capped at 60 messages)\n- Added an optional query parameter for number of messages (default to all messages after the summary, max 60)\n\n## Implementation Details\n- Used `history.get_messages_since_latest_summary()` to get both the latest summary and messages\n- Default to using `history.SummaryType.SHORT` for the summary type\n- If message_count is provided, limit messages to that number (capped at 60)\n- If message_count is not provided, still apply the 60-message cap\n- Return the summary as-is (which could be None if no summary exists)\n\n## Testing\n- Verified with linting using ruff\n\nLink to Devin run: https://app.devin.ai/sessions/62d5ec1747cb4b1fb089ed64d32e9f8d\nRequested by: Vineeth Voruganti (vineeth@plasticlabs.ai)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added a new `SessionContextResponse` schema in `src/schemas.py`"
+  },
+  {
+   "n": 2,
+   "text": "- Implemented a new GET endpoint in `src/routers/sessions.py`"
+  }
+ ],
+ "order": "d69276b750cce8c664332418e581c9a07322bde77c26c008d9857cd7830bcd5b"
+}

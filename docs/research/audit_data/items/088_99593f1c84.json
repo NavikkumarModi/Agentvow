@@ -1,0 +1,14 @@
+{
+ "id": "99593f1c84",
+ "url": "https://github.com/goat-sdk/goat/pull/218",
+ "repo": "goat-sdk/goat",
+ "number": 218,
+ "message": "# Python 1inch Plugin Implementation\n\nThis PR adds a Python implementation of the 1inch plugin, mirroring the functionality of the TypeScript version while following the structure of the existing Python coingecko plugin.\n\n## Changes\n- Created Python plugin structure following coingecko plugin template\n- Implemented get_balances functionality matching TypeScript version\n- Added proper parameter validation and error handling\n- Included comprehensive documentation and configuration details\n\n## Testing\n- [ ] Manual testing needed\n- [ ] Unit tests to be added in follow-up PR\n\nLink to Devin run: https://app.devin.ai/sessions/dcd4f504cece40b798043915495a94d5\n\n## Checklist\n- [x] Followed Python plugin structure\n- [x] Matched TypeScript functionality\n- [x] Added documentation\n- [x] Updated package configuration",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Added documentation"
+  }
+ ],
+ "order": "585047e4bbb44000b60d984107fda4d3cc0ea0ce44e59a6a9650ba31ad26f6e2"
+}

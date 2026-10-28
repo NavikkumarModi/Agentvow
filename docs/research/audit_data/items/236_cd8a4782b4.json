@@ -1,0 +1,14 @@
+{
+ "id": "cd8a4782b4",
+ "url": "https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2201",
+ "repo": "MontrealAI/AGI-Alpha-Agent-v0",
+ "number": 2201,
+ "message": "## Summary\n- update the self-healing repo demo to reference `apply_and_test`\n- keep backwards compatibility with `apply_patch_and_retst`\n- add regression test for importing entrypoint with stubbed deps\n\n## Testing\n- `python scripts/check_python_deps.py` *(fails: Missing packages)*\n- `python check_env.py --auto-install` *(fails: No network connectivity)*\n- `pre-commit run --files alpha_factory_v1/demos/self_healing_repo/agent_selfheal_entrypoint.py tests/test_selfheal_import_stubs.py` *(fails: proto-verify)*\n- `pytest -q` *(fails: Environment check failed)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_684ed82664288333bc76bae13eba5006",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- keep backwards compatibility with `apply_patch_and_retst`"
+  }
+ ],
+ "order": "fd5145e13ba25c1ce27738140385f754ad45521a8b4b0eaf9da783e23e12ff4e"
+}

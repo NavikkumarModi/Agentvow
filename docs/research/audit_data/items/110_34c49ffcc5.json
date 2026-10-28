@@ -1,0 +1,26 @@
+{
+ "id": "34c49ffcc5",
+ "url": "https://github.com/twpayne/chezmoi/pull/4581",
+ "repo": "twpayne/chezmoi",
+ "number": 4581,
+ "message": "# Pull Request: Add Beyond Compare merge tool configuration\r\n\r\n## Summary\r\n\r\nThis PR adds documentation for configuring [Beyond Compare](https://www.scootersoftware.com/) as a merge tool in chezmoi.  Configuration examples in both TOML and YAML formats are provided.\r\n\r\n## Changes\r\n\r\n- Added a new section \"Use Beyond Compare as the merge tool\" to `assets/chezmoi.io/docs/user-guide/tools/merge.md`\r\n- Included configuration examples for both TOML and YAML formats\r\n- Added reference link to Beyond Compare website\r\n\r\n## Testing Checklist\r\n\r\nI have followed the [contributing guidelines](https://www.chezmoi.io/developer-guide/contributing-changes/) and verified:\r\n\r\n- [x] **All tests pass**: Ran `make test` - all tests passed successfully\r\n- [x] **Generated files updated**: Ran `make generate` to ensure all generated files are up to date\r\n- [x] **Code properly formatted**: Ran `make format` to ensure proper formatting\r\n- [x] **Linting checks pass**: Ran `make lint` - verified with:\r\n  - `golangci-lint` - no issues found\r\n  - `editorconfig-checker` - all files pass\r\n- [x] **Documentation builds correctly**: Tested with `uv run task serve-docs` - documentation builds and renders correctly\r\n- [x] **Commit message follows conventional commits**: Used `docs:` prefix as recommended for documentation changes\r\n- [x] **Changes apply cleanly to master**: Branch created from latest master\r\n\r\n## Test Commands Run\r\n\r\n```bash\r\n# Run all tests\r\nmake test\r\n# \u2705 All tests passed\r\n\r\n# Update generated files\r\nmake generate\r\n# \u2705 Completed successfully\r\n\r\n# Format code\r\nmake format\r\n# \u2705 Code formatted\r\n\r\n# Run linters\r\n./bin/golangci-lint run\r\n# \u2705 0 issues\r\n\r\n./bin/editorconfig-checker\r\n# \u2705 No errors\r\n\r\n# Test documentation locally\r\nuv sync --frozen\r\nuv run task serve-docs\r\n# \u2705 Documentation builds and serves correctly\r\n```\r\n\r\n## Testing video\r\n![CleanShot 2025-08-03 at 08 18 55](https://github.com/user-attachments/assets/8acad3e3-ce40-4ea2-bc17-4f5874859e43)\r\n\r\n## Configuration Example\r\n\r\nThe added configuration for Beyond Compare:\r\n\r\n```toml\r\n[merge]\r\n    command = \"bcomp\"\r\n    args = [\"{{ .Destination }}\", \"{{ .Source }}\", \"{{ .Target }}\", \"{{ .Source }}\"]\r\n```\r\n\r\nThis follows the same pattern as the existing merge tool configurations for neovim and VSCode.\r\n\r\n## Validate TOML configuration\r\n- [x] I've made the toml configuration locally and successfully resolved a merge conflict using this setup.\r\n\r\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\r\n\r\nCo-Authored-By: Claude <noreply@anthropic.com>\r\n\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] **All tests pass**: Ran `make test` - all tests passed successfully"
+  },
+  {
+   "n": 2,
+   "text": "- [x] **Linting checks pass**: Ran `make lint` - verified with:"
+  },
+  {
+   "n": 3,
+   "text": "- `golangci-lint` - no issues found"
+  },
+  {
+   "n": 4,
+   "text": "# \u2705 All tests passed"
+  }
+ ],
+ "order": "7a0f2e95cc3a65a00ac6861f65d3a0ce41f9159f0dadde5f14ef63830b454565"
+}

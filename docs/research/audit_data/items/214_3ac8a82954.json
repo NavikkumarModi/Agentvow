@@ -1,0 +1,18 @@
+{
+ "id": "3ac8a82954",
+ "url": "https://github.com/roboflow/inference/pull/1299",
+ "repo": "roboflow/inference",
+ "number": 1299,
+ "message": "# Description\r\n\r\nAdds [an AGENTS.md file](https://openai.com/index/introducing-codex/#:~:text=Codex%20can%20be%20guided%20by%20AGENTS.md%20files) for agentic workflows like OpenAI Codex to use to orient themselves.\r\n\r\n## Type of change\r\n\r\n-   [ ] Bug fix (non-breaking change which fixes an issue)\r\n-   [ ] New feature (non-breaking change which adds functionality)\r\n-   [x] This change is a documentation update\r\n\r\n## How has this change been tested, please provide a testcase or example of how you tested the change?\r\n\r\nNot needed, non-functional\r\n\r\n## Any specific deployment considerations\r\n\r\nOnly documentation update\r\n\r\n## Docs\r\n\r\n-   [x] Docs updated? What were the changes: this is them\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "-   [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "-   [ ] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "dde0533c75881d1d8a69e9560a3a20d4b02fc0387f6dce260b4f744e7ff5b03d"
+}

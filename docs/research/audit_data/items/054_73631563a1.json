@@ -1,0 +1,18 @@
+{
+ "id": "73631563a1",
+ "url": "https://github.com/elementary-data/dbt-data-reliability/pull/875",
+ "repo": "elementary-data/dbt-data-reliability",
+ "number": 875,
+ "message": "# Add missing query_text column to dbt_tests table\n\n## Summary\nThis PR adds the missing `query_text` column to the `dbt_tests` table schema and updates the `flatten_test` macro to populate it with the compiled test query.\n\n**Changes made:**\n1. Added `query_text` (long_string) column to the `dbt_tests` table schema definition\n2. Updated `flatten_test` macro to use `query_text` instead of `compiled_code` as the dictionary key\n\n**Context:**\nThe Elementary internal codebase expects a `query_text` column in the dbt_tests artifact data, but the dbt-data-reliability package was using `compiled_code` instead. This was discovered during investigation of the Elementary internal code which has logic to filter out `query_text` with comments indicating it should exist in the raw data but not in the ORM model.\n\n## Review & Testing Checklist for Human\n\n- [ ] **Schema migration**: Verify that existing Elementary installations can successfully upgrade to this version and that the new column is added automatically (the model is configured with `on_schema_change='sync_all_columns'`)\n- [ ] **Data population**: Confirm that `query_text` is actually being populated with test queries after upgrade (run `dbt run` and check the `dbt_tests` table)\n- [ ] **Elementary internal compatibility**: Test that Elementary internal services (CLI/Cloud) can successfully consume the new `query_text` column without issues\n- [ ] **Integration tests**: Run relevant integration tests to ensure no breakage (note: I only ran `dbt compile` to verify syntax)\n- [ ] **Linear issue alignment**: Verify this change actually addresses what was requested in [ELE-5137](https://linear.app/elementary/issue/ELE-5137/add-missing-as-query-text)\n\n### Test Plan\n1. Run `dbt run --select dbt_tests` on a test project\n2. Query the `dbt_tests` table and verify `query_text` column exists and contains compiled SQL\n3. Test Elementary internal data processing to ensure it can consume the new column\n4. If possible, test upgrade path from previous version to ensure smooth migration\n\n### Notes\n- Session: [Devin run](https://app.devin.ai/sessions/a5101e109f474e3398759dc1e73df9f5)\n- Requested by: Yosef Arbiv (yosef@elementary-data.com) / @arbiv\n- Pre-commit hooks passed\n- Only syntax validation performed via `dbt compile` - full integration tests not run due to time constraints\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Refactor**\n  * Renamed the test artifact field from compiled_code to query_text across the test data schema and flattened metadata.\n  * Test records now display the stored query text for each test.\n  * Schema for empty test tables now includes query_text (long string).\n  * No other fields or paths were changed.\n  * Downstream consumers should read query_text where compiled_code was previously used.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Pre-commit hooks passed"
+  },
+  {
+   "n": 2,
+   "text": "- Only syntax validation performed via `dbt compile` - full integration tests not run due to time constraints"
+  }
+ ],
+ "order": "2ba612e09ec2ccbd43471e22c2bf2056b66092614d2b09f0811c7d268ba071d7"
+}

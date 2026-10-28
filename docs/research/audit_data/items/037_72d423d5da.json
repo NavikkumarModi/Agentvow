@@ -1,0 +1,14 @@
+{
+ "id": "72d423d5da",
+ "url": "https://github.com/onyx-dot-app/onyx/pull/3924",
+ "repo": "onyx-dot-app/onyx",
+ "number": 3924,
+ "message": "# Update \"Pro Search\" to \"Agent Search\" in Admin Panel Text\n\nThis PR updates the user-facing text in the admin panel from \"Pro Search\" to \"Agent Search\" to maintain consistent terminology.\n\n## Changes\n- Updated the label text from \"Pro Search Disabled\" to \"Agent Search Disabled\"\n- Updated the sublabel text to match the new terminology\n\n## Implementation Details\n- Changes are UI-only and don't affect functionality\n- Internal variable names (e.g., `pro_search_disabled`) are kept unchanged for backward compatibility\n- No database schema or API changes required\n\n## Testing\n- No functional changes, only text updates\n- Frontend lint checks will be run to ensure code quality\n\nNote: This is a direct request from Chris to update the terminology, no Linear ticket required.\n\nRequested by: Chris\nLink to Devin run: https://app.devin.ai/sessions/f9ccb3ea429b462ea8c7b7c611e74dde\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Internal variable names (e.g., `pro_search_disabled`) are kept unchanged for backward compatibility"
+  }
+ ],
+ "order": "1e4c7debfda7ca6296d4953ddf8c859c25bb5c3edcad462356aa642c614bb89f"
+}

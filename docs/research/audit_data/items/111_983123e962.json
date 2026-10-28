@@ -1,0 +1,14 @@
+{
+ "id": "983123e962",
+ "url": "https://github.com/onlook-dev/onlook/pull/1576",
+ "repo": "onlook-dev/onlook",
+ "number": 1576,
+ "message": "# Add setting to toggle bun replace command functionality\n\nThis PR adds a new setting to toggle the bun replace command functionality on and off. By default, the functionality is enabled to maintain backward compatibility.\n\n## Changes\n- Added a new `enableBunReplace` setting to the `EditorSettings` interface\n- Set the default value to `true` in `DefaultSettings`\n- Modified the `getBunCommand` function to check the setting before replacing commands\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/d5b0d74cc7c0471e912ebfb773de8e53\n\nRequested by: Slack user in #devin-requests\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "By default, the functionality is enabled to maintain backward compatibility."
+  }
+ ],
+ "order": "7af6240ab8df490f7ecb9f7d0d20430ba8b3fc180d85ee364a6ed0462fbf0fd7"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "b6557be518",
+ "url": "https://github.com/vinhnx/vtcode/pull/238",
+ "repo": "vinhnx/vtcode",
+ "number": 238,
+ "message": "## Summary\n- accept legacy ACP payload fields for `run_terminal_cmd`, including `cwd`, `timeout`, and `tty`\n- document the backwards compatible parameters in the `run_terminal_cmd` function schema so ACP clients can send either strings or arrays\n\n## Testing\n- cargo fmt\n- cargo clippy\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68ee9e19ddd08323860bc119bcac57b3",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- document the backwards compatible parameters in the `run_terminal_cmd` function schema so ACP clients can send either strings or arrays"
+  }
+ ],
+ "order": "8aa2e2fa1d436958dea0aee1edf269c3239a69675bb8c9d13258eda0d94886cd"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "5fdf0efdb6",
+ "url": "https://github.com/katspaugh/wavesurfer.js/pull/4162",
+ "repo": "katspaugh/wavesurfer.js",
+ "number": 4162,
+ "message": "## Short description\r\nFixes a crash when calling `empty()` with the `WebAudio` backend.\r\n\r\nResolves #4161.\r\n\r\n## Implementation details\r\nAdds a `removeAttribute` method to `WebAudioPlayer` so that `Player` can reset the media source without errors.\r\n\r\n## How to test it\r\n- `yarn lint`\r\n- `yarn test:unit`\r\n\r\n## Checklist\r\n* [ ] This PR is covered by e2e tests\r\n* [x] It introduces no breaking API changes\r\n\r\n------\r\nhttps://chatgpt.com/codex/tasks/task_b_687b3ac2e414832fb6a094729f2c306c",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* [x] It introduces no breaking API changes"
+  }
+ ],
+ "order": "9c9bdc8b3625c0a0c15d81010edab619c8d386a9457230daff5acf6b5a0a8f27"
+}

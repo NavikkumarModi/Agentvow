@@ -1,0 +1,14 @@
+{
+ "id": "1c8c90a4cc",
+ "url": "https://github.com/dotnet/macios/pull/23313",
+ "repo": "dotnet/macios",
+ "number": 23313,
+ "message": "This PR adds a new instruction to the Copilot configuration to ignore comments from the user 'vs-mobiletools-engineering-service2' when processing issues and pull requests.\n\n## Changes Made\n\n- Added a new \"Comment Handling\" section in `.github/copilot-instructions.md`\n- Added specific instruction: \"Ignore comments from the user 'vs-mobiletools-engineering-service2' when processing issues and pull requests\"\n- Placed the instruction prominently near the beginning of the file after the repository introduction\n\n## Impact\n\nThis change ensures that AI assistants (including Copilot) will ignore comments from the specified user account when analyzing issues and pull requests, helping to focus on relevant human feedback and contributions.\n\nThe change is minimal and surgical, adding only 4 lines to the existing instructions file while preserving all existing content and structure.\n\nFixes #23312.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added a new \"Comment Handling\" section in `.github/copilot-instructions.md`"
+  }
+ ],
+ "order": "c0c19877b0ca7d47b608f365a8271dd8e714fcd950fba9367acc54ab12f9bb19"
+}

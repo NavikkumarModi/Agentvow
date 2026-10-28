@@ -1,0 +1,18 @@
+{
+ "id": "49f17647b5",
+ "url": "https://github.com/jdereg/java-util/pull/125",
+ "repo": "jdereg/java-util",
+ "number": 125,
+ "message": "## Summary\n- restore backwards compatibility for legacy reverse ordered CompactMap implementations\n- detect reverse `TreeMap` comparators when subclasses do not override `getOrdering`\n\n## Testing\n- `This environment doesn't have network access after setup, so Codex couldn't run certain commands. Consider configuring a setup script in your Codex environment to install dependencies.`",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- restore backwards compatibility for legacy reverse ordered CompactMap implementations"
+  },
+  {
+   "n": 2,
+   "text": "- `This environment doesn't have network access after setup, so Codex couldn't run certain commands."
+  }
+ ],
+ "order": "9c23a42f5c59b2dd40bd57386ff56ae97fc014ea2fe2e586825971d446c3eeb0"
+}

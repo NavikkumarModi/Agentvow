@@ -1,0 +1,4 @@
+{"item_id": "ac42a17627", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change deletes .devcontainer/scripts/porter-v1.sh.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "File listed with status removed.", "evidence": ["gh api --paginate repos/microsoft/AzureTRE/pulls/4630/files: 'removed .devcontainer/scripts/porter-v1.sh'", "base dc88dd3c, head c578c4cc"]},
+{"n": 2, "step_a": "CLAIM", "proposition": "This change deletes resource_processor/scripts/porter-v1.sh.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "File listed with status removed.", "evidence": ["gh api --paginate repos/microsoft/AzureTRE/pulls/4630/files: 'removed resource_processor/scripts/porter-v1.sh'", "base dc88dd3c, head c578c4cc"]}
+], "minutes_estimate": 2}

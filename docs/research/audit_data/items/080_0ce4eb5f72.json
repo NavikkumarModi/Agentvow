@@ -1,0 +1,14 @@
+{
+ "id": "0ce4eb5f72",
+ "url": "https://github.com/ComposioHQ/composio/pull/1101",
+ "repo": "ComposioHQ/composio",
+ "number": 1101,
+ "message": "# Documentation Updates\n\nThis PR updates the documentation to:\n1. Replace all instances of `getEntity(\"Jessica\")` with `getEntity(\"default\")`\n2. Update execute method format to use `{actionName, params}` structure\n3. Maintain consistent formatting across all documentation files\n\n## Changes Made\n- Updated entity ID from \"Jessica\" to \"default\" across all documentation files\n- Fixed execute method format to use the correct structure\n- Ensured consistent formatting and code examples\n\nLink to Devin run: https://app.devin.ai/sessions/7f90d002bee24528865cb1a0d3193946\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated entity ID from \"Jessica\" to \"default\" across all documentation files"
+  }
+ ],
+ "order": "508778d29305cd2664c909727eef942dde0b1a03d4424a8d97bfdf3ee7d173cc"
+}

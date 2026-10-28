@@ -1,0 +1,44 @@
+{
+ "item_id": "d99604374c",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change is a bug fix and is non-breaking",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Impact/classification claim with no concrete check that settles it; whether prior behaviour was a bug is a matter of the spec reading, and compatibility was not checkable without running the client.",
+   "evidence": [
+    "gh api pulls/602/files: modified client/src/components/ToolResults.tsx (+31/-31), modified client/src/components/__tests__/ToolsTab.test.tsx (+88/-14); no other files"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox for New feature",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template, not a claim (rules section 2, class 2).",
+   "evidence": [
+    "span begins '- [ ]' (unticked)"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "New and existing tests pass locally at the head commit",
+   "label": "CANNOT_TELL",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Needed npm install (network) to build the client test environment; the install command was denied by the permission system, so tests could not be run. No CI result consulted.",
+   "evidence": [
+    "gh api pulls/602/files: modified client/src/components/ToolResults.tsx (+31/-31), modified client/src/components/__tests__/ToolsTab.test.tsx (+88/-14); no other files",
+    "Checked out head 1756b010; CI runs 'npm install --no-package-lock' then 'cd client && npm test'; sbx.py --network npm install was denied, so no test run"
+   ]
+  }
+ ],
+ "minutes_estimate": 6
+}

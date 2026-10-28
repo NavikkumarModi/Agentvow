@@ -1,0 +1,14 @@
+{
+ "id": "e3098d15c8",
+ "url": "https://github.com/bentoml/BentoML/pull/5230",
+ "repo": "bentoml/BentoML",
+ "number": 5230,
+ "message": "Support loading services from .py files directly while maintaining backward compatibility.\n\nLink to Devin run: https://app.devin.ai/sessions/c85114c45eca437c9d0cf8ad6194d5c5\nRequested by: Chaoyu",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Support loading services from .py files directly while maintaining backward compatibility."
+  }
+ ],
+ "order": "26cfeba27ebfa11ab0442f7f037bf15f1fa57b7970eeac0ac594a4afac9e4d04"
+}

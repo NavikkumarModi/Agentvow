@@ -1,0 +1,14 @@
+{
+ "id": "8699ff19c1",
+ "url": "https://github.com/browser-use/browser-use/pull/3036",
+ "repo": "browser-use/browser-use",
+ "number": 3036,
+ "message": "Add `custom_interactive_selectors` to the Agent to mark specified elements as interactive.\n\nThis feature (ENG-497) allows users to explicitly define CSS selectors for elements that should always be considered interactive, addressing cases where default detection heuristics might miss custom UI components or non-standard interactive patterns.\n\n---\n[Slack Thread](https://browser-use.slack.com/archives/D092QUQD6KA/p1757376184591849?thread_ts=1757376184.591849&cid=D092QUQD6KA)\n\n<a href=\"https://cursor.com/background-agent?bcId=bc-ac002e64-0f83-42c8-af76-0c445f6e6cb2\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-ac002e64-0f83-42c8-af76-0c445f6e6cb2\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n\n    \n<!-- This is an auto-generated description by cubic. -->\n---\n\n## Summary by cubic\nAdds custom_interactive_selectors to let users force-match certain CSS selectors as interactive, improving clicks on custom UI elements that our heuristics miss. Addresses ENG-497.\n\n- **New Features**\n  - Agent accepts custom_interactive_selectors and propagates them via BrowserProfile \u2192 BrowserSession \u2192 DOMService \u2192 DOMTreeSerializer.\n  - ClickableElementDetector now treats matches as interactive; supports tag, class (.cls), id (#id), attribute ([attr], [attr=\"val\"]), and simple combos (e.g., div.card).\n  - Optional and backward-compatible: no behavior change when unset.\n  - Added examples: examples/features/custom_interactive_selectors.py and custom_interactive_selectors_demo.py to showcase usage and before/after behavior.\n\n<!-- End of auto-generated description by cubic. -->\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Optional and backward-compatible: no behavior change when unset."
+  }
+ ],
+ "order": "9ec3326c2c6301700c3287f991a14c5318fa2e9299b5104ae6c1496f34592f04"
+}

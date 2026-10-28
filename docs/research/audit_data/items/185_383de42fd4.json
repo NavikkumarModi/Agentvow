@@ -1,0 +1,14 @@
+{
+ "id": "383de42fd4",
+ "url": "https://github.com/score-spec/score-compose/pull/337",
+ "repo": "score-spec/score-compose",
+ "number": 337,
+ "message": "## Summary\n\nImproves the error message shown when users run `score-compose generate` without any workloads, making it clearer and more actionable.\n\n## Changes\n\n- **Better error messages**: Replaced the confusing \"the project is empty, please provide a score file to generate from\" with contextual messages\n- **Smart detection**: Added logic to detect if `score.yaml` exists in the current directory\n  - If `score.yaml` exists: Shows \"no workloads to generate from. Did you mean to run: score-compose generate score.yaml\"\n  - If no `score.yaml`: Shows \"no workloads to generate from. Please specify a score file, e.g., score-compose generate score.yaml\"\n- **Enhanced testing**: Updated and added test cases to properly handle the init command's default behavior and new error message logic\n\n## Problem Addressed\n\nThe original error message \"the project is empty, please provide a score file to generate from\" was confusing because:\n1. It didn't clearly indicate what the user should do next\n2. It didn't suggest the most common case (using `score.yaml`)\n3. Users weren't sure if they needed to create a file or specify an existing one\n\n## Testing\n\n- All existing tests pass\n- Added new test case `TestGenerateWithScoreYamlPresent` to verify behavior when `score.yaml` is present\n- Updated `TestGenerateWithoutScoreFiles` to use `--no-sample` flag to properly test the no-file scenario\n\nFixes #287\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All existing tests pass"
+  }
+ ],
+ "order": "c61543b74c578b8af30c626f65084e7ea74c69db518f4afba3b3580f1745cf6c"
+}

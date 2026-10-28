@@ -1,0 +1,14 @@
+{
+ "id": "1ce992b182",
+ "url": "https://github.com/Apocrathia/home-assistant-config/pull/101",
+ "repo": "Apocrathia/home-assistant-config",
+ "number": 101,
+ "message": "# Proposed Changes\n\n> This pull request updates all Home Assistant YAML configurations to align with the new syntax introduced in versions 2024.8 and 2024.10. The changes ensure future compatibility, improve readability, and adhere to current best practices.\n>\n> **Key transformations include:**\n> - Renaming `service:` to `action:` in action definitions (2024.8).\n> - Changing top-level `trigger:`, `condition:`, and `action:` keys to their plural forms (`triggers:`, `conditions:`, `actions:`) (2024.10).\n> - Updating `platform:` to `trigger:` within trigger definitions (2024.10).\n>\n> **Example Transformation:**\n>\n> ### Before (Old Syntax):\n> ```yaml\n> automation:\n>   - id: example\n>     alias: 'Example Automation'\n>     trigger:\n>       - platform: sun\n>         event: sunset\n>     condition:\n>       - condition: state\n>         entity_id: group.people\n>         state: 'home'\n>     action:\n>       - service: light.turn_on\n>         data:\n>           entity_id: light.example\n> ```\n>\n> ### After (New Syntax):\n> ```yaml\n> automation:\n>   - id: example\n>     alias: 'Example Automation'\n>     triggers:\n>       - trigger: sun\n>         event: sunset\n>     conditions:\n>       - condition: state\n>         entity_id: group.people\n>         state: 'home'\n>     actions:\n>       - action: light.turn_on\n>         data:\n>           entity_id: light.example\n> ```\n>\n> **Impact:**\n> - 42 YAML files updated across `areas`, `functions`, `routines`, `system`, `projects`, and `integrations` directories.\n> - Over 160 `service:` calls, 85 `trigger:` sections, 55 `condition:` sections, 85 `action:` sections, and 125 `platform:` definitions were updated.\n> - All changes are backward compatible and have been validated to ensure no old syntax remains.\n\n## Related Issues\n\n> None.\n\n[autolink-references]: https://help.github.com/articles/autolinked-references-and-urls/",
+ "statements": [
+  {
+   "n": 1,
+   "text": "> - All changes are backward compatible and have been validated to ensure no old syntax remains."
+  }
+ ],
+ "order": "bda025d2ca68b5f4f84d548286baeb28b76e54f2675e67d8ea9ee73950238569"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "ac42a17627",
+ "url": "https://github.com/microsoft/AzureTRE/pull/4630",
+ "repo": "microsoft/AzureTRE",
+ "number": 4630,
+ "message": "This PR removes the deprecated Porter v1 installation from both the Dev Container and Resource Processor Docker images, cleaning up legacy dependencies as requested.\n\n## Changes Made\n\n- **Removed Porter v1 installation from `.devcontainer/Dockerfile`**:\n  - Removed ARG declarations for `PORTER_HOME_V1`, `PORTER_VERSION`, `PORTER_TERRAFORM_MIXIN_VERSION`, `PORTER_AZ_MIXIN_VERSION`, and `PORTER_AZURE_PLUGIN_VERSION`\n  - Removed RUN command that executed the porter-v1.sh installation script\n  - Removed ENV PATH configuration for Porter v1 home directory\n\n- **Removed Porter v1 installation from `resource_processor/vmss_porter/Dockerfile`**:\n  - Removed similar ARG declarations and RUN commands\n  - Removed COPY line for Porter v1 config.yaml file\n  - Removed ENV PATH configuration\n\n- **Deleted installation scripts**:\n  - Deleted `.devcontainer/scripts/porter-v1.sh`\n  - Deleted `resource_processor/scripts/porter-v1.sh`\n\n## Verification\n\n- Confirmed no remaining references to `porter-v1` or `PORTER_HOME_V1` in the codebase\n- Validated Dockerfile syntax with hadolint\n- The regular `porter.sh` script remains available (not v1-specific)\n\nThe changes are minimal and surgical, removing only the deprecated Porter v1 components while preserving all other functionality.\n\nFixes #4348.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Deleted `.devcontainer/scripts/porter-v1.sh`"
+  },
+  {
+   "n": 2,
+   "text": "- Deleted `resource_processor/scripts/porter-v1.sh`"
+  }
+ ],
+ "order": "85cdb722cda9df25fcc42dc5586126248a7ebf5b43c309e97dfd024412e31012"
+}

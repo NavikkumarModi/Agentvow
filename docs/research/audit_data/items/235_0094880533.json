@@ -1,0 +1,18 @@
+{
+ "id": "0094880533",
+ "url": "https://github.com/airbytehq/PyAirbyte/pull/698",
+ "repo": "airbytehq/PyAirbyte",
+ "number": 698,
+ "message": "# Bump airbyte-cdk from ^6.28.0 to ^6.56.0\n\nThis PR updates PyAirbyte to use the latest version of the Python CDK, bumping from version ^6.28.0 to ^6.56.0.\n\n## Changes\n- Updated `airbyte-cdk` dependency constraint in `pyproject.toml`\n- Updated `poetry.lock` with resolved dependencies\n\n## Testing\n- This is a draft PR created for CI validation\n- Focusing on pytest-fast results to validate CDK compatibility\n- Will monitor CI fast test suite results before proceeding\n\n## Context\n- Latest available CDK version is 6.56.1\n- This represents a significant version jump (28 minor versions)\n- Requested by AJ Steers (aj@airbyte.io) for CDK version validation\n\n**Link to Devin run:** https://app.devin.ai/sessions/286a650111bf400b866c0d2b9f6fd532\n\n**Requested by:** AJ Steers (aj@airbyte.io)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated `airbyte-cdk` dependency constraint in `pyproject.toml`"
+  },
+  {
+   "n": 2,
+   "text": "- Updated `poetry.lock` with resolved dependencies"
+  }
+ ],
+ "order": "f9dc1b7ef1c0048b97a54464c98f04a81e6e260797df10f68a122d90f9e9abd5"
+}

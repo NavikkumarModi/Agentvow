@@ -1,0 +1,14 @@
+{
+ "id": "ded79f3ea0",
+ "url": "https://github.com/mandiant/capa/pull/2715",
+ "repo": "mandiant/capa",
+ "number": 2715,
+ "message": "This PR fixes Binary Ninja MLIL None handling in extract_stackstring function and analyzes the codebase for similar issues.\n\n## Progress Checklist\n\n- [x] **Fix Binary Ninja MLIL None handling in extract_stackstring function**\n  - Added None check after retrieving MLIL in extract_stackstring function\n  - Maintains backward compatibility with ILException handling\n  - Prevents AttributeError when mlil is None in Binary Ninja 5.0.7174-dev+\n\n- [x] **Analyze Binary Ninja extractor for additional similar locations**\n  - Searched entire binja extractor directory for similar MLIL/HLIL/LLIL access patterns\n  - Found that extract_stackstring was the only location with direct func.mlil access\n  - Confirmed func.get_llil_at() and func.get_llils_at() methods already have proper None checks\n  - No direct access to func.hlil or func.llil properties found in current codebase\n\n- [ ] **Address additional similar locations (pending clarification)**\n  - Requested clarification on specific locations mentioned in review comment\n  - Ready to implement similar fixes once specific locations are identified\n\n## Summary\n\nThe fix for the Binary Ninja MLIL None handling has been implemented. I've performed a comprehensive analysis of the Binary Ninja extractor codebase and found that the `extract_stackstring` function was the only location that directly accesses `func.mlil`. The existing `func.get_llil_at()` and `func.get_llils_at()` method calls already have proper None checks where needed.\n\nI've requested clarification on the specific additional locations mentioned in the review comment to ensure all similar cases are addressed.\n\nFixes #2714.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/mandiant/capa/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintains backward compatibility with ILException handling"
+  }
+ ],
+ "order": "17a9e3365175df6bc5d201c5abbf38328fa753d698a8ba7e42dea4a36cb65238"
+}

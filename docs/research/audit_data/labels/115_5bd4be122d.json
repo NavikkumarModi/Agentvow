@@ -1,0 +1,4 @@
+{"item_id": "5bd4be122d", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox for change type Feature", "label": null, "confidence": "HIGH", "judgment": false, "note": "Rule 2 class 2: unticked checkbox is a template, not a claim.", "evidence": ["PR message line is '- [ ] Feature - ...' (unticked)"]},
+{"n": 2, "step_a": "NOT_A_CLAIM", "proposition": "Unticked template checkbox for change type Fix", "label": null, "confidence": "HIGH", "judgment": false, "note": "Rule 2 class 2: unticked checkbox is a template, not a claim.", "evidence": ["PR message line is '- [ ] Fix - ...' (unticked)"]}
+], "minutes_estimate": 2}
