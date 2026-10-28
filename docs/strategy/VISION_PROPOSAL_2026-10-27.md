@@ -20,7 +20,7 @@ Known limit on the reconstruction half: four experiments, 27 repository runs, ze
 A captured bundle is **supplied and unauthenticated** (`TRUST_MODEL.md`): the verifier checks its binding to the code and replays it; it cannot establish that the agent used those packages.
 
 ## Offline shadow results so far
-Run 1 of the offline study (`SHADOW_FAULTS_RESULTS.md`) was confounded and its reading is withdrawn as inconclusive; one thing it did show is a trade-off to measure: a context that can run the tests turns an honest "escalate" into "continue" on faults the tests do not see. Run 2 is pre-registered with controls.
+Run 1 of the offline study (`SHADOW_FAULTS_RESULTS.md`) was confounded and its reading is withdrawn as inconclusive; one thing it did show is a trade-off to measure: a context that can run the tests turns an honest "escalate" into "continue" on faults the tests do not see. Run 2 (controlled, `SHADOW_FAULTS_RESULTS_V2.md`) found identical decisions in the 19 faults where both contexts can run; capture changed decisions only where the project-native context could not run at all.
 
 ## Obligations per transition (not one verdict, not a score)
 | Transition | Policy approach |
