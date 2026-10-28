@@ -1,17 +1,22 @@
-# Audit study (Q1 to Q3): pre-registration (DRAFT v1, 2026-10-28; becomes binding when frozen)
+# Audit study (Q1 to Q3): pre-registration (v1, 2026-10-28; technically frozen, readers pending)
 
 Design: `docs/strategy/AUDIT_STUDY_DESIGN_2026-10-28.md`. Labelling: `AUDIT_LABELLING_RULES.md`. Framing: Agentvow is an independent claim-verification audit for human oversight; it is judged by correctness, coverage, reach, honesty of UNKNOWN and reproducibility, **not** by safety or autonomy rates. Q4 (human reading study) has its own pre-registration, to be written only if Q1 to Q3 support running it.
 
-**Status: DRAFT.** It is frozen by filling in section 0 and committing, **before** the held-out sample is drawn. Until then it is a proposal and nothing in it has been run or looked at. After freezing, a change is a dated amendment at the end, with the reason; decision rules (sections 5 and 6) are never amended after labels exist.
+**Status: technically frozen, readers pending (see section 0).** The held-out sample has not been drawn; a dry run with a throwaway seed (output deleted) only measured population size and the number of extracted claims per pull request. After freezing, a change is a dated amendment at the end, with the reason; decision rules (sections 5 and 6) are never amended after labels exist.
 
-## 0. Freeze record (to be filled before drawing the sample; the study does not start while any field is empty)
-- Checker/tool commit (full hash): ______
-- Date and time frozen: ______
-- Second reader name or id: ______; third reader (for disagreements) name or id: ______
-- Sampling seed (random 64-bit, written before drawing): ______
-- Corpus snapshot id/date (AIDev release or file hash): ______
-- Environment for audit runs (OS, Python, `ruff`/`black`/`flake8` versions): ______
-- Labelling rules version: v1 (no amendments) ______
+## 0. Freeze record
+**Status: TECHNICALLY FROZEN 2026-10-28T12:00Z; NOT YET FULLY FROZEN.** The technical fields below are fixed and must not change. The reader fields are empty, so **the sample must not be drawn and no statement may be labelled** until they are filled by a dated commit that changes nothing else. The owner approved freezing "with the current head" (2026-10-28).
+- Checker/tool commit (full hash): `6cf7f3bccd7f65c47dd0b611f9ae29ae55cae3a1` (contains `agentvow/`, `research/audit/draw.py` and `classify.py` at the versions to be used; CI for this commit was still running at freeze time and is to be checked before the draw). Any later change to `agentvow/` or `research/audit/` voids the freeze.
+- Date and time frozen: 2026-10-28T12:00:07Z
+- Sampling seed (CSPRNG, generated at freeze, not yet used for any draw): `6883625825084806765`
+- Corpus snapshot (SHA-256): `pull_request.parquet` c0b8e81e1d099905ef9ea420bf907d45179771ff5972afce6c219d8cafcef3e8; `repository.parquet` a08e34be4921c708be88a4ebd9e275b32f37fd442bb2770c0b69c94834dc6aa7 (AIDev tables in `data/aidev/`)
+- Draw parameters: `--target-prs 240 --max-per-repo 3 --max-agent-share 0.4 --python-share 0.5` (the script defaults at the frozen commit); draw rules `draw-v1`; plain-pip rules `classify-v1`
+- Environment for audit runs: macOS (Darwin 25.5.0, arm64), Python 3.13.5, ruff 0.15.1, black 24.10.0, flake8 7.1.1; the second-machine reproducibility run (H5) records its own versions
+- Labelling rules version: v1 (no amendments)
+- **Second reader name or id: NOT YET NAMED** ______
+- **Third reader (disagreements) name or id: NOT YET NAMED** ______
+- **Owner authorisation to clone and install third-party repositories for the audit runs: NOT YET GIVEN** ______ (needed before step 6 of the procedure, not for the draw)
+- Reader capacity confirmed by the owner (section 2, labelling effort): ______
 
 ## 1. Hypotheses (directional, each with a falsifier)
 - **H1 (precision of CONTRADICTED).** Per statement kind, the held-out precision of CONTRADICTED is at least 80% (lower bound of the 95% interval). Falsified for a kind if the lower bound is below 80%.
