@@ -1,15 +1,15 @@
 {
- "items": 52,
- "statements": 124,
+ "items": 56,
+ "statements": 132,
  "agreement": [
-  99,
-  124
+  107,
+  132
  ],
- "kappa": 0.711,
+ "kappa": 0.729,
  "claims_only": {
-  "n": 107,
-  "agree": 82,
-  "kappa": 0.624
+  "n": 114,
+  "agree": 89,
+  "kappa": 0.647
  },
  "per_kind": {
   "?": {
@@ -18,9 +18,9 @@
    "kappa": null
   },
   "backward_compatible": {
-   "n": 81,
-   "agree": 60,
-   "kappa": 0.644
+   "n": 87,
+   "agree": 66,
+   "kappa": 0.668
   },
   "docs_updated": {
    "n": 4,
@@ -43,9 +43,9 @@
    "kappa": 1.0
   },
   "tests_pass": {
-   "n": 15,
-   "agree": 12,
-   "kappa": 0.575
+   "n": 17,
+   "agree": 14,
+   "kappa": 0.589
   },
   "unchecked": {
    "n": 5,
@@ -54,18 +54,18 @@
   }
  },
  "pr_class": {
-  "n": 52,
-  "agree": 40,
-  "kappa": 0.637,
+  "n": 56,
+  "agree": 44,
+  "kappa": 0.662,
   "table": {
-   "negative|negative": 20,
+   "negative|negative": 22,
    "negative|positive": 2,
    "negative|unscorable": 1,
    "positive|negative": 3,
-   "positive|positive": 8,
+   "positive|positive": 9,
    "unscorable|negative": 4,
    "unscorable|positive": 2,
-   "unscorable|unscorable": 12
+   "unscorable|unscorable": 13
   }
  },
  "disagreement_count": 25,
