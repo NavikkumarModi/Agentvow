@@ -1,0 +1,126 @@
+{
+ "note": "post-hoc, exploratory; not pre-registered",
+ "tie_seed_distribution": {
+  "arm0": {
+   "mean": 0.198,
+   "sd": 0.087
+  },
+  "arm1": {
+   "mean": 0.311,
+   "sd": 0.054
+  },
+  "arm2": {
+   "mean": 0.279,
+   "sd": 0.095
+  },
+  "arm3": {
+   "mean": 0.193,
+   "sd": 0.017
+  },
+  "arm5": {
+   "mean": 0.344,
+   "sd": 0.069
+  },
+  "arm6": {
+   "mean": 0.403,
+   "sd": 0.041
+  }
+ },
+ "tie_seed_S1_share": 0.66,
+ "tie_seed_random_meets_S2_share": 0.7,
+ "tie_seed_arm5_minus_arm1": {
+  "mean": 0.033,
+  "sd": 0.087,
+  "positive_share": 0.64
+ },
+ "rest_positives": {
+  "n": 6,
+  "weight_share": 0.474
+ },
+ "recall_within_flagged_stratum": {
+  "arm0": [
+   4,
+   46
+  ],
+  "arm1": [
+   23,
+   46
+  ],
+  "arm2": [
+   10,
+   46
+  ],
+  "arm3": [
+   17,
+   46
+  ],
+  "arm5": [
+   24,
+   46
+  ],
+  "arm6": [
+   33,
+   46
+  ]
+ },
+ "without_empty_change_list": {
+  "positives": 44,
+  "weighted_recall": {
+   "arm0": 0.215,
+   "arm1": 0.299,
+   "arm2": 0.162,
+   "arm3": 0.218,
+   "arm5": 0.245,
+   "arm6": 0.367
+  },
+  "unique_catches": [
+   8,
+   7
+  ]
+ },
+ "binary_decisions": {
+  "arm1_non_success": {
+   "burden": 0.787,
+   "weighted_recall": 0.83,
+   "weighted_precision": 0.21
+  },
+  "arm1_failing_only": {
+   "burden": 0.147,
+   "weighted_recall": 0.263,
+   "weighted_precision": 0.377
+  },
+  "arm2_review": {
+   "burden": 0.606,
+   "weighted_recall": 0.84,
+   "weighted_precision": 0.23
+  },
+  "arm5_strict": {
+   "burden": 0.721,
+   "weighted_recall": 0.796,
+   "weighted_precision": 0.225
+  },
+  "arm5_lenient": {
+   "burden": 0.059,
+   "weighted_recall": 0.229,
+   "weighted_precision": 0.526
+  }
+ },
+ "arm5_score_scorable_share": {
+  "0": {
+   "labelled": 57,
+   "unscorable": 8
+  },
+  "1": {
+   "labelled": 179,
+   "unscorable": 85
+  },
+  "2": {
+   "labelled": 32,
+   "unscorable": 4
+  },
+  "3": {
+   "labelled": 10,
+   "unscorable": 0
+  }
+ }
+}
