@@ -96,9 +96,10 @@ def main(argv=None):
     flags["arm6_ci_plus_agentvow"] = top_set(ids, scores["arm1_ci"], a.seed, "arm1_ci", half) | top_set(ids, scores["arm5_agentvow"], a.seed, "arm5_agentvow", half)
     # labels
     labelled = {}
-    for f in glob.glob(str(ROOT / a.labels / "*.json")):
-        item = json.load(open(f))
-        labelled[item["pr"]] = item["statements"]
+    for f in glob.glob(str(ROOT / a.labels / "*.json")):   # label files carry the item's name; the pull request comes from the item file
+        lab = json.load(open(f))
+        item = json.load(open(ROOT / "data/shadow2/items" / (Path(f).stem + ".json")))
+        labelled[item["url"]] = lab["statements"]
     res = {"budget": a.budget, "pool": len(ids), "labelled": len(labelled), "arms": {}, "policies": {}}
     for mode in ("base", "pessimistic", "optimistic"):
         cls = {p: classify(s, mode) for p, s in labelled.items() if p in rows}

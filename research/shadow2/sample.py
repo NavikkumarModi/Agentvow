@@ -1,5 +1,5 @@
 """Choose the pull requests to label (pre-registration, section 4), after the cheap arms and the full arm 5 have run and before any label exists. Deterministic given the seed.
-F = pull requests flagged by at least one of: arm 5 under the STRICT policy; arm 3 in its top 15% lexical scores; arm 1 with failing or pending CI. All of F is labelled up to a cap (default 220; above it F is subsampled with a seeded
+F = pull requests flagged by at least one of: arm 5 under the LENIENT policy (amendment A2: the strict policy flags about 72% of the pool and carries no information as a sampling flag); arm 3 in exactly its top 15% lexical scores (ties broken by a seeded hash); arm 1 with failing or pending CI. All of F is labelled up to a cap (default 220; above it F is subsampled with a seeded
 probability recorded per pull request); of the rest, a seeded 10% is labelled. Each pull request gets its inclusion probability; weight = 1/probability.
 Arm 5 findings for a pull request = the static files/docs findings + the full-run findings when the pull request was run + UNKNOWN for every other tests, lint or impact claim (not run: the product cannot run it).
 Usage: python3 research/shadow2/sample.py --seed N [--cap 220] [--rest-rate 0.10]  -> data/shadow2/label_sample.json"""
@@ -56,14 +56,16 @@ def main(argv=None):
     cheap = [json.loads(l) for l in (ROOT / "data/shadow2/cheap.jsonl").read_text().splitlines()]
     cheap = [c for c in cheap if "head" in c]
     full = {json.loads(l)["pr"]: json.loads(l) for l in (ROOT / "data/shadow2/full_arm5.jsonl").read_text().splitlines()} if (ROOT / "data/shadow2/full_arm5.jsonl").exists() else {}
-    lex = sorted((c["arm3_lexical"] for c in cheap), reverse=True)
-    thr = lex[max(0, int(0.15 * len(lex)) - 1)] if lex else 0
+    ranked = sorted(cheap, key=lambda c: (-c["arm3_lexical"], u(a.seed, "lex", c["pr"])))
+    top3 = {c["pr"] for c in ranked[:int(0.15 * len(ranked))] if c["arm3_lexical"] > 0}
+    thr = min((c["arm3_lexical"] for c in ranked[:int(0.15 * len(ranked))]), default=0)
     rows = []
     for c in cheap:
         f5 = arm5_findings(c, full.get(c["pr"]))
         strict = policy.decide(f5, "strict")
-        flags = {"arm5_strict": strict == "review", "arm3_top15": c["arm3_lexical"] >= thr and c["arm3_lexical"] > 0, "arm1_failing": c["arm1_ci"] == "failing_or_pending"}
-        rows.append({"pr": c["pr"], "repo": c["repo"], "flagged": any(flags.values()), "flags": flags, "arm5_score": arm5_score(f5), "strict": strict, "lenient": policy.decide(f5, "lenient")})
+        lenient = policy.decide(f5, "lenient")
+        flags = {"arm5_lenient": lenient == "review", "arm3_top15": c["pr"] in top3, "arm1_failing": c["arm1_ci"] == "failing_or_pending"}
+        rows.append({"pr": c["pr"], "repo": c["repo"], "flagged": any(flags.values()), "flags": flags, "arm5_score": arm5_score(f5), "strict": strict, "lenient": lenient})
     F = [r for r in rows if r["flagged"]]
     p_f = min(1.0, a.cap / len(F)) if F else 1.0
     out = []
