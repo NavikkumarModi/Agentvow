@@ -1,0 +1,35 @@
+{
+ "item_id": "1269b0064f",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change adds pkg/auth/compat.go (a backward compatibility layer).",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "files_scope; the file is new and its content is aliases/wrappers marked Deprecated.",
+   "evidence": [
+    "PR file list: 'added pkg/auth/compat.go +124 -0'",
+    "Read compat.go at head 3916fcba: type aliases (TokenValidator = token.Validator etc.) and wrapper funcs marked Deprecated"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "After this change, the previously public pkg/auth API remains available (full backward compatibility via deprecated aliases/wrappers).",
+   "label": "FALSE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Public exported names of package pkg/auth at base were dropped with no alias or wrapper. Could not compile (no Go toolchain installed), so verified by name search; absence is definitive for the 'full' claim.",
+   "evidence": [
+    "git grep at base b58c5331: pkg/auth/token.go defines Registry, NewRegistry, GoogleProvider, NewGoogleProvider, RFC7662Provider, NewRFC7662Provider, NewRFC7662ProviderWithAuth, OIDCDiscoveryDocument (exported)",
+    "git grep -w for NewRegistry, NewGoogleProvider, NewRFC7662Provider, OIDCDiscoveryDocument in pkg/auth (non-subpackage) at head 3916fcba: 0 files; token.go removed and compat.go does not re-export them",
+    "Package pkg/auth is importable (pkg/ path, imported from cmd/thv and pkg/api), so these are public symbols; other compat names (TokenValidator, NewTokenValidator, GetClaimsFromContext, errors, GoogleTokeninfoURL) were aliased",
+    "oauth.OIDCDiscoveryDocument was kept as an alias, but the pkg/auth one was not"
+   ]
+  }
+ ],
+ "minutes_estimate": 15
+}

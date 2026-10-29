@@ -1,0 +1,14 @@
+{
+ "id": "deefed296e",
+ "url": "https://github.com/gerlero/foamlib/pull/461",
+ "repo": "gerlero/foamlib",
+ "number": 461,
+ "message": "This PR removes the ignore for Ruff rule UP007 from the linting configuration and updates all code to use the modern union syntax `X | Y` instead of `typing.Union[X, Y]`.\n\n## Changes Made\n\n- **Replaced `Union[X, Y]` with `X | Y`** in all type annotations across 4 files:\n  - `foamlib/postprocessing/load_tables.py` (5 occurrences)\n  - `foamlib/postprocessing/table_reader.py` (17 occurrences) \n  - `foamlib/preprocessing/of_dict.py` (1 occurrence)\n  - `foamlib/preprocessing/parameter_study.py` (4 occurrences)\n\n- **Removed unused `Union` imports** from all modified files\n\n- **Removed UP007 from the ignore list** in `pyproject.toml`\n\n## Compatibility\n\nThis change is safe because all affected files already use `from __future__ import annotations`, which allows the new union syntax to work correctly on Python 3.7+ by making all annotations strings and delaying their evaluation.\n\n## Benefits\n\n- **Modern Python syntax**: Uses the cleaner `X | Y` syntax introduced in Python 3.10 for type unions\n- **Consistent code style**: Aligns with current Python typing best practices\n- **Stricter linting**: Ensures future code uses the preferred union syntax\n\nAll linting checks pass and basic functionality tests confirm no regressions were introduced.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All linting checks pass and basic functionality tests confirm no regressions were introduced."
+  }
+ ],
+ "order": "0c5049e9f6b7f6000a3d212c0c6f840d0a66623d79e40594617ccf197a5285e7"
+}

@@ -1,0 +1,90 @@
+{
+ "item_id": "e549f6ea04",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change restores acceptance of existing API definitions that lack `negate` (schema no longer requires it).",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Judged from the schema diff: a rule lacking `negate` was invalid under the base schema (required) and is valid after, which is the compatibility the sentence refers to. Not confirmed by running schema validation; omitempty also changes marshalled output (false is no longer emitted), not checked for consumers.",
+   "evidence": [
+    "gh api pulls/7288/files: x-tyk-api-gateway.json and x-tyk-api-gateway.strict.json each drop `negate` from `required` in both X-Tyk-URLRewriteInputRule-style definitions (4 removals total; required now in,pattern and in,name,pattern)",
+    "url_rewrite.go: Negate tag changed to `bson:\"negate,omitempty\" json:\"negate,omitempty\"`",
+    "testdata urlRewrite-oas.json and urlRewrite-native.json gain a rule without negate",
+    "Not run: Go tests/schema validation were not executed; no CI statuses available for head b7fdd35"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Describes the earlier bug (existing behaviour before this change), not something this change did.",
+   "label": null,
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Fragment of the bug description: customers could not update APIs; class 1 (description of existing behaviour).",
+   "evidence": [
+    "span is the tail of the sentence 'Fixes breaking change introduced in previous release where customers with API definitions lacking negate field could not update their APIs.'"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "This change is a bug fix and is non-breaking (ticked checkbox).",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": true,
+   "note": "The same description also ticks 'Breaking change', contradicting this box. The diff loosens a required field (compatible for inputs) but omitempty alters serialized output when negate is false; whether anything depends on that was not settled and tests could not be run.",
+   "evidence": [
+    "PR body ticks both '- [x] Bug fix (non-breaking change...)' and '- [x] Breaking change'",
+    "url_rewrite.go diff: omitempty added to json/bson tags",
+    "no Go toolchain run, no CI statuses for head b7fdd35"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox for 'New feature'.",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template item (rule 2.2).",
+   "evidence": [
+    "span begins '- [ ]'"
+   ]
+  },
+  {
+   "n": 5,
+   "step_a": "CLAIM",
+   "proposition": "This change restores backward compatibility for existing API definitions (negate optional).",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Judged from the schema diff: a rule lacking `negate` was invalid under the base schema (required) and is valid after, which is the compatibility the sentence refers to. Not confirmed by running schema validation; omitempty also changes marshalled output (false is no longer emitted), not checked for consumers.",
+   "evidence": [
+    "gh api pulls/7288/files: x-tyk-api-gateway.json and x-tyk-api-gateway.strict.json each drop `negate` from `required` in both X-Tyk-URLRewriteInputRule-style definitions (4 removals total; required now in,pattern and in,name,pattern)",
+    "url_rewrite.go: Negate tag changed to `bson:\"negate,omitempty\" json:\"negate,omitempty\"`",
+    "testdata urlRewrite-oas.json and urlRewrite-native.json gain a rule without negate",
+    "Not run: Go tests/schema validation were not executed; no CI statuses available for head b7fdd35"
+   ]
+  },
+  {
+   "n": 6,
+   "step_a": "CLAIM",
+   "proposition": "The schema change (negate no longer required) restores compatibility with existing definitions (diagram edge).",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Judged from the schema diff: a rule lacking `negate` was invalid under the base schema (required) and is valid after, which is the compatibility the sentence refers to. Not confirmed by running schema validation; omitempty also changes marshalled output (false is no longer emitted), not checked for consumers.",
+   "evidence": [
+    "gh api pulls/7288/files: x-tyk-api-gateway.json and x-tyk-api-gateway.strict.json each drop `negate` from `required` in both X-Tyk-URLRewriteInputRule-style definitions (4 removals total; required now in,pattern and in,name,pattern)",
+    "url_rewrite.go: Negate tag changed to `bson:\"negate,omitempty\" json:\"negate,omitempty\"`",
+    "testdata urlRewrite-oas.json and urlRewrite-native.json gain a rule without negate",
+    "Not run: Go tests/schema validation were not executed; no CI statuses available for head b7fdd35"
+   ]
+  }
+ ],
+ "minutes_estimate": 8
+}

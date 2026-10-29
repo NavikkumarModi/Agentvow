@@ -1,0 +1,18 @@
+{
+ "id": "43d86901ba",
+ "url": "https://github.com/livestorejs/livestore/pull/591",
+ "repo": "livestorejs/livestore",
+ "number": 591,
+ "message": "## Summary\n\nThis PR introduces a comprehensive Cloudflare Workers adapter for LiveStore, providing native support for Cloudflare's serverless platform with Durable Objects for real-time synchronization.\n\n**\u2728 Supersedes #528** - This is a cleaner version with all changes squashed into a single commit for easier review and merging.\n\n### Key Features\n\n**\ud83d\ude80 New Packages**\n- `@livestore/adapter-cloudflare` - Complete Cloudflare Workers adapter with Durable Objects integration\n- `@livestore/common-cf` - Shared Cloudflare utilities and RPC framework\n\n**\ud83d\udd27 Core Functionality**\n- Native Cloudflare Workers environment support with custom SQLite VFS\n- Real-time sync using Durable Objects with hibernation API support\n- Multiple transport layers: WebSocket RPC, HTTP RPC, and native DO RPC\n- Automatic reconnection and connection management\n- Comprehensive error handling with Effect framework\n\n**\ud83d\udce6 Enhanced Infrastructure**\n- Custom SQLite Virtual File System optimized for Workers\n- Block-based storage with automatic persistence\n- Transaction support with ACID guarantees\n- Unified sync backend with pluggable transports\n- Event sequence management and conflict resolution\n\n### Examples & Testing\n\n**New Examples**\n- `cf-chat` - Real-time chat application demonstrating Cloudflare sync\n- `cloudflare-todomvc` - TodoMVC with Cloudflare Durable Objects\n\n**Comprehensive Testing**\n- End-to-end tests with real Cloudflare Workers\n- WebSocket transport validation\n- Durable Objects lifecycle testing\n- Multi-client synchronization scenarios\n- Hibernation API test coverage\n\n### Technical Implementation\n\n**Architecture**\n- Clean separation between client and server implementations\n- Pluggable transport architecture supporting multiple protocols\n- Effect-based error handling and observability\n- Comprehensive type safety throughout\n\n**Performance Optimizations**\n- Optimized for Cloudflare's edge computing model\n- Efficient serialization with minimal overhead\n- Smart caching and connection management\n- Low-latency synchronization with conflict resolution\n\n### Changes Summary\n- **231 files changed**: 15,590 insertions(+), 1,799 deletions(-)\n- All changes consolidated into a single, reviewable commit\n- Fully rebased on latest `origin/dev`\n- TypeScript errors resolved\n- All tests passing\n\n### Test Plan\n- [x] All existing tests pass\n- [x] New Cloudflare-specific test suites added\n- [x] Integration tests with real Cloudflare Workers\n- [x] WebSocket transport functionality verified\n- [x] Durable Objects hibernation scenarios tested\n- [x] Multi-client synchronization validated\n- [x] TypeScript compilation successful\n- [x] Linting and formatting applied\n\n### Breaking Changes\nNone - this is a purely additive change that introduces new functionality without affecting existing adapters.\n\n---\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All tests passing"
+  },
+  {
+   "n": 2,
+   "text": "- [x] All existing tests pass"
+  }
+ ],
+ "order": "a394814ed2143f71b438b96e256791867b79faaeb6f213f1ab8a33593362ea7f"
+}

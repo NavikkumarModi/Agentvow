@@ -1,0 +1,14 @@
+{
+ "id": "9e2d9a85cc",
+ "url": "https://github.com/l5yth/potato-mesh/pull/15",
+ "repo": "l5yth/potato-mesh",
+ "number": 15,
+ "message": "## Summary\n- Default node role to `CLIENT` when missing in API insert and queries\n- Display `CLIENT` as role in nodes table and map popup\n- Test that posting a node without a role stores and returns `CLIENT`\n\n## Testing\n- `pytest -q` *(1 passed, 3 skipped: ruby dependencies not installed)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68c563a40c5c832bbce3cd61828b6657",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `pytest -q` *(1 passed, 3 skipped: ruby dependencies not installed)*"
+  }
+ ],
+ "order": "c4f77d38f0fc10f83a49437a541302a5ed03684616eff5de9188e059bb81feec"
+}

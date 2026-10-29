@@ -1,0 +1,14 @@
+{
+ "id": "9bcb91c6e2",
+ "url": "https://github.com/novuhq/novu/pull/8361",
+ "repo": "novuhq/novu",
+ "number": 8361,
+ "message": "# Upgrade Nx to Latest Version and Remove Legacy Cache\n\n## Description\nThis PR upgrades Nx from v20.3.0 to v21.0.4 and updates the nx.json configuration to not use legacy cache. The changes include:\n\n1. Updating Nx version in package.json to 21.0.4\n2. Updating nx-cloud package to 19.1.0\n3. Updating nx.json to use the modern format without legacy cache\n4. Updating the runner configuration in nx.json and libs/automation/nx.json to use nx-cloud\n\n## Motivation\nUpgrading to the latest version of Nx provides access to new features, performance improvements, and bug fixes. Removing the legacy cache configuration ensures compatibility with the latest Nx version and improves build performance.\n\n## Type of change\n- [x] New feature (non-breaking change which adds functionality)\n\n## How Has This Been Tested?\nThe changes have been tested by running the build command locally.\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/7d2756b931f042aa9a941adae8055d31\n\n## Requested by\nDima Grossman (dima@novu.co)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "bcb9384b593ca95ec60bb60c6e2134203dfba6cf8f1f042f1a84dbc766b58b17"
+}

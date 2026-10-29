@@ -1,0 +1,26 @@
+{
+ "id": "56e161ecab",
+ "url": "https://github.com/lingodotdev/lingo.dev/pull/915",
+ "repo": "lingodotdev/lingo.dev",
+ "number": 915,
+ "message": "# Enhanced 5xx Error Handling with Cloudflare Status Integration\n\n## Summary\nThis PR enhances network error handling in the CLI to detect 5xx HTTP status codes alongside existing network error detection, and integrates Cloudflare status API checking to provide informative error messages when server errors occur due to Cloudflare service issues.\n\n## Changes Made\n\n### 1. Created Cloudflare Status Utility (`packages/cli/src/cli/utils/cloudflare-status.ts`)\n- New utility function `checkCloudflareStatus()` that queries the Cloudflare status API\n- `formatCloudflareStatusMessage()` to create user-friendly error messages\n- Designed to fail silently if the status API is unavailable\n- Uses 5-second timeout to avoid blocking user operations\n\n### 2. Enhanced Auth Utility (`packages/cli/src/cli/utils/auth.ts`)\n- Added 5xx HTTP status code detection in the `whoami()` method\n- Integrated Cloudflare status checking when server errors occur\n- Preserves existing TypeError \"fetch failed\" handling\n- Provides contextual error messages when Cloudflare issues are detected\n\n### 3. Enhanced SDK Error Handling (`packages/sdk/src/index.ts`)\n- Updated `localizeChunk()` method to detect 5xx server errors\n- Updated `recognizeLocale()` method with similar 5xx error detection\n- Enhanced `whoami()` method to throw proper errors for server issues\n- Maintains backward compatibility with existing error handling\n\n## Problem Solved\nPreviously, when the API returned 5xx server errors, the CLI would only return `null` from auth validation, which would then trigger a generic \"Invalid API key\" error. This was confusing for users when the actual issue was server-side problems, potentially related to Cloudflare service issues.\n\n## Testing\n- \u2705 Build passes: `pnpm turbo run build`\n- \u2705 All tests pass: `pnpm turbo run test` (244/244 tests passing)\n- \u2705 CLI functionality verified: Help command works correctly\n- \u2705 TypeScript compilation successful with no errors\n\n## Error Message Examples\n\n### Before (5xx errors):\n```\nInvalid API key. Please run `lingo.dev auth --login` to authenticate.\n```\n\n### After (5xx errors with Cloudflare issues):\n```\nServer error (503): Service Unavailable. Please try again later.\n\nCloudflare is experiencing major issues: Investigating connectivity issues affecting API services. This may be affecting the API connection.\n```\n\n### After (5xx errors without Cloudflare issues):\n```\nServer error (500): Internal Server Error. Please try again later.\n```\n\n## Backward Compatibility\n- \u2705 Existing TypeError \"fetch failed\" handling preserved\n- \u2705 All existing error handling patterns maintained\n- \u2705 No breaking changes to API or CLI behavior\n- \u2705 Graceful degradation if Cloudflare status API is unavailable\n\n## Implementation Details\n- Uses `AbortSignal.timeout(5000)` for Cloudflare API requests\n- Cloudflare status utility fails silently to avoid cascading errors\n- Error messages are user-friendly and actionable\n- Consistent error handling across CLI and SDK components\n\nThis enhancement significantly improves the user experience when server errors occur, providing clear context about whether issues are temporary service problems versus authentication issues.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintains backward compatibility with existing error handling"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All tests pass: `pnpm turbo run test` (244/244 tests passing)"
+  },
+  {
+   "n": 3,
+   "text": "## Backward Compatibility"
+  },
+  {
+   "n": 4,
+   "text": "- \u2705 No breaking changes to API or CLI behavior"
+  }
+ ],
+ "order": "a17ecb6f044ab20060a831740f685cc97f5e740d0f03e56657eb643f20d18176"
+}

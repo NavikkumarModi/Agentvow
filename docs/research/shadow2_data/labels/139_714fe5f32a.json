@@ -1,0 +1,3 @@
+{"item_id": "714fe5f32a", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "Template checkbox 'I ran the tests on all platforms and verified they passed' (unticked).", "label": null, "confidence": "HIGH", "judgment": false, "note": "Rule 2.2: an unticked checkbox in the PR author checklist template is not a claim; the span begins with '- [ ]'. The whole checklist and platform sub-items in the message are unticked.", "evidence": ["Item message text: '- [ ] I ran the tests on **all platforms** & verified they passed on:' followed by unticked platform sub-items '- [ ] Android: Native' etc."]}
+], "minutes_estimate": 1}

@@ -1,0 +1,14 @@
+{
+ "id": "76fc856284",
+ "url": "https://github.com/mlflow/mlflow/pull/17872",
+ "repo": "mlflow/mlflow",
+ "number": 17872,
+ "message": "## Plan: Update review instructions in AGENTS.md to handle repetitive issues\n\nI need to update the review instructions in the GitHub workflow to clarify that when the same issue appears on many lines (such as missing type hints), the reviewer should leave representative comments rather than flagging every instance.\n\n### Analysis:\n- [x] Located the `.github/workflows/review.yml` file that references AGENTS.md\n- [x] Found that AGENTS.md is dynamically created in the workflow (lines 125-159)\n- [x] Reviewed the current review instructions \n- [x] Examined the Python style guide in `dev/guides/python.md` to understand common repetitive issues\n\n### Changes needed:\n- [ ] Update the review instructions in the workflow to add guidance about handling repetitive issues\n- [ ] Specify that when the same issue appears multiple times, leave 1-3 representative comments\n- [ ] Add instructions to mention the total count of similar issues in the representative comment\n- [ ] Test the workflow syntax to ensure no breaking changes\n\n### Key repetitive issues to address:\n- Missing type hints (very common)\n- Style guide violations that appear across multiple lines\n- Similar typos or naming issues\n\nThe change will be minimal and focused only on adding clarification to avoid overwhelming PR authors while still providing helpful feedback.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/mlflow/mlflow/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Test the workflow syntax to ensure no breaking changes"
+  }
+ ],
+ "order": "8b5c298fe55d6ba22cf5f460038c99bf9cfadb8d484f035f37c8e0d117d312cb"
+}

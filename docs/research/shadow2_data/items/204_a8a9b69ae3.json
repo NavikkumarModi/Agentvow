@@ -1,0 +1,30 @@
+{
+ "id": "a8a9b69ae3",
+ "url": "https://github.com/dockpanelsuite/dockpanelsuite/pull/719",
+ "repo": "dockpanelsuite/dockpanelsuite",
+ "number": 719,
+ "message": "## Problem\n\nDockPanelSuite has long-standing DPI scaling issues on high-resolution displays, causing dock indicators and other UI elements to appear tiny or pixelated. Users have reported numerous issues with HDPI and scaled displays where interface elements don't scale properly with the system DPI settings.\n\n## Root Cause\n\nThe core issue was in `IImageService.cs` where multiple calls to `Graphics.DrawImageUnscaled()` explicitly ignore DPI scaling, causing images to render at their original pixel dimensions regardless of system DPI settings. Additionally, hard-coded pixel coordinates in image generation methods didn't account for DPI scaling.\n\n## Solution\n\nThis PR implements DPI-aware image handling while maintaining backward compatibility through the existing `PatchController.EnableHighDpi` infrastructure.\n\n### Key Changes\n\n**Added DPI scaling utilities:**\n- `GetDpiScale()` - Detects current system DPI scaling factor\n- `ScaleValue(int)` - Scales integer values according to DPI settings  \n- `DrawImageDpiAware()` - DPI-aware replacement for `DrawImageUnscaled`\n\n**Updated image generation methods:**\n- `GetImage()` - Creates final images at DPI-scaled dimensions\n- `GetDockIcon()` - Uses scaled dimensions and DPI-aware drawing\n- `CombineFive()` - Applies DPI scaling to positioning calculations\n- `GetFiveBackground()` - Scales all hard-coded coordinates\n\n### Backward Compatibility\n\nAll changes are gated behind the existing `PatchController.EnableHighDpi` flag:\n- When `EnableHighDpi = false`: Behavior identical to original implementation\n- When `EnableHighDpi = true`: Images scale appropriately with system DPI\n\n### Usage\n\nUsers can enable DPI scaling via existing configuration methods:\n- Environment variable: `DPS_EnableHighDpi=true`\n- Registry: `HKCU\\Software\\DockPanelSuite\\EnableHighDpi=true`\n- Programmatic: `PatchController.EnableAll = true`\n\n## Testing\n\nAdded comprehensive test suite (`DpiScalingTestFixture.cs`) that validates:\n- Proper scaling when DPI awareness is enabled\n- Backward compatibility when disabled\n- Correct handling of edge cases\n\n## Impact\n\nThis resolves the widely reported DPI scaling issues for dock indicators and UI elements on high-resolution displays while maintaining perfect backward compatibility for existing users. No breaking changes to public APIs.\n\n**Files changed:**\n- `WinFormsUI/Docking/IImageService.cs` - Core implementation\n- `Tests/DpiScalingTestFixture.cs` - Unit tests\n- `Tests/DpiScalingDemo.cs` - Demonstration program\n- `DPI_SCALING_IMPLEMENTATION.md` - Documentation\n\nFixes numerous user-reported DPI scaling issues and makes DockPanelSuite fully compatible with modern high-resolution displays.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This PR implements DPI-aware image handling while maintaining backward compatibility through the existing `PatchController.EnableHighDpi` infrastructure."
+  },
+  {
+   "n": 2,
+   "text": "### Backward Compatibility"
+  },
+  {
+   "n": 3,
+   "text": "- Backward compatibility when disabled"
+  },
+  {
+   "n": 4,
+   "text": "This resolves the widely reported DPI scaling issues for dock indicators and UI elements on high-resolution displays while maintaining perfect backward compatibility for existing users."
+  },
+  {
+   "n": 5,
+   "text": "No breaking changes to public APIs."
+  }
+ ],
+ "order": "b8981052dc8530d92b199e6bb33466af0b62e18700f011b75ca528f12baf12f1"
+}

@@ -1,0 +1,26 @@
+{
+ "id": "1364043cc8",
+ "url": "https://github.com/dotnet/aspire/pull/10035",
+ "repo": "dotnet/aspire",
+ "number": 10035,
+ "message": "## Summary\n\nEnhances the `aspire config set`, `get`, and `delete` commands to support dot notation for creating and managing nested JSON configuration structures.\n\n## Changes\n\n### Before\n```bash\naspire config set foo.bar baz\n# Created: { \"foo.bar\": \"baz\" }  # Flat key with literal dots\n```\n\n### After  \n```bash\naspire config set foo.bar baz\n# Creates: { \"foo\": { \"bar\": \"baz\" } }  # Nested object structure\n```\n\n## Key Features\n\n- **Nested object creation**: `aspire config set foo.bar.baz hello` creates `{ \"foo\": { \"bar\": { \"baz\": \"hello\" } } }`\n- **Primitive replacement**: Setting `foo.bar` after `foo` exists as a string automatically converts it to an object\n- **Smart cleanup**: Deleting nested values removes empty parent objects automatically\n- **Backward compatibility**: Existing flat keys continue to work unchanged\n- **Proper retrieval**: `aspire config get foo.bar.baz` correctly navigates nested structures\n- **Flattened listing**: `aspire config list` shows nested keys with dot notation (e.g., `foo.bar.baz=hello`)\n\n## Implementation Details\n\n### ConfigurationService Enhancements\n- `SetNestedValue()`: Parses dot-separated keys and creates nested JSON objects\n- `DeleteNestedValue()`: Removes values and cleans up empty parent objects  \n- `GetNestedValue()`: Traverses nested paths for value retrieval\n- `FlattenJsonObject()`: Recursively flattens JSON for list operations\n- `GetConfigurationAsync()`: New method for single key lookups with dot notation support\n\n### Updated Commands\n- **GetCommand**: Now uses `ConfigurationService.GetConfigurationAsync()` instead of flat `IConfiguration` lookup\n- **SetCommand**: Automatically handles nested object creation and primitive replacement\n- **DeleteCommand**: Includes smart cleanup of empty parent objects\n- **ListCommand**: Displays all keys in flattened dot notation format\n\n## Examples\n\n```bash\n# Set nested values\naspire config set database.host localhost\naspire config set database.port 5432\naspire config set logging.level debug\n\n# Results in:\n{\n  \"database\": {\n    \"host\": \"localhost\", \n    \"port\": \"5432\"\n  },\n  \"logging\": {\n    \"level\": \"debug\"\n  }\n}\n\n# Retrieve nested values\naspire config get database.host    # Returns: localhost\naspire config get logging.level    # Returns: debug\n\n# List shows flattened view\naspire config list\n# Output:\n# database.host=localhost\n# database.port=5432\n# logging.level=debug\n\n# Delete with automatic cleanup\naspire config delete database.port\naspire config delete database.host\n# The entire \"database\" object is removed since it becomes empty\n```\n\n## Testing\n\n- **81 tests pass** including comprehensive new test suite\n- Tests cover all scenarios: nested creation, primitive replacement, deletion cleanup, error handling\n- Backward compatibility verified - all existing flat key functionality preserved\n- Manual testing confirms real-world usage works as expected\n\n## Breaking Changes\n\nNone. This is a fully backward-compatible enhancement. Existing configurations and usage patterns continue to work unchanged.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward compatibility**: Existing flat keys continue to work unchanged"
+  },
+  {
+   "n": 2,
+   "text": "- **81 tests pass** including comprehensive new test suite"
+  },
+  {
+   "n": 3,
+   "text": "- Backward compatibility verified - all existing flat key functionality preserved"
+  },
+  {
+   "n": 4,
+   "text": "This is a fully backward-compatible enhancement."
+  }
+ ],
+ "order": "791681d41387635f52a33c58abefdb69a66fe0aec9ebfffede14d4e7c04db9ce"
+}

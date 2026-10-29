@@ -1,0 +1,14 @@
+{
+ "id": "a7fbee65b9",
+ "url": "https://github.com/FastLED/FastLED/pull/2072",
+ "repo": "FastLED/FastLED",
+ "number": 2072,
+ "message": "Implement the RMT5 Worker Pool to enable FastLED to control more LED strips than available ESP32 RMT channels.\n\nThis PR addresses the fundamental limitation of ESP32 RMT hardware, where the number of available RMT channels is fixed and often less than the desired number of LED strips. The worker pool dynamically assigns and reconfigures RMT channels to multiple `RmtController5` instances, allowing an arbitrary number of strips to share resources. It preserves full asynchronous operation when possible (strips \u2264 channels) and gracefully queues and processes strips via polling when channels are exceeded, all while maintaining backward compatibility with existing FastLED APIs.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-c5bf74ad-bf27-4ff8-a960-145e16b29d96\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-c5bf74ad-bf27-4ff8-a960-145e16b29d96\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "It preserves full asynchronous operation when possible (strips \u2264 channels) and gracefully queues and processes strips via polling when channels are exceeded, all while maintaining backward compatibility with existing FastLED APIs."
+  }
+ ],
+ "order": "6b430e22a69f7e8f85e1f3b0b69c0a626f81fd9c02910ae898b23ccf865a1a4e"
+}

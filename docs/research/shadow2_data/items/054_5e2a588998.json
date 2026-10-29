@@ -1,0 +1,14 @@
+{
+ "id": "5e2a588998",
+ "url": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/209",
+ "repo": "FinAegis/core-banking-prototype-laravel",
+ "number": 209,
+ "message": "## Summary\n\nThis PR implements three major components for the FinAegis core banking platform:\n\n### 1. CQRS Infrastructure (Command Query Responsibility Segregation)\n- **Command Bus**: Handles write operations with async support via Laravel queues\n- **Query Bus**: Manages read operations with built-in caching capabilities  \n- **Domain Event Bus**: Priority-based event handling with transaction support\n- **Full test coverage** for all infrastructure components\n\n### 2. Liquidity Pool Impermanent Loss (IL) Protection\n- **Tiered Coverage System**:\n  - 7-30 days: 20% coverage\n  - 30-90 days: 40% coverage\n  - 90-180 days: 60% coverage  \n  - 180+ days: 80% coverage\n- **Protection Features**:\n  - Minimum 2% IL threshold for claims\n  - Automatic fund requirement calculations\n  - Event sourcing integration for audit trail\n- **5 New API Endpoints**:\n  - `GET /api/liquidity/il-protection/{positionId}` - Calculate IL for position\n  - `POST /api/liquidity/il-protection/enable` - Enable IL protection for pool\n  - `POST /api/liquidity/il-protection/process-claims` - Process pending claims\n  - `GET /api/liquidity/il-protection/fund-requirements/{poolId}` - Get fund requirements\n  - `GET /api/liquidity/analytics/{poolId}` - Get pool analytics\n\n### 3. Documentation & Quality Improvements\n- Comprehensive architecture documentation\n- OpenAPI/Swagger annotations for all new endpoints\n- Code quality verified with PHPStan (Level 5)\n- Code formatting applied with PHP CS Fixer\n- Updated TODO.md to reflect completed work\n\n## Technical Details\n\n### Files Changed\n- **Infrastructure**: 5 new files implementing CQRS pattern\n- **Liquidity Pool**: 2 new events, 1 service, controller updates\n- **Tests**: Comprehensive unit tests for IL protection\n- **Documentation**: Architecture diagrams and API docs\n\n### Testing\nAll tests passing:\n- \u2705 PHPStan Level 5 analysis\n- \u2705 PHP CS Fixer formatting\n- \u2705 Unit tests for IL protection service\n- \u2705 Integration tests for CQRS infrastructure\n\n## Next Steps\nFollowing tasks should be done in separate PRs:\n- Phase 8.5: FinAegis Treasury implementation\n- Production readiness improvements\n- Additional CQRS command/query examples\n- Event sourcing best practices guide\n\n## Related Issues\nCompletes Phase 8.1: Liquidity Pool Management from TODO.md\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All tests passing:"
+  }
+ ],
+ "order": "2a0d61e46d704ce54b72e37578fcbb8af824b68968aae6f5dd56ed04926fac62"
+}

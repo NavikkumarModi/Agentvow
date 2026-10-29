@@ -1,0 +1,18 @@
+{
+ "id": "9552811315",
+ "url": "https://github.com/apache/superset/pull/35305",
+ "repo": "apache/superset",
+ "number": 35305,
+ "message": "## Summary\n\nThis PR implements a comprehensive migration strategy to move away from nested `describe`/`it` test patterns to flat `test()` functions, following [Kent C. Dodds' \"avoid nesting when testing\"](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing) best practices.\n\n## Changes\n\n### 1. ESLint Rules Enforcement\n- Added `jest/consistent-test-it` rule to enforce `test` over `it`\n- Added `no-restricted-globals` rule to error on `describe` and `it` usage\n- Configured in `superset-frontend/src/.eslintrc.json`\n\n### 2. Automated Migrations\n- **Auto-migrated all `it` to `test`**: 194 files updated via `npm run lint-fix`\n- **Flattened simple describe blocks**: 5 files with no hooks or complex setup safely migrated\n\n### 3. Legacy Code Handling\n- Added `eslint-disable` comments with TODO markers to 243 files containing `describe` blocks\n- Marked 1,080 existing `describe` blocks with: `// eslint-disable-next-line no-restricted-globals -- TODO: Migrate from describe blocks`\n- This allows existing code to work while preventing new usage\n\n## Migration Statistics\n\n- **Total test files**: 482\n- **`it` \u2192 `test` migration**: 100% complete (194 files)\n- **`describe` blocks removed**: 5 files (simple cases without hooks)\n- **`describe` blocks with TODOs**: 243 files (to be migrated gradually)\n- **Files with hooks requiring manual migration**: 198\n\n## Files Successfully Flattened\n\nThese files had simple `describe` blocks without hooks and were safely migrated:\n- `utils/urlUtils.test.ts`\n- `explore/controlPanels/Separator.test.ts`\n- `components/ErrorMessage/ErrorAlert.test.tsx`\n- `components/ModalTitleWithIcon/ModalTitleWithIcon.test.tsx`\n- `components/MessageToasts/reducers.test.js`\n\n## Benefits\n\n1. **Enforces modern patterns**: New tests cannot use `describe`/`it` (ESLint error)\n2. **Preserves functionality**: All existing tests continue to work\n3. **Clear technical debt**: TODO markers make legacy patterns visible\n4. **Gradual migration path**: Files can be updated as they're touched\n5. **Better test readability**: Flat structure is easier to understand and maintain\n\n## Testing Instructions\n\n1. Run tests to confirm everything still passes:\n   ```bash\n   npm run test\n   ```\n\n2. Try adding a new `describe` block - it should trigger an ESLint error:\n   ```javascript\n   describe('NewComponent', () => {  // \u274c ESLint error\n     test('works', () => {});\n   });\n   ```\n\n3. New tests should use flat structure:\n   ```javascript\n   test('NewComponent works', () => {  // \u2705 Correct pattern\n     // test implementation\n   });\n   ```\n\n## Additional Information\n\nThis migration follows React Testing Library and Jest best practices. The flat test structure:\n- Reduces nesting complexity\n- Makes test names more descriptive\n- Eliminates confusion about hook scopes\n- Improves test maintainability\n\nThe TODO markers allow us to track and gradually migrate the remaining `describe` blocks without breaking existing tests.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Enforces modern patterns**: New tests cannot use `describe`/`it` (ESLint error)"
+  },
+  {
+   "n": 2,
+   "text": "Run tests to confirm everything still passes:"
+  }
+ ],
+ "order": "e3c714da47ee222e5537bf586b0562746afbaa1019afce95f4944565c72fb354"
+}

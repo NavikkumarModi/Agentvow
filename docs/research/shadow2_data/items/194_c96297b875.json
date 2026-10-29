@@ -1,0 +1,30 @@
+{
+ "id": "c96297b875",
+ "url": "https://github.com/microsoft/AzureTRE/pull/4631",
+ "repo": "microsoft/AzureTRE",
+ "number": 4631,
+ "message": "This PR consolidates the confusing `custom_domain` and `tre_url` settings into a single `tre_url` setting as requested in issue #4248. Previously, users had to understand the difference between these two similar settings that served essentially the same purpose.\n\n## Changes Made\n\n### Configuration Simplification\n- **Removed** `custom_domain` from `config.sample.yaml` and `config_schema.json`\n- **Enhanced** `tre_url` to accept full custom URLs (e.g., `https://mytre.example.com`)\n- **Added** clear documentation explaining that `tre_url` can be either auto-generated or custom\n\n### Backend Implementation\n- **Created** `extract_domain_from_url.sh` helper function to programmatically extract domains from URLs\n- **Updated** `load_and_validate_env.sh` to automatically derive `CUSTOM_DOMAIN` from `TRE_URL` for backward compatibility\n- **Modified** AAD application scripts to remove `--custom-domain` parameter and auto-detect custom domains from TRE URL\n- **Enhanced** redirect URI logic to intelligently handle both default and custom domains\n\n### Documentation Updates\n- **Updated** environment variables documentation to mark `CUSTOM_DOMAIN` as deprecated\n- **Revised** custom domain setup guide to use the new `tre_url` approach\n- **Updated** CI/CD documentation references\n- **Provided** clear migration path for existing users\n\n## Migration Path\n\n**Before:**\n```yaml\ntre:\n  custom_domain: mytre.example.com\n```\n\n**After:**\n```yaml\ntre:\n  tre_url: https://mytre.example.com\n```\n\n## Backward Compatibility\n\n- Scripts depending on the `CUSTOM_DOMAIN` environment variable continue to work (automatically derived from `TRE_URL`)\n- Existing deployments will continue to function without changes\n- The `letsencrypt.sh` script works without modification\n\n## Testing\n\n- Comprehensive domain extraction tests for various URL formats\n- End-to-end validation of configuration changes\n- Verified AAD script parameter handling\n- Validated schema and sample file correctness\n\nThis change eliminates user confusion while maintaining full functionality and backward compatibility.\n\nFixes #4248.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Added** clear documentation explaining that `tre_url` can be either auto-generated or custom"
+  },
+  {
+   "n": 2,
+   "text": "- **Updated** `load_and_validate_env.sh` to automatically derive `CUSTOM_DOMAIN` from `TRE_URL` for backward compatibility"
+  },
+  {
+   "n": 3,
+   "text": "- **Updated** environment variables documentation to mark `CUSTOM_DOMAIN` as deprecated"
+  },
+  {
+   "n": 4,
+   "text": "## Backward Compatibility"
+  },
+  {
+   "n": 5,
+   "text": "This change eliminates user confusion while maintaining full functionality and backward compatibility."
+  }
+ ],
+ "order": "b0d0395f491d24cc25f17a4b7aa5a3e56a75a6561e7c21aaf2532035fa14bce9"
+}

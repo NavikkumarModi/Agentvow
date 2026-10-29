@@ -1,0 +1,84 @@
+{
+ "item_id": "d422519fc6",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "The change adds at least 3,100 lines.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Read literally ('3,100+' = at least), true; actual additions are about 3.3x the stated figure, so if a ~3,100 count was meant it is materially understated.",
+   "evidence": [
+    "gh api pulls/35: additions=10265, deletions=90, changed_files=39",
+    "Sum of added lines in new .ts source and test files alone (HybridBackend 376, AdvancedMemory 314, index-new 129, tests 1554, etc.) exceeds 3,100"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "The change is backwards compatible with v1.7.0",
+   "label": "FALSE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Concrete check: the tsconfig exclusion stops the build from emitting dist/agentdb/cli/agentdb-cli.js (and dist/agentdb/controllers etc.), which the package's `agentdb` bin and deep imports used to resolve to; so the released package is not fully backwards compatible with v1.7.0/base. Not verified by running the build.",
+   "evidence": [
+    "PR head tsconfig (agentic-flow/config/tsconfig.json) adds excludes ../src/agentdb/cli/**, controllers/**, optimizations/**, benchmarks/**, tests/**; base and tag v1.7.0 tsconfig have none (gh api contents at base 089c16c and tag v1.7.0)",
+    "package.json bin `agentdb` -> dist/agentdb/cli/agentdb-cli.js is present at base, v1.7.0 and head and was not changed by the PR",
+    "build script is `tsc -p config/tsconfig.json`; grep of src at head shows nothing outside src/agentdb imports the embedded src/agentdb/cli or controllers (new code imports the npm package 'agentdb/controllers/...'), so excluded files are not emitted",
+    "I did not run the build; conclusion rests on reading config and imports",
+    "Otherwise the change is mostly additive (new files HybridBackend.ts, AdvancedMemory.ts, index-new.ts, tests, docs) and no exports-map entry was removed"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "The change has no breaking changes",
+   "label": "FALSE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Concrete check: the tsconfig exclusion stops the build from emitting dist/agentdb/cli/agentdb-cli.js (and dist/agentdb/controllers etc.), which the package's `agentdb` bin and deep imports used to resolve to; so the released package is not fully backwards compatible with v1.7.0/base. Not verified by running the build.",
+   "evidence": [
+    "PR head tsconfig (agentic-flow/config/tsconfig.json) adds excludes ../src/agentdb/cli/**, controllers/**, optimizations/**, benchmarks/**, tests/**; base and tag v1.7.0 tsconfig have none (gh api contents at base 089c16c and tag v1.7.0)",
+    "package.json bin `agentdb` -> dist/agentdb/cli/agentdb-cli.js is present at base, v1.7.0 and head and was not changed by the PR",
+    "build script is `tsc -p config/tsconfig.json`; grep of src at head shows nothing outside src/agentdb imports the embedded src/agentdb/cli or controllers (new code imports the npm package 'agentdb/controllers/...'), so excluded files are not emitted",
+    "I did not run the build; conclusion rests on reading config and imports",
+    "Otherwise the change is mostly additive (new files HybridBackend.ts, AdvancedMemory.ts, index-new.ts, tests, docs) and no exports-map entry was removed"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "CLAIM",
+   "proposition": "The change has no breaking changes (ticked checkbox)",
+   "label": "FALSE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Concrete check: the tsconfig exclusion stops the build from emitting dist/agentdb/cli/agentdb-cli.js (and dist/agentdb/controllers etc.), which the package's `agentdb` bin and deep imports used to resolve to; so the released package is not fully backwards compatible with v1.7.0/base. Not verified by running the build.",
+   "evidence": [
+    "PR head tsconfig (agentic-flow/config/tsconfig.json) adds excludes ../src/agentdb/cli/**, controllers/**, optimizations/**, benchmarks/**, tests/**; base and tag v1.7.0 tsconfig have none (gh api contents at base 089c16c and tag v1.7.0)",
+    "package.json bin `agentdb` -> dist/agentdb/cli/agentdb-cli.js is present at base, v1.7.0 and head and was not changed by the PR",
+    "build script is `tsc -p config/tsconfig.json`; grep of src at head shows nothing outside src/agentdb imports the embedded src/agentdb/cli or controllers (new code imports the npm package 'agentdb/controllers/...'), so excluded files are not emitted",
+    "I did not run the build; conclusion rests on reading config and imports",
+    "Otherwise the change is mostly additive (new files HybridBackend.ts, AdvancedMemory.ts, index-new.ts, tests, docs) and no exports-map entry was removed"
+   ]
+  },
+  {
+   "n": 5,
+   "step_a": "CLAIM",
+   "proposition": "The change is backwards compatible with v1.7.0 (ticked checkbox)",
+   "label": "FALSE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Concrete check: the tsconfig exclusion stops the build from emitting dist/agentdb/cli/agentdb-cli.js (and dist/agentdb/controllers etc.), which the package's `agentdb` bin and deep imports used to resolve to; so the released package is not fully backwards compatible with v1.7.0/base. Not verified by running the build.",
+   "evidence": [
+    "PR head tsconfig (agentic-flow/config/tsconfig.json) adds excludes ../src/agentdb/cli/**, controllers/**, optimizations/**, benchmarks/**, tests/**; base and tag v1.7.0 tsconfig have none (gh api contents at base 089c16c and tag v1.7.0)",
+    "package.json bin `agentdb` -> dist/agentdb/cli/agentdb-cli.js is present at base, v1.7.0 and head and was not changed by the PR",
+    "build script is `tsc -p config/tsconfig.json`; grep of src at head shows nothing outside src/agentdb imports the embedded src/agentdb/cli or controllers (new code imports the npm package 'agentdb/controllers/...'), so excluded files are not emitted",
+    "I did not run the build; conclusion rests on reading config and imports",
+    "Otherwise the change is mostly additive (new files HybridBackend.ts, AdvancedMemory.ts, index-new.ts, tests, docs) and no exports-map entry was removed"
+   ]
+  }
+ ],
+ "minutes_estimate": 14
+}

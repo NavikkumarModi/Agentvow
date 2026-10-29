@@ -1,0 +1,14 @@
+{
+ "id": "4266e8ffa1",
+ "url": "https://github.com/sei-protocol/sei-chain/pull/2337",
+ "repo": "sei-protocol/sei-chain",
+ "number": 2337,
+ "message": "This PR addresses a stability issue in panic handling within sei-chain.\r\nPreviously, if a nil logger was passed into LogPanicCallback, a secondary panic could occur, masking the original error.\r\nAdditionally, this PR strengthens test coverage for panic recovery and tracer timeout scenarios.\r\n\r\n\ud83d\udd27 Changes\r\n\r\nutils/panic.go\r\n\r\nUpdated LogPanicCallback to safely handle nil loggers and provide structured logging for recovered panics.\r\n\r\nutils/panic_test.go\r\n\r\nAdded TestLogPanicCallback to ensure panic recovery does not fail when logger is missing.\r\n\r\nx/epoch/types/hooks.go\r\n\r\nSimplified defer usage to consistently wrap with PanicHandler(LogPanicCallback).\r\n\r\nevmrpc/tracers_test.go\r\n\r\nAdded timeout simulation (time.Sleep(2s)) to validate tracer behavior under slow node responses.\r\n\r\nUpgrade Support\r\n\r\nIncludes scaffolding for v6.1.4 upgrade (fix(v614)).\r\n\r\nCodex JSON Files (\u26a0\ufe0f subject to removal before merge)\r\n\r\n.codex/keys/hotfix-august.jso\r\n\r\n.codex/paywords.json\r\n\r\nThese files currently contain test key/rotation data. They should not be merged into main if sensitive.\r\n\r\n\u2705 Testing\r\n\r\nRan go test ./... locally \u2014 all tests pass.\r\n\r\nVerified new test TestLogPanicCallback behaves as expected.\r\n\r\nManually simulated slow RPC node response for tracer timeout test.\r\n\r\n\u26a0\ufe0f Risks & Considerations\r\n\r\nEnsure .codex/*.json files are excluded before merging if they contain sensitive or environment-specific data.\r\n\r\nThe panic handling change affects multiple modules that rely on deferred recovery \u2014 careful review is recommended.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "locally \u2014 all tests pass."
+  }
+ ],
+ "order": "f0c3e5fb163019ab093480512c648b1817e490a788ee139e138d850bc6d332d5"
+}

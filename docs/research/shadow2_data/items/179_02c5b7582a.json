@@ -1,0 +1,18 @@
+{
+ "id": "02c5b7582a",
+ "url": "https://github.com/AgentOps-AI/agentops/pull/1238",
+ "repo": "AgentOps-AI/agentops",
+ "number": 1238,
+ "message": "## \ud83d\udce5 Pull Request\n\n**\ud83d\udcd8 Description**\nFixes self-hosted AgentOps setup where the dashboard incorrectly posts to `http://localhost:3000/auth/login` (returning 404) instead of the API service on port 8000.\n\n**Root Cause:** The dashboard's API client reads `NEXT_PUBLIC_API_URL` to determine the backend URL, but this environment variable wasn't being passed to the dashboard container in Docker Compose, causing requests to default to the dashboard's own host.\n\n**Changes:**\n- Added `NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}` to dashboard service environment in `compose.yaml`\n- Added troubleshooting note in README.md to help users identify this issue\n\n**\ud83e\uddea Testing**\n\u26a0\ufe0f **Manual testing required** - This fix was developed based on HAR file analysis and code inspection but hasn't been tested end-to-end with a running compose stack.\n\n**Recommended verification:**\n1. Ensure `app/.env` includes `NEXT_PUBLIC_API_URL=http://localhost:8000`\n2. Run `docker compose up -d` from `app/` directory  \n3. Verify dashboard at `http://localhost:3000` makes requests to `http://localhost:8000` (not `:3000`)\n4. Check browser network tab for successful API calls with proper CORS headers\n\n**\u26a0\ufe0f Review Checklist:**\n- [ ] Verify that `.env.example` includes `NEXT_PUBLIC_API_URL` (should be present)\n- [ ] Consider backwards compatibility: should we provide a default value for missing env var?\n- [ ] Validate that the troubleshooting note accurately describes the symptom\n- [ ] Test with actual Docker Compose setup if possible\n\n---\n\n**Link to Devin run:** https://app.devin.ai/sessions/bb2e39c488334c21854b3aa218db0579  \n**Requested by:** @areibman",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added troubleshooting note in README.md to help users identify this issue"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Consider backwards compatibility: should we provide a default value for missing env var?"
+  }
+ ],
+ "order": "a7f9509ddc65121f8698a859e2d17c93358a5153a4de1a78e1a95ecda9e7e569"
+}

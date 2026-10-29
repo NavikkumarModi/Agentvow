@@ -1,0 +1,26 @@
+{
+ "id": "9299b7d86b",
+ "url": "https://github.com/frappe/frappe/pull/33989",
+ "repo": "frappe/frappe",
+ "number": 33989,
+ "message": "## Add Database Decimal Precision Configuration Support\n\nImplementation plan to add configurable database decimal precision for Float, Currency, and Percent fields:\n\n- [x] Add `db_decimal_precision` field to System Settings DocType JSON\n- [x] Update System Settings Python class to handle the new field  \n- [x] Modify database schema.py to use configurable decimal precision instead of hardcoded \"21,9\"\n- [x] Add helper function to get default decimal precision from system settings\n- [x] Add validation for the new field to ensure valid format (e.g., \"21,9\")\n- [x] Test the implementation to ensure backward compatibility\n- [x] Verify the decimal precision is applied correctly for new fields\n\n## Key Features\n\n**New System Setting**: `db_decimal_precision` field in System Settings -> Date and Number Format section\n- Default value: \"21,9\" (maintains backward compatibility)\n- Configurable format: \"total_digits,decimal_places\" (e.g., \"18,4\", \"10,2\")\n- Validation: Ensures valid format and reasonable limits (total \u2264 65, decimal \u2264 30)\n\n**Database Schema Integration**: \n- Float, Currency, and Percent fields with precision > 6 now use configurable precision\n- Fields with precision \u2264 6 continue using original \"18,6\" format\n- Other field types remain unchanged\n\n**Use Cases**:\n- Financial applications requiring specific decimal precision\n- Scientific calculations with custom requirements  \n- Compliance with regional accounting standards\n- Performance optimization for specific data ranges\n\n**Backward Compatibility**: \n- Existing databases continue working unchanged\n- Default precision maintained if not configured\n- Only affects new field creations and schema modifications\n\nThis feature allows users to configure database-level decimal precision through System Settings, providing flexibility while maintaining full backward compatibility.\n\nFixes #33924.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/frappe/frappe/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Test the implementation to ensure backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "- Default value: \"21,9\" (maintains backward compatibility)"
+  },
+  {
+   "n": 3,
+   "text": "**Backward Compatibility**:"
+  },
+  {
+   "n": 4,
+   "text": "This feature allows users to configure database-level decimal precision through System Settings, providing flexibility while maintaining full backward compatibility."
+  }
+ ],
+ "order": "4b9d2f05281aab6cc1199499219aa1d54149c4d8547a95b354e6949278eae3ff"
+}

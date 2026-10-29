@@ -1,0 +1,22 @@
+{
+ "id": "7866891065",
+ "url": "https://github.com/PostHog/posthog/pull/39883",
+ "repo": "PostHog/posthog",
+ "number": 39883,
+ "message": "- [x] Update placeholder text in PlayerFrameCommentOverlay.tsx to say \"Comment on this recording? Use @ to mention team members\"\n- [x] Add minRows prop to LemonRichContentEditor component\n- [x] Apply minRows={3} only to the player frame comment overlay modal\n- [x] Revert global min-height change from SCSS file\n- [x] Use style attribute for dynamic height (Tailwind cannot process runtime values)\n- [x] Run linting and formatting - all checks passed\n\n## Changes Made\n\n### 1. Updated Placeholder Text\nChanged from \"Comment on this recording?\" to \"Comment on this recording? Use @ to mention team members\" in `PlayerFrameCommentOverlay.tsx`\n\n### 2. Added minRows Prop to LemonRichContentEditor\n- Added optional `minRows?: number` prop to `LemonRichContentEditorProps` type\n- Applied min-height styling using inline style attribute (not Tailwind className)\n- Only affects instances where minRows is explicitly specified\n\n### 3. Applied minRows to Player Comment Modal Only\n- Set `minRows={3}` in PlayerFrameCommentOverlay.tsx to provide 3 lines of visible space\n- Other LemonRichContentEditor instances remain unaffected\n\n### 4. Technical Note on Styling Approach\nThe implementation uses inline `style` attribute rather than Tailwind className because:\n- Tailwind processes class names at build time, not runtime\n- Dynamic template literals like `min-h-[${minRows * 1.5}em]` cannot be evaluated by Tailwind's JIT compiler\n- Inline styles are the correct approach for dynamic, computed values in React\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> i want to change the player frame comment overlay modal text prompt. so that it says \"Comment on this recording? Use @ to mention team members\" and has three lines of visibile space\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Use style attribute for dynamic height (Tailwind cannot process runtime values)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] Run linting and formatting - all checks passed"
+  },
+  {
+   "n": 3,
+   "text": "- Dynamic template literals like `min-h-[${minRows * 1.5}em]` cannot be evaluated by Tailwind's JIT compiler"
+  }
+ ],
+ "order": "43db82f7a4da300bdbf678895baabd9e802031c38672f8c534d06a7cdf575f9a"
+}

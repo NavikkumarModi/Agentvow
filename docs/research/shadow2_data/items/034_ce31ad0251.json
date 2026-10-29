@@ -1,0 +1,14 @@
+{
+ "id": "ce31ad0251",
+ "url": "https://github.com/mabel-dev/opteryx/pull/2855",
+ "repo": "mabel-dev/opteryx",
+ "number": 2855,
+ "message": "- [x] Add Rust availability check in setup.py\n- [x] Set explicit paths for rustc and cargo when found\n- [x] Provide helpful error message if Rust is not available\n- [x] Support CARGO and RUSTC environment variables\n- [x] Validate environment variable paths\n- [x] Fix empty string handling for environment variables\n- [x] Add security check to validate rustc binary\n- [x] Improve error handling with better exception catching\n- [x] Test the changes to ensure they work correctly\n- [x] Address code review feedback\n- [x] Fix code formatting to pass CI checks\n\n## Summary\nSuccessfully updated setup.py to detect and validate Rust toolchain availability with helpful error messages. Fixed code formatting issues to pass ruff format checks.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> can we update setup.py to set the path for rust and fail with a helpful message if rust isn't available?\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Fixed code formatting issues to pass ruff format checks."
+  }
+ ],
+ "order": "1deabaa1e3af8b09550499e7296f8c7ebf23a93e54c7a96ebf35cf44b5c2fa1a"
+}

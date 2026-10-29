@@ -1,0 +1,22 @@
+{
+ "id": "7768f00d5a",
+ "url": "https://github.com/ant-design/ant-design-web3/pull/1538",
+ "repo": "ant-design/ant-design-web3",
+ "number": 1538,
+ "message": "## Overview\n\nThis PR adds complete Ledger hardware wallet support for TRON, including wallet metadata, provider integration, and comprehensive documentation in both English and Chinese.\n\n## Changes\n\n### Core Implementation\n\n- **Added `LedgerWallet` metadata** (`packages/tron/src/wallets/ledgerWallet.tsx`)\n  - Configured as \"Popular\" group wallet\n  - Includes proper naming and hardware wallet description\n\n- **Integrated Ledger adapter** into TRON provider (`packages/tron/src/provider/index.tsx`)\n  - Imported `LedgerAdapter` from `@tronweb3/tronwallet-adapter-ledger`\n  - Added to adapters array in `TronWeb3ConfigProvider`\n\n- **Added dependency**: `@tronweb3/tronwallet-adapter-ledger@^1.1.11`\n\n### Documentation\n\nCreated standalone Ledger documentation section parallel to TRON:\n\n**New Ledger Section (`packages/web3/src/ledger/`):**\n- Created as a separate top-level section (order: 9, after TRON)\n- English documentation (`index.md`) with installation, demo, prerequisites, and features\n- Chinese documentation (`index.zh-CN.md`) with complete translations\n- Dedicated demo showing TRON + Ledger integration (`demos/tron.tsx`)\n\n**TRON Section Updates:**\n- Added \"Ledger\" to supported wallets list in both `index.md` and `index.zh-CN.md`\n\n### Demo\n\nCreated a concise demo (`packages/web3/src/ledger/demos/tron.tsx`) showing Ledger usage with TRON:\n\n```tsx\nimport { ConnectButton, Connector } from '@ant-design/web3';\nimport { LedgerWallet, TronWeb3ConfigProvider } from '@ant-design/web3-tron';\n\nconst App: React.FC = () => {\n  return (\n    <TronWeb3ConfigProvider wallets={[LedgerWallet]}>\n      <Connector>\n        <ConnectButton />\n      </Connector>\n    </TronWeb3ConfigProvider>\n  );\n};\n```\n\n## Key Features\n\n- \ud83d\udd10 **Hardware-level security**: Private keys never leave the Ledger device\n- \u2705 **Physical confirmation**: All TRON transactions require device confirmation\n- \ud83d\udcf1 **Simple integration**: Works seamlessly with existing TRON infrastructure\n- \ud83d\udcda **Complete documentation**: Both English and Chinese with clear prerequisites\n- \ud83d\udcc2 **Proper structure**: Ledger documentation is a standalone section parallel to other blockchain sections\n\n## Prerequisites Documented\n\n- Chrome/Edge browser (WebHID support required)\n- Ledger device connected via USB\n- Device unlocked with TRON app open\n\n## Testing\n\n- \u2705 All builds pass successfully\n- \u2705 All TRON package tests pass (10/10)\n- \u2705 No lint errors introduced\n- \u2705 Code formatted with Biome\n\n## Changeset\n\nAdded changeset for proper version management:\n- `@ant-design/web3-tron`: minor (new feature)\n- `@ant-design/web3`: patch (documentation)\n\n> [!WARNING]\n>\n> \n\n\n\n\n\n\n\nCreated from VS Code via the <a href=\"https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github\">GitHub Pull Request</a> extension.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> \u8bf7\u4f60\u53c2\u8003\u5f53\u524d\u9879\u76ee\u5185\u5bb9\u548c\u6587\u6863\u4e66\u5199\u89c4\u8303\uff0c\u5e2e\u6211\u5b8c\u6210 ledger provider \u7684\u6587\u6863\u548c\u793a\u4f8b\uff0c\u8981\u6c42\u653e\u5728 TRON \u4e0b\u9762\uff0c\u5c3d\u53ef\u80fd\u7b80\u6d01\u5b8c\u6574\n> \n> The user has attached the following files as relevant context:\n>  - AGENTS.md\n\n\n</details>\n\nCreated from VS Code via the [GitHub Pull Request](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) extension.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Created standalone Ledger documentation section parallel to TRON:"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All TRON package tests pass (10/10)"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 No lint errors introduced"
+  }
+ ],
+ "order": "06fd5e2c9435fbb4be72128a24356d390b2380d49f8798aa6b13546697a4245a"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "9a9ad7cb42",
+ "url": "https://github.com/OpShin/opshin/pull/525",
+ "repo": "OpShin/opshin",
+ "number": 525,
+ "message": "This PR fixes mutual recursion support in OpShin by implementing a two-pass type inference approach that works for all function scopes.\n\n## Problem\n\nPreviously, mutual recursion would fail to compile because the type inference system processed functions sequentially. When an earlier function tried to call a later-defined function, the later function wasn't yet in scope:\n\n```python\ndef even(n: int) -> bool:\n    if n == 0:\n        return True\n    else:\n        return odd(n - 1)  # ERROR: 'odd' not yet defined\n        \ndef odd(n: int) -> bool:\n    if n == 0:\n        return False\n    else:\n        return even(n - 1)  # This would work since 'even' is already defined\n\ndef validator(a: int) -> int:\n    return 42\n```\n\n## Solution\n\nImplemented a two-pass approach in `AggressiveTypeInferencer.visit_sequence()`:\n\n1. **Pass 1**: Extract all function signatures from type annotations and add them to scope, along with processing classes to ensure they're available for function annotations\n2. **Pass 2**: Process function bodies normally with all function signatures available\n\nThis ensures that all function names are available before any function bodies are processed, enabling mutual recursion at any scope level.\n\n## Key Features\n\n- **General scope handling**: Works for functions at module level, nested functions, and functions inside other constructs\n- **Class integration**: Handles cases where user-defined classes are defined between mutually recursive functions\n- **Robust error handling**: If signature extraction fails in the first pass (e.g., due to forward references to classes), it gracefully falls back to second-pass processing\n- **Backward compatibility**: All existing functionality is preserved\n- **Support for various recursion patterns**: 2-way, 3-way, and mixed self/mutual recursion\n\n## Test Coverage\n\nAdded comprehensive test cases covering:\n- Basic mutual recursion (even/odd functions)\n- Three-way mutual recursion patterns\n- Nested function mutual recursion (functions inside other functions)\n- Mutual recursion with classes defined between functions\n- Edge cases with different argument types and counts\n\nThe fix handles various mutual recursion scenarios while maintaining full backward compatibility with existing code.\n\nFixes #524.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward compatibility**: All existing functionality is preserved"
+  },
+  {
+   "n": 2,
+   "text": "The fix handles various mutual recursion scenarios while maintaining full backward compatibility with existing code."
+  }
+ ],
+ "order": "7c185e92ed796a362da17767f965ee9f66335de8068e558d2a7f08b6df6e46ed"
+}

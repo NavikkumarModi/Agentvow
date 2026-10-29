@@ -1,0 +1,14 @@
+{
+ "id": "496da2caff",
+ "url": "https://github.com/theopenco/llmgateway/pull/215",
+ "repo": "theopenco/llmgateway",
+ "number": 215,
+ "message": "# Enable bare 'auto' and 'custom' model names\n\nThis PR adds support for sending bare 'auto' or 'custom' models without the 'llmgateway/' prefix, making them equivalent to 'llmgateway/auto' and 'llmgateway/custom'.\n\n## Changes\n\n- Modified model parsing logic to recognize bare 'auto' and 'custom' model names\n- Updated routing logic to handle both prefixed and bare model names\n- Added comprehensive e2e tests for both formats\n- Fixed provider-api.ts to handle custom model URLs properly\n\n## Testing\n\nAll tests are passing, including the new e2e tests for bare 'auto' and 'custom' models.\n\n```\npnpm test && pnpm test:e2e\n```\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/2318682bcb014be391842e908ad985d1\n\n## Requested by\nLuca Steeb (contact@luca-steeb.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All tests are passing, including the new e2e tests for bare 'auto' and 'custom' models."
+  }
+ ],
+ "order": "a1a7adad4208a35d594b31068784711ed54d74c00939300f366da4f4c9a561cc"
+}

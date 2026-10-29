@@ -1,0 +1,55 @@
+{
+ "item_id": "86267a6448",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox: Bugfix",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template (rules section 2, class 2), not a claim.",
+   "evidence": [
+    "Item message shows '- [ ]' (unticked) for this line"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox: Improvement",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template (rules section 2, class 2), not a claim.",
+   "evidence": [
+    "Item message shows '- [ ]' (unticked) for this line"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox: New feature",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template (rules section 2, class 2), not a claim.",
+   "evidence": [
+    "Item message shows '- [ ]' (unticked) for this line"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Unticked template checkbox: Lint and unit tests pass locally",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Unticked checkbox is a template (rules section 2, class 2), not a claim.",
+   "evidence": [
+    "Item message shows '- [ ]' (unticked) for this line"
+   ]
+  }
+ ],
+ "minutes_estimate": 2
+}

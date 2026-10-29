@@ -1,0 +1,26 @@
+{
+ "id": "e93f01249f",
+ "url": "https://github.com/microsoft/msquic/pull/5325",
+ "repo": "microsoft/msquic",
+ "number": 5325,
+ "message": "This PR adds comprehensive support for GitHub's new `windows-2025` runners across the MSQuic CI/CD pipeline, enabling builds and tests to run on the latest Windows environment.\n\n## Overview\n\nGitHub recently introduced `windows-2025` runner images, and this change updates our workflows to utilize these new runners while maintaining backward compatibility with existing `windows-2022` runners.\n\n## Changes Made\n\n**Build Workflows:**\n- Updated `build.yml` to include `windows-2025` in the build matrix alongside `windows-2022` for both regular and official builds\n- Enhanced `stress.yml` with `windows-2025` configurations for stress testing builds and execution\n- Added `dotnet-test.yml` support for .NET interop testing on `windows-2025`\n\n**Workflows Preserved with `windows-latest`:**\nFollowing the principle of only adding `windows-2025` where `windows-2022` was explicitly used (and `windows-2019` was previously supported), the following workflows remain unchanged with `windows-latest`:\n- `cargo.yml` - Rust/Cargo builds continue using `windows-latest`\n- `check-clog.yml` - CLOG validation remains on `windows-latest`\n- `check-dotnet.yml` - .NET validation remains on `windows-latest`\n- `netperf.yml` - Performance testing continues using `windows-latest`\n- `plugins.yml` - Plugin builds for WinDbg extensions and QuicTrace remain on `windows-latest`\n- `wan-perf.yml` - WAN performance testing continues using `windows-latest`\n\n## Technical Approach\n\nThe implementation adds `windows-2025` as additional matrix options rather than replacing `windows-2022`, ensuring:\n- **Zero breaking changes** - existing workflows continue to work\n- **Gradual migration** - teams can choose which runner to use\n- **Comprehensive coverage** - both builds and tests supported\n- **Selective adoption** - only workflows previously using explicit version tags (like `windows-2022`) are updated, while workflows using `windows-latest` remain unchanged to track GitHub's default\n\n## Exceptions\n\nSome workflows intentionally remain on `windows-2022`:\n- **Kernel builds** - `windows-2025` doesn't currently support kernel driver development\n- **NuGet packaging** - maintains consistent artifact naming\n- **Code coverage** - preserves analysis consistency\n\n## Validation\n\nAll modified YAML workflow files have been validated for syntax correctness, and the changes maintain full backward compatibility while extending support to the new runner environment.\n\nFixes #5242.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "GitHub recently introduced `windows-2025` runner images, and this change updates our workflows to utilize these new runners while maintaining backward compatibility with existing `windows-2022` runners."
+  },
+  {
+   "n": 2,
+   "text": "- Updated `build.yml` to include `windows-2025` in the build matrix alongside `windows-2022` for both regular and official builds"
+  },
+  {
+   "n": 3,
+   "text": "- Added `dotnet-test.yml` support for .NET interop testing on `windows-2025`"
+  },
+  {
+   "n": 4,
+   "text": "All modified YAML workflow files have been validated for syntax correctness, and the changes maintain full backward compatibility while extending support to the new runner environment."
+  }
+ ],
+ "order": "db2f9964a605fd6ccf6ee0c8b6b05c002462cbf2fe5c44f859e69f834c5fe215"
+}

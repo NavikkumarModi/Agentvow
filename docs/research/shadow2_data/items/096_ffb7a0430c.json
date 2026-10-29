@@ -1,0 +1,14 @@
+{
+ "id": "ffb7a0430c",
+ "url": "https://github.com/laiso/site2pdf/pull/22",
+ "repo": "laiso/site2pdf",
+ "number": 22,
+ "message": "# Fix binary path in package.json\r\n\r\n## Problem\r\nThe `npx site2pdf-cli` command was failing with `sh: site2pdf: command not found` error because the binary path in `package.json` was incorrect.\r\n\r\n## Root Cause\r\n- `package.json` had `\"site2pdf\": \"bin/index.js\"` in the bin configuration\r\n- The actual binary file is located at `bin/site2pdf.js`\r\n- This mismatch caused npm/npx to look for a non-existent file\r\n\r\n## Solution\r\n- Updated `package.json` to correctly reference `\"site2pdf\": \"bin/site2pdf.js\"`\r\n- Verified the binary file exists and is executable\r\n- Tested locally to ensure the fix works\r\n\r\n## Testing\r\n- \u2705 Built the project successfully with `npm run build`\r\n- \u2705 All tests pass (4/4 tests passing)\r\n- \u2705 Binary executes correctly when called directly\r\n- \u2705 No regressions introduced\r\n\r\n## Impact\r\nAfter this fix is published, users will be able to successfully run:\r\n```bash\r\nnpx site2pdf-cli https://example.com\r\n```\r\n\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 All tests pass (4/4 tests passing)"
+  }
+ ],
+ "order": "4ea3c1946936f9036c1f181042692888ed24fd8e844ea8c93cf703f46c948759"
+}

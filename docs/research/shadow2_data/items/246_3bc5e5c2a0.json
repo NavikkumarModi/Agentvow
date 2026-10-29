@@ -1,0 +1,14 @@
+{
+ "id": "3bc5e5c2a0",
+ "url": "https://github.com/DannyMac180/meta-agent/pull/170",
+ "repo": "DannyMac180/meta-agent",
+ "number": 170,
+ "message": "## Summary\n- import `field_validator` with backward compatibility for pydantic v1\n- clean up duplicate imports\n\n## Testing\n- `ruff check .`\n- `black --check src/meta_agent/generators/guardrail_generator.py src/meta_agent/models/spec_schema.py src/meta_agent/parsers/tool_spec_parser.py`\n- `mypy src/meta_agent` *(fails: Argument 1 has incompatible type \"Any | None\"; expected \"str\")*\n- `pyright src/meta_agent` *(fails: `field_validator` is unknown import symbol)*\n- `pytest tests/test_spec_schema.py::test_spec_schema_instantiation -q`\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68470714ba94832fbf77c004b7816e05",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- import `field_validator` with backward compatibility for pydantic v1"
+  }
+ ],
+ "order": "db4345bb3b9f6d639196b92a3b79640cc7bdaec50ef4eef643084cb153a937a6"
+}

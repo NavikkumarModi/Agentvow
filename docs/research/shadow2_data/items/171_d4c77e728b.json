@@ -1,0 +1,22 @@
+{
+ "id": "d4c77e728b",
+ "url": "https://github.com/thomhurst/TUnit/pull/3052",
+ "repo": "thomhurst/TUnit",
+ "number": 3052,
+ "message": "This PR fixes an issue where `IFirstTestInAssemblyEventReceiver.OnFirstTestInAssembly` was being invoked twice before any tests run in TUnit 0.50.x, breaking the \"exactly once per assembly\" guarantee.\n\n## Problem\n\nThe issue was in the `EventReceiverOrchestrator.InitializeTestCounts()` method which was creating new `GetOnlyDictionary` instances for first-event tracking, effectively clearing the cache of already-executed first events:\n\n```csharp\n// This was clearing the cache, allowing duplicate invocations\n_firstTestInAssemblyTasks = new GetOnlyDictionary<string, Task>();\n_firstTestInClassTasks = new GetOnlyDictionary<Type, Task>();\n_firstTestInSessionTasks = new GetOnlyDictionary<string, Task>();\n```\n\n## Solution\n\nChanged to only initialize these dictionaries if they don't already exist:\n\n```csharp\n// Now preserves existing cache, maintaining \"once per assembly\" guarantee\n_firstTestInAssemblyTasks ??= new GetOnlyDictionary<string, Task>();\n_firstTestInClassTasks ??= new GetOnlyDictionary<Type, Task>();\n_firstTestInSessionTasks ??= new GetOnlyDictionary<string, Task>();\n```\n\nThis ensures that first events maintain their \"once per assembly/class/session\" guarantee throughout the entire test run, rather than being reset during initialization cycles.\n\n## Validation\n\n- \u2705 Source generator tests pass (90/91 succeeded on .NET 9)\n- \u2705 Public API tests pass (4/4 succeeded on .NET 9)  \n- \u2705 Added regression test to prevent future occurrences\n- \u2705 Minimal, surgical change with no side effects\n\nThe fix preserves the existing behavior for `[Before(Assembly)]` hooks while restoring the correct single-invocation guarantee for `IFirstTestInAssemblyEventReceiver`.\n\nFixes #2951.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/thomhurst/TUnit/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 Source generator tests pass (90/91 succeeded on .NET 9)"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Public API tests pass (4/4 succeeded on .NET 9)"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 Minimal, surgical change with no side effects"
+  }
+ ],
+ "order": "a04939755e7191f173a8f795c1d171e3e485feec6057129bda499cdf202868e5"
+}

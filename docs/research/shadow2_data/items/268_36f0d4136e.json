@@ -1,0 +1,22 @@
+{
+ "id": "36f0d4136e",
+ "url": "https://github.com/livingbio/typed-ffmpeg/pull/742",
+ "repo": "livingbio/typed-ffmpeg",
+ "number": 742,
+ "message": "## Problem\n\nThe current `parse_cli` functionality performs both CLI syntax parsing and option existence validation, which requires loading the full FFmpeg options dictionary. This increases package size because the complete options list gets bundled into release files.\n\n## Solution\n\nThis PR refactors the CLI parsing to separate these concerns:\n\n### New Functions\n- **`parse_cli(cli: str)`** - Parses CLI arguments by syntax only, without loading the options dictionary\n- **`parse_with_validation(cli: str, validate_options: bool)`** - Allows explicit control over validation behavior\n\n### Modified Functions\n- **`parse_global()`, `parse_input()`, `parse_output()`** - Made `ffmpeg_options` parameter optional\n- **`parse_filter_complex()`** - Updated to handle optional filter validation\n- **`parse_options()`** - Already only handled syntax parsing (no changes needed)\n\n### Backward Compatibility\nThe original `parse()` function remains unchanged and continues to validate options by default.\n\n## Usage Examples\n\n### Before (loads full options dictionary)\n```python\nfrom ffmpeg.compile.compile_cli import parse\nstream = parse(\"ffmpeg -i input.mp4 -c:v libx264 output.mp4\")\n```\n\n### After (syntax-only parsing, no dictionary loading)\n```python\nfrom ffmpeg.compile.compile_cli import parse_cli\nstream = parse_cli(\"ffmpeg -i input.mp4 -c:v libx264 output.mp4\")\n```\n\n### Explicit validation control\n```python\nfrom ffmpeg.compile.compile_cli import parse_with_validation\n\n# No validation (smaller package size)\nstream = parse_with_validation(cli, validate_options=False)\n\n# With validation (backward compatible)\nstream = parse_with_validation(cli, validate_options=True)\n```\n\n## Benefits\n\n1. **Reduced Package Size** - `parse_cli()` avoids loading the full options dictionary\n2. **Improved Performance** - Faster parsing without validation overhead\n3. **Flexible Validation** - Can enable/disable validation as needed\n4. **Backward Compatibility** - Existing code continues to work unchanged\n\n## Testing\n\n- \u2705 Comprehensive unit tests verify dictionary loading behavior\n- \u2705 Compatibility tests ensure both parsing methods work correctly\n- \u2705 Complex CLI commands with filters tested successfully\n- \u2705 Mocking confirms `parse_cli()` doesn't load options dictionary\n- \u2705 All existing functionality preserved\n\nFixes #741\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "### Backward Compatibility"
+  },
+  {
+   "n": 2,
+   "text": "# With validation (backward compatible)"
+  },
+  {
+   "n": 3,
+   "text": "**Backward Compatibility** - Existing code continues to work unchanged"
+  }
+ ],
+ "order": "f1e022b1dcfc3ae10f57b088f8b38d49971ee2f6527a7773b7b6c372907d46f5"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "da5ac968b9",
+ "url": "https://github.com/JuliaIO/JLD2.jl/pull/682",
+ "repo": "JuliaIO/JLD2.jl",
+ "number": 682,
+ "message": "Implementing keyword argument constructors for filters as requested in issue #675.\n\n## Changes Made\n\nAll filter types now support keyword argument constructors with **no ambiguous zero-argument methods**:\n\n### Core Filters (src/Filters.jl):\n- **Shuffle**: `Shuffle(; element_size=0)` (keyword-only constructor)\n- **Deflate**: `Deflate(level)` (mandatory positional) + `Deflate(; level=5)` (keyword with default)  \n- **ZstdFilter**: `ZstdFilter(level)` (mandatory positional) + `ZstdFilter(; level=default)` (keyword with default)\n\n### Filter Package Extensions:\n- **Bzip2Filter**: `Bzip2Filter(; blocksize100k=9)` (keyword-only constructor)\n- **Lz4Filter**: `Lz4Filter(; blocksize=DEFAULT_BLOCK_SIZE)` (keyword-only constructor)\n\n## Constructor Design\n\nThe implementation eliminates constructor ambiguity by ensuring **each filter has exactly one zero-argument method**:\n- **No duplicate zero-argument constructors** - removed explicit zero-arg methods where they conflicted with keyword defaults\n- **Backward compatibility maintained** - automatic constructors still provide positional argument support\n- **Clean keyword API** - users can specify parameters by name for clarity\n\nUsers can now create filters using either style:\n```julia\n# Zero-argument calls (exactly one method each)\nShuffle()           # \u2192 uses keyword default\nDeflate()           # \u2192 uses keyword default  \nBzip2Filter()       # \u2192 uses keyword default\n\n# Positional calls (via automatic or explicit constructors)\nShuffle(8)          # \u2192 uses automatic constructor\nDeflate(3)          # \u2192 uses explicit constructor with validation\nBzip2Filter(5)      # \u2192 uses automatic constructor\n\n# Keyword calls (new functionality)\nShuffle(element_size=8)        # \u2192 clear and explicit\nDeflate(level=7)              # \u2192 parameter name visible\nBzip2Filter(blocksize100k=5)  # \u2192 self-documenting\n```\n\n## Testing\n\n- \u2705 Added comprehensive tests for both positional and keyword constructors\n- \u2705 Verified all syntax checks pass\n- \u2705 Confirmed no ambiguous constructor methods exist\n- \u2705 Maintained full backward compatibility\n\nThe implementation addresses all feedback and provides a clean, non-ambiguous constructor API that enhances usability while preserving existing functionality.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/JuliaIO/JLD2.jl/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward compatibility maintained** - automatic constructors still provide positional argument support"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Maintained full backward compatibility"
+  }
+ ],
+ "order": "a568c7e70229f14153fd76656efaf2c504d314134dbaceb5884321ef065979de"
+}

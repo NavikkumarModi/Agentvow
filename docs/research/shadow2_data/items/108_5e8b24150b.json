@@ -1,0 +1,26 @@
+{
+ "id": "5e8b24150b",
+ "url": "https://github.com/svapnil/iso20022.js/pull/54",
+ "repo": "svapnil/iso20022.js",
+ "number": 54,
+ "message": "# Add ACHCreditPaymentInitiation Implementation\n\nThis PR implements ACH Credit Payment Initiation functionality for the iso20022.js library, addressing [Issue #8](https://github.com/svapnil/iso20022.js/issues/8).\n\n## Changes\n\n- Added ACH-related types and enums in `src/lib/types.ts`\n  - ACHLocalInstrumentCode (CCD, PPD, WEB, etc.)\n  - ACHServiceLevelCode (NURG, URGP, SDVA)\n  - ACHInstructionPriorityCode (NORM, HIGH)\n  - ACHCreditPaymentInstruction interface\n\n- Implemented `ACHCreditPaymentInitiation` class in `src/pain/001/ach-credit-payment-initiation.ts`\n  - Follows ISO20022 pain.001.001.03 XML standards for ACH credit transfers\n  - Uses NORM and NURG as defaults for instruction priority and service level codes\n  - Includes validation for USD currency requirement\n  - Supports XML serialization and parsing\n\n- Updated ISO20022 class with `createACHCreditPaymentInitiation` method\n- Added exports in `index.ts`\n- Added comprehensive tests in `test/pain/001/ach-credit-payment-initiation.test.ts`\n\n## Testing\n\nAll tests are passing. The implementation includes tests for:\n- XML serialization and validation against XSD schema\n- XML parsing and reconstruction\n- Error handling for invalid inputs\n- Integration with the ISO20022 class\n\nLink to Devin run: https://app.devin.ai/sessions/531a9bd3fee74ec0bb9cb7699a8d4637\nRequested by: Svapnil\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Implemented `ACHCreditPaymentInitiation` class in `src/pain/001/ach-credit-payment-initiation.ts`"
+  },
+  {
+   "n": 2,
+   "text": "- Added exports in `index.ts`"
+  },
+  {
+   "n": 3,
+   "text": "- Added comprehensive tests in `test/pain/001/ach-credit-payment-initiation.test.ts`"
+  },
+  {
+   "n": 4,
+   "text": "All tests are passing."
+  }
+ ],
+ "order": "5a614fb52b5e46ef3e5441fed3b884dbfe19c7a8decb32162d29c07fcf698f48"
+}

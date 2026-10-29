@@ -1,0 +1,3 @@
+{"item_id": "dae5870ca3", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change modifies .github/workflows/ci.yml so the Go version is \"1.25.1\" instead of \"stable\".", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "Only file changed; the matrix line changes from go-version: [\"stable\"] to go-version: [\"1.25.1\"].", "evidence": ["gh api repos/jpillora/chisel/pulls/572/files: 1 file, modified .github/workflows/ci.yml", "patch: '-        go-version: [\"stable\"]' -> '+        go-version: [\"1.25.1\"]'"]}
+], "minutes_estimate": 2}

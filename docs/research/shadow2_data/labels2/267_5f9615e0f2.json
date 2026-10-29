@@ -1,0 +1,3 @@
+{"item_id": "5f9615e0f2", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "The plugin was tuned over 5 iterations of 100 test cases each, yielding an 8-15% pass rate against GPT-4o-mini.", "label": "CANNOT_TELL", "confidence": "LOW", "judgment": false, "note": "Process/evaluation claim about runs against an external paid model API; no run logs or results files are in the change, and reproducing it would need network LLM access and is nondeterministic. Not settleable from the repository.", "evidence": ["gh api repos/promptfoo/promptfoo/pulls/6001/files: 9 files (plugin source, grader registration, docs page, unit test); no evaluation output, results or iteration log file in the change list"]}
+], "minutes_estimate": 3}

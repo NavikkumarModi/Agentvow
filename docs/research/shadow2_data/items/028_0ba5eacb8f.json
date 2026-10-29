@@ -1,0 +1,14 @@
+{
+ "id": "0ba5eacb8f",
+ "url": "https://github.com/Lyellr88/MARM-Systems/pull/9",
+ "repo": "Lyellr88/MARM-Systems",
+ "number": 9,
+ "message": "This PR updates the project structure documentation in `/webchat/data/chatbotreadme.md` to accurately reflect the intended file organization.\n\n## Changes Made\n\n- **Updated master protocol reference**: Changed `SYSTEM_DIAGNOSTIC.md` to `MARMREADME.md` to match the correct filename\n- **Removed outdated entries**: Eliminated `decision-tree.md` and `README.md` from the project structure tree\n- **Fixed tree formatting**: Updated the final entry to use proper tree structure formatting (`\u2514\u2500\u2500` for the last item)\n\n## Before\n```\n\u251c\u2500\u2500 data/\n\u2502   \u251c\u2500\u2500 SYSTEM_DIAGNOSTIC.md  # Master protocol\n\u2502   \u251c\u2500\u2500 HANDBOOK.md           # User guide\n\u2502   \u251c\u2500\u2500 FAQ.md                # FAQ\n\u2502   \u251c\u2500\u2500 DESCRIPTION.md        # Protocol overview (+ audio link)\n\u2502   \u2514\u2500\u2500 decision-tree.md      # (Optional: logic tree/notes)\n\u251c\u2500\u2500 media/\n\u2502   \u2514\u2500\u2500 media_MARM_Audio_Walkthrough.mp3 # Audio walkthrough\n\u251c\u2500\u2500 style.css                 # Minimalist CSS\n\u251c\u2500\u2500 README.md                 # This file\n```\n\n## After\n```\n\u251c\u2500\u2500 data/\n\u2502   \u251c\u2500\u2500 MARMREADME.md  # Master protocol\n\u2502   \u251c\u2500\u2500 HANDBOOK.md           # User guide\n\u2502   \u251c\u2500\u2500 FAQ.md                # FAQ\n\u2502   \u2514\u2500\u2500  DESCRIPTION.md        # Protocol overview (+ audio link)\n\u251c\u2500\u2500 media/\n\u2502   \u2514\u2500\u2500 media_MARM_Audio_Walkthrough.mp3 # Audio walkthrough\n\u2514\u2500\u2500 style.css                 # Minimalist CSS\n```\n\nThis ensures the documentation accurately represents the current project structure and provides correct guidance for users working with the MARM Protocol chatbot scaffold.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Updated master protocol reference**: Changed `SYSTEM_DIAGNOSTIC.md` to `MARMREADME.md` to match the correct filename"
+  }
+ ],
+ "order": "18481d8732c1a994d713a39a97088b72a36aed43f80d3a59c693e7a6060855dc"
+}

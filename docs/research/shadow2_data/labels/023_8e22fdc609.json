@@ -1,0 +1,3 @@
+{"item_id": "8e22fdc609", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change creates (adds as a new file) .github/copilot-instructions.md.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "File is status 'added' in the change list; the 'detailed guidance covering' list is not part of the file-scope proposition (quality not judged).", "evidence": ["gh api pulls/29/files: 'added .github/copilot-instructions.md +139'"]}
+], "minutes_estimate": 2}

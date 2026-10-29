@@ -1,0 +1,96 @@
+{
+ "item_id": "9ccf4a4e12",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change modified path resolution in brewfile.rb to choose between XDG and legacy Brewfile paths while keeping existing behaviour for existing files.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "File changed and logic selects between XDG and legacy; 'full backwards compatibility' judged by code reading only, tests not run.",
+   "evidence": [
+    "brewfile.rb patch (PR 20658 files list): XDG mode (HOMEBREW_USER_CONFIG_HOME ends with /homebrew): xdg file if exists, else legacy ~/.Brewfile if exists, else xdg path; non-XDG branch unchanged",
+    "bin/brew at head 890e7ab: XDG_CONFIG_HOME set -> HOMEBREW_USER_CONFIG_HOME=${XDG_CONFIG_HOME}/homebrew else ${HOME}/.homebrew"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "When the legacy ~/.Brewfile exists and the XDG Brewfile does not, the new path logic returns the legacy path.",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Checked by reading head code; both XDG mode (inner else with File.exist?(legacy)) and non-XDG mode (falls to ~/.Brewfile) return legacy.",
+   "evidence": [
+    "brewfile.rb patch (PR 20658 files list): XDG mode (HOMEBREW_USER_CONFIG_HOME ends with /homebrew): xdg file if exists, else legacy ~/.Brewfile if exists, else xdg path; non-XDG branch unchanged",
+    "bin/brew at head 890e7ab: XDG_CONFIG_HOME set -> HOMEBREW_USER_CONFIG_HOME=${XDG_CONFIG_HOME}/homebrew else ${HOME}/.homebrew"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "This change added directory creation via Pathname#mkpath in dumper.rb.",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "",
+   "evidence": [
+    "dumper.rb patch in write_file: added line `file.parent.mkpath` inside exchange_uid_if_needed!; file is a Pathname per sig"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "CLAIM",
+   "proposition": "This change added tests covering backwards-compatibility scenarios, including HOMEBREW_USER_CONFIG_HOME set with neither Brewfile existing.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "New context 'when HOMEBREW_USER_CONFIG_HOME is set but neither Brewfile exists' added with XDG set/unset cases; 'comprehensive'/'all scenarios' is a judgment and tests were not run.",
+   "evidence": [
+    "brewfile_spec.rb patch adds context 'when HOMEBREW_USER_CONFIG_HOME is set but neither Brewfile exists' with two examples",
+    "existing spec contexts for config-dir Brewfile exist/not exist remain"
+   ]
+  },
+  {
+   "n": 5,
+   "step_a": "CLAIM",
+   "proposition": "An existing legacy ~/.Brewfile is still used for global Brewfile path when XDG is configured and no XDG Brewfile exists.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Settled by code reading; if an XDG Brewfile also exists, XDG wins (unchanged behaviour), which the wording does not contradict materially.",
+   "evidence": [
+    "brewfile.rb patch (PR 20658 files list): XDG mode (HOMEBREW_USER_CONFIG_HOME ends with /homebrew): xdg file if exists, else legacy ~/.Brewfile if exists, else xdg path; non-XDG branch unchanged",
+    "bin/brew at head 890e7ab: XDG_CONFIG_HOME set -> HOMEBREW_USER_CONFIG_HOME=${XDG_CONFIG_HOME}/homebrew else ${HOME}/.homebrew"
+   ]
+  },
+  {
+   "n": 6,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Section heading only.",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Heading, asserts nothing.",
+   "evidence": [
+    "span is the markdown heading '## Backwards Compatibility'"
+   ]
+  },
+  {
+   "n": 7,
+   "step_a": "CLAIM",
+   "proposition": "Users with an existing ~/.Brewfile continue to use it after setting XDG_CONFIG_HOME, while new installs get the XDG path.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Code reading only; neither-exists case returns XDG path, legacy-only case returns legacy.",
+   "evidence": [
+    "brewfile.rb patch (PR 20658 files list): XDG mode (HOMEBREW_USER_CONFIG_HOME ends with /homebrew): xdg file if exists, else legacy ~/.Brewfile if exists, else xdg path; non-XDG branch unchanged",
+    "bin/brew at head 890e7ab: XDG_CONFIG_HOME set -> HOMEBREW_USER_CONFIG_HOME=${XDG_CONFIG_HOME}/homebrew else ${HOME}/.homebrew"
+   ]
+  }
+ ],
+ "minutes_estimate": 8
+}

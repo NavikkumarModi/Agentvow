@@ -1,0 +1,26 @@
+{
+ "id": "7f28fe255e",
+ "url": "https://github.com/microsoft/AzureTRE/pull/4607",
+ "repo": "microsoft/AzureTRE",
+ "number": 4607,
+ "message": "## Problem\n\nUsers were confused about two key aspects of cost labels displayed in the Azure TRE UI:\n\n1. **Time period**: What time period do the cost labels cover? Lifetime of the resource or current month?\n2. **Aggregation scope**: For workspace costs, do they include sub-resources like VMs and workspace services?\n\n![Cost label example](https://github.com/user-attachments/assets/bb1996eb-0818-4ce7-80ef-0d5b22c96f1c)\n\nThe cost labels shown in resource cards provided no indication of what they represented, leading to user confusion.\n\n## Solution\n\nEnhanced the cost labels with informative tooltips and comprehensive documentation:\n\n### UI Changes\n- **All cost labels** now show \"Month-to-date costs\" tooltip when hovering\n- **Workspace cost labels** specifically show \"Month-to-date costs (includes all workspace services and user resources)\" \n- Maintains existing \"Cost data not yet available\" message when data is unavailable\n\n### Documentation\nAdded a new \"Cost Labels in UI\" section to the cost reporting documentation that clearly explains:\n- Time period behavior (month-to-date by default)\n- Cost aggregation rules for different resource types\n- Data availability expectations\n\n### Technical Implementation\n- Enhanced `CostsTag.tsx` with optional `resourceType` prop for context-aware tooltips\n- Updated `ResourceCard.tsx` to pass resource type information (minimal change)\n- Added intelligent tooltip generation based on resource type and data availability\n- All changes are backward compatible\n\n## Result\n\nUsers now get immediate clarity when viewing cost labels:\n- \u2705 **Time period question answered**: \"Month-to-date costs\" \n- \u2705 **Aggregation question answered**: Workspace costs explicitly mention sub-resource inclusion\n- \u2705 **Better UX**: No need to guess what cost labels represent\n- \u2705 **No breaking changes**: Existing functionality preserved\n\nFixes #4606.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added a new \"Cost Labels in UI\" section to the cost reporting documentation that clearly explains:"
+  },
+  {
+   "n": 2,
+   "text": "- Updated `ResourceCard.tsx` to pass resource type information (minimal change)"
+  },
+  {
+   "n": 3,
+   "text": "- All changes are backward compatible"
+  },
+  {
+   "n": 4,
+   "text": "- \u2705 **No breaking changes**: Existing functionality preserved"
+  }
+ ],
+ "order": "095bf9e94c92a04d0f2b463d2d1a52484d547296de957134ab4e5a79152e1081"
+}

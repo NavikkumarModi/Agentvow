@@ -1,0 +1,14 @@
+{
+ "id": "91f28c6480",
+ "url": "https://github.com/oven-sh/bun/pull/23832",
+ "repo": "oven-sh/bun",
+ "number": 23832,
+ "message": "## Summary\n\nFixes a panic that occurred when a WebSocket close frame's payload was split across multiple TCP packets.\n\n## The Bug\n\nThe panic occurred at `websocket_client.zig:681`:\n```\npanic: index out of bounds: index 24, len 14\n```\n\nThis happened when:\n- A close frame had a payload of 24 bytes (2 byte code + 22 byte reason)\n- The first TCP packet contained 14 bytes (header + partial payload)\n- The code tried to access `data[2..24]` causing the panic\n\n## Root Causes\n\n1. **Bounds checking issue**: The code assumed all close frame data would arrive in one packet and tried to `@memcpy` without verifying sufficient data was available.\n\n2. **Premature flag setting**: `close_received = true` was set immediately upon entering the close state. This prevented `handleData` from being called again when the remaining bytes arrived (early return at line 354).\n\n## The Fix\n\nImplemented proper fragmentation handling for close frames, following the same pattern used for ping frames:\n\n- Added `close_frame_buffering` flag to track buffering state\n- Buffer incoming data incrementally using the existing `ping_frame_bytes` buffer\n- Track total expected length and bytes received so far\n- Only set `close_received = true` after all bytes are received\n- Wait for more data if the frame is incomplete\n\n## Testing\n\n- Created two regression tests that fragment close frames across multiple packets\n- All existing WebSocket tests pass (`test/js/web/websocket/`)\n- Verified the original panic no longer occurs\n\n## Related\n\nThis appears to be the root cause of crashes reported on Windows when WebSocket connections close, particularly when close frames have reasons that get fragmented by the network stack.\n\n---\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All existing WebSocket tests pass (`test/js/web/websocket/`)"
+  }
+ ],
+ "order": "31cbae6916153eff474469c1e18f108f6c1aef9dcd0d44e4251e5f14688bf2f9"
+}

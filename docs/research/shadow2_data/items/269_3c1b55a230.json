@@ -1,0 +1,18 @@
+{
+ "id": "3c1b55a230",
+ "url": "https://github.com/cloudflare/workers-sdk/pull/10955",
+ "repo": "cloudflare/workers-sdk",
+ "number": 10955,
+ "message": "Fixes #10944\n\nWhen using custom builds with file watching, if multiple files changed simultaneously (e.g., via git operations or editor auto-saves), the build would trigger multiple times concurrently. This PR fixes the issue by debouncing the custom build trigger with a 50ms delay.\n\n## Changes\n\n1. **Enhanced the `debounce` utility** (`packages/wrangler/src/utils/debounce.ts`) to support generic function signatures with parameters:\n   - Previously only supported `() => void` functions\n   - Now supports any function signature via TypeScript generics\n   - Maintains full backward compatibility with existing uses\n   - Uses `any[]` with eslint-disable (necessary for TypeScript contravariance)\n\n2. **Applied debounce to custom build watcher** (`packages/wrangler/src/api/startDevWorker/BundlerController.ts`):\n   - Wraps the `#runCustomBuild` callback with debounced version\n   - Uses 50ms delay (consistent with `pages/dev.ts` pattern)\n   - Prevents concurrent builds when multiple files change rapidly\n   - Preserves filePath parameter for logging\n\n## Review Focus\n\n- Verify the generic type signature is correct and maintains backward compatibility\n- Confirm 50ms is an appropriate debounce delay\n- Check that filePath is correctly passed through to `#runCustomBuild`\n\n---\n\n**Link to Devin run:** https://app.devin.ai/sessions/0923b0d7ecc441d29357b877d08d1d63  \n**Requested by:** @smacleod\n\n---\n\n- Tests\n  - [ ] Tests included\n  - [x] Tests not necessary because: This is a simple debounce application following existing patterns in the codebase (e.g., `pages/dev.ts`); the logic correctness is straightforward and can be verified through code review\n- Public documentation\n  - [ ] Cloudflare docs PR(s):\n  - [x] Documentation not necessary because: Internal implementation fix with no user-facing API changes\n- Wrangler V3 Backport\n  - [ ] Wrangler PR:\n  - [ ] Not necessary because:",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintains full backward compatibility with existing uses"
+  },
+  {
+   "n": 2,
+   "text": "- Verify the generic type signature is correct and maintains backward compatibility"
+  }
+ ],
+ "order": "f477568ae3259b79134d17ba5583bd3f5e8a17febb8760856b11a16f96fe1c8c"
+}

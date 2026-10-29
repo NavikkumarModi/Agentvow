@@ -1,0 +1,14 @@
+{
+ "id": "b16e78c6fd",
+ "url": "https://github.com/rsyslog/rsyslog/pull/6213",
+ "repo": "rsyslog/rsyslog",
+ "number": 6213,
+ "message": "## Summary\r\n- Export USE_VALGRIND before sourcing diag.sh in\r\n  tests/manytcp-too-few-tls-vg.sh so the harness applies the 240s startup\r\n  timeout under valgrind.\r\n- Addresses intermittent 60s startup timeouts on slower CentOS 8 runners.\r\n- Test-only change; no impact on rsyslog functionality.\r\n\r\n## Rationale\r\nThe harness sets TB_STARTUP_MAX_RUNTIME to 240s when USE_VALGRIND=YES. This\r\ntest sourced diag.sh before setting the variable, leaving the default 60s\r\ntimeout and causing rare startup aborts under valgrind on CentOS 8.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Test-only change; no impact on rsyslog functionality."
+  }
+ ],
+ "order": "82d78cf3303bc5b9d751228036671de5ac93977016387bb148f570c56dcd873f"
+}

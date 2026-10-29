@@ -1,0 +1,14 @@
+{
+ "id": "f5e96868f2",
+ "url": "https://github.com/prebid/Prebid.js/pull/13295",
+ "repo": "prebid/Prebid.js",
+ "number": 13295,
+ "message": "<!--\r\nThank you for your pull request! \r\n\r\nPlease title your pull request like this: 'Module: Change', eg 'Fraggles Bid Adapter: support fragglerock'\r\n\r\nPlease make sure this PR is scoped to one change or you may be asked to resubmit. \r\n \r\nPlease make sure any added or changed code includes tests with greater than 80% code coverage. \r\n\r\nSee https://github.com/prebid/Prebid.js/blob/master/CONTRIBUTING.md#testing-prebidjs for documentation on testing Prebid.js.\r\n\r\nFor any user facing change, submit a link to a PR on the docs repo at https://github.com/prebid/prebid.github.io/\r\n-->\r\n\r\n## Type of change\r\n<!-- Remove items that don't apply and/or select an item by changing [ ] to [x] -->\r\n- [ ] Bugfix\r\n- [ ] Feature\r\n- [ ] New bidder adapter  <!--  IMPORTANT: also submit your bidder parameter documentation as noted in https://docs.prebid.org/dev-docs/bidder-adaptor.html#submitting-your-adapter -->\r\n- [ ] Updated bidder adapter  <!--  IMPORTANT: (1) consider whether you need to upgrade your bidder parameter documentation in https://github.com/prebid/prebid.github.io/tree/master/dev-docs/bidders and (2) if you have a Prebid Server adapter, please consider whether that should be updated as well. --> \r\n- [ ] Code style update (formatting, local variables)\r\n- [ ] Refactoring (no functional changes, no api changes)\r\n- [ ] Build related changes\r\n- [ ] CI related changes\r\n\r\n- [ ] Does this change affect user-facing APIs or examples documented on http://prebid.org?\r\n- [ ] Other\r\n\r\n## Description of change\r\n<!-- Describe the change proposed in this pull request -->\r\n\r\n<!-- For new bidder adapters, please provide the following\r\n- contact email of the adapter\u2019s maintainer\r\n- test parameters for validating bids:\r\n```\r\n{\r\n  bidder: '<bidder name>',\r\n  params: {\r\n    // ...\r\n  }\r\n}\r\n```\r\n\r\nBe sure to test the integration with your adserver using the [Hello World](https://github.com/prebid/Prebid.js/blob/master/integrationExamples/gpt/hello_world.html) sample page. -->\r\n\r\n\r\n## Other information\r\n<!-- References to related PR or issue #s, @mentions of the person or team responsible for reviewing changes, etc. -->\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Refactoring (no functional changes, no api changes)"
+  }
+ ],
+ "order": "587b67447987b3e43a67614f04f67a20c31f9b202f63fac03dae5cce48926f1c"
+}

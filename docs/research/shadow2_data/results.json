@@ -1,0 +1,375 @@
+{
+ "budget": 0.2,
+ "pool": 1003,
+ "labelled": 278,
+ "arms": {
+  "base": {
+   "positives": 52,
+   "negatives": 129,
+   "unscorable": 97,
+   "recall": {
+    "arm0_random": {
+     "weighted": 0.136,
+     "unweighted": [
+      6,
+      52,
+      [
+       0.054,
+       0.23
+      ]
+     ]
+    },
+    "arm1_ci": {
+     "weighted": 0.309,
+     "unweighted": [
+      27,
+      52,
+      [
+       0.387,
+       0.649
+      ]
+     ]
+    },
+    "arm2_trust_report": {
+     "weighted": 0.294,
+     "unweighted": [
+      8,
+      52,
+      [
+       0.08,
+       0.275
+      ]
+     ]
+    },
+    "arm3_lexical": {
+     "weighted": 0.172,
+     "unweighted": [
+      15,
+      52,
+      [
+       0.183,
+       0.423
+      ]
+     ]
+    },
+    "arm5_agentvow": {
+     "weighted": 0.32,
+     "unweighted": [
+      28,
+      52,
+      [
+       0.405,
+       0.667
+      ]
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "weighted": 0.412,
+     "unweighted": [
+      36,
+      52,
+      [
+       0.557,
+       0.801
+      ]
+     ]
+    }
+   },
+   "diff_vs_arm1": {
+    "arm5_agentvow": {
+     "diff": 0.011,
+     "cluster_bootstrap_95": [
+      -0.131,
+      0.156
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": 0.103,
+     "cluster_bootstrap_95": [
+      -0.009,
+      0.244
+     ]
+    }
+   },
+   "diff_vs_arm3": {
+    "arm5_agentvow": {
+     "diff": 0.149,
+     "cluster_bootstrap_95": [
+      0.023,
+      0.309
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": 0.24,
+     "cluster_bootstrap_95": [
+      0.106,
+      0.425
+     ]
+    }
+   },
+   "unique_catches": {
+    "count": 14,
+    "repos": [
+     "Chia-Network/chia-blockchain",
+     "Ljzd-PRO/KToolBox",
+     "Lyellr88/MARM-Systems",
+     "bugsink/bugsink",
+     "chenditc/investment_data",
+     "jxxghp/MoviePilot",
+     "livekit/agents",
+     "microsoft/AIOpsLab",
+     "microsoft/sbom-tool",
+     "microsoft/typespec",
+     "pdfme/pdfme",
+     "vllm-project/vllm"
+    ],
+    "prs": [
+     "https://github.com/microsoft/sbom-tool/pull/1094",
+     "https://github.com/microsoft/typespec/pull/8311",
+     "https://github.com/Lyellr88/MARM-Systems/pull/9",
+     "https://github.com/livekit/agents/pull/3399",
+     "https://github.com/Ljzd-PRO/KToolBox/pull/296",
+     "https://github.com/jxxghp/MoviePilot/pull/4713",
+     "https://github.com/microsoft/typespec/pull/7760",
+     "https://github.com/Chia-Network/chia-blockchain/pull/19813",
+     "https://github.com/vllm-project/vllm/pull/26983",
+     "https://github.com/microsoft/AIOpsLab/pull/78",
+     "https://github.com/vllm-project/vllm/pull/23601",
+     "https://github.com/chenditc/investment_data/pull/75",
+     "https://github.com/bugsink/bugsink/pull/166",
+     "https://github.com/pdfme/pdfme/pull/775"
+    ]
+   }
+  },
+  "pessimistic": {
+   "positives": 149,
+   "negatives": 129,
+   "unscorable": 0,
+   "recall": {
+    "arm0_random": {
+     "weighted": 0.145,
+     "unweighted": [
+      28,
+      149,
+      [
+       0.133,
+       0.258
+      ]
+     ]
+    },
+    "arm1_ci": {
+     "weighted": 0.254,
+     "unweighted": [
+      68,
+      149,
+      [
+       0.378,
+       0.536
+      ]
+     ]
+    },
+    "arm2_trust_report": {
+     "weighted": 0.198,
+     "unweighted": [
+      21,
+      149,
+      [
+       0.094,
+       0.206
+      ]
+     ]
+    },
+    "arm3_lexical": {
+     "weighted": 0.241,
+     "unweighted": [
+      58,
+      149,
+      [
+       0.315,
+       0.469
+      ]
+     ]
+    },
+    "arm5_agentvow": {
+     "weighted": 0.272,
+     "unweighted": [
+      50,
+      149,
+      [
+       0.265,
+       0.415
+      ]
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "weighted": 0.238,
+     "unweighted": [
+      69,
+      149,
+      [
+       0.385,
+       0.543
+      ]
+     ]
+    }
+   },
+   "diff_vs_arm1": {
+    "arm5_agentvow": {
+     "diff": 0.018,
+     "cluster_bootstrap_95": [
+      -0.118,
+      0.152
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": -0.016,
+     "cluster_bootstrap_95": [
+      -0.102,
+      0.068
+     ]
+    }
+   },
+   "diff_vs_arm3": {
+    "arm5_agentvow": {
+     "diff": 0.031,
+     "cluster_bootstrap_95": [
+      -0.092,
+      0.157
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": -0.003,
+     "cluster_bootstrap_95": [
+      -0.11,
+      0.102
+     ]
+    }
+   }
+  },
+  "optimistic": {
+   "positives": 52,
+   "negatives": 226,
+   "unscorable": 0,
+   "recall": {
+    "arm0_random": {
+     "weighted": 0.136,
+     "unweighted": [
+      6,
+      52,
+      [
+       0.054,
+       0.23
+      ]
+     ]
+    },
+    "arm1_ci": {
+     "weighted": 0.309,
+     "unweighted": [
+      27,
+      52,
+      [
+       0.387,
+       0.649
+      ]
+     ]
+    },
+    "arm2_trust_report": {
+     "weighted": 0.294,
+     "unweighted": [
+      8,
+      52,
+      [
+       0.08,
+       0.275
+      ]
+     ]
+    },
+    "arm3_lexical": {
+     "weighted": 0.172,
+     "unweighted": [
+      15,
+      52,
+      [
+       0.183,
+       0.423
+      ]
+     ]
+    },
+    "arm5_agentvow": {
+     "weighted": 0.32,
+     "unweighted": [
+      28,
+      52,
+      [
+       0.405,
+       0.667
+      ]
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "weighted": 0.412,
+     "unweighted": [
+      36,
+      52,
+      [
+       0.557,
+       0.801
+      ]
+     ]
+    }
+   },
+   "diff_vs_arm1": {
+    "arm5_agentvow": {
+     "diff": 0.011,
+     "cluster_bootstrap_95": [
+      -0.131,
+      0.156
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": 0.103,
+     "cluster_bootstrap_95": [
+      -0.009,
+      0.244
+     ]
+    }
+   },
+   "diff_vs_arm3": {
+    "arm5_agentvow": {
+     "diff": 0.149,
+     "cluster_bootstrap_95": [
+      0.023,
+      0.309
+     ]
+    },
+    "arm6_ci_plus_agentvow": {
+     "diff": 0.24,
+     "cluster_bootstrap_95": [
+      0.106,
+      0.425
+     ]
+    }
+   }
+  }
+ },
+ "policies": {
+  "strict": {
+   "review_burden_census": 0.721,
+   "false_clear_rate_weighted": 0.204,
+   "false_clear_unweighted": [
+    6,
+    52
+   ],
+   "review_precision_weighted": 0.225
+  },
+  "lenient": {
+   "review_burden_census": 0.059,
+   "false_clear_rate_weighted": 0.771,
+   "false_clear_unweighted": [
+    32,
+    52
+   ],
+   "review_precision_weighted": 0.526
+  }
+ }
+}

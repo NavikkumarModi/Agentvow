@@ -1,0 +1,22 @@
+{
+ "id": "4d2b0427bd",
+ "url": "https://github.com/mlflow/mlflow/pull/18000",
+ "repo": "mlflow/mlflow",
+ "number": 18000,
+ "message": "This PR updates the `trailing-whitespace` pre-commit hook configuration to also check `.txt` files for trailing whitespace, in addition to the currently supported MDX and YAML files, and fixes existing trailing whitespace issues discovered by the updated hook.\n\n## Changes Made\n\n### 1. Updated Pre-commit Configuration\n\nUpdated the `files` pattern in `.pre-commit-config.yaml` from:\n```yaml\n- id: trailing-whitespace\n  files: \\.(mdx|ya?ml)$\n```\n\nTo:\n```yaml\n- id: trailing-whitespace\n  files: \\.(mdx|ya?ml|txt)$\n```\n\n### 2. Fixed Existing Trailing Whitespace Issues\n\nAfter updating the hook configuration, ran pre-commit to identify and fix existing trailing whitespace in `.txt` files:\n- Fixed trailing whitespace in `requirements/doc-requirements.txt`\n- Fixed trailing whitespace in `tests/langchain/state_of_the_union.txt` (365 lines cleaned)\n\n## Why This Change\n\nThe repository contains numerous `.txt` files (LICENSE.txt, requirements.txt files, data files, etc.) that should be checked for trailing whitespace to maintain consistent code quality. Previously, these files were not covered by the trailing-whitespace hook.\n\n## Testing\n\n- \u2705 Verified the hook now processes `.txt` files (previously skipped)\n- \u2705 Confirmed existing functionality for MDX and YAML files remains unchanged\n- \u2705 Tested with actual `.txt` files in the repository\n- \u2705 Created test files with trailing whitespace to confirm detection and auto-fixing works correctly\n- \u2705 Ran all pre-commit hooks to ensure no regressions\n- \u2705 Successfully cleaned up existing trailing whitespace issues found by the updated hook\n\n## Impact\n\nThis change ensures that all `.txt` files in the repository will be automatically checked for trailing whitespace during pre-commit, helping maintain consistent code quality across all text-based files.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> Update the .pre-commit-config.yaml file so that the 'trailing-whitespace' hook also runs on .txt files, in addition to its current configuration. Ensure the hook is configured to check for trailing whitespace in .txt files as well as any other currently specified file types.\n\n\n</details>\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Updated the `files` pattern in `.pre-commit-config.yaml` from:"
+  },
+  {
+   "n": 2,
+   "text": "- Fixed trailing whitespace in `requirements/doc-requirements.txt`"
+  },
+  {
+   "n": 3,
+   "text": "- Fixed trailing whitespace in `tests/langchain/state_of_the_union.txt` (365 lines cleaned)"
+  }
+ ],
+ "order": "452d8609176b2002d10a06e536100517f3b9759c5e8519156a1caed55d31b6fa"
+}

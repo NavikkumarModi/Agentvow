@@ -1,0 +1,18 @@
+{
+ "id": "0f9bf04c08",
+ "url": "https://github.com/djlint/djLint/pull/1359",
+ "repo": "djlint/djLint",
+ "number": 1359,
+ "message": "Fixed a critical issue where template variables that shadow Python built-in function names (like `dir`, `span`, `object`, etc.) were being corrupted during formatting, causing templates to break.\n\n## Problem\n\nWhen formatting Jinja templates, variables that happened to match Python built-in names were being removed:\n\n```jinja\n<!-- Input -->\n{% set dir = \"example\" %}\n{% set foo = dir %}\n\n<!-- Output (broken) -->\n{% set dir = \"example\" %}\n{% set foo =  %}\n```\n\nThis made templates non-functional as the variable reference was completely removed.\n\n## Root Cause\n\nThe issue was in `src/djlint/formatter/indent.py` in the `format_data` function. When processing `{% set %}` tags, djLint was:\n\n1. Attempting to parse the right-hand side as JSON\n2. When that failed, falling back to using Python's `eval()` on template variables\n3. For variables like `dir`, `eval(\"dir\")` returned the built-in `dir` function object\n4. The string representation of this object was processed incorrectly, ultimately causing the variable to be removed\n\n## Solution\n\nModified the `format_data` function to be more conservative about what it evaluates:\n\n- **Only evaluate Python literals** (lists, dicts, numbers, strings) that don't look like simple identifiers\n- **Skip evaluation for simple identifiers** that are likely template variables\n- **Preserve template variables as-is** instead of trying to \"format\" them\n\n```python\n# Before: Would eval any content that wasn't \"object\"\nevaluated = str(eval(contents)) if contents != \"object\" else contents\n\n# After: Only eval if it's not a simple identifier\nif (contents.strip() and \n    not contents.strip().isidentifier() and\n    not contents.strip().startswith(('_', 'object'))):\n    evaluated = str(eval(contents))\nelse:\n    contents = contents.strip()  # Don't eval identifiers\n```\n\n## Additional Protection\n\nAdded `inside_template_block()` checks in `compress.py` and `attributes.py` to prevent HTML tag processing from affecting template content.\n\n## Testing\n\nAdded comprehensive test cases covering:\n- Template variables that shadow HTML tag names (`dir`, `span`, `button`)\n- Template variables that shadow Python built-ins (`object`, `dir`)\n- Mixed scenarios with both template variables and HTML tags\n- Verification that Python literals can still be formatted properly\n\nThe fix is minimal, surgical, and maintains backward compatibility while preventing the dangerous evaluation of template variables.\n\nFixes #828.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added `inside_template_block()` checks in `compress.py` and `attributes.py` to prevent HTML tag processing from affecting template content."
+  },
+  {
+   "n": 2,
+   "text": "The fix is minimal, surgical, and maintains backward compatibility while preventing the dangerous evaluation of template variables."
+  }
+ ],
+ "order": "18ebf00d9088868846c1ffe8423bec0f08d02792a7a1f376983b885a535181bf"
+}

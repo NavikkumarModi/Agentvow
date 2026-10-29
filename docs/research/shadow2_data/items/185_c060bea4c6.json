@@ -1,0 +1,14 @@
+{
+ "id": "c060bea4c6",
+ "url": "https://github.com/microsoft/vscode-black-formatter/pull/585",
+ "repo": "microsoft/vscode-black-formatter",
+ "number": 585,
+ "message": "Updates the Node.js version across all configuration files from 22.17.0 to 22.19.0, which is the latest LTS release.\n\n## Changes Made\n\n- **`.nvmrc`**: Updated to specify Node.js 22.19.0\n- **GitHub Actions workflows**: Updated `NODE_VERSION` environment variable in both `pr-check.yml` and `push-check.yml`\n- **Azure Pipelines**: Updated `versionSpec` in both pre-release and stable pipeline configurations\n\n## Benefits\n\n- Uses the latest stable LTS version of Node.js with security updates and performance improvements\n- Ensures consistent Node.js version across all CI/CD environments\n- Maintains compatibility with existing dependencies while staying current\n\n## Verification\n\nAll existing build, lint, and test processes continue to work correctly with the updated Node.js version:\n- \u2705 TypeScript compilation\n- \u2705 ESLint checks\n- \u2705 Prettier formatting validation\n- \u2705 Webpack bundling\n\nThe update is backwards compatible and doesn't require any changes to the codebase or dependencies.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\nCreated from VS Code via the [GitHub Pull Request](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) extension.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The update is backwards compatible and doesn't require any changes to the codebase or dependencies."
+  }
+ ],
+ "order": "aab17c59f3448f7b29a3b5bc4ae943737d911137f75970982dcd635f8edb9ae9"
+}

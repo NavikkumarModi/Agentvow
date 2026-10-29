@@ -1,0 +1,14 @@
+{
+ "id": "1ec07ee6f9",
+ "url": "https://github.com/deepnoodle-ai/risor/pull/415",
+ "repo": "deepnoodle-ai/risor",
+ "number": 415,
+ "message": "Add prototype syntax for user-defined types, interfaces, and type annotations to enable more structured programming and type safety.\n\nThis initial prototype introduces `type` and `interface` declarations, variable type annotations, and function return types, drawing inspiration from TypeScript. Design choices prioritize avoiding parsing ambiguities (e.g., no type prefixes on literals) and ensuring backward compatibility. Note that method receiver parsing is temporarily disabled due to complex lookahead requirements that would interfere with anonymous functions.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-c9dc3672-5121-45e4-a1aa-1cf04c893f81\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-c9dc3672-5121-45e4-a1aa-1cf04c893f81\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n<sub>[Learn more](https://docs.cursor.com/background-agent/web-and-mobile) about Cursor Agents</sub>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Design choices prioritize avoiding parsing ambiguities (e.g., no type prefixes on literals) and ensuring backward compatibility."
+  }
+ ],
+ "order": "0bae759734787bb95495b558e8a867b63c88ac887c3fba7c5a730dd11e03fbb6"
+}

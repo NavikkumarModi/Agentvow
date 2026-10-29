@@ -1,0 +1,18 @@
+{
+ "id": "6c0e40aa16",
+ "url": "https://github.com/peimanja/artifactory_exporter/pull/173",
+ "repo": "peimanja/artifactory_exporter",
+ "number": 173,
+ "message": "This PR fixes an issue where OpenMetrics were being successfully scraped from Artifactory (as evidenced by debug logs) but were not appearing in the `/metrics` endpoint exposed to Prometheus.\n\n## Problem\n\nThe root cause was a mismatch between the Prometheus collector's `Describe()` and `Collect()` methods:\n\n- `Describe()` was registering static metric descriptors for OpenMetrics\n- `exportOpenMetrics()` was creating dynamic descriptors based on the actual metrics returned from Artifactory\n- This mismatch caused Prometheus to reject the metrics during collection\n\n## Solution\n\nOpenMetrics should be handled dynamically (like `backgroundTaskMetrics`) since the metric names, labels, and types are determined by Artifactory's response. The fix:\n\n1. **Removed static OpenMetrics descriptors** from the `Describe()` method\n2. **Removed unused static descriptor definitions** that are no longer needed\n3. **Added comprehensive tests** to validate the fix and prevent regression\n\n## Technical Details\n\nOpenMetrics from Artifactory contain dynamic metric families with varying names and labels that cannot be known at startup time. The `exportOpenMetrics()` function already correctly:\n\n- Fetches metrics from Artifactory's `/v1/metrics` endpoint\n- Sanitizes the OpenMetrics format (removes `# EOF`, fixes escaped quotes)\n- Parses metrics using Prometheus text parser\n- Creates appropriate descriptors dynamically for each metric family\n- Sends metrics to the collection channel\n\nBy removing the static descriptors, the dynamic approach now works correctly without conflicts.\n\n## Verification\n\n- All existing tests pass\n- New tests confirm OpenMetrics descriptors are handled dynamically\n- Build succeeds without issues\n- Manual validation confirms the fix resolves the issue\n\nAfter this change, when `open_metrics` is enabled as an optional metric, users will see the Artifactory OpenMetrics properly exported in the `/metrics` endpoint.\n\nFixes #116.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "OpenMetrics from Artifactory contain dynamic metric families with varying names and labels that cannot be known at startup time."
+  },
+  {
+   "n": 2,
+   "text": "- All existing tests pass"
+  }
+ ],
+ "order": "2a844401887c192036be2953ead9245c9ab747c87e32eb91b03225ff9b029694"
+}

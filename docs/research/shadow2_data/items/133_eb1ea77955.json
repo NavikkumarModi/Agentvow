@@ -1,0 +1,14 @@
+{
+ "id": "eb1ea77955",
+ "url": "https://github.com/ethereum-optimism/optimism/pull/17347",
+ "repo": "ethereum-optimism/optimism",
+ "number": 17347,
+ "message": "# Enhance L2StandardBridge test coverage with comprehensive fuzz tests and eliminate code duplication\n\n## Summary\nThis PR converts three regular tests to fuzz tests (`withdraw_ether`, `withdraw_withdrawingERC20`, `withdrawTo_withdrawingERC20`), adds missing test coverage for the `l1TokenBridge()` function, and significantly refactors helper functions to eliminate code duplication while adding comprehensive cross-domain messaging expectations to fuzz tests.\n\n**Key Changes:**\n- **Fuzz test conversion**: Tests now validate a wide range of amounts (1-1,000,000) and gas limits (21,000-1,000,000) instead of hardcoded values\n- **Helper function refactoring**: Broke down duplicated `_preBridgeERC20` and `_preBridgeERC20To` functions into a parameterized `_expectERC20WithdrawalCalls` system with 4 smaller functions\n- **Comprehensive expectations**: Fuzz tests now include all cross-domain messaging expectations (baseGas calculation, withdrawal hash, vm.expectCall for full call chain, comprehensive events)\n- **New coverage**: Added test for previously uncovered `l1TokenBridge()` function\n\n## Review & Testing Checklist for Human\nThis is a **medium-risk** refactoring that requires careful validation of complex helper function changes:\n\n- [ ] **Verify helper function equivalence**: Run both old and new helper functions side-by-side to ensure identical expectations are generated\n- [ ] **Test conditional bridge logic**: Manually verify that `_expectBridgeCalls` correctly handles withdraw vs withdrawTo based on recipient address\n- [ ] **Validate fuzz boundaries**: Confirm that amount bounds (1-1,000,000) and gas limit bounds (21,000-1,000,000) are appropriate and don't exclude important edge cases\n- [ ] **Run heavy fuzz testing**: Execute `FOUNDRY_PROFILE=ciheavy forge test --match-path test/L2/L2StandardBridge.t.sol --match-test \"testFuzz_withdraw_withdrawingERC20_succeeds|testFuzz_withdrawTo_withdrawingERC20_succeeds\"` to catch potential edge case failures\n\n### Notes\n- This addresses alcueca's feedback about missing `_preBridgeERC20` logic in fuzz tests and code duplication concerns\n- The refactoring eliminates ~80 lines of duplicated code while maintaining identical test coverage\n- All 25 tests pass locally and the critical \"contracts-bedrock-tests-heavy-fuzz-modified\" CI check now passes\n- **Link to Devin run:** https://app.devin.ai/sessions/970ca21f44774d2694ab3dc1946f9a32\n- **Requested by:** @aliersh",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All 25 tests pass locally and the critical \"contracts-bedrock-tests-heavy-fuzz-modified\" CI check now passes"
+  }
+ ],
+ "order": "7c52fdb29a5578bb1f77741e4cff16013958aedf483df2928668a73c9da2bc9c"
+}

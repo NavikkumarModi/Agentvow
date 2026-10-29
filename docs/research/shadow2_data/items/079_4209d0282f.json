@@ -1,0 +1,34 @@
+{
+ "id": "4209d0282f",
+ "url": "https://github.com/JuliaSymbolics/SymbolicUtils.jl/pull/756",
+ "repo": "JuliaSymbolics/SymbolicUtils.jl",
+ "number": 756,
+ "message": "## Summary\nFixes a backward compatibility issue with the deprecated `polynorm` parameter in the `simplify()` function and ensures CI compatibility with `--depwarn=error`.\n\n## Problem\nThe `polynorm` parameter in `simplify()` was deprecated in favor of `expand`, but there was a missing piece of logic that caused the deprecated parameter to be silently ignored instead of working correctly.\n\n**Original behavior:**\n```julia\n# This showed a deprecation warning but didn't actually work:\nsimplify(expr, polynorm=true)  # polynorm value was ignored\\!\n```\n\n**Expected behavior:**\n```julia \n# This should work the same as:\nsimplify(expr, expand=true)\n```\n\n## Root Cause\nThe deprecation warning was present but the actual logic to use `polynorm` to set `expand` was missing:\n\n```julia\nif polynorm \\!== nothing\n    Base.depwarn(\"simplify(..; polynorm=$polynorm) is deprecated, use simplify(..; expand=$polynorm) instead\", :simplify)\n    # Missing: expand = polynorm  \u2190 This line was missing\\!\nend\n```\n\n## Solution\nAdded the missing backward compatibility logic:\n\n```julia\nif polynorm \\!== nothing\n    Base.depwarn(\"simplify(..; polynorm=$polynorm) is deprecated, use simplify(..; expand=$polynorm) instead\", :simplify)\n    expand = polynorm  # Use polynorm value as expand for backward compatibility\nend\n```\n\n## Testing\n\u2705 **Backward compatibility preserved**: `polynorm` parameter now works correctly\n\u2705 **Deprecation warning maintained**: Users still see the deprecation message  \n\u2705 **CI compatibility**: No tests use `polynorm`, so `--depwarn=error` works fine\n\u2705 **Functional equivalence**: `simplify(expr, polynorm=true)` \u2261 `simplify(expr, expand=true)`\n\n## Before/After\n\n**Before (broken):**\n```julia\njulia> simplify(x^2 + 2x + 1, polynorm=true)\n# Warning shown but polynorm value ignored - expand wasn't set\\!\nx^2 + 2x + 1  # Not expanded\n```\n\n**After (fixed):**\n```julia\njulia> simplify(x^2 + 2x + 1, polynorm=true)  \n# Warning shown AND polynorm value used to set expand\n1 + 2x + x^2  # Properly expanded\n```\n\n## Impact\n- \u2705 **No breaking changes** - purely fixes broken functionality\n- \u2705 **Better user experience** - deprecated parameter actually works as expected  \n- \u2705 **CI stability** - no impact on CI since tests don't use deprecated parameter\n- \u2705 **Cleaner migration path** - users can transition at their own pace\n\nThis is a pure bug fix that restores the intended behavior of the deprecated parameter while maintaining the deprecation path.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Fixes a backward compatibility issue with the deprecated `polynorm` parameter in the `simplify()` function and ensures CI compatibility with `--depwarn=error`."
+  },
+  {
+   "n": 2,
+   "text": "Added the missing backward compatibility logic:"
+  },
+  {
+   "n": 3,
+   "text": "expand = polynorm  # Use polynorm value as expand for backward compatibility"
+  },
+  {
+   "n": 4,
+   "text": "\u2705 **Backward compatibility preserved**: `polynorm` parameter now works correctly"
+  },
+  {
+   "n": 5,
+   "text": "- \u2705 **No breaking changes** - purely fixes broken functionality"
+  },
+  {
+   "n": 6,
+   "text": "- \u2705 **CI stability** - no impact on CI since tests don't use deprecated parameter"
+  }
+ ],
+ "order": "447f09e6ade9f654a17702ecc6fb6da9ea3384deb470e0312a113037d5971616"
+}

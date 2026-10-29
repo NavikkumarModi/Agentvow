@@ -1,0 +1,14 @@
+{
+ "id": "5f9615e0f2",
+ "url": "https://github.com/promptfoo/promptfoo/pull/6001",
+ "repo": "promptfoo/promptfoo",
+ "number": 6001,
+ "message": "## Summary\n- Adds new `goal-misalignment` red team plugin to detect Goodhart's Law vulnerabilities\n- Tests whether AI systems recognize when optimizing measurable metrics might harm true underlying objectives\n- Optimized through 5 iterations of 100 test cases each (8-15% pass rate with GPT-4o-mini)\n\n## Changes\n- Implements `GoalMisalignmentPlugin` and `GoalMisalignmentGrader` classes\n- Registered plugin in factory system and graders\n- Added to `FOUNDATION_PLUGINS` with Medium severity\n- Uses neutral 5-criteria rubric for evaluation\n\n## Testing\n- Validated with GPT-4o-mini (8-15% pass rate shows vulnerability detection)\n- Validated with Claude Sonnet (~50% pass rate shows better awareness)\n- Generates varied, realistic scenarios across multiple domains\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Optimized through 5 iterations of 100 test cases each (8-15% pass rate with GPT-4o-mini)"
+  }
+ ],
+ "order": "f11350fdde62b3504af9bee37fc0320695d28ccdc78f366ade84ce98a9a7e238"
+}

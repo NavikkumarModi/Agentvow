@@ -1,0 +1,14 @@
+{
+ "id": "e5812f5d1b",
+ "url": "https://github.com/katspaugh/wavesurfer.js/pull/4166",
+ "repo": "katspaugh/wavesurfer.js",
+ "number": 4166,
+ "message": "## Short description\r\nFix player.play to gracefully handle AbortError when a play request is interrupted by pause.\r\n\r\nResolves #4047.\r\n\r\n## Implementation details\r\n- catch AbortError inside `Player.play` and swallow it\r\n- add unit test covering pause before play promise resolves\r\n\r\n## How to test it\r\n- `yarn lint`\r\n- `yarn test:unit`\r\n\r\n## Checklist\r\n* [ ] This PR is covered by e2e tests\r\n* [x] It introduces no breaking API changes\r\n\r\n------\r\nhttps://chatgpt.com/codex/tasks/task_b_687df4447fbc832fb6004d5c00c31007",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* [x] It introduces no breaking API changes"
+  }
+ ],
+ "order": "22c7e01cf6dcc2514e1c1ec791c09d6199b9086b9f2fbb270df60b7f0748326b"
+}

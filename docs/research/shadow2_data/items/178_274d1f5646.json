@@ -1,0 +1,22 @@
+{
+ "id": "274d1f5646",
+ "url": "https://github.com/microsoft/typespec/pull/8311",
+ "repo": "microsoft/typespec",
+ "number": 8311,
+ "message": "This PR removes the deprecated \"multiapi\" functionality from the TypeSpec Python HTTP client generator as requested in issue #8310.\n\n## Changes Made\n\n### Core Option Removal\n- Removed `multiapi` from the default options dictionary\n- Removed multiapi validation logic from `_validate_combinations` method\n- Added deprecation handling that always returns `False` for the multiapi option (maintaining backward compatibility)\n\n### Model Classes\n- Removed `imports_for_multiapi` methods from all model classes:\n  - `Client`, `Config`, `OperationBase`, `OperationGroup`\n  - `BaseType`, `ConstantType`, `Parameter`, `Response` classes\n- Updated class name generation logic to remove multiapi-specific behavior\n\n### Serializers\n- Removed multiapi-specific code generation logic from all serializers\n- Removed multiapi filtering for samples and tests\n- Simplified namespace configuration by removing multiapi path handling\n- Removed conditional metadata generation for multiapi\n- Updated template parameter passing to remove multiapi API version handling\n\n### Templates\n- Updated Jinja2 templates to remove multiapi-specific code blocks\n- Removed conditional API version parameter passing\n- Simplified operation group initialization\n\n### File Removal\n- Deleted `metadata_serializer.py` (contained exclusively multiapi functionality)\n\n### Documentation\n- Updated help text in CI scripts to remove multiapi references\n\n## Backward Compatibility\n\nThe multiapi option is still accepted but deprecated. When accessed, it always returns `False` regardless of the value set, effectively disabling all multiapi functionality while maintaining compatibility with existing configurations that may still reference this option.\n\n## Testing\n\nVerified that:\n- The multiapi option always returns `False` when accessed\n- Other configuration options continue to work normally\n- Default values are preserved for all remaining options\n- Core functionality imports work correctly\n\nFixes #8310.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses (expand for details)</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `telemetry.astro.build`\n>   - Triggering command: `node /home/REDACTED/work/typespec/typespec/website/node_modules/.bin/../astro/astro.js build` (dns block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to the custom allowlist in this repository's [Copilot coding agent settings](https://github.com/microsoft/typespec/settings/copilot/coding_agent) (admins only)\n>\n> </details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added deprecation handling that always returns `False` for the multiapi option (maintaining backward compatibility)"
+  },
+  {
+   "n": 2,
+   "text": "- Deleted `metadata_serializer.py` (contained exclusively multiapi functionality)"
+  },
+  {
+   "n": 3,
+   "text": "## Backward Compatibility"
+  }
+ ],
+ "order": "a74bca4227994defa200d4d41c302b277758d2e8c44c3a2f253392a844651a87"
+}

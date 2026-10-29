@@ -1,0 +1,14 @@
+{
+ "id": "9bb600f024",
+ "url": "https://github.com/microsoft/onnxscript/pull/2390",
+ "repo": "microsoft/onnxscript",
+ "number": 2390,
+ "message": "This PR implements the missing `quantize_per_channel` and `dequantize_per_channel` operations in the torchlib quantized_decomposed module.\n\n## Changes\n\nAdded two new functions to `onnxscript/function_libs/torch_lib/ops/quantized_decomposed.py`:\n\n### `quantized_decomposed_quantize_per_channel`\n- Implements per-channel quantization using ONNX QuantizeLinear with per-axis support\n- Takes tensor inputs for `scales` and `zero_points` (one value per channel)\n- Supports `axis` parameter to specify the quantization dimension\n- Uses ONNX opset23 for per-axis quantization capabilities\n\n### `quantized_decomposed_dequantize_per_channel`  \n- Implements per-channel dequantization using ONNX DequantizeLinear with per-axis support\n- Takes tensor inputs for `scales` and optional `zero_points`\n- `zero_points` parameter is `Optional[TensorType]` matching PyTorch reference\n- Supports both default output type and explicit `output_dtype` parameter\n\n## Implementation Details\n\nBoth functions:\n- Follow the existing code patterns using `@torch_op` decorator with `trace_only=True`\n- Have function signatures that match the PyTorch reference implementations from `torch.ao.quantization.fx._decomposed`\n- Use ONNX opset23 to leverage the `axis` and `output_dtype` parameters for per-axis quantization\n- Are properly registered and accessible as TracedOnnxFunctions\n\nThe implementation leverages ONNX's native per-axis quantization support rather than implementing the tensor manipulation logic from the PyTorch reference, making it more efficient and aligned with ONNX best practices.\n\n## Testing\n\nValidated that:\n- Functions import correctly and have proper signatures\n- Function schemas are correctly generated with appropriate parameter types\n- No existing functionality is broken (per-tensor functions still work)\n- Functions can be used to build ONNX models\n\nFixes #2389.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added two new functions to `onnxscript/function_libs/torch_lib/ops/quantized_decomposed.py`:"
+  }
+ ],
+ "order": "0e288c9910d4c6fdb74e76a362596cec9fc1a317000350365997705e7acc4020"
+}

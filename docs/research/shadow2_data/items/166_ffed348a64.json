@@ -1,0 +1,22 @@
+{
+ "id": "ffed348a64",
+ "url": "https://github.com/selfxyz/self/pull/1008",
+ "repo": "selfxyz/self",
+ "number": 1008,
+ "message": "## Summary\n- add baseUrl and common path mappings to mobile-sdk-alpha tsconfig\n\n## Testing\n- `yarn workspace @selfxyz/mobile-sdk-alpha format`\n- `yarn workspaces foreach -p -v --topological-dev --since=HEAD run nice` *(passes for mobile-sdk-alpha)*\n- `yarn lint` *(fails: Unable to resolve module paths in @selfxyz/mobile-app)*\n- `yarn build`\n- `yarn workspace @selfxyz/contracts build` *(fails: Couldn't find a script named \"hardhat\")*\n- `yarn types` *(fails: Cannot find module 'react-native-svg-circle-country-flags' in @selfxyz/mobile-app)*\n- `yarn workspace @selfxyz/mobile-sdk-alpha test`\n\n\n------\nhttps://chatgpt.com/codex/tasks/task_b_68bd15b42600832da69f631949352eed\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Chores**\n  * Updated TypeScript configuration in the mobile SDK alpha package to streamline module resolution and improve developer workflow.\n  * Enhances internal build consistency without altering application behavior or performance.\n  * No user-facing changes; the app\u2019s functionality and UI remain the same.\n  * Backward compatibility preserved; no action required from users or integrators.\n  * Purely a configuration update with no impact on runtime code.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `yarn types` *(fails: Cannot find module 'react-native-svg-circle-country-flags' in @selfxyz/mobile-app)*"
+  },
+  {
+   "n": 2,
+   "text": "* Backward compatibility preserved; no action required from users or integrators."
+  },
+  {
+   "n": 3,
+   "text": "* Purely a configuration update with no impact on runtime code."
+  }
+ ],
+ "order": "99b2216778e53d5794883ac52ecfddf52d5570e600424791e9d4df7cb5842d47"
+}

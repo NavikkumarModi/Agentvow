@@ -1,0 +1,18 @@
+{
+ "id": "54c493d5c7",
+ "url": "https://github.com/OpShin/opshin/pull/531",
+ "repo": "OpShin/opshin",
+ "number": 531,
+ "message": "Currently, the TypeInference visitor replaces upper bounds of `None` with expensive calls to `len(x)` for list and byte string slicing operations like `x[:]`. This approach is brittle (relies on len being non-overwritable) and unnecessarily expensive.\n\nThis PR replaces these `len()` calls with direct pluthon expressions that compute the length more efficiently:\n\n**Before:**\n```python\n# For x[:] slicing, TypeInference would generate:\nts.slice.upper = Call(func=Name(id=\"len\"), args=[ts.value], keywords=[])\n```\n\n**After:**\n```python\n# Now generates direct pluthon expressions:\n# For lists:\nts.slice.upper = RawPlutoExpr(\n    typ=IntegerInstanceType,\n    expr=plt.FoldList(ts.value, OLambda([\"a\", \"_\"], plt.AddInteger(OVar(\"a\"), plt.Integer(1))), plt.Integer(0))\n)\n\n# For byte strings:\nts.slice.upper = RawPlutoExpr(\n    typ=IntegerInstanceType,\n    expr=plt.LengthOfByteString(ts.value)\n)\n```\n\n## Changes\n\n- **Performance**: Eliminates expensive function calls by using direct pluthon expressions\n- **Robustness**: No longer depends on `len()` being non-overwritable due to its polymorphic type\n- **Consistency**: Uses identical expressions as `LenImpl` for computing lengths\n- **Backward Compatible**: Existing slicing operations continue to work unchanged\n\n## Testing\n\nAdded comprehensive tests in `test_slice_upper_bound_fix.py` that verify:\n- `list[:]` creates `RawPlutoExpr` instead of `Call` to len\n- `bytes[:]` creates `RawPlutoExpr` instead of `Call` to len  \n- Explicit upper bounds like `list[:n]` still work normally\n\nThe implementation is minimal and surgical, targeting only the specific problematic code paths while preserving all existing functionality.\n\nFixes #515.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward Compatible**: Existing slicing operations continue to work unchanged"
+  },
+  {
+   "n": 2,
+   "text": "Added comprehensive tests in `test_slice_upper_bound_fix.py` that verify:"
+  }
+ ],
+ "order": "be34f3f7adc5dde686e1dbea386824cc41b4b047491343050e771be26c508d99"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "87d321967f",
+ "url": "https://github.com/theopenco/llmgateway/pull/193",
+ "repo": "theopenco/llmgateway",
+ "number": 193,
+ "message": "# Consider project mode in auto routing logic\n\n## Description\nThis PR modifies the auto routing logic to consider the project's mode (api-keys, credits, or hybrid) when selecting providers. Previously, the auto routing only considered database provider keys, but now it also considers environment tokens when the project is in \"credits\" or \"hybrid\" mode.\n\n## Changes\n- Moved the project query up before the auto routing logic to make the project mode available for routing decisions\n- Updated the auto routing logic to consider different provider sources based on project mode:\n  - For \"api-keys\" mode: Only use database provider keys (existing behavior)\n  - For \"credits\" mode: Only use environment tokens\n  - For \"hybrid\" mode: Use both database provider keys and environment tokens\n- Removed the duplicate project query that was previously after the routing logic\n\n## Testing\n- Ran all unit and e2e tests successfully\n- Verified that the auto routing logic works correctly for all project modes\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/800354fcffe945df950cdba42ddb2692\n\nRequested by: Luca Steeb\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Ran all unit and e2e tests successfully"
+  }
+ ],
+ "order": "c22198578376e269c9d567faefca286c5c0df61cbc086bcaead530a9f72916f7"
+}

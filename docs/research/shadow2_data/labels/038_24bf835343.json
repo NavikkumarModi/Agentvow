@@ -1,0 +1,20 @@
+{
+ "item_id": "24bf835343",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "NOT_A_CLAIM",
+   "proposition": "Section heading '### Impact / backwards compatibility' (asserts nothing by itself).",
+   "label": null,
+   "confidence": "HIGH",
+   "judgment": true,
+   "note": "The span is only a section heading; the assertions are in the bullets below it (not the span). Rule 2 class: boilerplate/section header, not a statement that something was done.",
+   "evidence": [
+    "Item message: heading is followed by separate bullets 'Only affects Gruff::Line with the dataxy API' and 'No public API changes'; the span itself contains no assertion",
+    "PR file list: lib/gruff/line.rb (+1 -1) plus many expected PNG updates (context only)"
+   ]
+  }
+ ],
+ "minutes_estimate": 3
+}

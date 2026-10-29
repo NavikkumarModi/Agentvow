@@ -1,0 +1,3 @@
+{"item_id": "9bb600f024", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change adds two new functions to onnxscript/function_libs/torch_lib/ops/quantized_decomposed.py.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "Content claim: the file was modified (+83 -0), and it gains exactly two new top-level defs, both decorated with @torch_op.", "evidence": ["gh api --paginate repos/microsoft/onnxscript/pulls/2390/files: 'modified onnxscript/function_libs/torch_lib/ops/quantized_decomposed.py +83 -0'", "patch grep '^+def': quantized_decomposed_quantize_per_channel, quantized_decomposed_dequantize_per_channel (2 new defs, no removed defs)"]}
+], "minutes_estimate": 3}

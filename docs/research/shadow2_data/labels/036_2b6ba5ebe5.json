@@ -1,0 +1,20 @@
+{
+ "item_id": "2b6ba5ebe5",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "This change adds tests in tests/test_auth_init.py (covering regeneration on app recreation, no regeneration when both exist, generation when app exists but no secret).",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "files_scope; new file with three async tests matching the three bullets.",
+   "evidence": [
+    "gh api pulls/2737/files: 'added tests/test_auth_init.py +173 -0' and 'modified scripts/auth_init.py +1 -1'",
+    "Patch of tests/test_auth_init.py defines three tests: ..._regenerates_when_app_recreated, ..._skips_when_app_exists_and_secret_exists, ..._generates_when_app_exists_but_no_secret"
+   ]
+  }
+ ],
+ "minutes_estimate": 3
+}

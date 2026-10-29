@@ -1,0 +1,14 @@
+{
+ "id": "2fb00ab53c",
+ "url": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1190",
+ "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+ "number": 1190,
+ "message": "## Description\r\n\r\nAdded a new OpenAPI example allOfRequired.yaml showing how a parent schema marks the pet property as required while composing its definition with allOf\r\n\r\nUpdated the SchemaEdge component so that all allOf branches check the incoming required prop, ensuring required flags are inherited correctly. SchemaNodeDetails is now returned when allOf items contain properties\r\n\r\n## Motivation and Context\r\n\r\nAddresses #1163 \r\n\r\n## Types of changes\r\n\r\n<!--- What types of changes does your code introduce? -->\r\n<!--- PICK ONE: -->\r\n\r\n- Bug fix (non-breaking change which fixes an issue)\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Bug fix (non-breaking change which fixes an issue)"
+  }
+ ],
+ "order": "831bdffb0555bc228f140a04a95863a679ce4a2f8f25a7436b04bfdec20c757b"
+}

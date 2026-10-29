@@ -1,0 +1,18 @@
+{
+ "id": "56d2c8d9b9",
+ "url": "https://github.com/TimeWarpEngineering/timewarp-state/pull/554",
+ "repo": "TimeWarpEngineering/timewarp-state",
+ "number": 554,
+ "message": "## Summary\nMigrate TimeWarp.State from MediatR 12.4.1 to TimeWarp.Mediator 13.0.0 (version 12.0.0-beta.1)\n\n## Changes\n- \u2705 Updated package version to 12.0.0-beta.1\n- \u2705 Replaced MediatR with TimeWarp.Mediator in all package references\n- \u2705 Updated using statements from `MediatR` to `TimeWarp.Mediator`\n- \u2705 Changed service registration from `AddMediatR` to `AddMediator` (corrected spelling)\n- \u2705 Updated all sample projects to use the new packages\n- \u2705 Fixed Test.App.Server startup configuration\n\n## Testing\n- \u2705 All unit tests pass\n- \u2705 Test.App runs successfully\n- \u2705 Test.App tests pass\n- \u2705 Sample apps run (Sample00Wasm verified)\n- \u2705 NuGet packages build successfully\n\n## Migration Notes\nTimeWarp.Mediator is a fork of MediatR that maintains full API compatibility. The main changes are:\n1. Package name: `MediatR` \u2192 `TimeWarp.Mediator`\n2. Namespace: `using MediatR` \u2192 `using TimeWarp.Mediator`\n3. Service registration: `AddMediatR` \u2192 `AddMediator`\n\nAll interfaces (IRequest, IRequestHandler, IMediator, ISender, IPublisher) and behaviors work unchanged.\n\n## Known Issues\n- Test.App.Server doesn't display \"Now listening on...\" message in console (cosmetic issue, server runs fine)\n\n## CI/CD Note\nThis PR will NOT publish to NuGet. Publishing only occurs on release creation via the release-publish.yml workflow.\n\nCloses #032\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 All unit tests pass"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Test.App tests pass"
+  }
+ ],
+ "order": "86a27d2209ac1765bc3bc03e383999b904b15f5597794b42971405cae1923440"
+}

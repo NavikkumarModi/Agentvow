@@ -1,0 +1,14 @@
+{
+ "id": "8be6fa9287",
+ "url": "https://github.com/pdfme/pdfme/pull/775",
+ "repo": "pdfme/pdfme",
+ "number": 775,
+ "message": "# Fix: Update import path for pdf2img in e2e test\n\nThis PR fixes the import error in the e2e test file that occurs when trying to import pdf2img from '@pdfme/converter'. The error message indicates: 'Must use import to load ES Module'. The fix updates the import path to use the ES module version of the converter package.\n\n## Changes\n- Updated the import statement in `playground/e2e/index.test.ts` to use the ES module path: `import { pdf2img } from '../../packages/converter/dist/esm/src/index.node.js';`\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/51991911ca834272a7d92a601de69b40\n\n## Requested by\nKyohei\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated the import statement in `playground/e2e/index.test.ts` to use the ES module path: `import { pdf2img } from '../../packages/converter/dist/esm/src/index.node.js';`"
+  }
+ ],
+ "order": "81487169d1c81f85c483bb1b05cf9a60a15aecabe310c7fe48a860acc3e62c21"
+}

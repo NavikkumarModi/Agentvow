@@ -1,0 +1,14 @@
+{
+ "id": "234e5ea1d9",
+ "url": "https://github.com/airbytehq/airbyte/pull/67715",
+ "repo": "airbytehq/airbyte",
+ "number": 67715,
+ "message": "This PR updates the cron schedule for the \"Connectors up-to-date\" workflow to run at a more convenient time for the team.\n\n## Changes Made\n\nChanged the schedule in `.github/workflows/connectors_up_to_date.yml`:\n- **Before**: `\"0 10 * * 2\"` - Every Tuesday at 10:00 UTC (3:00 AM PDT / 2:00 AM PST)\n- **After**: `\"0 3 * * 2\"` - Every Tuesday at 03:00 UTC (8:00 PM PDT / 7:00 PM PST Monday evening)\n\n## Rationale\n\nRunning the connectors up-to-date workflow at 8 PM Pacific on Monday evening instead of 3 AM Pacific on Tuesday morning provides several benefits:\n1. Better alignment with working hours for monitoring and troubleshooting\n2. Results are available first thing Tuesday morning\n3. Reduces the likelihood of issues going unnoticed overnight\n\nThe workflow functionality remains unchanged - only the execution time has been adjusted to be more team-friendly while maintaining the same weekly cadence.\n\n## Fix Applied\n\nInitial implementation had incorrect timezone calculation. Fixed to properly target Monday evening Pacific time by scheduling for Tuesday 03:00 UTC instead of Monday 03:00 UTC.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> Please update the cron used in connectors up to date so that it kicks off at 8pm Pacific the prior evening, rather than 3am in the morning.\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.\n\n> [!IMPORTANT]\n> **Auto-merge enabled.**\n> \n> _This PR is set to merge automatically when all requirements are met._\n\n> [!NOTE]\n> **Auto-merge may have been disabled. Please check the PR status to confirm.**",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Changed the schedule in `.github/workflows/connectors_up_to_date.yml`:"
+  }
+ ],
+ "order": "5fe812494840cb25daa55f8a264b7a3787593f41b4874b9d8e5e2c6f369b1801"
+}

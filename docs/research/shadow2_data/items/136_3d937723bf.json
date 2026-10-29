@@ -1,0 +1,18 @@
+{
+ "id": "3d937723bf",
+ "url": "https://github.com/oven-sh/bun/pull/23572",
+ "repo": "oven-sh/bun",
+ "number": 23572,
+ "message": "Fixes #23569\n\n## Summary\n\nHTML imports require bundling to work correctly, as they need to process and transform linked assets (JS/CSS). When `--no-bundle` is used, no bundling or transformation happens, which causes a crash.\n\nThis change adds validation to detect HTML entrypoints when `--no-bundle` is used and provides a clear error message explaining that \"HTML imports are only supported when bundling\".\n\n## Changes\n\n- Added validation in `src/cli/build_command.zig` to check for HTML entrypoints when `--no-bundle` flag is used\n- Shows clear error message: \"HTML imports are only supported when bundling\"\n- Added regression tests in `test/regression/issue/23569.test.ts`\n\n## Test Plan\n\n### Before\n```bash\n$ bun build ./index.html --no-bundle\n# Crashes without helpful error\n```\n\n### After\n```bash\n$ bun build ./index.html --no-bundle\nerror: HTML imports are only supported when bundling\n```\n\n### Tests\n- \u2705 Test with `--no-bundle` flag errors correctly\n- \u2705 Test with `--no-bundle --outdir` errors correctly  \n- \u2705 Test without `--no-bundle` works normally\n- \u2705 All 3 regression tests pass\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added regression tests in `test/regression/issue/23569.test.ts`"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All 3 regression tests pass"
+  }
+ ],
+ "order": "7fc979cb3bcfdcaf22ff05bde889455a5af14d9a3e0b36baef06feb7c75a51ae"
+}

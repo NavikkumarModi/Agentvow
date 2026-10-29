@@ -1,0 +1,18 @@
+{
+ "id": "b95d5eb4fb",
+ "url": "https://github.com/sugyan/claude-code-webui/pull/157",
+ "repo": "sugyan/claude-code-webui",
+ "number": 157,
+ "message": "## Type of Change\n\n- [x] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)\n- [ ] \u2728 `feature` - New feature (non-breaking change which adds functionality)\n- [ ] \ud83d\udca5 `breaking` - Breaking change\n- [ ] \ud83d\udcda `documentation` - Documentation update\n- [ ] \u26a1 `performance` - Performance improvement\n- [ ] \ud83d\udd28 `refactor` - Code refactoring\n- [ ] \ud83e\uddea `test` - Adding or updating tests\n- [ ] \ud83d\udd27 `chore` - Maintenance, dependencies, tooling\n- [x] \ud83d\udda5\ufe0f `backend` - Backend-related changes\n- [ ] \ud83c\udfa8 `frontend` - Frontend-related changes\n\n## Description\n\nUnify static file paths between Deno binary distribution and npm package to ensure consistent asset serving across both distribution methods.\n\n**Problem**: Deno binary used `../static` while npm package used `./dist/static`, causing inconsistent build processes and potential bundling of npm artifacts into Deno binary.\n\n**Solution**: Standardize both distributions to use `backend/dist/static/` structure.\n\n## Changes\n\n- **Deno staticPath**: Update from `../static` to `../dist/static` for consistency with npm package\n- **release.yml**: Replace direct `cp` command with `copy-frontend.js` script usage  \n- **deno.json & release.yml**: Update `--include` flag from `./dist` to `./dist/static` to exclude npm package artifacts\n- **Version handling**: Add `version.ts` generation step before Deno compilation\n- **Cleanup**: Remove deprecated `--include ./VERSION` from deno compile command\n\n## Technical Details\n\n**Unified static file structure:**\n- **Path**: `backend/dist/static/`\n- **Assets**: `/assets/*` \u2192 CSS, JS files\n- **Fallback**: Other routes \u2192 `index.html`\n\n**Build improvements:**\n- Prevents bundling npm package artifacts (`dist/cli/`) into Deno binary\n- Uses consistent `copy-frontend.js` script in both npm build and release workflow\n- Ensures static assets are correctly included in both local builds and GitHub releases\n\n## Test Plan\n\n- [x] All CI checks pass\n- [x] Deno staticPath points to correct unified location  \n- [x] Release workflow uses consistent asset copying method\n- [x] Deno compile includes only static assets, not npm artifacts\n\nCloses #150\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] \ud83d\udc1b `bug` - Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] \u2728 `feature` - New feature (non-breaking change which adds functionality)"
+  }
+ ],
+ "order": "2421fc7c25b8367f50636b3db37fa3b02d5a84694723b9cdabf5ebf6ace1d8f7"
+}

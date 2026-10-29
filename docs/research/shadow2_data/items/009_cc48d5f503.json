@@ -1,0 +1,30 @@
+{
+ "id": "cc48d5f503",
+ "url": "https://github.com/czlonkowski/n8n-mcp/pull/320",
+ "repo": "czlonkowski/n8n-mcp",
+ "number": 320,
+ "message": "## Summary\n\nFixes critical bug in session restoration where synthetic MCP initialization had no HTTP context to respond through, causing timeouts. Implements warm start pattern that handles the current request immediately.\n\n## Problem\n\nv2.19.4's `initializeMCPServerForSession()` attempted to synthetically initialize restored MCP servers, but had no active HTTP req/res pair to send responses through, causing all restoration attempts to timeout. Session restoration was completely broken.\n\n## Solution\n\n**Warm Start Pattern:**\n1. Client sends request with unknown session ID (after restart)\n2. Server detects unknown session, calls `onSessionNotFound` hook\n3. Hook loads session context from database\n4. Server creates session using existing `createSession()` flow\n5. Server immediately handles current request through new transport\n6. Client receives `-32000` error, auto-retries with initialize\n7. Session fully restored, client continues normally\n\n**Benefits:**\n- \u2705 Zero client changes (standard MCP clients auto-retry on -32000)\n- \u2705 Single HTTP round-trip (no extra network requests)\n- \u2705 Concurrent-safe (idempotency guards prevent race conditions)\n- \u2705 Automatic cleanup (failed restorations clean up resources)\n- \u2705 Standard MCP (uses official error code)\n\n## Changes\n\n### Code Changes\n- **src/http-server-single-session.ts**\n  - Deleted broken `initializeMCPServerForSession()` method (85 lines)\n  - Simplified restoration flow (lines 1118-1247)\n  - Added idempotency guards for concurrent restoration\n  - Added cleanup on failure\n  - Added early return to prevent double processing\n\n### Tests\n- **tests/integration/session-restoration-warmstart.test.ts** (NEW)\n  - 9 comprehensive integration tests\n  - Happy path: successful restoration + event emission\n  - Failure cleanup: failures, timeouts, invalid context\n  - Concurrent idempotency: multiple requests handled safely\n  - Edge cases: null/undefined hook returns\n\n### Documentation\n- **docs/MULTI_APP_INTEGRATION.md** (NEW)\n  - Explains warm start pattern\n  - Usage examples with code\n  - Error handling scenarios\n  - Concurrency safety guarantees\n\n### Version\n- **package.json**: 2.19.4 \u2192 2.19.5\n- **package.runtime.json**: 2.19.4 \u2192 2.19.5\n- **CHANGELOG.md**: Added comprehensive v2.19.5 entry\n\n## Testing\n\n### Integration Tests\n- \u2705 9/9 new warm start tests passing\n- \u2705 13/13 existing session persistence tests passing\n- \u2705 Build successful (no TypeScript errors)\n- \u2705 Lint successful (no type errors)\n\n### Regression Testing\n- \u2705 All 12 MCP tools verified working\n- \u2705 No regressions in node discovery, validation, or workflow operations\n- \u2705 535 nodes loaded correctly\n- \u2705 2,653 templates available\n- \u2705 88% documentation coverage\n\n## Code Review\n\n### Agent Analysis\n- **n8n-mcp-tester**: NO REGRESSIONS FOUND \u2705\n- **code-reviewer**: Implementation is solid with good architecture\n\n### Key Findings\n1. Transport stored synchronously (line 679) - no race condition\n2. `createSession()` has idempotency at line 644 - duplicates prevented\n3. Transport/server stored before async ops - cleanup works correctly\n4. All critical paths have proper error handling\n\n## Migration Notes\n\nThis is a **patch release** with no breaking changes:\n- \u2705 No API changes to public interfaces\n- \u2705 Existing session restoration hooks work unchanged\n- \u2705 Internal implementation simplified (80 fewer lines of code)\n- \u2705 Session restoration now works correctly with standard MCP protocol\n\n## Related Issues\n\nFixes session restoration regression introduced in v2.19.4\n\nReplaces #319 (closed due to merge conflicts)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 9/9 new warm start tests passing"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 13/13 existing session persistence tests passing"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 Lint successful (no type errors)"
+  },
+  {
+   "n": 4,
+   "text": "This is a **patch release** with no breaking changes:"
+  },
+  {
+   "n": 5,
+   "text": "- \u2705 No API changes to public interfaces"
+  }
+ ],
+ "order": "09fd064ab3704ca9687222fea2a83cfb9a6afab9206a24b012e0e08e45b369bf"
+}

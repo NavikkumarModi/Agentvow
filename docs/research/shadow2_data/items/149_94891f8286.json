@@ -1,0 +1,14 @@
+{
+ "id": "94891f8286",
+ "url": "https://github.com/novuhq/novu/pull/9162",
+ "repo": "novuhq/novu",
+ "number": 9162,
+ "message": "### What changed? Why was the change needed?\n\nUpdated the `describe()` strings in all e2e tests within `apps/api/src/app/translations/e2e/v1`.\n\nSpecifically:\n*   Replaced `#novu-v1` with `#novu-v2` to align with new test categorization.\n*   Prepended `[V1 Translations]` to each `describe()` string. This is to clearly identify these as legacy V1 tests that must continue to run, ensuring backward compatibility for existing customers.\n\n### Screenshots\n\n<!-- If the changes are visual, include screenshots or screencasts. -->\n\n---\n[Slack Thread](https://novu.slack.com/archives/D0919LNS89H/p1758053280308669?thread_ts=1758053280.308669&cid=D0919LNS89H)\n\n<a href=\"https://cursor.com/background-agent?bcId=bc-d9df61d1-fd7d-40b7-81b6-8b5172649078\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-d9df61d1-fd7d-40b7-81b6-8b5172649078\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This is to clearly identify these as legacy V1 tests that must continue to run, ensuring backward compatibility for existing customers."
+  }
+ ],
+ "order": "831f87701a08724d9ff004238c12a18e7b4b24f33a1b646c1c338c21f79a4368"
+}

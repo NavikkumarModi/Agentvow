@@ -1,0 +1,18 @@
+{
+ "id": "bb4e88ab08",
+ "url": "https://github.com/reown-com/appkit/pull/4447",
+ "repo": "reown-com/appkit",
+ "number": 4447,
+ "message": "# Fix TypeScript JSX namespace pollution in AppKit library\n\n## Summary\nRefactored TypeScript type declarations to prevent global JSX namespace pollution that was causing type conflicts with third-party polymorphic components from libraries like HeadlessUI and MUI.\n\n## Changes Made\n- **Removed global module augmentation** from main React library entry points:\n  - `packages/appkit/src/library/react/index.ts`\n  - `packages/wallet-button/exports/react.ts`\n  - `packages/ui/src/utils/JSXTypeUtil.ts`\n  - `packages/ui-new/src/utils/JSXTypeUtil.ts`\n\n- **Created separate JSX type export files** for explicit opt-in:\n  - `packages/appkit/exports/jsx.ts`\n  - `packages/wallet-button/exports/jsx.ts`\n  - `packages/ui-new/exports/jsx.ts` (following existing UI pattern)\n\n- **Updated package.json files** to support new `./jsx` subpath exports:\n  - `packages/appkit/package.json`\n  - `packages/wallet-button/package.json`\n  - `packages/ui-new/package.json`\n\n## Usage\nUsers who need JSX types can now explicitly import them:\n\n```typescript\nimport '@reown/appkit/jsx'           // For AppKit components\nimport '@reown/appkit-wallet-button/jsx'  // For wallet button\nimport '@reown/appkit-ui/jsx'       // For UI components (already existed)\nimport '@reown/appkit-ui-new/jsx'   // For new UI components\n```\n\n## Backward Compatibility\nThis change maintains backward compatibility by:\n- Not removing any existing functionality\n- Following the established pattern from the UI package\n- Providing clear migration path through documentation\n\n## Testing\n- \u2705 `pnpm build` passes\n- \u2705 `pnpm run prettier:format` passes\n- \u23f3 Waiting for CI validation\n\n## Linear Ticket\nFixes APKT-2855\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/b56854d02f6e4e0090cbeb4d701fd82c\n\n## Requested by\nsam@reown.com\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "## Backward Compatibility"
+  },
+  {
+   "n": 2,
+   "text": "This change maintains backward compatibility by:"
+  }
+ ],
+ "order": "68620a3135035eef966d250ab009bc553846a2b0489a7863a1ecdba2e6adc5b1"
+}

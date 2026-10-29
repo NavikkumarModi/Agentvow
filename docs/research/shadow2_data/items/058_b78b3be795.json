@@ -1,0 +1,18 @@
+{
+ "id": "b78b3be795",
+ "url": "https://github.com/espresso3389/pdfrx/pull/372",
+ "repo": "espresso3389/pdfrx",
+ "number": 372,
+ "message": "# Add Swift Package Manager (SPM) support for iOS and macOS\n\nThis PR addresses issue #371 by adding Swift Package Manager support to the pdfrx Flutter plugin while maintaining CocoaPods compatibility.\n\n## Changes\n\n- Created the SPM directory structure in `darwin/pdfrx/`\n- Added `Package.swift` with proper configuration for iOS and macOS platforms\n- Configured binary targets for PDFium frameworks with correct checksums\n- Updated the podspec file to include the new SPM directory structure\n- Maintained backward compatibility with CocoaPods\n\n## Implementation Details\n\nThe implementation follows Flutter's official guidelines for adding SPM support to existing plugins:\n\n- Created a parallel directory structure that supports both CocoaPods and SPM\n- Used binary targets to reference the PDFium xcframeworks for iOS and macOS\n- Maintained the same minimum deployment targets (iOS 12.0, macOS 10.11)\n- Reused the existing C++ implementation through relative imports\n\n## Testing\n\n- Verified with `dart analyze` - no issues found\n- The implementation maintains compatibility with existing CocoaPods setup\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/db8c1aa2e62348229304f7d3ff315889\n\nRequested by: Takashi Kawasaki\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Created the SPM directory structure in `darwin/pdfrx/`"
+  },
+  {
+   "n": 2,
+   "text": "- Maintained backward compatibility with CocoaPods"
+  }
+ ],
+ "order": "300124bcb7d0adb8e7ba1f9e875900caf3bb55660219bee5218e7e06f3e540ec"
+}

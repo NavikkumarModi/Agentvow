@@ -1,0 +1,26 @@
+{
+ "id": "9434808d7e",
+ "url": "https://github.com/GlareDB/glaredb/pull/3953",
+ "repo": "GlareDB/glaredb",
+ "number": 3953,
+ "message": "# Add repeat table scan function example\n\nThis PR adds a comprehensive example demonstrating how to implement a custom table scan function in GlareDB. The example includes:\n\n## Implementation Details\n\n- **Custom table scan function**: `repeat(value, count)` that repeats a given Int64 value a specified number of times\n- **Complete example binary**: Shows the full process from implementation to usage\n- **Proper extension registration**: Demonstrates how to register custom table functions in the `custom` namespace\n- **Comprehensive SQL Logic Tests**: Covers various use cases and edge cases\n\n## Files Added\n\n- `crates/glaredb_core/src/functions/table/builtin/repeat.rs` - Core repeat function implementation\n- `examples/example_extension_table_function/` - Complete example binary with Cargo.toml and main.rs\n- `slt/standard/repeat.slt` - SQL Logic Tests for the repeat function\n- Updated `crates/glaredb_core/src/functions/table/builtin/mod.rs` to register the function\n\n## Example Usage\n\n```sql\n-- Basic usage\nSELECT * FROM custom.repeat(5, 3);\n\n-- With WHERE clauses\nSELECT * FROM custom.repeat(100, 5) WHERE repeat > 50;\n\n-- With aggregations\nSELECT COUNT(*), SUM(repeat) FROM custom.repeat(3, 4);\n\n-- With joins\nSELECT r.repeat, g.generate_series \nFROM custom.repeat(7, 3) r \nCROSS JOIN generate_series(1, 2) g;\n```\n\n## Testing\n\n- \u2705 All formatting checks pass (`cargo +nightly fmt`)\n- \u2705 All linting checks pass (`cargo clippy --all --all-features -- --deny warnings`)\n- \u2705 Example binary compiles and runs successfully\n- \u2705 SQL Logic Tests pass\n- \u2705 Function appears correctly in `list_functions()` output\n\n## Reference Implementation\n\nThis example serves as a complete reference for developers wanting to add custom table scan functions to GlareDB. It follows all established patterns and conventions used throughout the codebase.\n\nLink to Devin run: https://app.devin.ai/sessions/fa6bafb9f97f441e9a25b02676bcd76b\nRequested by: Sean (sean@glaredb.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated `crates/glaredb_core/src/functions/table/builtin/mod.rs` to register the function"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All formatting checks pass (`cargo +nightly fmt`)"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 All linting checks pass (`cargo clippy --all --all-features -- --deny warnings`)"
+  },
+  {
+   "n": 4,
+   "text": "- \u2705 SQL Logic Tests pass"
+  }
+ ],
+ "order": "5ce6921d18aa6a4f6ca9e26e07c3707644567f26716e5f622555134609a98184"
+}

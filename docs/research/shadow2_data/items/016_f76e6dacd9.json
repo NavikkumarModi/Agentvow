@@ -1,0 +1,34 @@
+{
+ "id": "f76e6dacd9",
+ "url": "https://github.com/NikolayS/postgres_dba/pull/67",
+ "repo": "NikolayS/postgres_dba",
+ "number": 67,
+ "message": "## Summary\nComplete migration from CircleCI to GitHub Actions with comprehensive PostgreSQL testing and real-world privilege validation.\n\n## Key Features\n- \u2705 **Complete PostgreSQL ecosystem support**: Tests versions 13-18 (including latest PostgreSQL 18)\n- \u2705 **Minimal privilege testing**: Uses `pg_monitor` role instead of superuser to ensure real-world compatibility\n- \u2705 **PostgreSQL 17/18 compatibility**: Handles `pg_stat_bgwriter` \u2192 `pg_stat_checkpointer` migration\n- \u2705 **No DDL requirements**: Purely read-only diagnostic tool with informational messages for version differences\n- \u2705 **CircleCI removal**: Complete migration to GitHub Actions\n\n## Changes Made\n\n### GitHub Actions Workflow\n- Test matrix covering PostgreSQL 13, 14, 15, 16, 17, 18\n- Creates `dba_user` with `pg_monitor` role for realistic testing\n- Grants minimal necessary privileges: `CONNECT`, `USAGE`, `SELECT`\n- All SQL files tested with non-admin user permissions\n- Flexible regression tests handling cross-version variations\n\n### PostgreSQL Compatibility\n- **PostgreSQL 17/18**: Shows informational message directing to `pg_stat_checkpointer`\n- **PostgreSQL 13-16**: Works normally with `pg_stat_bgwriter`\n- No DDL functions required - maintains read-only nature\n- Dynamic version detection using `server_version_num`\n\n### Real-World Testing\n- Tests with `pg_monitor` role (typical DBA permissions)\n- Validates tool works without superuser privileges  \n- Ensures compatibility in production environments\n- Comprehensive privilege validation across all PostgreSQL versions\n\n## Test Results\nAll PostgreSQL versions pass with minimal privileges:\n- \u2705 PostgreSQL 13: All tests passing with `pg_monitor`\n- \u2705 PostgreSQL 14: All tests passing with `pg_monitor`  \n- \u2705 PostgreSQL 15: All tests passing with `pg_monitor`\n- \u2705 PostgreSQL 16: All tests passing with `pg_monitor`\n- \u2705 PostgreSQL 17: All tests passing with `pg_monitor`\n- \u2705 PostgreSQL 18: All tests passing with `pg_monitor`\n\n## Migration Notes\n- **Breaking**: Removes all CircleCI configuration\n- **Enhancement**: Adds support for latest PostgreSQL 18\n- **Improvement**: Validates tool works with realistic user privileges\n- **Future-proof**: Ready for upcoming PostgreSQL versions\n\nThis ensures postgres_dba works reliably in production environments where users typically have monitoring privileges rather than full admin access.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 PostgreSQL 13: All tests passing with `pg_monitor`"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 PostgreSQL 14: All tests passing with `pg_monitor`"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 PostgreSQL 15: All tests passing with `pg_monitor`"
+  },
+  {
+   "n": 4,
+   "text": "- \u2705 PostgreSQL 16: All tests passing with `pg_monitor`"
+  },
+  {
+   "n": 5,
+   "text": "- \u2705 PostgreSQL 17: All tests passing with `pg_monitor`"
+  },
+  {
+   "n": 6,
+   "text": "- \u2705 PostgreSQL 18: All tests passing with `pg_monitor`"
+  }
+ ],
+ "order": "0def9cf6f55527e461237fe5e17fe968b0ced1e92e9901c2139cb2d79348bfba"
+}

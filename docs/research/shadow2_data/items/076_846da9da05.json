@@ -1,0 +1,18 @@
+{
+ "id": "846da9da05",
+ "url": "https://github.com/pgdogdev/pgdog/pull/234",
+ "repo": "pgdogdev/pgdog",
+ "number": 234,
+ "message": "This implements a \"Fail\" mode when no shard is selected, equivalent to pgcat's MR #859. When enabled, applications must explicitly select a shard for every connection, preventing data compromise in multi-tenant scenarios.\n\n## Problem\n\nIn multi-tenant applications using shards as tenants, it's critical that every query explicitly selects the correct shard. Without this requirement, queries may inadvertently access data from all shards, leading to potential data compromise and cross-tenant data leakage.\n\n## Solution\n\nAdded a new configuration option `require_shard_selection` that enforces explicit shard selection:\n\n```toml\n[general]\nrequire_shard_selection = true\n```\n\nWhen enabled, queries without explicit shard selection will fail with a `ShardSelectionRequired` error.\n\n## Valid shard selection methods\n\n- **Comments**: `/* pgdog_shard: 1 */ SELECT * FROM users`\n- **SET statements**: `SET pgdog.shard TO 1; SELECT * FROM users`  \n- **Sharding keys**: `/* pgdog_sharding_key: user_123 */ SELECT * FROM users`\n\n## Implementation details\n\n- Added `require_shard_selection: bool` configuration option to `[general]` section\n- Added `ShardSelectionRequired` error variant to the parser error enum\n- Modified query parser to check for explicit shard selection and fail if required but not provided\n- Added comprehensive test coverage for the new functionality\n- Ensured backward compatibility (default is `false`)\n\n## Example\n\n```toml\n# pgdog.toml\n[general]\nrequire_shard_selection = true\n\n[[databases]]\nname = \"myapp\"\nshard = 0\nhost = \"127.0.0.1\"\nport = 5432\n\n[[databases]]  \nname = \"myapp\"\nshard = 1\nhost = \"127.0.0.1\"\nport = 5433\n```\n\nWith this configuration:\n- \u274c `SELECT * FROM users` \u2192 fails with `ShardSelectionRequired`\n- \u2705 `/* pgdog_shard: 1 */ SELECT * FROM users` \u2192 routes to shard 1\n- \u2705 `SET pgdog.shard TO 0; SELECT * FROM users` \u2192 routes to shard 0\n\n## Testing\n\nAll existing tests pass and new tests verify the functionality works correctly with various query types and shard selection methods.\n\nFixes #221.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Ensured backward compatibility (default is `false`)"
+  },
+  {
+   "n": 2,
+   "text": "All existing tests pass and new tests verify the functionality works correctly with various query types and shard selection methods."
+  }
+ ],
+ "order": "42835725e74c672e059fa531d26f2e5da1ce77c8a915e1451cae92d2bca02002"
+}

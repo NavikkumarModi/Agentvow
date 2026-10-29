@@ -1,0 +1,26 @@
+{
+ "id": "ee0cb7f104",
+ "url": "https://github.com/firecrawl/firecrawl/pull/1735",
+ "repo": "firecrawl/firecrawl",
+ "number": 1735,
+ "message": "\n# Implement IDN support with Punycode encoding\n\n## Summary\n\nThis PR adds support for Internationalized Domain Names (IDNs) with Punycode encoding to enable proper scraping of websites with \"xn--\" prefix domains like `http://xn--1lqv92a901a.xn--ses554g/`.\n\n**Key Changes:**\n- Updated URL validation regex to explicitly accept xn-- prefixed domains\n- Added `normalizeHostnameForComparison` utility for consistent IDN handling across the codebase\n- Updated domain comparison functions (`isSameDomain`, `isSameSubdomain`, `removeDuplicateUrls`) to use Punycode normalization\n- Enhanced test coverage with comprehensive IDN test cases for Chinese, Arabic, and Russian domain examples\n- Maintained backward compatibility with existing URL processing logic\n\n**Technical Approach:**\n- Standardized on Punycode representation internally for consistent domain comparison\n- Used Node.js built-in URL constructor for Punycode conversion (no additional dependencies)\n- Applied normalization to all hostname comparisons used in crawling, filtering, and deduplication\n\n## Review & Testing Checklist for Human\n\n\u26a0\ufe0f **Critical Items (5 items)**\n- [ ] Test actual scraping with real IDN domains like `http://xn--1lqv92a901a.xn--ses554g/` to verify end-to-end functionality\n- [ ] Verify URL validation regex doesn't break existing non-IDN URLs (test with common domains like example.com, google.com, etc.)\n- [ ] Test domain comparison functions with mixed IDN/regular domain scenarios to ensure backward compatibility\n- [ ] Verify blocklist filtering works correctly with IDN domains (both blocked and allowed cases)\n- [ ] Test crawler behavior with IDN subdomains and path filtering to ensure proper crawling scope\n\n**Recommended Test Plan:**\n1. Start the Firecrawl server locally (`pnpm run start` + `pnpm run workers`)\n2. Test scraping IDN domains using the requests.http file:\n   - Chinese: `http://xn--1lqv92a901a.xn--ses554g/`\n   - Arabic: `http://xn--mgbh0fb.xn--kgbechtv/`\n3. Test crawling with IDN domains to verify link extraction and filtering\n4. Verify existing functionality with regular domains still works\n\n---\n\n### Diagram\n\n```mermaid\n%%{ init : { \"theme\" : \"default\" }}%%\ngraph TD\n    types[\"controllers/v1/types.ts<br/>URL validation regex\"]:::major-edit\n    validateUrl[\"lib/validateUrl.ts<br/>Domain comparison functions\"]:::major-edit\n    canonical[\"lib/canonical-url.ts<br/>Hostname normalization\"]:::minor-edit\n    \n    crawler[\"scraper/WebScraper/crawler.ts<br/>Link filtering logic\"]:::context\n    extractLinks[\"scraper/scrapeURL/lib/extractLinks.ts<br/>Link extraction\"]:::context\n    blocklist[\"scraper/WebScraper/utils/blocklist.ts<br/>Domain blocking\"]:::context\n    \n    urlTests[\"controllers/v1/__tests__/urlValidation.test.ts<br/>Enhanced IDN tests\"]:::minor-edit\n    idnTests[\"__tests__/snips/idn-support.test.ts<br/>Comprehensive IDN tests\"]:::major-edit\n    \n    types --> validateUrl\n    validateUrl --> canonical\n    validateUrl --> crawler\n    validateUrl --> extractLinks\n    canonical --> blocklist\n    \n    types -.-> urlTests\n    validateUrl -.-> idnTests\n    canonical -.-> idnTests\n    \n    subgraph Legend\n        L1[\"Major Edit\"]:::major-edit\n        L2[\"Minor Edit\"]:::minor-edit  \n        L3[\"Context/No Edit\"]:::context\n    end\n    \n    classDef major-edit fill:#90EE90\n    classDef minor-edit fill:#87CEEB\n    classDef context fill:#FFFFFF\n```\n\n### Notes\n\n- **Session Info**: Requested by mogery@sideguide.dev for Linear ticket ENG-2510\n- **Devin Session**: https://app.devin.ai/sessions/d9a80398df39439d8c36750f9e192a24\n- **Testing Status**: Unit tests pass locally, but full end-to-end testing with real IDN domains requires manual verification due to environment setup limitations\n- **Dependencies**: No new dependencies added - uses Node.js built-in URL handling for Punycode support\n- **Backward Compatibility**: All existing URL processing should continue to work unchanged\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintained backward compatibility with existing URL processing logic"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Test domain comparison functions with mixed IDN/regular domain scenarios to ensure backward compatibility"
+  },
+  {
+   "n": 3,
+   "text": "- **Testing Status**: Unit tests pass locally, but full end-to-end testing with real IDN domains requires manual verification due to environment setup limitations"
+  },
+  {
+   "n": 4,
+   "text": "- **Backward Compatibility**: All existing URL processing should continue to work unchanged"
+  }
+ ],
+ "order": "de6801e27b71e51e8958bbd240d7e24ab531dc02dc29f30e4e7c54ee6d56257a"
+}

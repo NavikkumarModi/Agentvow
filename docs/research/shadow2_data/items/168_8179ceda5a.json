@@ -1,0 +1,14 @@
+{
+ "id": "8179ceda5a",
+ "url": "https://github.com/bugsink/bugsink/pull/172",
+ "repo": "bugsink/bugsink",
+ "number": 172,
+ "message": "This PR adds a new Django management command `vacuum_ingest_dir` to clean up old temporary files from the ingest directory that may accumulate during system crashes or high stress conditions.\n\n## Problem\n\nThe ingest directory (`INGEST_STORE_BASE_DIR`) is intended to be temporary, but files can pile up when the system crashes under stress, as the normal cleanup in the digest task may not complete.\n\n## Solution\n\nThe new `vacuum_ingest_dir` command provides:\n\n- **Safe cleanup**: Only removes files matching the expected event ID format (32-character hex UUIDs)\n- **Configurable age threshold**: `--days N` parameter with sensible default of 7 days\n- **Dry-run mode**: `--dry-run` flag to preview actions without making changes\n- **Safety checks**: Reports but doesn't touch files with unexpected names to prevent accidental deletion\n\n## Usage\n\n```bash\n# Clean up files older than 7 days (default)\npython manage.py vacuum_ingest_dir\n\n# Preview what would be deleted\npython manage.py vacuum_ingest_dir --dry-run\n\n# Clean up files older than 14 days\npython manage.py vacuum_ingest_dir --days 14\n```\n\n## Implementation Details\n\n- Command validates filenames using regex pattern `^[0-9a-f]{32}$` before deletion\n- Provides detailed reporting of processed files, removals, and skipped files\n- Includes comprehensive error handling for missing directories and permission issues\n- Added full test suite covering all edge cases and safety features\n- Follows existing project patterns and passes flake8 linting\n\nFixes #163.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Follows existing project patterns and passes flake8 linting"
+  }
+ ],
+ "order": "9c1bfed452acd0126a9d8bb198ac5a9dfbaebb4ead2817cfbcd172e2caf8863a"
+}

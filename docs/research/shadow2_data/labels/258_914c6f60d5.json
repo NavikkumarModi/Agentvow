@@ -1,0 +1,3 @@
+{"item_id": "914c6f60d5", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change adds the file tests/enterprise/litellm_enterprise/proxy/guardrails/test_apply_guardrail_endpoint.py.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "files_scope: new file in the change list. 'Comprehensive' is a quality adjective and not judged.", "evidence": ["gh api pulls/15436/files: 'added tests/enterprise/litellm_enterprise/proxy/guardrails/test_apply_guardrail_endpoint.py'"]}
+], "minutes_estimate": 2}

@@ -1,0 +1,18 @@
+{
+ "id": "2a76ba0d58",
+ "url": "https://github.com/Azure/azure-sdk-for-python/pull/42866",
+ "repo": "Azure/azure-sdk-for-python",
+ "number": 42866,
+ "message": "This PR deprecates and removes all \"multiapi\" related code, tools, and documentation from the `eng` folder as requested in the issue.\n\n## Changes Made\n\n### Deleted Files (958 lines removed)\n- **`eng/tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py`** - The main multiapi combiner tool (691 lines)\n- **`eng/tools/azure-sdk-tools/packaging_tools/templates/multiapi_combiner/`** - Complete template directory with 9 Jinja2 template files for multiapi code generation\n\n### Modified Files\n- **`pyproject.toml`** - Removed `multiapi_combiner` script entry point\n- **`sdk_generator.py`** - Removed multiapi-specific functions:\n  - `is_multiapi_package()` - Function to detect multiapi packages\n  - `need_regen_for_multiapi_package()` - Function to handle multiapi regeneration logic\n  - Simplified package processing to treat all packages as single-api (`isMultiapi=False`)\n  - Removed multiapi-specific conditional logic in sample cleanup\n- **`package_utils.py`** - Removed `is_multiapi` parameter from `change_log_generate()` function and simplified logic\n- **`test_servicemetadata.py`** - Removed multiapi test reference\n- **`changelog_generics.md`** - Updated documentation to remove multiapi-specific section\n- **`swagger_to_sdk_config_v4.json`** - Removed multiapi autorest configuration option\n\n## Impact\n\nThis change simplifies the SDK generation pipeline by:\n- Removing 958 lines of multiapi-specific code\n- Treating all packages consistently as single-API packages\n- Eliminating the complexity of multiapi template generation\n- Removing deprecated tooling while preserving all existing functionality for standard packages\n\nThe removal is backward-compatible as all packages will now be processed using the standard single-API generation path, which was already the recommended approach.\n\nFixes #42865.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/Azure/azure-sdk-for-python/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **`changelog_generics.md`** - Updated documentation to remove multiapi-specific section"
+  },
+  {
+   "n": 2,
+   "text": "The removal is backward-compatible as all packages will now be processed using the standard single-API generation path, which was already the recommended approach."
+  }
+ ],
+ "order": "6f6734fc162847da35f6a91600f04c4953d9202901c9faf58f553282b9da805c"
+}

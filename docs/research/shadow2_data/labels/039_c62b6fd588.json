@@ -1,0 +1,22 @@
+{
+ "item_id": "c62b6fd588",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "The change leaves all pre-existing functionality intact (purely additive, no existing behaviour altered).",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": false,
+   "note": "Settled by diff inspection against the merge-base, not by running the pre-existing test suite (tests/ktoolbox/test_cli.py calls the live Kemono API, which returned an anti-scraping text, so it fails in any environment regardless of the PR).",
+   "evidence": [
+    "git diff e6b8176 (merge-base) HEAD 6c5e755 -- ktoolbox: 3 deleted lines total, all import or __all__ lines replaced by supersets (api.posts import gains search_posts; __all__ gains 'search_posts'; utils import gains parse_search_url)",
+    "Everything else is additions: new search_posts.py, new parse_search_url, new download_search/search_posts CLI methods",
+    "Imported the package at head in sandbox: previous KToolBoxCli methods (search_creator, search_creator_post, download_post, sync_creator, get_post, version etc.), api.posts.get_post/get_creator_post/get_creators, action.search_creator, utils.parse_webpage_url all still present",
+    "tests/ktoolbox/test_utils.py: 1 passed; test_cli.py live-API tests fail on network response, not diff-related"
+   ]
+  }
+ ],
+ "minutes_estimate": 20
+}

@@ -1,0 +1,14 @@
+{
+ "id": "426500bcea",
+ "url": "https://github.com/mlflow/mlflow/pull/17771",
+ "repo": "mlflow/mlflow",
+ "number": 17771,
+ "message": "## Problem\r\n\r\nThe `filter_python_diff` function in `dev/mcps/review.py` was including auto-generated Python files from the `mlflow/protos/` directory when processing PR diffs. These files are generated from protocol buffer definitions and should not be included in code review diff output as they add noise and are not manually edited.\r\n\r\n## Solution\r\n\r\nModified the file path filtering logic in `filter_python_diff` to exclude Python files located in the `mlflow/protos/` directory while preserving all other functionality.\r\n\r\n**Before:**\r\n```python\r\nin_python_file = file_path.endswith(\".py\")\r\n```\r\n\r\n**After:**\r\n```python\r\nin_python_file = (\r\n    file_path.endswith(\".py\") and \r\n    not file_path.startswith(\"mlflow/protos/\")\r\n)\r\n```\r\n\r\n## Impact\r\n\r\n- **Cleaner code reviews**: Auto-generated protobuf files no longer appear in Python diff output\r\n- **Maintained functionality**: All existing behavior for regular Python files is preserved\r\n- **No breaking changes**: The filter continues to work as expected for all other file types\r\n\r\nThis change reduces noise in PR reviews by filtering out files that are auto-generated and not intended for manual review, while ensuring that all legitimate Python code changes continue to be properly included in the diff output.\r\n\r\n<!-- START COPILOT CODING AGENT SUFFIX -->\r\n\r\n\r\n\r\n<!-- START COPILOT CODING AGENT TIPS -->\r\n---\r\n\r\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/mlflow/mlflow/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **No breaking changes**: The filter continues to work as expected for all other file types"
+  }
+ ],
+ "order": "e8c0e09c751602ad897746301c29031a2c3a86e2732f07d103ffae4303694451"
+}

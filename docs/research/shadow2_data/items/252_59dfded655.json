@@ -1,0 +1,14 @@
+{
+ "id": "59dfded655",
+ "url": "https://github.com/go-vikunja/vikunja/pull/908",
+ "repo": "go-vikunja/vikunja",
+ "number": 908,
+ "message": "Adds support for full text search using [ParadeDB](https://docs.paradedb.com/documentation/full-text/filtering). In my benchmark, searching takes 14ms with ParadeDB vs. 18ms with Typesense (vs. 206ms with plain Postgres).\r\n\r\n## Summary\r\n\r\n- Add support for ParadeDB full-text search extension to significantly improve task search performance on PostgreSQL                                      \r\n- Implement graceful fallback to standard ILIKE queries when ParadeDB is not available, maintaining backward compatibility",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Implement graceful fallback to standard ILIKE queries when ParadeDB is not available, maintaining backward compatibility"
+  }
+ ],
+ "order": "df7228e36b70f041e847c3798a816e2967959a9aeb95487b3cbe2b7077d90789"
+}

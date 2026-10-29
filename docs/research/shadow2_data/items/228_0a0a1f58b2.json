@@ -1,0 +1,22 @@
+{
+ "id": "0a0a1f58b2",
+ "url": "https://github.com/theopenco/llmgateway/pull/246",
+ "repo": "theopenco/llmgateway",
+ "number": 246,
+ "message": "# Add Request ID Tracking for Parallel E2E Tests\n\nThis PR implements request ID tracking functionality to enable parallel execution of e2e tests. It removes the `--no-file-parallelism` flag from the e2e test configuration, allowing tests to run concurrently.\n\n## Changes\n\n- Added `requestId` field to log schema\n- Added support for `x-request-id` header in the chat route\n- Updated `waitForLogs` function to filter logs by request ID\n- Modified all e2e tests to generate and use unique request IDs\n- Added debug logging to help diagnose log processing issues\n- Removed `--no-file-parallelism` flag from e2e test configuration\n\n## Testing\n\n- Verified that e2e tests run successfully in parallel (71/76 tests passing)\n- Confirmed that logs are properly filtered by request ID\n- Ensured all insertLog calls include the requestId field\n\n## Notes\n\nThe 5 failing tests are authentication-related environmental issues unrelated to the request ID implementation. These failures occur both locally and in CI, showing 401/500 errors during test user creation in the `getTestToken` function. These authentication issues require separate investigation.\n\nLink to Devin run: https://app.devin.ai/sessions/6ea00e9646414531a137e32b2a5b2c24\nRequested by: Luca (contact@luca-steeb.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Verified that e2e tests run successfully in parallel (71/76 tests passing)"
+  },
+  {
+   "n": 2,
+   "text": "The 5 failing tests are authentication-related environmental issues unrelated to the request ID implementation."
+  },
+  {
+   "n": 3,
+   "text": "These failures occur both locally and in CI, showing 401/500 errors during test user creation in the `getTestToken` function."
+  }
+ ],
+ "order": "c9de31b24275e0e36f5ae7696bff7eaf3dc11f7a05dfe7234f208ee1f29cfffb"
+}

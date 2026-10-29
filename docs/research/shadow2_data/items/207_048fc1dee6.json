@@ -1,0 +1,14 @@
+{
+ "id": "048fc1dee6",
+ "url": "https://github.com/pyth-network/pyth-crosschain/pull/2674",
+ "repo": "pyth-network/pyth-crosschain",
+ "number": 2674,
+ "message": "# Reset priceLastUpdatedAt when price IDs are added in updateSubscription\r\n\r\n## Description\r\nThis PR fixes an issue in the `Scheduler.sol` contract where `priceLastUpdatedAt` was not being reset when the `priceIds` list was added to in the `updateSubscription` function. This could prevent immediate calls to `updatePriceFeeds` after a subscription update because:\r\n1. `heartbeatSeconds` enforces a minimum time since `priceLastUpdatedAt`\r\n2. New price updates must have a `publishTime` greater than `priceLastUpdatedAt`\r\n\r\nThe fix modifies the `_clearRemovedPriceUpdates` function to return a boolean indicating whether price IDs have been added, and then resets `priceLastUpdatedAt` to 0 in `updateSubscription` when this occurs.\r\n\r\n## Changes\r\n- Modified `_clearRemovedPriceUpdates` to return a boolean indicating if price IDs were added\r\n- Added logic in `updateSubscription` to reset `priceLastUpdatedAt` to 0 when price IDs are added\r\n- Added a test case in `PulseScheduler.t.sol` to verify the fix works as expected\r\n\r\n## Testing\r\n- Added a new test `testUpdateSubscriptionResetsPriceLastUpdatedAt` that verifies:\r\n  - `priceLastUpdatedAt` is reset to 0 when price IDs are added\r\n  - Price updates can be processed immediately after a subscription update\r\n  - Normal heartbeat criteria apply again for subsequent updates\r\n- All tests pass successfully\r\n\r\n## Requested by\r\nTejas Badadare (tejas@dourolabs.xyz)\r\n\r\n## Link to Devin run\r\nhttps://app.devin.ai/sessions/143f676aadca48d8a5e491864dff0917\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All tests pass successfully"
+  }
+ ],
+ "order": "ba42e990c207383a1a3e37dc3fd07773840a8d78d1b76aff7460582fd8e34692"
+}

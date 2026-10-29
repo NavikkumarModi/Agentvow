@@ -1,0 +1,14 @@
+{
+ "id": "1bb456d28f",
+ "url": "https://github.com/microsoft/autogen/pull/6565",
+ "repo": "microsoft/autogen",
+ "number": 6565,
+ "message": "This PR extends the GraphFlow edges to support custom conditional expressions through lambda functions, allowing for more flexible and powerful graph execution logic.\n\n## Changes\n\n1. Modified `DiGraphEdge` class to support callable conditions:\n   - Changed the condition type to accept `Callable[[BaseChatMessage], bool]` in addition to string or None\n   - Added a `check_condition` method that properly handles both string and callable conditions\n   - Added proper serialization handling for callable functions\n\n2. Updated the edge handling in `GraphFlowManager`:\n   - Modified the conditional edge transition logic to use the new `check_condition` method\n\n3. Enhanced the `DiGraphBuilder` class:\n   - Updated `add_edge` method to accept callable functions \n   - Improved documentation to explain the new feature\n\n4. Added comprehensive tests:\n   - Direct DiGraph creation with function-based conditions\n   - DiGraphBuilder usage with lambda conditions\n\n## Usage Examples\n\nUsing a lambda function as an edge condition:\n```python\n# Route to agent B if message has more than 100 characters\nbuilder.add_edge(agent_a, agent_b, \n                lambda msg: len(msg.to_model_text()) > 100)\n\n# Function that checks if a message contains an error\ndef contains_error(message: BaseChatMessage) -> bool:\n    return \"error\" in message.to_model_text().lower()\n\n# Route to agent C if message contains the word \"error\"\nbuilder.add_edge(agent_b, agent_c, contains_error)\n```\n\nThese additions make the GraphFlow component more flexible and expressive while maintaining backward compatibility with the existing string-based conditions.\n\nFixes #6542.\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "These additions make the GraphFlow component more flexible and expressive while maintaining backward compatibility with the existing string-based conditions."
+  }
+ ],
+ "order": "82c4fc0087a0be03ceb3bc78a543703e70e310e852b623c74ceff58a4ca21837"
+}

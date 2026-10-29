@@ -1,0 +1,14 @@
+{
+ "id": "919e449469",
+ "url": "https://github.com/hmislk/hmis/pull/14470",
+ "repo": "hmislk/hmis",
+ "number": 14470,
+ "message": "## Summary\n- Enhanced BillBeanController with fetchBilledDepartmentFinanceDetailsEnhanced() method for flexible filtering\n- Added createTransferIssueBillSummeryEnhanced() method in ReportsTransfer with support for filtering by fromDepartment, toDepartment, both, or none\n- Updated pharmacy transfer issue bill summary page with \"Issue To\" department selection field\n- Improved layout from 4-column to 3-column grid for better spacing\n- Fixed rate calculation issues where ItemBatch rates were overwriting original transfer issue bill data\n\n## Test plan\n- [x] All Maven tests passed successfully\n- [x] Enhanced report filtering functionality tested\n- [x] Department selection fields working correctly\n- [x] Rate calculations preserve original transfer data\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **New Features**\n  * Enhanced pharmacy transfer reports now display both \"from\" and \"to\" departments with detailed financial values (transfer, purchase, retail, cost).\n  * Added advanced filtering options for transfer issue and receive summary reports, allowing selection of both source and destination departments.\n  * Introduced a new data structure for transfer report results, improving data clarity and presentation.\n\n* **Improvements**\n  * Pharmacy transfer report tables now support pagination, sorting, and filtering for easier data analysis.\n  * Report filters and table layouts have been redesigned for better usability and clarity.\n  * UI updates provide clearer context and visual separation when viewing multiple bill formats.\n\n* **Bug Fixes**\n  * Adjusted logic to preserve original rates and avoid overwriting non-zero finance values during data migration and calculations.\n\n* **Chores**\n  * Updated SQL queries to retrieve the two most recent records for pharmacy transaction checks, with additional columns for improved auditing.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] All Maven tests passed successfully"
+  }
+ ],
+ "order": "81f16cb8bfc8970cb397e601dcce93cb92a7ae297fa87df3736e2df57a8c729e"
+}

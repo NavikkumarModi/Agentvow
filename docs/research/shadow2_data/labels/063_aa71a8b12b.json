@@ -1,0 +1,20 @@
+{
+ "item_id": "aa71a8b12b",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "`pnpm turbo lint` passes at the head commit of this change.",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Could not build the environment: the dependency install (pnpm install in the monorepo) was blocked by the harness permission system, so lint was not run. No CI check runs exist on the head commit to consult.",
+   "evidence": [
+    "gh api pulls/2142/files: single modified file apps/docs/app/(home)/examples/page.tsx",
+    "gh api commits/b7cfbc5.../check-runs: none returned; apps/docs lint script is `next lint`; pnpm@10.12.1 obtained locally but `pnpm install` was denied"
+   ]
+  }
+ ],
+ "minutes_estimate": 8
+}

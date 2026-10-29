@@ -1,0 +1,18 @@
+{
+ "id": "d600720387",
+ "url": "https://github.com/chrxh/alien/pull/143",
+ "repo": "chrxh/alien",
+ "number": 143,
+ "message": "This PR implements a systematic rename of the `genomeNodeIndex` member to `nodeIndex` across the core cell classes and all related components.\n\n## Changes Made\n\n### Core Structure Updates\n- **CellDescription** (`source/EngineInterface/Descriptions.h`): Updated MEMBER macro definition\n- **CellTO** (`source/EngineGpuKernels/ObjectTO.cuh`): Updated transfer object structure  \n- **Cell** (`source/EngineGpuKernels/Object.cuh`): Updated GPU memory structure\n\n### Conversion Services\n- **DescriptionConverterService**: Updated bidirectional conversion logic between Description and TO objects\n- **PreviewDescriptionConverterService**: Updated preview generation to use new member name\n\n### Serialization\n- **SerializerService**: Updated serialization constant from `Id_Cell_GenomeNodeIndex` to `Id_Cell_NodeIndex` while preserving the ID value (12) for backward compatibility\n\n### CUDA Kernel Updates\n- **ObjectFactory**: Updated cell creation and modification routines\n- **DataAccessKernels**: Updated data transfer operations\n- **ConstructorProcessor**: Updated cell construction validation logic\n\n### Test Updates\n- **PreviewDescriptionConverterServiceTests**: Updated all test cases to use `nodeIndex()` instead of `genomeNodeIndex()`\n\n## Backward Compatibility\n\nThe serialization format remains fully compatible with existing data files. The serialization ID constant retains its value (12), ensuring that saved simulations will load correctly after this change.\n\n## Quality Assurance\n\n- All 10 modified files show balanced changes (29 insertions, 29 deletions)\n- No `genomeNodeIndex` references remain in the codebase\n- The rename is purely cosmetic with no functional changes\n- CUDA kernel code properly updated to maintain GPU computation correctness\n\nThis change improves code readability by using a more concise and clear member name while maintaining full functionality and compatibility.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n*This pull request was created as a result of the following prompt from Copilot chat.*\n> Rename the member `genomeNodeIndex` to `nodeIndex` in the classes `CellDescription`, `CellTO`, and `Cell`. Update all references, constructors, getters/setters, and usages accordingly. Also, update the following conversion and utility classes to use `nodeIndex` instead of `genomeNodeIndex`:\n> - `DescriptionConverterService`\n> - `ObjectFactory`\n> - `DataAccessKernels`\n> - `SerializerService`\n> - `TestDataFactory`\n> \n> Ensure all serialization/deserialization, data transformations, and test utilities reflect the new member name. Verify correctness and update related documentation or comments if necessary.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **SerializerService**: Updated serialization constant from `Id_Cell_GenomeNodeIndex` to `Id_Cell_NodeIndex` while preserving the ID value (12) for backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "## Backward Compatibility"
+  }
+ ],
+ "order": "ab7ed6abfc05672b620f1192b52368bef4744628bfc498ab5543ba3e2fd6d683"
+}

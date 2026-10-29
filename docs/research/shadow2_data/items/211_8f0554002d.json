@@ -1,0 +1,14 @@
+{
+ "id": "8f0554002d",
+ "url": "https://github.com/AstrBotDevs/AstrBot/pull/2461",
+ "repo": "AstrBotDevs/AstrBot",
+ "number": 2461,
+ "message": "Adds networking options for ZhiPu models to enable built-in web search capabilities as requested in the issue.\n\n## Changes Made\n\n### Configuration\n- Added `zhipu_web_search` boolean option to ZhiPu provider configuration (default: `false`)\n- Added proper configuration schema with Chinese description and usage hints\n- Maintains backward compatibility with existing configurations\n\n### Implementation\nEnhanced the `ProviderZhipu` class with model-specific networking tools:\n\n**For `glm-4-alltools` model:**\n```python\ntools = [{\n    \"type\": \"web_browser\"\n}]\n```\n\n**For other models (glm-4-flash, etc.):**\n```python\ntools = [{\n    \"type\": \"web_search\",\n    \"web_search\": {\n        \"enable\": True,\n        \"search_result\": True\n    }\n}]\n```\n\n### Key Features\n- **Automatic model detection**: The system detects the ZhiPu model type and applies the appropriate networking tools\n- **Function tool conflict prevention**: When ZhiPu networking is enabled, AstrBot function tools are disabled to prevent conflicts\n- **Debug logging**: Provides clear logging when networking tools are added and function tools are disabled\n- **Seamless integration**: Works with the existing OpenAI-compatible provider architecture\n\n### Usage\nUsers can enable the feature by setting `zhipu_web_search: true` in their ZhiPu provider configuration. The system will automatically:\n1. Detect the model type (`glm-4-alltools` vs others)\n2. Add the appropriate networking tools to the request\n3. Disable conflicting function tools if present\n4. Log the networking tool activation for debugging\n\nThis implementation follows the same pattern as Gemini's native search functionality but is tailored specifically for ZhiPu's networking requirements.\n\nFixes #1546.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintains backward compatibility with existing configurations"
+  }
+ ],
+ "order": "bf5c16d097575d0686ce976266a93111daf98ec0ec3c14b1da1b0f6b7fd61c3c"
+}

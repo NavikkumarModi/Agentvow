@@ -1,0 +1,22 @@
+{
+ "id": "d067698f27",
+ "url": "https://github.com/meilisearch/meilisearch/pull/5796",
+ "repo": "meilisearch/meilisearch",
+ "number": 5796,
+ "message": "## Summary\r\n\r\nThis PR introduces advanced access control features for API keys as part of the Enterprise Edition, allowing administrators to restrict API key usage based on IP addresses, HTTP referrers, and rate limits.\r\n\r\n## Features Added\r\n\r\n1. IP-based Access Restrictions\r\n\r\n  - API keys can now be restricted to specific IP addresses or CIDR subnets\r\n  - Supports both IPv4 and IPv6 addresses\r\n  - Example: `\"allowed_ips\": [\"192.168.1.0/24\", \"10.0.0.1/32\"]`\r\n\r\n2. Referrer-based Access Restrictions\r\n\r\n  - API keys can be limited to requests from specific domains\r\n  - Supports wildcard patterns for flexible domain matching\r\n  - Example: `\"allowed_referrers\": [\"*.example.com\", \"https://trusted.org/*\"]`\r\n\r\n3. Rate Limiting Configuration\r\n\r\n  - Per-API-key rate limiting with configurable request limits and time windows\r\n  - Structure: `\"rate_limit\": { \"max_requests\": 100, \"window_seconds\": 3600 }`\r\n  - Returns HTTP 429 when rate limit is exceeded\r\n  - Adds rate limit headers to responses: `X-RateLimit-Limit`,\r\n  `X-RateLimit-Remaining`, `X-RateLimit-Reset`\r\n\r\n## Technical Implementation\r\n\r\n### Core Components\r\n\r\n- `api_key_restrictions.rs`: Core validation logic for IP and referrer restrictions with comprehensive wildcard matching and CIDR subnet support\r\n- Rate Limiter Module: In-memory sliding window rate limiter with automatic cleanup of expired entries. Redis based if the feature `redis-rate-limiter` is activated and the env variable `MEILI_REDIS_RATE_LIMIT_URL` is set. \r\n- Authentication Integration: Extended authentication pipeline to validate restrictions and enforce rate limits\r\n\r\n### API Changes\r\n\r\n- Extended CreateApiKey and Key structs with optional restriction fields\r\n- New error codes: `rate_limit_exceeded` (HTTP 429)\r\n- Backward compatible - all restriction fields are optional\r\n\r\n### Testing\r\n\r\n- Unit tests for wildcard matching algorithm\r\n- Unit tests for CIDR IP matching (IPv4 and IPv6)\r\n- Integration tests for API key creation with restrictions\r\n- Comprehensive test coverage for combined restrictions\r\n\r\n## Example Usage\r\n```\r\n  POST /keys\r\n  {\r\n    \"name\": \"restricted-api-key\",\r\n    \"actions\": [\"search\"],\r\n    \"indexes\": [\"products\"],\r\n    \"allowed_ips\": [\"192.168.1.0/24\", \"2001:db8::/32\"],\r\n    \"allowed_referrers\": [\"*.mycompany.com\", \"https://partner.org/*\"],\r\n    \"rate_limit\": {\r\n      \"max_requests\": 1000,\r\n      \"window_seconds\": 3600\r\n    }\r\n  }\r\n```\r\n## Migration & Compatibility\r\n\r\n- Fully backward compatible with existing API keys\r\n- Database migration handled via v5 to v6 compatibility layer\r\n- No action required for existing deployments\r\n\r\n## Security Considerations\r\n\r\n- IP restrictions help prevent API key abuse from unauthorized networks\r\n- Referrer restrictions add an additional layer of protection for\r\n  browser-based applications\r\n- Rate limiting prevents API abuse and ensures fair resource usage\r\n\r\n## Performance Impact\r\n\r\n- Minimal overhead for restriction checks (O(n) for n restrictions)\r\n- In-memory rate limiter with efficient sliding window algorithm\r\n- Automatic cleanup of expired rate limit entries\r\n\r\n## Breaking Changes\r\n\r\nNone - all new fields are optional and backward compatible.\r\n\r\n## Dependencies Added\r\n\r\n- ipnet: For efficient IP subnet matching\r\n\r\n## Enterprise Edition Notice\r\n\r\nThis feature is part of Meilisearch Enterprise Edition and is governed by the Business Source License 1.1.\r\n   \r\n## Check\r\n- [x] Cargo check, test, fmt, clippy\r\n- [x] Api changes: None\r\n- [x] Storage changes: Dump Implemented\r\n- [x] Env/CLI changes: Yes and documented",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Backward compatible - all restriction fields are optional"
+  },
+  {
+   "n": 2,
+   "text": "- Fully backward compatible with existing API keys"
+  },
+  {
+   "n": 3,
+   "text": "None - all new fields are optional and backward compatible."
+  }
+ ],
+ "order": "fce9fe331a37286aa6f06253a1ddbd84d04f63ca237531f9ba8f5d9d452472f5"
+}

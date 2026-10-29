@@ -1,0 +1,22 @@
+{
+ "id": "660d7d66f3",
+ "url": "https://github.com/assistant-ui/assistant-ui/pull/2125",
+ "repo": "assistant-ui/assistant-ui",
+ "number": 2125,
+ "message": "# Implement CloudFileAttachmentAdapter with promise-based uploads and progress bar support\n\n## Summary\n\nThis PR adds a new `CloudFileAttachmentAdapter` that uploads files to AssistantCloud and displays upload progress in the shadcn registry template. The implementation uses a promise-based upload pattern for better performance and user experience.\n\n## Key Features\n\n### CloudFileAttachmentAdapter\n- **File Upload**: Uploads files to AssistantCloud using `generatePresignedUploadUrl()`\n- **File Type Support**: Accepts any file type (`accept = \"*/*\"`)\n- **Content Format**: Returns `FileContentPart` with base64 data and mimeType\n- **Error Handling**: Comprehensive error handling for upload failures\n\n### Promise-Based Upload Pattern\n- **Upload Timing**: Upload starts immediately in `add()` method\n- **Promise Storage**: Upload promise stored on `PendingAttachment.uploadPromise`\n- **Await in Send**: `send()` method awaits the stored upload promise\n- **Performance**: Allows upload to happen in parallel with user interactions\n\n### Progress Bar Support\n- **AsyncGenerator**: Yields progress updates (0%, 25%, 50%, 75%) during upload\n- **UI Component**: Added `AttachmentProgress` component to shadcn registry template\n- **Visual Design**: Thin progress bar at bottom of file attachments\n- **Conditional Display**: Only shows when `status.type === \"running\"` with progress data\n\n## Technical Implementation\n\n### Type Safety\n- Extended `PendingAttachment` type with optional `uploadPromise?: Promise<{ url: string; data: string }>`\n- Maintains backward compatibility since `uploadPromise` is optional\n- Proper TypeScript typing throughout\n\n### Code Organization\n- New `CloudFileAttachmentAdapter.ts` in attachment adapters directory\n- Exported from attachment adapters index for easy import\n- Private `startUpload()` method for clean separation of concerns\n- Reusable `fileToBase64()` utility method\n\n## Files Changed\n\n- `packages/react/src/runtimes/adapters/attachment/CloudFileAttachmentAdapter.ts` - New adapter implementation\n- `packages/react/src/runtimes/adapters/attachment/index.ts` - Export added\n- `packages/react/src/types/AttachmentTypes.ts` - Extended PendingAttachment type\n- `apps/registry/components/assistant-ui/attachment.tsx` - Progress bar UI component\n\n## Usage Example\n\n```typescript\nimport { CloudFileAttachmentAdapter } from \"@assistant-ui/react\";\n\nconst adapter = new CloudFileAttachmentAdapter(assistantCloudInstance);\n// Upload starts immediately when file is added\n// Progress updates are shown in the UI\n// Send operation awaits the completed upload\n```\n\n## Testing\n\nThe implementation follows existing patterns in the codebase and maintains backward compatibility. All TypeScript types are properly defined and the optional `uploadPromise` field ensures no breaking changes.\n\n---\n\n**Link to Devin run**: https://app.devin.ai/sessions/ff739636edd84055b190e64e25a22501\n\n**Requested by**: Simon Farshid (simon@assistant-ui.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintains backward compatibility since `uploadPromise` is optional"
+  },
+  {
+   "n": 2,
+   "text": "The implementation follows existing patterns in the codebase and maintains backward compatibility."
+  },
+  {
+   "n": 3,
+   "text": "All TypeScript types are properly defined and the optional `uploadPromise` field ensures no breaking changes."
+  }
+ ],
+ "order": "97a753fea09268c7bf4548247703a89b1ee7552e427a04a49b549a380288ae47"
+}

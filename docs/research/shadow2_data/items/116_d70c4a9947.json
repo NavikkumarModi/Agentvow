@@ -1,0 +1,18 @@
+{
+ "id": "d70c4a9947",
+ "url": "https://github.com/crewAIInc/crewAI/pull/3575",
+ "repo": "crewAIInc/crewAI",
+ "number": 3575,
+ "message": "# Fix CSVKnowledgeSource token limit issue with batching\n\n## Summary\n\nResolves issue #3574 where CSVKnowledgeSource exceeds embedder token limits when processing large CSV files. The problem occurred because all chunks were sent to the embedder in a single request, causing \"Requested 722281 tokens, max 300000 tokens per request\" errors.\n\n**Key Changes:**\n- Added configurable `batch_size` parameter to `BaseFileKnowledgeSource` (default: 50 chunks)\n- Modified `_save_documents()` method to process chunks in batches instead of all at once\n- Added comprehensive tests for large file batching behavior and backward compatibility\n\n**Impact:** This fix applies to ALL file-based knowledge sources (CSV, PDF, Excel, JSON, etc.) since it modifies the base class.\n\n## Review & Testing Checklist for Human\n\n**\u26a0\ufe0f Critical - Could not verify fix locally due to pytest environment issues**\n\n- [ ] **Reproduce original issue**: Create a large CSV file (~150 rows, ~434k words) and verify it fails with token limit error before this fix\n- [ ] **Verify fix works**: Test the same large CSV file with this fix and confirm it processes successfully without token errors  \n- [ ] **Test different embedders**: Verify batching works with OpenAI, Anthropic, and other embedding providers to ensure batch size is appropriate\n- [ ] **Test other knowledge sources**: Ensure no regressions in PDFKnowledgeSource, ExcelKnowledgeSource, JSONKnowledgeSource after base class changes\n- [ ] **Edge case validation**: Test batch_size parameter with edge values (0, negative, very large numbers) to ensure proper error handling\n\n### Notes\n\n- The default batch size of 50 chunks is based on the issue suggestion but hasn't been empirically validated across different embedders\n- Tests use mocking to verify batching logic but don't test actual embedding calls\n- This is a broad change affecting all file knowledge sources - extra attention needed for regressions\n\n**Link to Devin run:** https://app.devin.ai/sessions/c43b6fb53a8a4594b0499292d0acb878  \n**Requested by:** Jo\u00e3o (joao@crewai.com)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added comprehensive tests for large file batching behavior and backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "**\u26a0\ufe0f Critical - Could not verify fix locally due to pytest environment issues**"
+  }
+ ],
+ "order": "642ba5a670fc6b824513862d69f07e40471fc8bb08d455ce6bf9f1c1dee515a8"
+}

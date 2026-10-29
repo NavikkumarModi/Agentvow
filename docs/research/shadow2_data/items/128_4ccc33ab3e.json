@@ -1,0 +1,14 @@
+{
+ "id": "4ccc33ab3e",
+ "url": "https://github.com/percona/pmm/pull/4673",
+ "repo": "percona/pmm",
+ "number": 4673,
+ "message": "## Overview\n\nThis PR removes the `_TEST_` prefix from PMM High Availability environment variables to officially promote them from preview/test status to production-ready supported variables.\n\n## Changes\n\nAll `PMM_TEST_HA_*` environment variables have been renamed to `PMM_HA_*` across the codebase:\n\n- `PMM_TEST_HA_ENABLE` \u2192 `PMM_HA_ENABLE`\n- `PMM_TEST_HA_BOOTSTRAP` \u2192 `PMM_HA_BOOTSTRAP`\n- `PMM_TEST_HA_NODE_ID` \u2192 `PMM_HA_NODE_ID`\n- `PMM_TEST_HA_ADVERTISE_ADDRESS` \u2192 `PMM_HA_ADVERTISE_ADDRESS`\n- `PMM_TEST_HA_PEERS` \u2192 `PMM_HA_PEERS`\n- `PMM_TEST_HA_RAFT_PORT` \u2192 `PMM_HA_RAFT_PORT`\n- `PMM_TEST_HA_GOSSIP_PORT` \u2192 `PMM_HA_GOSSIP_PORT`\n- `PMM_TEST_HA_GRAFANA_GOSSIP_PORT` \u2192 `PMM_HA_GRAFANA_GOSSIP_PORT`\n\n## Files Modified\n\n- **managed/cmd/pmm-managed/main.go** - Updated environment variable bindings for HA flags\n- **docker-compose.ha.yml** - Updated all HA environment variables across active and passive PMM server instances\n- **documentation/docs/install-pmm/HA.md** - Updated all HA deployment examples and configuration\n- **documentation/docs/install-pmm/install-pmm-server/deployment-options/docker/preview_env_var.md** - Updated variable documentation\n- **managed/services/telemetry/config.default.yml** - Updated telemetry tracking configuration\n- **docs/process/best_practices.md** - Updated environment variable naming convention example\n\n## Impact\n\nUsers currently using `PMM_TEST_HA_*` variables will need to update their configurations to use the new `PMM_HA_*` variable names. This change reflects the maturity and official support status of the HA feature in PMM.\n\n## Testing\n\n- \u2705 Go code compiles successfully\n- \u2705 All references to old variable names removed from codebase\n- \u2705 Documentation updated to reflect new variable names\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> We have to review the ENV variables and rename variables for PMM HA like below and remove _TEST_ part to make it officially supported env variables:\n> Env variables with prefix PMM_TEST_HA should have prefix PMM_HA\n> \n> Include task ID \"PMM-14402\" to every commit and PR name\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **documentation/docs/install-pmm/install-pmm-server/deployment-options/docker/preview_env_var.md** - Updated variable documentation"
+  }
+ ],
+ "order": "7484d8a620556f096727f4dbabbfaf0cdce63589da6c210719192107074208fc"
+}

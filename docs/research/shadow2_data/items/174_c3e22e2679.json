@@ -1,0 +1,22 @@
+{
+ "id": "c3e22e2679",
+ "url": "https://github.com/specmatic/specmatic/pull/1950",
+ "repo": "specmatic/specmatic",
+ "number": 1950,
+ "message": "## Summary\n\nThis PR implements support for OpenAPI 3.0.3 `allOf` schemas by introducing a new `AllOfPattern` class that enforces \"all patterns must match\" semantics, inspired by the existing `AnyPattern` class which handles `oneOf` schemas.\n\n## Problem\n\nThe existing `allOf` handling in OpenAPISpecification was complex and primarily designed for discriminator scenarios. There was no dedicated pattern class to represent the semantic intent of `allOf` - that a value must satisfy ALL constituent patterns simultaneously.\n\n## Solution\n\n### New AllOfPattern Class\n\nCreated `AllOfPattern` class in `core/src/main/kotlin/io/specmatic/core/pattern/AllOfPattern.kt` with key features:\n\n- **matches()**: Returns success only when the value matches ALL constituent patterns\n- **generate()**: Generates values that satisfy all patterns \n- **typeName**: Combines pattern names with \"and\" (e.g., \"string and number\")\n- Complete Pattern interface implementation with allOf-specific semantics\n\n### Integration\n\nEnhanced `OpenApiSpecification.toSpecmaticPattern()` to use `AllOfPattern` for simple allOf cases without discriminators:\n\n```kotlin\nif (!allDiscriminators.isNotEmpty() && schema.discriminator == null && deepListOfAllOfs.all { it.oneOf == null }) {\n    val candidatePatterns = schema.allOf.map { componentSchema ->\n        // Convert each schema to a Pattern\n        toSpecmaticPattern(schemaToProcess, typeStack.plus(componentName), componentName)\n    }\n    \n    AllOfPattern(candidatePatterns, typeAlias = \"(${patternName})\")\n}\n```\n\nThe existing complex allOf logic for discriminator scenarios is preserved for backward compatibility.\n\n## Example Usage\n\n```yaml\n# OpenAPI Schema\nschema:\n  allOf:\n    - type: object\n      properties:\n        name:\n          type: string\n    - type: object  \n      properties:\n        age:\n          type: integer\n```\n\nThis now creates an `AllOfPattern` that requires BOTH the name (string) and age (integer) properties to be present and valid.\n\n## Testing\n\n- \u2705 Created comprehensive unit tests for `AllOfPattern` core functionality\n- \u2705 All existing `AllOfDiscriminatorTest` tests continue to pass (no regression)\n- \u2705 Added integration tests to verify OpenAPI conversion works correctly\n- \u2705 Verified pattern matching, generation, and type naming work as expected\n\n## Benefits\n\n1. **Semantic Clarity**: `AllOfPattern` clearly represents the \"all must match\" intent of `allOf` schemas\n2. **Better Error Reporting**: Can show which specific pattern in the allOf failed\n3. **Extensibility**: Provides foundation for complex allOf scenarios\n4. **No Breaking Changes**: Existing functionality is preserved\n\n## Files Changed\n\n- `core/src/main/kotlin/io/specmatic/core/pattern/AllOfPattern.kt` - New pattern class\n- `core/src/main/kotlin/io/specmatic/conversions/OpenApiSpecification.kt` - Integration logic\n- Test files for comprehensive validation\n\nThis implementation provides a solid foundation for improved allOf support in OpenAPI 3.0.3 while maintaining backward compatibility with existing functionality.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The existing complex allOf logic for discriminator scenarios is preserved for backward compatibility."
+  },
+  {
+   "n": 2,
+   "text": "**No Breaking Changes**: Existing functionality is preserved"
+  },
+  {
+   "n": 3,
+   "text": "This implementation provides a solid foundation for improved allOf support in OpenAPI 3.0.3 while maintaining backward compatibility with existing functionality."
+  }
+ ],
+ "order": "a299f0595842c59a1c385ad86d868b1625b29b9f8964d51d2b421ba21fbf4778"
+}

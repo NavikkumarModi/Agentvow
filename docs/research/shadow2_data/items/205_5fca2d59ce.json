@@ -1,0 +1,26 @@
+{
+ "id": "5fca2d59ce",
+ "url": "https://github.com/maester365/maester/pull/1185",
+ "repo": "maester365/maester",
+ "number": 1185,
+ "message": "The `Get-MtRoleMember` function previously used a hardcoded `[ValidateSet()]` attribute containing 100+ Entra role names that became outdated as Microsoft adds, removes, or modifies roles. This caused the function to reject valid new roles and prevented users from querying recently added Entra roles.\n\n## Changes Made\n\n**Removed hardcoded validation:**\n- Eliminated the static `[ValidateSet()]` attribute from the `Role` parameter that contained a fixed list of role names\n- Function now accepts any role name without parameter-level restrictions\n\n**Implemented dynamic validation:**\n- Created `Get-MtRoleList` internal function that queries current role definitions from Microsoft Graph API (`roleManagement/directory/roleDefinitions`)\n- Added session caching using existing `$__MtSession.GraphCache` infrastructure to avoid repeated API calls\n- Enhanced `Get-MtRoleInfo` to use dynamic role lookup with fallback to static list for backward compatibility\n\n**Improved user experience:**\n- Added helpful error messages that list all available roles when invalid role names are provided\n- Updated function documentation to explain the dynamic validation behavior\n- Maintained 100% backward compatibility - all existing scripts continue to work unchanged\n\n## Before vs After\n\n**Before (problematic):**\n```powershell\nGet-MtRoleMember -Role \"Microsoft365BackupAdministrator\"\n# Could fail if role was added after module release\n```\n\n**After (fixed):**\n```powershell\nGet-MtRoleMember -Role \"Microsoft365BackupAdministrator\" \n# \u2705 Always works - validates against current tenant roles\nGet-MtRoleMember -Role \"AnyNewRole2024\"\n# \u2705 Accepts any role name, validates dynamically\n```\n\n## Technical Implementation\n\nThe solution follows the existing codebase patterns:\n- Uses `Invoke-MtGraphRequest` like other Graph API functions\n- Leverages the established `$__MtSession.GraphCache` caching mechanism  \n- Includes graceful fallback when Graph API is unavailable\n- Maintains the same parameter structure and return types\n\nThis ensures Entra role lists stay current automatically without requiring module updates, while preserving full backward compatibility and performance through intelligent caching.\n\nFixes #1184.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses (expand for details)</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `us.i.posthog.com`\n>   - Triggering command: `pwsh -Command &amp; &#39;./tests/pester.ps1&#39; -Output None` (dns block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to the custom allowlist in this repository's [Copilot coding agent settings](https://github.com/maester365/maester/settings/copilot/coding_agent) (admins only)\n>\n> </details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/maester365/maester/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Enhanced `Get-MtRoleInfo` to use dynamic role lookup with fallback to static list for backward compatibility"
+  },
+  {
+   "n": 2,
+   "text": "- Updated function documentation to explain the dynamic validation behavior"
+  },
+  {
+   "n": 3,
+   "text": "- Maintained 100% backward compatibility - all existing scripts continue to work unchanged"
+  },
+  {
+   "n": 4,
+   "text": "This ensures Entra role lists stay current automatically without requiring module updates, while preserving full backward compatibility and performance through intelligent caching."
+  }
+ ],
+ "order": "ba02c6bbf8b5dfc92861b7843930d9b0822cc728825bc090806b81fdd7ab6c8c"
+}

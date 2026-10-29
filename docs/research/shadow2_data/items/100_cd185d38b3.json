@@ -1,0 +1,14 @@
+{
+ "id": "cd185d38b3",
+ "url": "https://github.com/wieslawsoltes/Dock/pull/452",
+ "repo": "wieslawsoltes/Dock",
+ "number": 452,
+ "message": "## Summary\n- add `FactoryExtensions` with methods to retrieve the active root and current document\n- document how to get the active document\n- link the new guide from the docs index\n\n## Testing\n- `dotnet test` *(fails: No test is available message, but 13 tests passed)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_685c5f8b49088321810eeab8c38443cd",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `dotnet test` *(fails: No test is available message, but 13 tests passed)*"
+  }
+ ],
+ "order": "502073e06c1f178753ccb111ef3c92326b6cc2bc421fdb3e37cbf06a6e9bb52a"
+}

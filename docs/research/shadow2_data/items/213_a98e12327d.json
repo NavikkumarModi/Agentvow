@@ -1,0 +1,14 @@
+{
+ "id": "a98e12327d",
+ "url": "https://github.com/OfficeDev/microsoft-365-agents-toolkit/pull/14516",
+ "repo": "OfficeDev/microsoft-365-agents-toolkit",
+ "number": 14516,
+ "message": "This PR synchronizes the changes from PR #14497 (\"feat: default bot for Teams AI V2\") to the `dev` branch only as requested in the cherry-pick reminder issue.\n\n## What Changed\n\nThe default bot templates have been migrated from the legacy `@microsoft/agents-hosting` SDK to the modern Teams AI Library V2 (`@microsoft/teams.apps`). This modernization brings several improvements:\n\n### Architecture Changes\n- **Replaced** `agent.ts/js` files with new `app.ts/js` and `config.ts/js` structure\n- **Updated** from imperative agent pattern to declarative app pattern using Teams AI V2\n- **Simplified** authentication with `TokenCredentials` and `ManagedIdentityCredential`\n\n### Dependencies\n```diff\n- \"@microsoft/agents-hosting\": \"^1.0.0\"\n+ \"@azure/identity\": \"^4.11.1\"\n+ \"@microsoft/teams.apps\": \"preview\"  \n+ \"@microsoft/teams.common\": \"preview\"\n```\n\n### Runtime Requirements\n- **Updated** Node.js support from `18, 20, 22` to `20, 22` (dropped Node.js 18 support)\n- **Modernized** TypeScript configuration for better compatibility\n\n### Configuration Updates\n- **Environment variables**: `clientId` \u2192 `CLIENT_ID`, `tenantId` \u2192 `TENANT_ID`\n- **Added** `BOT_TYPE` environment variable for UserAssignedMsi authentication\n- **Updated** Azure deployment templates and local configuration files\n\n## Branch-Specific Implementation\n\n### `dev` branch\n- Successfully migrated templates in `templates/vsc/ts/default-bot/` and `templates/vsc/js/default-bot/`\n- Updated README files to reflect Teams AI Library V2 and new Node.js requirements\n- Modified Azure bicep templates with new environment variable naming\n- Updated m365agents configuration files for new environment variable format\n\nThe migration ensures developers get the latest Teams AI capabilities while maintaining full functionality. Both TypeScript and JavaScript templates now leverage the improved Teams AI Library V2 architecture.\n\nFixes #14498.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/OfficeDev/microsoft-365-agents-toolkit/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated README files to reflect Teams AI Library V2 and new Node.js requirements"
+  }
+ ],
+ "order": "c04ea8b4130284080c3ecc4fc764f009411b389c96e771e0eb7776dd61720cb4"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "c0ca1adaf3",
+ "url": "https://github.com/yutto-dev/yutto/pull/539",
+ "repo": "yutto-dev/yutto",
+ "number": 539,
+ "message": "This PR addresses the repository structure optimization issues identified in the codebase by renaming poorly named modules and functions to better reflect their actual purpose and functionality.\n\n## Key Changes\n\n### 1. Renamed `bilibili_typing` module to `media`\n\nThe `bilibili_typing` module name was misleading since it doesn't contain TypedDict or typing annotations, but rather codec and quality definitions for Bilibili media formats. The new `media` name clearly describes its actual purpose.\n\n**Changed:**\n- `src/yutto/bilibili_typing/` \u2192 `src/yutto/media/`\n- Updated 11 import statements across the codebase\n\n### 2. Renamed `start_downloader` function to `process_download`\n\nWith the introduction of `download_manager`, the function name `start_downloader` was confusing since it doesn't start a downloader service, but rather processes a single download task.\n\n**Changed:**\n- `start_downloader()` \u2192 `process_download()` in `downloader.py`\n- Updated all references in `download_manager.py`\n\n### 3. Import organization cleanup\n\nFixed import ordering issues that arose from the module rename using ruff formatter.\n\n## Benefits\n\n- **Clearer module purpose**: `media` immediately conveys that this module handles media-related codec and quality definitions\n- **Accurate function naming**: `process_download` accurately describes single task processing vs. service initialization\n- **Improved maintainability**: Future developers will have clearer understanding of module responsibilities\n- **Consistent naming patterns**: Aligns with the existing `download_manager` naming convention\n\n## Verification\n\n- All existing functionality preserved\n- Linting passes with ruff\n- Core imports work correctly\n- Old names properly removed and inaccessible\n- No breaking changes to public API\n\nThe repository structure is now more logical and maintainable with naming that accurately reflects each component's purpose.\n\nFixes #538.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Linting passes with ruff"
+  },
+  {
+   "n": 2,
+   "text": "- No breaking changes to public API"
+  }
+ ],
+ "order": "15e66d192ad5ef4171dca49954ef7ccef9a66aec9e4f3fe693cd00852851ffca"
+}

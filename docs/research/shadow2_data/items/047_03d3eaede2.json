@@ -1,0 +1,14 @@
+{
+ "id": "03d3eaede2",
+ "url": "https://github.com/antiwork/shortest/pull/427",
+ "repo": "antiwork/shortest",
+ "number": 427,
+ "message": "# Add object-shorthand ESLint rule\n\nThis PR adds the `\"object-shorthand\": \"error\"` rule to the ESLint configuration and fixes all instances in the codebase to comply with this rule.\n\n## Changes\n- Added the rule to eslint.config.js\n- Fixed all instances of object properties that needed to use shorthand syntax\n\n## Testing\nThe changes were verified by running the lint command, which completed successfully with no errors.\n\nLink to Devin run: https://app.devin.ai/sessions/1c827ef64bdb468d9430e0e83197d4fa\nRequested by: Razvan Marescu (razvan@marescu.net)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "The changes were verified by running the lint command, which completed successfully with no errors."
+  }
+ ],
+ "order": "246ba0ad4920d9c28636a8426a822a127eb6d6b90ffa84dd4173fb2cdd6cbdcb"
+}

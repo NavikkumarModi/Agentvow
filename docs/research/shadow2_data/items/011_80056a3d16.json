@@ -1,0 +1,18 @@
+{
+ "id": "80056a3d16",
+ "url": "https://github.com/mastra-ai/mastra/pull/8736",
+ "repo": "mastra-ai/mastra",
+ "number": 8736,
+ "message": "## Description\n\nThis PR introduces a new \"Storage Explorer\" feature to the Mastra playground. It provides a universal interface for users to browse, search, and perform basic CRUD operations on data across all Mastra storage tables (excluding `mastra_traces`), regardless of the underlying storage provider.\n\nThe implementation includes:\n- New backend API endpoints for listing tables, fetching paginated data, and handling record-level GET, PUT, and DELETE operations.\n- A dedicated frontend UI page in the playground, accessible via a new sidebar link, offering table selection, search, pagination, and a modal for viewing/editing records.\n\n**Note:** While the UI for record editing is complete, the save functionality is currently pending. Additionally, the initial search implementation uses string concatenation for SQL queries, which poses a **SQL injection risk** and requires immediate refactoring to use parameterized queries for production readiness.\n\n## Related Issue(s)\n\nN/A\n\n## Type of Change\n\n- [ ] Bug fix (non-breaking change that fixes an issue)\n- [x] New feature (non-breaking change that adds functionality)\n- [ ] Breaking change (fix or feature that would cause existing functionality to change)\n- [x] Documentation update\n- [ ] Code refactoring\n- [ ] Performance improvement\n- [ ] Test update\n\n## Checklist\n\n- [x] I have made corresponding changes to the documentation (if applicable)\n- [ ] I have added tests that prove my fix is effective or that my feature works\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-69ba094d-3f73-4435-bcd2-06f3734b3fe7\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-69ba094d-3f73-4435-bcd2-06f3734b3fe7\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bug fix (non-breaking change that fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] New feature (non-breaking change that adds functionality)"
+  }
+ ],
+ "order": "0b2ec016e586421ff19324f130207f586b95d669d9e164b7c255a3dcd3048267"
+}

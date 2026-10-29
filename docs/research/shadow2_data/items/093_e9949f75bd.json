@@ -1,0 +1,22 @@
+{
+ "id": "e9949f75bd",
+ "url": "https://github.com/neondatabase/website/pull/3680",
+ "repo": "neondatabase/website",
+ "number": 3680,
+ "message": "# Update Neon Local Connect docs for broader editor compatibility\n\n## Summary\n\nThis PR updates the Neon Local Connect documentation to reflect broader editor compatibility beyond just VS Code. The main changes include:\n\n- **File rename**: `neon-local-vscode.md` \u2192 `neon-local-connect.md` \n- **URL change**: `/docs/local/neon-local-vscode` \u2192 `/docs/local/neon-local-connect`\n- **Content updates**: Added support mentions for Cursor, Windsurf, and other VS Code-compatible editors\n- **Installation instructions**: Added OpenVSX registry installation alongside VS Code Marketplace\n- **Navigation updates**: Updated sidebar title from \"VS Code Extension\" to \"Neon Local Connect\"\n- **Redirect added**: Maintains backward compatibility for old URL\n\nThe documentation now accurately reflects that the extension is available on both the VS Code Marketplace and OpenVSX registry, making it accessible to users of various VS Code-compatible editors.\n\n## Review & Testing Checklist for Human\n\n- [ ] **Test URL redirect**: Verify that `/docs/local/neon-local-vscode` properly redirects to `/docs/local/neon-local-connect`\n- [ ] **Verify OpenVSX link**: Confirm the OpenVSX registry URL (https://open-vsx.org/extension/databricks/neon-local-connect) is correct and accessible\n- [ ] **Test new page rendering**: Check that the renamed documentation page renders correctly with updated content\n- [ ] **Verify editor compatibility claims**: Confirm that the extension actually works on Cursor, Windsurf, and other mentioned editors\n- [ ] **Check for broken internal links**: Search for any remaining references to the old filename that might have been missed\n\n**Recommended test plan**: Navigate to the old URL to test redirect, then verify the new page loads properly, test both marketplace links work, and spot-check that sidebar navigation functions correctly.\n\n---\n\n### Diagram\n\n```mermaid\n%%{ init : { \"theme\" : \"default\" }}%%\ngraph TD\n    A[\"content/docs/local/<br/>neon-local-vscode.md\"]:::major-edit --> B[\"content/docs/local/<br/>neon-local-connect.md\"]:::major-edit\n    C[\"content/docs/sidebar.yaml\"]:::minor-edit\n    D[\"next.config.js\"]:::minor-edit\n    E[\"content/changelog/<br/>2025-07-18.md\"]:::minor-edit\n    F[\"content/docs/introduction/<br/>roadmap.md\"]:::minor-edit\n    G[\"public/llms/<br/>local-neon-local-vscode.txt\"]:::major-edit --> H[\"public/llms/<br/>local-neon-local-connect.txt\"]:::major-edit\n    \n    B --> |\"referenced by\"| C\n    B --> |\"redirected from\"| D\n    B --> |\"linked from\"| E\n    B --> |\"mentioned in\"| F\n    \n    subgraph Legend\n        L1[Major Edit]:::major-edit\n        L2[Minor Edit]:::minor-edit\n        L3[Context/No Edit]:::context\n    end\n\n    classDef major-edit fill:#90EE90\n    classDef minor-edit fill:#87CEEB\n    classDef context fill:#FFFFFF\n```\n\n### Notes\n\n- The extension name consistently uses \"Neon Local Connect\" throughout all documentation\n- Maintained all existing functionality descriptions and screenshots, just updated context for broader editor support\n- Added redirect to ensure backward compatibility with existing links\n- Updated LLM training file to match the documentation changes\n\n**Link to Devin run**: https://app.devin.ai/sessions/b4a4df9c43a74275ab79339743ebb60b  \n**Requested by**: Barry Grenon (barry@neon.tech)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Redirect added**: Maintains backward compatibility for old URL"
+  },
+  {
+   "n": 2,
+   "text": "- Added redirect to ensure backward compatibility with existing links"
+  },
+  {
+   "n": 3,
+   "text": "- Updated LLM training file to match the documentation changes"
+  }
+ ],
+ "order": "4bb682c07c472ae1b19bb7ec7a8f7c351d2894b6b5fdb2f319c19c0c2b5addd9"
+}

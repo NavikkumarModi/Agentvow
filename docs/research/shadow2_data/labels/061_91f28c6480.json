@@ -1,0 +1,20 @@
+{
+ "item_id": "91f28c6480",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "The existing WebSocket tests in test/js/web/websocket/ pass with this change.",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Bun is a Zig/C++ project needing a full multi-hour build; not feasible in the time limit. CI status on head is aggregate 'failure' with per-test results not attributable to this directory, so it does not settle the claim.",
+   "evidence": [
+    "gh api pulls/23832/files: only src/http/websocket_client.zig and test/js/web/websocket/websocket-close-fragmented.test.ts changed",
+    "gh api commits/8ccc3d2.../status: combined state failure (buildkite pipeline context success, individual contexts mixed; no per-test result for test/js/web/websocket)"
+   ]
+  }
+ ],
+ "minutes_estimate": 4
+}

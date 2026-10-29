@@ -1,0 +1,18 @@
+{
+ "id": "7621d4e5c2",
+ "url": "https://github.com/SciML/RecursiveArrayTools.jl/pull/490",
+ "repo": "SciML/RecursiveArrayTools.jl",
+ "number": 490,
+ "message": "## Summary\n\nFixes #486\n\nThis PR adds the `issparse` method for `AbstractVectorOfArray`, resolving a `MethodError` that occurred when `issparse(::SubArray)` tried to call `issparse` on its parent array.\n\n## Changes\n\n1. **Added `issparse` method in `RecursiveArrayToolsSparseArraysExt.jl`**\n   - Returns `false` for `AbstractVectorOfArray` since it is not a sparse array type\n   - Placed in the SparseArrays extension to keep sparse-related functionality together\n\n2. **Added comprehensive tests in `test/interface_tests.jl`**\n   - Test `issparse` returns `false` for `VectorOfArray`\n   - Test `issparse` returns `false` for `DiffEqArray`\n   - Test the original issue with `SubArray` views\n   - Test nested `VectorOfArray` structures\n\n## Test Results\n\nAll tests pass successfully. The fix resolves the error described in the issue:\n```julia\njulia> U = mapreduce(u -> view(u, :, :), hcat, us)\n# Previously: MethodError: no method matching issparse(::ODESolution{...})\n# Now: Works correctly, issparse returns false\n```\n\n## Checklist\n\n- [x] Added implementation in appropriate extension file\n- [x] Added comprehensive tests\n- [x] All tests pass locally (129 tests passed)\n- [x] Code formatted with JuliaFormatter SciMLStyle\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All tests pass successfully."
+  },
+  {
+   "n": 2,
+   "text": "- [x] All tests pass locally (129 tests passed)"
+  }
+ ],
+ "order": "dea327f4a56a62a9e53e4da4b4a2b0c169665be95103a9d08e3b0dacebd4ddc9"
+}

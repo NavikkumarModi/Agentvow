@@ -1,0 +1,38 @@
+{
+ "id": "9ccf4a4e12",
+ "url": "https://github.com/Homebrew/brew/pull/20658",
+ "repo": "Homebrew/brew",
+ "number": 20658,
+ "message": "When running `brew bundle dump --global` for the first time, Homebrew was ignoring `XDG_CONFIG_HOME` and falling back to `~/.Brewfile` instead of creating the Brewfile in the XDG-compliant location `${XDG_CONFIG_HOME}/homebrew/Brewfile`.\n\nThe issue was in the path resolution logic in `Library/Homebrew/bundle/brewfile.rb` which checked for the existence of the Brewfile before deciding to use the XDG path:\n\n```ruby\nif user_config_home && File.exist?(\"#{user_config_home}/Brewfile\")\n```\n\nThis meant that for initial dumps where no Brewfile existed yet, it would fall back to the legacy path even when `XDG_CONFIG_HOME` was properly set.\n\n## Changes Made\n\n1. **Enhanced path resolution logic** in `brewfile.rb` to intelligently choose between XDG and legacy paths while maintaining full backwards compatibility:\n   - When XDG is not set: uses legacy path (unchanged behavior)\n   - When XDG file exists: uses XDG path (unchanged)  \n   - When legacy file exists but XDG doesn't: uses legacy path (maintains backwards compatibility)\n   - When neither exists: uses XDG path (fixes the initial creation issue)\n\n2. **Added directory creation** in `dumper.rb` using `Pathname#mkpath` to ensure the XDG directory structure is created automatically when needed\n\n3. **Added comprehensive test coverage** for all backwards compatibility scenarios including when `HOMEBREW_USER_CONFIG_HOME` is set but neither file exists yet\n\n4. **Refined XDG detection logic** based on reviewer feedback to properly distinguish between XDG paths (`${XDG_CONFIG_HOME}/homebrew`) and legacy paths (`${HOME}/.homebrew`) by checking if `HOMEBREW_USER_CONFIG_HOME` ends with `/homebrew`\n\n5. **Implemented lazy evaluation** to avoid expensive operations unless necessary and restructured conditional logic to reduce duplication\n\n## Behavior After Fix\n\n- `XDG_CONFIG_HOME=/custom/path brew bundle dump --global` \u2192 creates `/custom/path/homebrew/Brewfile` (only when no existing files)\n- Default behavior (no `XDG_CONFIG_HOME`) \u2192 still creates `~/.Brewfile` as expected (unchanged)\n- Existing legacy `~/.Brewfile` files are preserved and used even when XDG is configured (backwards compatible)\n- Existing Brewfiles in XDG locations continue to work unchanged\n- `HOMEBREW_BUNDLE_FILE_GLOBAL` override continues to take precedence\n\n## Backwards Compatibility\n\nThis implementation ensures that no existing workflows are disrupted. Users with existing `~/.Brewfile` files will continue to use them even after setting `XDG_CONFIG_HOME`, maintaining full backwards compatibility while still enabling XDG compliance for new installations.\n\nFixes #20628.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Enhanced path resolution logic** in `brewfile.rb` to intelligently choose between XDG and legacy paths while maintaining full backwards compatibility:"
+  },
+  {
+   "n": 2,
+   "text": "- When legacy file exists but XDG doesn't: uses legacy path (maintains backwards compatibility)"
+  },
+  {
+   "n": 3,
+   "text": "**Added directory creation** in `dumper.rb` using `Pathname#mkpath` to ensure the XDG directory structure is created automatically when needed"
+  },
+  {
+   "n": 4,
+   "text": "**Added comprehensive test coverage** for all backwards compatibility scenarios including when `HOMEBREW_USER_CONFIG_HOME` is set but neither file exists yet"
+  },
+  {
+   "n": 5,
+   "text": "- Existing legacy `~/.Brewfile` files are preserved and used even when XDG is configured (backwards compatible)"
+  },
+  {
+   "n": 6,
+   "text": "## Backwards Compatibility"
+  },
+  {
+   "n": 7,
+   "text": "Users with existing `~/.Brewfile` files will continue to use them even after setting `XDG_CONFIG_HOME`, maintaining full backwards compatibility while still enabling XDG compliance for new installations."
+  }
+ ],
+ "order": "31a1540dbd375686d6682dd9c30b7eebd93a3ed2115804bd46c381111533efa3"
+}

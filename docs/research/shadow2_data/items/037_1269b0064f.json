@@ -1,0 +1,18 @@
+{
+ "id": "1269b0064f",
+ "url": "https://github.com/stacklok/toolhive/pull/2060",
+ "repo": "stacklok/toolhive",
+ "number": 2060,
+ "message": "Reorganize the authentication and authorization code into a cleaner,\nmore maintainable package structure with better separation of concerns.\n\nKey changes:\n- Extract OIDC discovery into dedicated pkg/auth/oidc package\n- Split token validation and introspection into pkg/auth/token with\n  provider pattern for different introspection endpoints\n- Move HTTP middleware to pkg/auth/middleware package\n- Extract PKCE generation into separate file in oauth package\n- Consolidate RFC 9728 resource metadata handling\n- Add backward compatibility layer in pkg/auth/compat.go\n\nThe refactoring reduces code duplication, improves testability, and\nmaintains full backward compatibility through deprecated type aliases\nand wrapper functions.\n\nNet reduction: 3,394 lines of code (-65% in modified files)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Add backward compatibility layer in pkg/auth/compat.go"
+  },
+  {
+   "n": 2,
+   "text": "maintains full backward compatibility through deprecated type aliases"
+  }
+ ],
+ "order": "2175b56cc8ce5e2938e28bdfd7c99ea928342bacf0cde17a4b8340e4284a1291"
+}

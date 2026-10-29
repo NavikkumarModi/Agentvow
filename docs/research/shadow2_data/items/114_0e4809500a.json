@@ -1,0 +1,14 @@
+{
+ "id": "0e4809500a",
+ "url": "https://github.com/BenPru/luxtronik/pull/412",
+ "repo": "BenPru/luxtronik",
+ "number": 412,
+ "message": "This PR fixes deprecated usage of `platform_translations` that will be removed in Home Assistant Core 2026.8. The deprecated pattern was accessing platform translations through `self.platform.platform_data.platform_translations`, which should be replaced with direct access via `self.platform_data.platform_translations`.\n\n## Changes Made\n\nUpdated 4 instances in `custom_components/luxtronik/sensor.py` within the `LuxtronikStatusSensorEntity` class:\n\n**Before (deprecated):**\n```python\nline_1 = self.platform.platform_data.platform_translations.get(\n    f\"component.{DOMAIN}.entity.sensor.status_line_1.state.{line_1_state}\"\n)\n```\n\n**After (new pattern):**\n```python\nline_1 = self.platform_data.platform_translations.get(\n    f\"component.{DOMAIN}.entity.sensor.status_line_1.state.{line_1_state}\"\n)\n```\n\nThe changes were made to the `_build_status_text()` method where platform translations are used to localize status messages for:\n- Status line 1 and line 2 text\n- EVU (utility company) event timing messages\n\n## Pattern Analysis\n\nThe fix differentiates between two correct usage patterns:\n- **Entities**: Use `self.platform_data.platform_translations` (direct property access)\n- **Utility functions with platform parameters**: Use `platform.platform_data.platform_translations` (access through parameter)\n\nThe coordinator.py file was reviewed but requires no changes as it correctly uses the second pattern in functions that receive platform objects as parameters.\n\n## Testing\n\n- All modified files pass syntax validation\n- Created verification test to confirm the pattern changes maintain equivalent functionality\n- No deprecated `platform_translations` usage patterns remain in the codebase\n\nThis change ensures compatibility with future Home Assistant Core versions while maintaining current functionality.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/BenPru/luxtronik/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Updated 4 instances in `custom_components/luxtronik/sensor.py` within the `LuxtronikStatusSensorEntity` class:"
+  }
+ ],
+ "order": "60959285e960d12cf0c80d48acee3901edae84d8d826e43229ebdf9e8560bba6"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "2b67b0077c",
+ "url": "https://github.com/oxc-project/oxc/pull/14802",
+ "repo": "oxc-project/oxc",
+ "number": 14802,
+ "message": "This optimization adds byte-level fast path checks for irregular whitespace\nand line terminators before falling back to full UTF-8 character decoding.\n\n**Key Changes:**\n- Pre-defined UTF-8 byte sequences for common irregular whitespace/line terminators\n- Added `check_byte_sequence()` helper to match byte patterns directly\n- New fast path methods: `is_next_irregular_line_terminator()` and `is_next_irregular_whitespace()`\n- Reordered `unicode_char_handler()` to check byte patterns before char decoding\n\n**Performance Benefits:**\n- Avoids expensive UTF-8 decoding for common whitespace/line terminator checks\n- Reduces character comparisons by checking byte sequences directly\n- Maintains correctness while improving hot path performance\n\n**Testing:**\n- All existing parser tests pass\n- No behavioral changes, only performance improvements\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All existing parser tests pass"
+  }
+ ],
+ "order": "b114d6b2799ff19169bfe6b9b537f9de84967d01ddd70e133ca948f91bb21936"
+}

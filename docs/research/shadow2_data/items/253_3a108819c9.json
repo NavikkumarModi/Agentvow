@@ -1,0 +1,18 @@
+{
+ "id": "3a108819c9",
+ "url": "https://github.com/nodetool-ai/nodetool/pull/27",
+ "repo": "nodetool-ai/nodetool",
+ "number": 27,
+ "message": "## Summary\n- remove lodash Omit import and rely on TypeScript's built\u2011in `Omit`\n\n## Testing\n- `npm --prefix web run typecheck` *(fails: Cannot find module '@emotion/react', etc.)*\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n- **Chores**\n  - Updated internal dependencies to use the built-in TypeScript utility type, with no impact on user-facing functionality.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `npm --prefix web run typecheck` *(fails: Cannot find module '@emotion/react', etc.)*"
+  },
+  {
+   "n": 2,
+   "text": "- Updated internal dependencies to use the built-in TypeScript utility type, with no impact on user-facing functionality."
+  }
+ ],
+ "order": "e112154902a9c83ebf1dcc6875849711bfa2e86533302d152331e8389075e231"
+}

@@ -1,0 +1,26 @@
+{
+ "id": "4ce608a184",
+ "url": "https://github.com/githubnext/gh-aw/pull/1882",
+ "repo": "githubnext/gh-aw",
+ "number": 1882,
+ "message": "## Problem\n\nThe JavaScript test suite was failing with 113+ test failures across multiple test files. The root cause was a mismatch between how tests were setting up agent output data and how the actual scripts expected to consume it.\n\n**The Issue**: Tests were setting `GITHUB_AW_AGENT_OUTPUT` to JSON strings directly:\n```javascript\nprocess.env.GITHUB_AW_AGENT_OUTPUT = JSON.stringify({ items: [...] });\n```\n\nBut the scripts expected this to be a **file path** and would call:\n```javascript\nconst content = fs.readFileSync(agentOutputFile, \"utf8\");\nconst data = JSON.parse(content);\n```\n\nThis caused various failures including:\n- \"Cannot read properties of undefined (reading 'trim')\" errors\n- \"Error parsing agent output JSON: Unexpected token 'd', \"diff--git\"...\" errors when mocks returned wrong content\n- Tests expecting certain behavior but getting different error messages\n\n## Solution\n\n### 1. Updated Tests to Use File-Based Approach\n\nModified tests to use the existing `setAgentOutput()` helper function that creates actual temporary files:\n\n```javascript\n// Before (wrong)\nprocess.env.GITHUB_AW_AGENT_OUTPUT = JSON.stringify({ items: [...] });\n\n// After (correct)\nsetAgentOutput({ items: [...] });\n```\n\nThis change was applied to:\n- `add_comment.test.cjs`\n- `add_labels.test.cjs`\n- `create_issue.test.cjs`\n- `create_pr_review_comment.test.cjs`\n- `create_code_scanning_alert.test.cjs`\n- `update_issue.test.cjs`\n- `push_to_pull_request_branch.test.cjs`\n\n### 2. Fixed Scripts to Handle Empty Content\n\nAdded proper empty content checks after reading files in:\n- `missing_tool.cjs`\n- `push_to_pull_request_branch.cjs`\n\n```javascript\nif (agentOutput.trim() === \"\") {\n  core.info(\"No agent output to process\");\n  // ... handle gracefully\n  return;\n}\n```\n\n### 3. Improved Mock Infrastructure\n\nCreated `mockPatchContent()` helper functions that preserve agent output file reading while allowing tests to mock patch file content:\n\n```javascript\nconst mockPatchContent = (patchContent) => {\n  mockFs.readFileSync.mockImplementation((filepath, encoding) => {\n    // Read real temp file for agent output\n    if (filepath === process.env.GITHUB_AW_AGENT_OUTPUT) {\n      return fs.readFileSync(filepath, encoding || \"utf8\");\n    }\n    // Return mocked content for patch files\n    return patchContent;\n  });\n};\n```\n\n### 4. Fixed Test Infrastructure Issues\n\n- Fixed variable shadowing in `create_code_scanning_alert.test.cjs` where `securityReportScript` was declared twice\n- Updated invalid JSON test to use actual temp file instead of setting env var to invalid string\n\n## Results\n\n- \u2705 **All 534 JavaScript tests now passing (100%)**\n- \u2705 All Go tests passing\n- \u2705 Code formatting and linting validated\n- \u2705 Full `make agent-finish` validation successful\n- \u2705 Workflow compilation completed without errors\n\n## Testing\n\nRan the complete test suite:\n```bash\nmake test-js  # All 534 tests passing\nmake agent-finish  # Full validation successful\n```\n\nFixes #[issue number if applicable]\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> Fix javascript tests\n\n\n</details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey3.medallia.com/?EAHeSx-AP01bZqG0Ld9QLQ) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \"Cannot read properties of undefined (reading 'trim')\" errors"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 **All 534 JavaScript tests now passing (100%)**"
+  },
+  {
+   "n": 3,
+   "text": "- \u2705 All Go tests passing"
+  },
+  {
+   "n": 4,
+   "text": "make test-js  # All 534 tests passing"
+  }
+ ],
+ "order": "d8a08ca30fd834d43f62b0be34e827eb715bbd7ec2c1bcd9ac6abd6cd8874ad4"
+}

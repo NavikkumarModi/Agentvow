@@ -1,0 +1,3 @@
+{"item_id": "76fc856284", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"NOT_A_CLAIM","proposition":"Unticked checklist item in a plan: test the workflow syntax to ensure no breaking changes.","label":null,"confidence":"HIGH","judgment":false,"note":"Rule 2 (unticked checkbox, plan item under 'Changes needed'); not an assertion that testing was done.","evidence":["PR message: '- [ ] Test the workflow syntax to ensure no breaking changes' is unticked and listed under '### Changes needed:'"]}
+],"minutes_estimate":1}

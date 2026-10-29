@@ -1,0 +1,3 @@
+{"item_id": "f0a126bdc9", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change modifies .github/workflows/prisma-migrate.yml, replacing node-version: 20 with node-version: 22.16.0.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "Exact line replacement confirmed in the patch.", "evidence": ["gh api pulls/239/files: single file, 'modified .github/workflows/prisma-migrate.yml'", "patch: '-          node-version: 20' / '+          node-version: 22.16.0' in the Setup Node step"]}
+], "minutes_estimate": 2}

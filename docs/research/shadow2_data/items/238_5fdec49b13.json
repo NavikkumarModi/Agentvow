@@ -1,0 +1,18 @@
+{
+ "id": "5fdec49b13",
+ "url": "https://github.com/ethereum-optimism/optimism/pull/17834",
+ "repo": "ethereum-optimism/optimism",
+ "number": 17834,
+ "message": "# refactor(test): improve ResourceMetering test coverage and quality\n\n## Summary\n\nThis PR improves the `ResourceMetering.t.sol` test file by:\n\n1. **Converting duplicate tests to fuzz test**: Replaced 3 duplicate tests (`test_metered_updateOneEmptyBlock_succeeds`, `test_metered_updateTwoEmptyBlocks_succeeds`, `test_metered_updateTenEmptyBlocks_succeeds`) with a single fuzz test `testFuzz_metered_updateEmptyBlocks_succeeds` that tests block differences from 1-100. This provides broader coverage while reducing code duplication.\n\n2. **Reorganizing test contracts**: Reordered test contracts to match the source contract's function declaration order:\n   - `ResourceMetering_Metered_Test` (tests `metered` modifier at line 66)\n   - `ResourceMetering_ResourceMeteringInit_Test` (tests `__ResourceMetering_init` at line 168)\n\n**Net change**: -22 lines of code (59 insertions, 81 deletions) with improved test coverage.\n\n## Review & Testing Checklist for Human\n\n- [ ] Verify the fuzz test `testFuzz_metered_updateEmptyBlocks_succeeds` properly covers the same scenarios as the original 3 tests (bounded 1-100 blocks)\n- [ ] Confirm test contract order matches source function declaration order (metered modifier \u2192 init function)\n- [ ] Run tests locally to verify all pass: `just test-dev --match-path test/L1/ResourceMetering.t.sol -v`\n\n### Notes\n\n- All tests passed (10 passed, 0 failed, 1 skipped)\n- Pre-PR validation passed with 0 semgrep violations\n- No functional changes to test logic, only consolidation and reorganization\n\n---\n\n**Link to Devin run**: https://app.devin.ai/sessions/f1b80be40ec3484ca620f146f11e965a  \n**Requested by**: Ariel Diaz (@aliersh)",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Run tests locally to verify all pass: `just test-dev --match-path test/L1/ResourceMetering.t.sol -v`"
+  },
+  {
+   "n": 2,
+   "text": "- All tests passed (10 passed, 0 failed, 1 skipped)"
+  }
+ ],
+ "order": "d6088fe1e344bd522196801081797b67f2d2750cbed4f746ef96138f981770d0"
+}

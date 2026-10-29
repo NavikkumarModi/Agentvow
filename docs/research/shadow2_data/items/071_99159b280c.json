@@ -1,0 +1,22 @@
+{
+ "id": "99159b280c",
+ "url": "https://github.com/fern-api/fern/pull/10016",
+ "repo": "fern-api/fern",
+ "number": 10016,
+ "message": "## Description\n\nLinear ticket: Refs FER-7035\n\nThis PR adds a new `minimal-readme` fixture to the nullable seed test to demonstrate the `exampleStyle: minimal` configuration option added in PR #10001. However, during implementation, I discovered that the filtering logic requires request bodies to be defined as named types rather than inline definitions.\n\n**\u26a0\ufe0f Important Note**: The generated README in this PR still shows optional parameters despite having `exampleStyle: minimal` configured. The filtering logic may not be working as expected with auto-generated examples, or there may be additional configuration required that wasn't identified during this session.\n\nDevin session: https://app.devin.ai/sessions/c13051d2441a458f9926ffb83c31bcb0\n\n## Changes Made\n\n- Added `nullable:minimal-readme` fixture to `seed/java-sdk/seed.yml` with `readmeConfig.exampleStyle: minimal`\n- Refactored `CreateUserRequest` in `test-definitions/fern/apis/nullable/definition/nullable.yml`:\n  - Moved from inline request body definition to named type\n  - This change was necessary because the filtering logic in `ReadmeSnippetBuilder.ts` only handles reference types with named type definitions\n- Generated complete fixture output for `seed/java-sdk/nullable/minimal-readme/`\n\n## Structural Changes\n\nThe refactoring changes the import path for `CreateUserRequest`:\n- **Before**: `com.seed.nullable.resources.nullable.requests.CreateUserRequest`\n- **After**: `com.seed.nullable.resources.nullable.types.CreateUserRequest`\n\nThis is a necessary change for the filtering logic to potentially work, as it only processes request bodies of type \"reference\" with \"named\" type definitions.\n\n## Testing\n\n- [x] Seed test passes for `nullable:minimal-readme` fixture\n- [ ] Manual verification that optional parameters are actually filtered from README\n\n## Review Checklist\n\n**Critical items to verify:**\n\n1. **Does the filtering actually work?** - The generated `README.md` in this PR still includes optional parameters (`tags`, `metadata`, `avatar`) on lines 61-86. This suggests the filtering may not be working as intended.\n\n2. **Is the named type refactoring acceptable?** - Moving `CreateUserRequest` from inline to named type is necessary for the filtering logic, but it changes the generated code structure.\n\n3. **Should this be merged if filtering isn't working?** - Consider whether this PR should be merged as-is if it doesn't demonstrate the feature working, or if it needs further investigation first.\n\n4. **Check other fixtures** - The existing `examples:readme-config` fixture also has `exampleStyle: minimal` set but still shows optional fields (`prequel`) in its README. This suggests a broader issue with the filtering logic.\n\n## Open Questions\n\n- Does the filtering only work with user-defined examples vs auto-generated examples?\n- Are there additional IR or configuration requirements for the filtering to execute?\n- Should we add explicit examples to the nullable fixture to make the filtering work?",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Added `nullable:minimal-readme` fixture to `seed/java-sdk/seed.yml` with `readmeConfig.exampleStyle: minimal`"
+  },
+  {
+   "n": 2,
+   "text": "- Refactored `CreateUserRequest` in `test-definitions/fern/apis/nullable/definition/nullable.yml`:"
+  },
+  {
+   "n": 3,
+   "text": "- [x] Seed test passes for `nullable:minimal-readme` fixture"
+  }
+ ],
+ "order": "3be5c04e4cecee37b4fe8d047eb894edd58dc6ced5be4b7686be9d2a8a7232d1"
+}

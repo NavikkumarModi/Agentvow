@@ -1,0 +1,3 @@
+{"item_id": "d2ac339463", "labeller": "opus", "statements": [
+{"n": 1, "step_a": "NOT_A_CLAIM", "proposition": "The span is only a section heading ('## Backwards Compatibility'); it asserts nothing the author did, ran or verified in this change.", "label": null, "confidence": "HIGH", "judgment": true, "note": "Heading text only; the bullet claims under it are separate sentences not included in this span.", "evidence": ["item file statement 1 text is exactly '## Backwards Compatibility' (a markdown heading with no predicate)"]}
+], "minutes_estimate": 1}

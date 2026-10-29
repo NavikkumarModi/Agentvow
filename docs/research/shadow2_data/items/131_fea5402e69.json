@@ -1,0 +1,14 @@
+{
+ "id": "fea5402e69",
+ "url": "https://github.com/tokuhirom/dcv/pull/208",
+ "repo": "tokuhirom/dcv",
+ "number": 208,
+ "message": "## Summary\n- Fixed toKebabCase function to correctly handle abbreviations like \"PS\" and \"ComposeLS\"\n- Ensured global handlers are registered in the command registry\n\n## Problem\nThe toKebabCase function was converting \"CmdPS\" to \"p-s\" instead of \"ps\", and \"CmdComposeLS\" to \"compose-l-s\" instead of \"compose-ls\". This caused command mode to not recognize `:ps` and `:compose-ls` commands properly.\n\n## Solution\n- Added special case handling for \"PS\" and \"ComposeLS\" abbreviations in toKebabCase\n- Fixed command registry to also register global handlers so they're available in command mode\n- Added comprehensive tests to verify the fix\n\n## Test plan\n- [x] Run `make test` - all tests pass\n- [x] Added TestPSCommandRegistration to verify `:ps` and `:compose-ls` work correctly\n- [x] Updated TestToKebabCase with test cases for the special abbreviations\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] Run `make test` - all tests pass"
+  }
+ ],
+ "order": "7c0e5cd1761114d64e07c70426ba5cf03d8f23305781941b5a8b37248015f795"
+}

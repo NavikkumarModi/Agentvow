@@ -1,0 +1,38 @@
+{
+ "id": "3bd9a21ae8",
+ "url": "https://github.com/campfirein/cipher/pull/283",
+ "repo": "campfirein/cipher",
+ "number": 283,
+ "message": "## Summary\n\nThis PR fixes several critical bugs in the knowledge graph system and improves the robustness of knowledge graph tools. All fixes are backward compatible with zero breaking changes.\n\n## Critical Fixes\n\n### 1. **Neo4j Cypher Query Support** \ud83d\udd27\n- **Issue**: Neo4j backend successfully connected but Cypher queries rejected with \"Current backend: in-memory\"\n- **Root cause**: Missing `getBackendType()` method in `KnowledgeGraphManager`\n- **Fix**: Added public method that delegates to backend instance (source of truth)\n- **Impact**: Cypher queries now functional with Neo4j backend\n- **Files**: `src/core/knowledge_graph/manager.ts`\n\n### 2. **Neo4j Filter Constraint Bug** \ud83d\udc1b\n- **Issue**: Filter constraints using wrong property keys (`Object.keys(params).length` counter instead of actual property names)\n- **Impact**: Filter operations producing incorrect Cypher queries\n- **Fix**: Use actual property keys from `Object.entries()`\n- **Follow-up Hardening**: Escape and validate user-supplied filter property names before interpolating them into Cypher to prevent syntax errors and injection vectors.\n- **Files**: `src/core/knowledge_graph/backend/neo4j.ts`\n\n### 3. **Entity Extraction Crash** \ud83d\udca5\n- **Issue**: Regex creation fails on entities with special characters (C++, .NET, etc.)\n- **Impact**: Entity extraction crashes when processing tech stack mentions\n- **Fix**: Added `escapeRegex()` helper to properly escape special characters\n- **Files**: `src/core/brain/tools/definitions/knowledge_graph/extract-entities.ts`\n\n### 4. **Schema Validation Error** \ud83d\udccb\n- **Issue**: `metadata` required in reasoning trace but tool definition allows optional\n- **Impact**: Valid tool calls rejected by schema validation\n- **Fix**: Made `metadata` optional in `ReasoningTraceSchema`\n- **Files**: `src/core/brain/tools/def_reflective_memory_tools.ts`\n\n## Improvements\n\n### 5. **Enhanced JSON Parsing** \ud83d\udd04\n- **Tool**: relationship-manager\n- **Improvement**: Multiple fallback patterns for parsing LLM responses\n- **Benefit**: More robust handling of markdown code blocks and malformed JSON\n- **Files**: `src/core/brain/tools/definitions/knowledge_graph/relationship-manager.ts`\n\n### 6. **Backend Validation** \u2705\n- **Tool**: query-graph\n- **Improvement**: Validates backend type before executing Cypher queries\n- **Benefit**: Clear error messages with alternatives for in-memory backend\n- **Files**: `src/core/brain/tools/definitions/knowledge_graph/query-graph.ts`\n\n### 7. **Code Cleanup** \ud83e\uddf9\n- **Issue**: Debug logging statements in production code\n- **Fix**: Removed diagnostic logging from factory\n- **Files**: `src/core/knowledge_graph/factory.ts`\n\n## Testing\n\n### Unit Tests\n- \u2705 All 94 knowledge graph tests passing (100%)\n- \u2705 Added 2 new tests for backend validation in `query-graph.test.ts`\n- \u2705 Updated test mocks to include `getBackendType()` method\n\n### Test Coverage\n```\nTest Files: 8/8 passed\nTests: 94/94 passed\nDuration: 2.41s\n```\n\n### Modules Tested\n- add-node (11 tests)\n- add-edge\n- delete-node\n- extract-entities (9 tests)\n- get-neighbors\n- query-graph (including new validation tests)\n- search-graph (15 tests)\n- update-node (11 tests)\n\n### MCP Tool Integration Tests\n- \u2705 All 19 Cipher MCP tools tested (100% pass rate)\n- \u2705 Knowledge graph tools verified operational\n- \u2705 Backend detection confirmed working\n\n### TypeScript Compilation\n- \u2705 No new TypeScript errors\n- \u2705 All modified files compile cleanly\n\n## Breaking Changes\n\n**None** - All changes are additive or fix existing bugs without altering public APIs.\n\n## Files Changed\n\n**8 files modified** (100% knowledge graph system):\n\n1. `src/core/knowledge_graph/manager.ts` (+57 lines)\n2. `src/core/knowledge_graph/backend/neo4j.ts` (+10, -9 lines)\n3. `src/core/knowledge_graph/factory.ts` (+1, -6 lines)\n4. `src/core/brain/tools/definitions/knowledge_graph/query-graph.ts` (+23 lines)\n5. `src/core/brain/tools/definitions/knowledge_graph/relationship-manager.ts` (+104, -18 lines)\n6. `src/core/brain/tools/definitions/knowledge_graph/extract-entities.ts` (+11 lines)\n7. `src/core/brain/tools/definitions/knowledge_graph/__test__/query-graph.test.ts` (+67 lines)\n8. `src/core/brain/tools/def_reflective_memory_tools.ts` (+5 lines)\n\n## Checklist\n\n- [x] All tests pass\n- [x] TypeScript compilation successful\n- [x] No breaking changes\n- [x] Documentation updated (JSDoc comments added)\n- [x] Backward compatible\n- [x] Zero file overlap with recent upstream changes\n\n## Related Issues\n\nFixes backend detection issue where Neo4j connection succeeded but Cypher queries were incorrectly rejected.\n\n## Additional Context\n\nThis PR integrates cleanly with recent upstream changes:\n- Zero file overlap with PR #265 (default config)\n- Zero file overlap with PR #264 (Gemini API)\n- All fixes tested against latest main branch\n\nThe changes enable proper Neo4j backend utilization while maintaining full compatibility with in-memory backend operations.\n\n---\n\n\ud83e\udd16 Generated with assistance from [Claude Code](https://claude.com/claude-code)\n\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68f930095a30832492d06a27a451f0e2",
+ "statements": [
+  {
+   "n": 1,
+   "text": "All fixes are backward compatible with zero breaking changes."
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 All 94 knowledge graph tests passing (100%)"
+  },
+  {
+   "n": 3,
+   "text": "Test Files: 8/8 passed"
+  },
+  {
+   "n": 4,
+   "text": "Tests: 94/94 passed"
+  },
+  {
+   "n": 5,
+   "text": "- [x] All tests pass"
+  },
+  {
+   "n": 6,
+   "text": "- [x] No breaking changes"
+  },
+  {
+   "n": 7,
+   "text": "- [x] Backward compatible"
+  }
+ ],
+ "order": "82540bbdce37290c3e55d91296afbe5cc33404013543be8d0d5fc31e49748ad2"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "24bf835343",
+ "url": "https://github.com/topfunky/gruff/pull/665",
+ "repo": "topfunky/gruff",
+ "number": 665,
+ "message": "### What problem does this PR solve?\r\n\r\nWhen a `Gruff::Line` graph is built with multiple `dataxy` series, the last\r\npoint of *series\u00a0N* is drawn as a straight line to the first point of\r\n*series\u00a0N\u202f+\u202f1*.  \r\nThe result is a single, continuous poly\u2011line instead of visually separated\r\nseries, which is misleading for end\u2011users. :contentReference[oaicite:0]{index=0}\r\n\r\n### How to reproduce\r\n\r\n```ruby\r\nrequire 'gruff'\r\n\r\ng = Gruff::Line.new(600)\r\ng.title = 'Gruff Line #dataxy connection bug demo'\r\n\r\n# Series\u20111: rising line\r\ng.dataxy('Series 1', [0, 1, 2, 3], [1, 2, 3, 4])\r\n\r\n# Series\u20112: falling line \u2013 should start a new poly\u2011line,\r\n# but is currently connected to the last point of Series\u20111.\r\ng.dataxy('Series 2', [0, 1, 2, 3], [3, 2, 1, 0])\r\n\r\ng.write('before_fix.png')\r\n````\r\n\r\n<img width=\"600\" height=\"450\" alt=\"line_series_connection_1\" src=\"https://github.com/user-attachments/assets/616e5794-99e3-423c-ad62-136b5ba2ebd3\" />\r\n\r\n**Current output:**\r\nA \u201cV\u201d\u2011shaped line connecting (3,4) \u2192 (0,3) instead of two independent lines.\r\n**Expected output:**\r\nTwo distinct polylines that do **not** share a segment.\r\n\r\n<img width=\"600\" height=\"450\" alt=\"line_series_connection_2\" src=\"https://github.com/user-attachments/assets/09a39a35-f3c0-4937-8c55-f592f53ea29c\" />\r\n\r\n### Root cause\r\n\r\nInside `Gruff::Line#draw_graph`, the helper variables `prev_x` and `prev_y`\r\ncache the coordinates of the previously plotted point.\r\nThey are initialised once **before** the outer loop that iterates over each\r\n`data_row` (series).\r\nConsequently, the starting point of the next series inherits the last point of\r\nthe previous series.\r\n\r\n### What does this PR change?\r\n\r\nA single line resets the cache at the top of the loop:\r\n\r\n```diff\r\n store.norm_data.each do |data_row|\r\n+  prev_x = prev_y = nil\r\n   data_row.coordinates.each_with_index do |(x_data, y_data), index|\r\n```\r\n\r\nBy setting `prev_x` and `prev_y` to `nil` for every new series, the drawing\r\nlogic starts a fresh poly\u2011line and no longer links series together. \r\n\r\n### Impact / backwards compatibility\r\n\r\n* Only affects `Gruff::Line` with the `dataxy` API.\r\n* No public API changes.\r\n\r\nThanks for maintaining Gruff! Any feedback is welcome.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "### Impact / backwards compatibility"
+  }
+ ],
+ "order": "224e7c2b0a592c0f32489d6bb97228ac9cb4af3ea169b60878f87aeb59ad3806"
+}

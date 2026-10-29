@@ -1,0 +1,34 @@
+{
+ "id": "9ce002da0b",
+ "url": "https://github.com/pulumi/pulumi-kubernetes-operator/pull/1023",
+ "repo": "pulumi/pulumi-kubernetes-operator",
+ "number": 1023,
+ "message": "## Summary\r\n\r\nThis PR implements comprehensive structured configuration support for the Pulumi Kubernetes Operator, addressing two long-standing feature requests:\r\n- Support for complex configuration values (objects, arrays, booleans, numbers) - [#258](https://github.com/pulumi/pulumi-kubernetes-operator/issues/258)\r\n- Reading configuration from ConfigMaps - [#872](https://github.com/pulumi/pulumi-kubernetes-operator/issues/872)\r\n\r\nThe implementation leverages Pulumi CLI's [JSON configuration support](https://github.com/pulumi/pulumi/pull/19427) (v3.202.0+) and extends both the Stack and Workspace APIs to naturally represent structured values using Kubernetes' native JSON type support.\r\n\r\n## Key Features\r\n\r\n### 1. Structured Configuration Values\r\n- **Stack API**: `config` field now accepts objects, arrays, numbers, and booleans directly in YAML\r\n- **Workspace API**: `ConfigItem.Value` field supports structured values naturally\r\n- Uses `apiextensionsv1.JSON` for natural Kubernetes representation\r\n- Fully backwards compatible with existing string-only configurations\r\n\r\n### 2. ConfigMap References\r\n- New `configRef` field in Stack API for loading config from ConfigMaps\r\n- Supports both string and JSON-parsed values via `json: true` flag\r\n- Parallel to existing `secretsRef` functionality\r\n\r\n### 3. Version Detection & Safety\r\n- Automatic Pulumi CLI version detection via new `PulumiVersion` RPC\r\n- Stack enters \"Stalled\" condition if CLI version < v3.202.0 when using structured config\r\n- Clear error messages guide users to upgrade\r\n\r\n## API Changes\r\n\r\n### Stack API\r\n\r\n```yaml\r\napiVersion: pulumi.com/v1\r\nkind: Stack\r\nspec:\r\n  # Structured values in config (NEW)\r\n  config:\r\n    simpleKey: \"string\"\r\n    dbConfig:\r\n      host: \"localhost\"\r\n      port: 5432\r\n    regions: [\"us-west-2\", \"us-east-1\"]\r\n    maxConns: 100\r\n    enableSSL: true\r\n  \r\n  # ConfigMap references (NEW)\r\n  configRef:\r\n    appSettings:\r\n      name: app-config\r\n      key: settings.json\r\n      json: true\r\n```\r\n\r\n### Workspace API\r\n\r\n```yaml\r\napiVersion: auto.pulumi.com/v1alpha1\r\nkind: Workspace\r\nspec:\r\n  stacks:\r\n    - name: dev\r\n      config:\r\n        # Structured object value (NEW)\r\n        - key: myapp:database\r\n          value:\r\n            host: \"localhost\"\r\n            port: 5432\r\n        \r\n        # JSON from environment or file (NEW)\r\n        - key: myapp:features\r\n          valueFrom:\r\n            env: FEATURE_FLAGS\r\n            json: true\r\n```\r\n\r\n## Implementation Details\r\n\r\n### Architecture Changes\r\n\r\n1. **Agent Proto**: Extended `ConfigItem` to use `google.protobuf.Value` for structured values, added `PulumiVersion` RPC\r\n2. **Agent Server**: Enhanced `SetAllConfig` to build JSON documents and use Pulumi automation API's `SetAllConfigJson`\r\n3. **Workspace Controller**: Queries Pulumi version on pod ready, translates structured values to protobuf\r\n4. **Stack Controller**: Version validation, ConfigMap resolution, structured config translation\r\n\r\n### Key Technical Decisions\r\n\r\n- **Replace Semantics**: Structured values replace entire objects (no merge/patch support)\r\n- **No Structured Secrets**: Limitation of Pulumi CLI - secrets must be strings only\r\n- **No Path Support**: `path: true` incompatible with structured values (validation enforced by CLI)\r\n- **Version Gating**: Clear errors when CLI doesn't support JSON config\r\n\r\n## Backwards Compatibility\r\n\r\n\u2705 **Fully backwards compatible**\r\n- Existing string configs work unchanged (JSON encoding handles strings transparently)\r\n- No manifest changes required for existing Stacks or Workspaces\r\n- New features are opt-in via structured values or `json: true` flags\r\n\r\n## Testing\r\n\r\n### Unit Tests\r\n- Agent config unmarshaling with JSON values\r\n- Workspace controller config translation\r\n- Version detection and comparison logic\r\n\r\n### E2E Tests\r\n- Structured config from inline values\r\n- Structured config from ConfigMaps\r\n- Version compatibility validation\r\n- Mixed string and structured configs\r\n\r\n### Examples\r\n- Comprehensive examples in `examples/structured-config/`\r\n- Both Stack and Workspace API patterns\r\n- ConfigMap integration examples\r\n\r\n## Migration Guide\r\n\r\n_TODO: Helm does not automatically upgrade CRDs, please confirm and suggest a solution._\r\n\r\nUsers can adopt structured configuration incrementally:\r\n\r\n1. **String configs continue working**: No changes needed\r\n2. **Add structured values**: Simply use YAML objects/arrays in `config`\r\n3. **Use ConfigMaps**: Add `configRef` entries as needed\r\n4. **Workspace users**: Replace string values with structured YAML naturally\r\n\r\n## Dependencies\r\n\r\n- Pulumi SDK v3.202.0+\r\n\r\n## Test Plan\r\n\r\n- [x] Unit tests pass for all new functionality\r\n- [x] E2E tests validate structured config scenarios\r\n- [x] Version detection works correctly\r\n- [x] Backwards compatibility verified\r\n- [x] Example manifests tested\r\n\r\n## Related Issues\r\n\r\n- Closes #258 - Support for complex configuration values\r\n- Closes #872 - ConfigMap support for configuration\r\n- Related to #575 - Earlier prototype work\r\n- Related to https://github.com/pulumi/pulumi/issues/13176 - \"merge\" semantics for config values\r\n\r\n---\r\n\r\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Fully backwards compatible with existing string-only configurations"
+  },
+  {
+   "n": 2,
+   "text": "## Backwards Compatibility"
+  },
+  {
+   "n": 3,
+   "text": "\u2705 **Fully backwards compatible**"
+  },
+  {
+   "n": 4,
+   "text": "_TODO: Helm does not automatically upgrade CRDs, please confirm and suggest a solution._"
+  },
+  {
+   "n": 5,
+   "text": "- [x] Unit tests pass for all new functionality"
+  },
+  {
+   "n": 6,
+   "text": "- [x] Backwards compatibility verified"
+  }
+ ],
+ "order": "22950d7780cd42aa5379c3913373d8c460e39c2b578bd308fab9ff94881f915d"
+}

@@ -1,0 +1,60 @@
+{
+ "item_id": "52ab68322a",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "The change keeps isURL behaviour for legitimate URLs unchanged (no regression for valid URLs).",
+   "label": "FALSE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Concrete regression: scheme-less host:port URLs that validated at base are rejected at head, because the new regex treats 'example.com' as a scheme and returns false (not in protocols list / no '//').",
+   "evidence": [
+    "Built base 6f436be and head ec9c86f, ran isURL with default options: base isURL('example.com:8080')=true, isURL('www.example.com:80/path')=true, isURL('sub.example.com:443?x=1')=true; head returns false for all three",
+    "Head also false for 'localhost:3000' with require_tld:false (base true); both are legitimate host:port URLs",
+    "Existing 298 mocha tests do not cover this, so the PR's own suite does not catch it"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "npm test passes at the head commit.",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Run as CI does (npm install --legacy-peer-deps; npm test, includes build and lint).",
+   "evidence": [
+    "PR files list: only src/lib/isURL.js modified among library/test files; no test/ changes",
+    "npm install --legacy-peer-deps (as CI) then `npm test` at head ec9c86f in sandbox, node v24.10.0: build ok, eslint ok, mocha '298 passing', exit success"
+   ]
+  },
+  {
+   "n": 3,
+   "step_a": "CLAIM",
+   "proposition": "Running node test-cve-2025-56200.js shows all security tests passing.",
+   "label": "FALSE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "The script prints a FAIL for one case (exit code is still 0 since it does not set one).",
+   "evidence": [
+    "node test-cve-2025-56200.js in sandbox at head: output line '✗ FAIL myapp://host/path / ERROR: Expected true, got false' under Test 2; grep found exactly 1 failure marker",
+    "Process exit status 0"
+   ]
+  },
+  {
+   "n": 4,
+   "step_a": "CLAIM",
+   "proposition": "The existing test suite passes (ticked checkbox).",
+   "label": "TRUE",
+   "confidence": "HIGH",
+   "judgment": false,
+   "note": "Same run as statement 2.",
+   "evidence": [
+    "PR files list: only src/lib/isURL.js modified among library/test files; no test/ changes",
+    "npm install --legacy-peer-deps (as CI) then `npm test` at head ec9c86f in sandbox, node v24.10.0: build ok, eslint ok, mocha '298 passing', exit success"
+   ]
+  }
+ ],
+ "minutes_estimate": 20
+}

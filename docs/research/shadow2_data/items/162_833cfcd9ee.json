@@ -1,0 +1,22 @@
+{
+ "id": "833cfcd9ee",
+ "url": "https://github.com/module-federation/core/pull/3887",
+ "repo": "module-federation/core",
+ "number": 3887,
+ "message": "%23%23 Description\r\n\r\nAdds two new shell scripts to the `scripts/` directory to simulate existing GitHub workflows locally.\r\n\r\n-   `scripts/simulate-build-and-test.sh`: Simulates the `.github/workflows/build-and-test.yml` workflow.\r\n-   `scripts/simulate-e2e-next-dev.sh`: Simulates the `.github/workflows/e2e-next-dev.yml` workflow.\r\n\r\nThese scripts enable local testing and debugging of CI/CD steps, improving development efficiency.\r\n\r\n%23%23 Related Issue\r\n\r\n<!--- This project only accepts pull requests related to open issues -->\r\n<!--- If suggesting a new feature or change, please discuss it in an issue first -->\r\n<!--- If fixing a bug, there should be an issue describing it with steps to reproduce -->\r\n<!--- Please link to the issue here: -->\r\n\r\n\r\n%23%23 Types of changes\r\n\r\n<!--- What types of changes does your code introduce%3F Put an `x` in all the boxes that apply: -->\r\n\r\n- [ ] Docs change / refactoring / dependency upgrade\r\n- [ ] Bug fix (non-breaking change which fixes an issue)\r\n- [x] New feature (non-breaking change which adds functionality)\r\n\r\n%23%23 Checklist\r\n\r\n<!--- Go over all the following points, and put an `x` in all the boxes that apply. -->\r\n<!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->\r\n\r\n- [ ] I have added tests to cover my changes.\r\n- [ ] All new and existing tests passed.\r\n- [ ] I have updated the documentation.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bug fix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] All new and existing tests passed."
+  }
+ ],
+ "order": "932a7e70fca1052c04607daa5dff5aec45b85f87dabd96a3ac2fd2149977ab99"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "137a6e7a9d",
+ "url": "https://github.com/microsoft/AzureTRE/pull/4609",
+ "repo": "microsoft/AzureTRE",
+ "number": 4609,
+ "message": "This PR adds browser-based file upload and download functionality to the Airlock system as an alternative to SAS token-based operations, addressing the needs of highly regulated environments where SAS tokens and shared keys must be disabled on storage accounts.\n\n## Changes Made\n\n### API Enhancements\n- **New endpoints added:**\n  - `POST /workspaces/{workspace_id}/requests/{airlock_request_id}/files` - Upload files directly through the API\n  - `GET /workspaces/{workspace_id}/requests/{airlock_request_id}/files` - List files in airlock request\n  - `GET /workspaces/{workspace_id}/requests/{airlock_request_id}/files/{filename}` - Download files directly\n\n- **New service functions in `services/airlock.py`:**\n  - `upload_airlock_file()` - Handles file upload using Azure AD authentication\n  - `list_airlock_files()` - Lists files with metadata (name, size, last modified)\n  - `download_airlock_file()` - Downloads files as streaming response\n\n- **New schemas in `models/schemas/airlock_file.py`:**\n  - `AirlockFileMetadata` - File information structure\n  - `AirlockFileListResponse` - API response for file listing\n  - `AirlockFileUploadResponse` - API response for successful uploads\n\n### UI Enhancements\n- **New \"Direct Upload\" tab** added to `AirlockRequestFilesSection.tsx` alongside existing \"SAS URL\" and \"CLI\" tabs\n- **Upload functionality:** File selection and upload for Draft requests with progress indicators\n- **Download functionality:** File listing with download buttons for all accessible requests\n- **File management:** View file metadata including size and last modified date\n- **Error handling:** User-friendly error messages for upload/download failures\n\n### Technical Approach\n- Uses existing Azure AD authentication instead of SAS tokens\n- Preserves networking constraints by keeping operations browser-based\n- Maintains the same user permission model as existing SAS token approach\n- File uploads restricted to Draft requests only\n- Supports the existing single-file requirement for airlock requests\n\n### Testing\n- Added unit tests for new file operation functions\n- Verified API endpoints compile without errors\n- Confirmed UI builds successfully with new functionality\n- Maintained backward compatibility with existing SAS token and CLI workflows\n\n### Version Updates\n- API: 0.24.3 \u2192 0.24.4\n- UI: 0.8.8 \u2192 0.8.9\n- Updated CHANGELOG.md with feature description\n\nThis implementation provides a seamless alternative for organizations that need to disable SAS tokens while maintaining the security and networking constraints of the TRE environment.\n\nFixes #4309.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintained backward compatibility with existing SAS token and CLI workflows"
+  },
+  {
+   "n": 2,
+   "text": "- Updated CHANGELOG.md with feature description"
+  }
+ ],
+ "order": "c5a9664c3043aa6494d96fdad8354f9db664af1c75b0c3638781633c0e7b367e"
+}

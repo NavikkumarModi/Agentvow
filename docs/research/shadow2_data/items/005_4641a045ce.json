@@ -1,0 +1,18 @@
+{
+ "id": "4641a045ce",
+ "url": "https://github.com/tokens-studio/figma-plugin/pull/3469",
+ "repo": "tokens-studio/figma-plugin",
+ "number": 3469,
+ "message": "## Problem\n\nWhen switching to Tokens Studio as a sync provider, the system was missing the modal to ask users if they want to pull tokens from the remote source. Instead, it directly overwrote local tokens without user confirmation, which could result in unexpected loss of local changes.\n\n## Solution\n\nThis PR implements the same pull confirmation logic that already exists for other sync providers like GitHub. The fix ensures users are prompted before their local tokens are overwritten when syncing with Tokens Studio.\n\n### Changes Made\n\n**Modified `src/app/store/providers/tokens-studio/tokensStudio.tsx`:**\n- Added `useConfirm` hook and `isEqual` utility imports\n- Added `askUserIfPull` function that displays a confirmation dialog\n- Modified `syncTokensWithTokensStudio` to:\n  - Compare local and remote tokens/themes using `isEqual`\n  - Show confirmation dialog when differences are detected\n  - Only update local tokens if user confirms the pull operation\n  - Skip dialog when tokens are identical\n\n### Implementation Details\n\nThe fix follows the exact same pattern used in the GitHub provider's `syncTokensWithGitHub` function:\n\n```typescript\nif (\n  !isEqual(data.tokens, tokens)\n  || !isEqual(data.themes, themes)\n  || !isEqual(data.metadata?.tokenSetOrder ?? Object.keys(tokens), Object.keys(tokens))\n) {\n  const userDecision = await askUserIfPull();\n  if (userDecision) {\n    // Update local tokens with remote data\n  }\n}\n```\n\n### User Experience\n\n**Before:** Tokens Studio sync directly overwrote local tokens without warning\n**After:** Users see a confirmation dialog asking \"Pull from Tokens Studio? Your tokens might be different from the ones stored in Tokens Studio, do you want to pull these now?\"\n\n- \u2705 User can choose to pull or cancel\n- \u2705 No dialog shown when tokens are identical\n- \u2705 Consistent behavior across all sync providers\n\n## Testing\n\n- \u2705 Build passes successfully\n- \u2705 Linting passes without issues  \n- \u2705 Existing tests continue to pass\n- \u2705 Code follows established patterns in the codebase\n\nThis change ensures Tokens Studio users have the same protection against accidental token overwrites that users of other sync providers already enjoy.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "**Modified `src/app/store/providers/tokens-studio/tokensStudio.tsx`:**"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Linting passes without issues"
+  }
+ ],
+ "order": "03b036f28b190069181d044aa69d103a6fb18825c93ec057fb22765036a27902"
+}

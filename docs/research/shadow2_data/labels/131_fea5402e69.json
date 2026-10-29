@@ -1,0 +1,3 @@
+{"item_id": "fea5402e69", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"CLAIM","proposition":"Running `make test` at the head commit passes all tests.","label":"CANNOT_TELL","confidence":"LOW","judgment":false,"note":"Ticked checkbox is a claim. No Go toolchain in the environment and no CI result on the head commit (combined status 'pending', no check-runs), so it could not be verified.","evidence":["which go: not found","gh api commits/779e1dfec524227c4cc4f482ec98960692c960e6/check-runs: empty; status: pending","change list: added internal/ui/command_ps_test.go; modified internal/ui/command_registry.go, internal/ui/command_registry_test.go"]}
+], "minutes_estimate": 3}

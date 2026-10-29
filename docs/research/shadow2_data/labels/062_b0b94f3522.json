@@ -1,0 +1,34 @@
+{
+ "item_id": "b0b94f3522",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "The new view classes added in this PR have no functional impact because they are not used yet.",
+   "label": "TRUE",
+   "confidence": "MEDIUM",
+   "judgment": true,
+   "note": "Impact claim settled only by reading patches of modified main files (none reference the new classes); I did not clone and grep the whole repo. The 'need not deeply review' part is a suggestion.",
+   "evidence": [
+    "gh api pulls/32561/files: 126 files; added files are ~100 ResponseEntity*View / *ListView DTO classes, SwaggerCompliant.java, tests, docs, a shell script",
+    "Modified main-code patches (ErrorResponseHelper, ResponseUtil, UserResourceHelper, ExceptionMapperUtil: `new ResponseEntityView` -> `new ResponseEntityView<>`; ResponseEntityMapView: extra constructor) reference none of the new view classes"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "The PR's underlying fixes and additional View classes, on their own, have no impact.",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Fixes are diamond-operator generics, a new constructor and OpenAPI tag changes in DotRestApplication.java/openapi.yaml (tag 'Experiment' renamed 'Experiments', many tags added, external docs links); the generics changes look runtime-neutral but the published OpenAPI tag rename is an observable change, so 'no impact' is not settleable by a concrete check.",
+   "evidence": [
+    "gh api pulls/32561/files: 126 files; added files are ~100 ResponseEntity*View / *ListView DTO classes, SwaggerCompliant.java, tests, docs, a shell script",
+    "Modified main-code patches (ErrorResponseHelper, ResponseUtil, UserResourceHelper, ExceptionMapperUtil: `new ResponseEntityView` -> `new ResponseEntityView<>`; ResponseEntityMapView: extra constructor) reference none of the new view classes",
+    "DotRestApplication.java patch renames @Tag 'Experiment' to 'Experiments' and adds tags; openapi.yaml patch mirrors it"
+   ]
+  }
+ ],
+ "minutes_estimate": 6
+}

@@ -1,0 +1,26 @@
+{
+ "id": "6d541e72cf",
+ "url": "https://github.com/Chia-Network/chia-blockchain/pull/19813",
+ "repo": "Chia-Network/chia-blockchain",
+ "number": 19813,
+ "message": "This PR upgrades ruff from 0.11.11 to 0.12.3 and addresses the linting issues that arise with the newer version.\n\n## Changes Made\n\n### 1. Updated Dependencies\n- Updated `pyproject.toml` to require `ruff >= 0.12.3`\n\n### 2. Fixed Trailing Comma Issues (COM812)\nThe main issue with ruff 0.12.3 was the `missing-trailing-comma` rule (COM812) which was previously disabled due to 5000+ violations. This rule is commonly enabled in newer ruff versions to enforce consistent code style.\n\n- Enabled COM812 rule temporarily to identify all issues\n- Applied automatic fixes for **5,208** missing trailing comma violations using `ruff check --fix`\n- Manually fixed **9** resulting line-too-long issues by splitting long strings appropriately\n- Examples of fixes applied:\n  ```python\n  # Before\n  some_function(arg1, arg2, arg3)\n  \n  # After  \n  some_function(arg1, arg2, arg3,)\n  ```\n\n### 3. Optimized Ruff Configuration\n- Added proper `[format]` section to `ruff.toml` with formatter settings\n- Disabled COM812 linter rule to prevent conflicts with the formatter (as recommended by ruff docs)\n- Let ruff's formatter handle trailing commas automatically instead of the linter\n\n### 4. Verification\n- All `ruff check` validations now pass with zero errors\n- All `ruff format` checks pass \n- Python syntax verified to remain valid across the codebase\n- Configuration optimized for ruff 0.12.x best practices\n\n## Impact\nThe codebase now has consistent trailing comma usage throughout and is fully compatible with ruff 0.12.3. This change improves code consistency and prepares the repository for future ruff updates.\n\n## Files Changed\n- `pyproject.toml`: Updated ruff version requirement\n- `ruff.toml`: Added formatter config and updated rule selection\n- **402 Python files**: Automatic trailing comma fixes applied\n- **9 Python files**: Manual line length fixes\n\nFixes #19812.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `pypi.chia.net`\n>   - Triggering command: `/usr/bin/python3 /home/REDACTED/.local/bin/poetry install --extras dev` (dns block)\n>   - Triggering command: `/usr/bin/python3 /home/REDACTED/.local/bin/poetry update ruff` (dns block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)\n>\n> </details>\n\n\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated `pyproject.toml` to require `ruff >= 0.12.3`"
+  },
+  {
+   "n": 2,
+   "text": "- Added proper `[format]` section to `ruff.toml` with formatter settings"
+  },
+  {
+   "n": 3,
+   "text": "- All `ruff check` validations now pass with zero errors"
+  },
+  {
+   "n": 4,
+   "text": "- All `ruff format` checks pass"
+  }
+ ],
+ "order": "fd9cd9fea1c831fc8ea8689329b1f7f7b3945238f00c6b3aa43be3dca7effdd4"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "cd22e50ccc",
+ "url": "https://github.com/liveblocks/liveblocks/pull/2549",
+ "repo": "liveblocks/liveblocks",
+ "number": 2549,
+ "message": "# Add storage documentation page\n\n## Summary\n\nAdded a new platform documentation page at `/docs/platform/storage` that provides comprehensive information about Liveblocks data storage, retention policies, and deletion procedures. The page covers what data Liveblocks stores (Presence, Comments, Notifications, Sync Engine, AI Copilots), where it's stored (AWS, Cloudflare, Svix), and how data deletion works.\n\nThe content was formatted to match existing platform documentation patterns, including proper MDX frontmatter, structured sections with bullet points, and a markdown table for data deletion triggers. Added the corresponding route to `routes.json` to make the page accessible in the Platform section navigation.\n\n## Review & Testing Checklist for Human\n\n- [ ] **Verify page renders correctly** - Navigate to `https://liveblocks.io/docs/platform/storage` and confirm the page displays properly with correct formatting\n- [ ] **Test navigation integration** - Check that the \"Storage\" link appears in the Platform section sidebar and clicking it loads the page correctly  \n- [ ] **Review content formatting** - Ensure the data deletion table, bullet points, and section headers render as expected (not raw markdown)\n- [ ] **Validate route configuration** - Confirm the new route entry doesn't break navigation or cause any console errors\n- [ ] **Content accuracy check** - Review that the reformatted content matches the original requirements and uses proper typography (curly apostrophes, etc.)\n\n**Recommended test plan**: Build the docs site locally or check the preview deployment to verify end-to-end functionality before merging.\n\n---\n\n### Diagram\n\n```mermaid\n%%{ init : { \"theme\" : \"default\" }}%%\ngraph TD\n    A[\"docs/pages/platform/storage.mdx<br/>(New Documentation Page)\"]:::major-edit\n    B[\"docs/routes.json<br/>(Navigation Configuration)\"]:::minor-edit\n    C[\"docs/pages/platform/websocket-infrastructure.mdx<br/>(Reference Pattern)\"]:::context\n    D[\"docs/pages/platform/limits.mdx<br/>(Table Format Reference)\"]:::context\n    E[\"Platform Section Navigation<br/>(User-facing)\"]:::context\n\n    B -->|\"adds route entry\"| A\n    B -->|\"controls navigation\"| E\n    C -->|\"formatting pattern\"| A\n    D -->|\"table structure\"| A\n    A -->|\"appears in\"| E\n\n    subgraph Legend\n        L1[Major Edit]:::major-edit\n        L2[Minor Edit]:::minor-edit  \n        L3[Context/No Edit]:::context\n    end\n\n    classDef major-edit fill:#90EE90\n    classDef minor-edit fill:#87CEEB  \n    classDef context fill:#FFFFFF\n```\n\n### Notes\n\n- Content was provided by the user and reformatted from plain text to MDX following existing platform documentation patterns\n- Positioned the Storage page after REST API in the Platform section navigation, which seemed like a logical placement\n- Used curly apostrophes (') instead of straight apostrophes (') as specified in the formatting guidelines\n- Could not test locally due to documentation site setup requirements, so human verification of rendering is critical\n\n**Link to Devin run**: https://app.devin.ai/sessions/51af96ad63f54b5cb90caaea18c94387  \n**Requested by**: stacy.schmitz@liveblocks.io",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Added a new platform documentation page at `/docs/platform/storage` that provides comprehensive information about Liveblocks data storage, retention policies, and deletion procedures."
+  },
+  {
+   "n": 2,
+   "text": "Added the corresponding route to `routes.json` to make the page accessible in the Platform section navigation."
+  },
+  {
+   "n": 3,
+   "text": "- Could not test locally due to documentation site setup requirements, so human verification of rendering is critical"
+  }
+ ],
+ "order": "b4b0b2e0404ab1c748fef30fd61506229e417bb30f0ce19cded81b51d45d1c01"
+}

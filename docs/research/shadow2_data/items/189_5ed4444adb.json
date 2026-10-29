@@ -1,0 +1,30 @@
+{
+ "id": "5ed4444adb",
+ "url": "https://github.com/bugsink/bugsink/pull/166",
+ "repo": "bugsink/bugsink",
+ "number": 166,
+ "message": "This PR adds a `remote_addr` field to the Event model to capture the client's IP address at ingest-time and carry it through to digest-time.\n\n## Changes Made\n\n- **Event Model**: Added `remote_addr = models.GenericIPAddressField(blank=True, null=True, default=None)` to store client IP addresses\n- **Ingest Pipeline**: Updated `get_event_meta()` to capture `request.META['REMOTE_ADDR']` and pass it through the existing metadata mechanism\n- **Event Creation**: Modified `Event.from_ingested()` to handle the `remote_addr` field from metadata\n- **Database Migration**: Created migration `0023_event_remote_addr.py` to add the new field\n- **Tests**: Added comprehensive test coverage for all scenarios including backwards compatibility\n\n## Implementation Details\n\nThe implementation leverages the existing `SetRemoteAddrMiddleware` which already processes proxy headers (`X-Real-IP`, `X-Forwarded-For`) to determine the real client IP address, even when behind proxies. The middleware sets `request.META['REMOTE_ADDR']` to the correct value, which is then captured during ingest and stored with the event.\n\nThe field can be `None` for both backwards compatibility and misconfigured proxy scenarios (as intended by the existing middleware design).\n\n## Example Usage\n\nAfter this change, events will automatically include the client's IP address:\n\n```python\n# Event ingested from IP 192.168.1.100\nevent = Event.objects.get(...)\nprint(event.remote_addr)  # \"192.168.1.100\"\n\n# Events from misconfigured proxies or old events\nprint(event.remote_addr)  # None (backwards compatible)\n```\n\n## Backwards Compatibility\n\n- The field is nullable, so existing events continue to work without issues\n- Uses the same metadata-passing pattern as existing fields like `debug_info`\n- No breaking changes to any existing APIs\n\nFixes #165.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Tests**: Added comprehensive test coverage for all scenarios including backwards compatibility"
+  },
+  {
+   "n": 2,
+   "text": "The field can be `None` for both backwards compatibility and misconfigured proxy scenarios (as intended by the existing middleware design)."
+  },
+  {
+   "n": 3,
+   "text": "print(event.remote_addr)  # None (backwards compatible)"
+  },
+  {
+   "n": 4,
+   "text": "## Backwards Compatibility"
+  },
+  {
+   "n": 5,
+   "text": "- No breaking changes to any existing APIs"
+  }
+ ],
+ "order": "ab947cf9ee72a7fc37572eb302f28e74f17d79f9e45a04e43186580805af6cb6"
+}

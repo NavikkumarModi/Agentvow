@@ -1,0 +1,22 @@
+{
+ "id": "bcebd8816c",
+ "url": "https://github.com/vfarcic/dot-ai/pull/115",
+ "repo": "vfarcic/dot-ai",
+ "number": 115,
+ "message": "## Summary\nComplete implementation of PRD 110 - REST API Gateway for MCP Tools. This provides HTTP REST endpoints for all DevOps AI Toolkit capabilities, enabling integration with traditional applications and CI/CD pipelines.\n\n## Implementation Highlights\n- **Universal Tool Access**: All 9 MCP tools exposed via HTTP POST endpoints\n- **Auto-Generated OpenAPI**: Dynamic OpenAPI 3.0 specification with tool schemas  \n- **Zero Maintenance**: Automatically stays current when new tools are added\n- **Dual Protocol Support**: REST API and MCP protocol run simultaneously\n- **Production Ready**: Comprehensive documentation with real working examples\n\n## Technical Achievements\n- **Core Infrastructure**: Generic REST routing with tool registry system\n- **JSON Response Transformation**: Clean JSON objects instead of MCP text format\n- **OpenAPI Generation**: Complete specification with 11+ endpoints\n- **API Versioning**: /api/v1/ prefix with deprecation strategy\n- **Comprehensive Testing**: 100+ new test cases, 960/960 tests passing\n\n## Documentation\n- **Comprehensive User Guide**: `docs/rest-api-gateway-guide.md` with real examples\n- **Kubernetes Integration**: Clear setup reference avoiding duplication\n- **Dynamic Discovery**: Tool discovery patterns instead of static listings\n- **Workflow Integration**: Cross-references to existing MCP guides\n\n## PRD Status\n**PRD 110: COMPLETE** \u2705\n- All 4 milestones delivered\n- Strategic deferrals implemented (performance optimization based on usage)\n- Production-ready with comprehensive documentation\n\n## Test Coverage\n- **960 tests passing** (100% pass rate)\n- **100+ new REST API tests** covering all endpoints\n- **Integration tests** validating MCP + REST dual protocol support\n- **OpenAPI validation** ensuring specification accuracy\n\n## Quality Standards\n- All TypeScript compilation successful\n- Comprehensive error handling with proper HTTP status codes\n- Real working examples validated against live server\n- Clean commit history with detailed implementation evidence\n\nCloses #110\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n## Summary by CodeRabbit\n\n- **New Features**\n  - REST API gateway for tool discovery and execution with CORS, standardized JSON responses, and an OpenAPI endpoint.\n  - OpenAPI 3.0 spec generation with caching and configurable metadata.\n  - Centralized tool registry with discovery, filtering, and schema conversion.\n\n- **Documentation**\n  - Consolidated CLAUDE guidance into a streamlined testing/workflow and command-oriented docs; added REST API Gateway guides and updated project readiness docs.\n\n- **Tests**\n  - End-to-end tests for REST gateway, registry, and OpenAPI; MCP tests updated for dynamic ports.\n\n- **Chores**\n  - Added dependency: zod-to-json-schema.\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Comprehensive Testing**: 100+ new test cases, 960/960 tests passing"
+  },
+  {
+   "n": 2,
+   "text": "- **960 tests passing** (100% pass rate)"
+  },
+  {
+   "n": 3,
+   "text": "- Consolidated CLAUDE guidance into a streamlined testing/workflow and command-oriented docs; added REST API Gateway guides and updated project readiness docs."
+  }
+ ],
+ "order": "99ccb26435f0d6e94c0637ba46df204324f0841c3c2475474b36a40f7dfd4524"
+}

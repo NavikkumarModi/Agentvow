@@ -1,0 +1,14 @@
+{
+ "id": "33cacc71e2",
+ "url": "https://github.com/VCBSstudio/ScreenCut/pull/6",
+ "repo": "VCBSstudio/ScreenCut",
+ "number": 6,
+ "message": "Migrate About and Preferences windows from AppKit NSWindowControllers to native SwiftUI Scenes.\n\nThe original request was to migrate UIKit to SwiftUI. Upon inspection, the app is a macOS application using AppKit and SwiftUI. This PR modernizes the About and Preferences windows by replacing their AppKit `NSWindowController` implementations with pure SwiftUI `Settings` and `WindowGroup` scenes, while ensuring backward compatibility for older macOS versions. Core AppKit-dependent features like the screenshot overlay remain unchanged to avoid breaking existing functionality.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-5d086c54-8557-40d5-8ac8-be05bf74c652\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-5d086c54-8557-40d5-8ac8-be05bf74c652\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This PR modernizes the About and Preferences windows by replacing their AppKit `NSWindowController` implementations with pure SwiftUI `Settings` and `WindowGroup` scenes, while ensuring backward compatibility for older macOS versions."
+  }
+ ],
+ "order": "ba0afd8b45596c9f8113399b5d4c3d4643399d77b2851a1d111c9bff5f3a0122"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "f3f49c821d",
+ "url": "https://github.com/GongRzhe/Gmail-MCP-Server/pull/43",
+ "repo": "GongRzhe/Gmail-MCP-Server",
+ "number": 43,
+ "message": "- Add optional 'from' parameter to send/draft emails from verified aliases\n- Add optional 'fromName' parameter for custom display names\n- Add list_send_as_aliases tool to view available aliases\n- Support RFC 2047 encoding for international characters in display names\n- Maintain backward compatibility with existing email sending\n- Add new OAuth scope: gmail.settings.basic for alias access\n- Enhanced evaluations to include alias functionality testing\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Maintain backward compatibility with existing email sending"
+  }
+ ],
+ "order": "b4237f3e0a521787d8e01cbd57455e1765935ea2d4930b4cedfad14981c56e32"
+}

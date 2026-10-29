@@ -1,0 +1,14 @@
+{
+ "id": "0a7b3a9239",
+ "url": "https://github.com/airbytehq/airbyte/pull/52588",
+ "repo": "airbytehq/airbyte",
+ "number": 52588,
+ "message": "# Description\nThis PR adds integration tests for destination-milvus that use a local Milvus instance via Docker. The tests verify:\n- Connection to local Milvus instance\n- Configuration validation\n- Write operations in different sync modes\n- Vector operations and similarity search\n\nChanges:\n- Added standalone_embed.sh script for managing local Milvus container\n- Updated integration tests to use local instance\n- Added test configuration for local testing\n- Updated README with local testing instructions\n\nLink to Devin run: https://app.devin.ai/sessions/0ea2200c3281440eba78008bc50fd4ed\n\n# Test Coverage\nThe integration tests cover:\n- Configuration validation\n- Write operations with overwrite and append_dedup modes\n- Record fidelity verification\n- Vector similarity search functionality\n\n# Testing Instructions\nPrerequisites:\n- Docker installed and running\n- Default ports available (19530, 2379, 9091)\n\nTo run tests:\n```bash\ncd airbyte-integrations/connectors/destination-milvus\npoetry run pytest -s integration_tests\n```",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated README with local testing instructions"
+  }
+ ],
+ "order": "c962ea8ca0bf24acae836b5c047f749219d7b212b7d002a97ecd2ae0f57f90c0"
+}

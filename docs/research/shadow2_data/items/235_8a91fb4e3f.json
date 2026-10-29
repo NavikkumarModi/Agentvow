@@ -1,0 +1,18 @@
+{
+ "id": "8a91fb4e3f",
+ "url": "https://github.com/AstrBotDevs/AstrBot/pull/2457",
+ "repo": "AstrBotDevs/AstrBot",
+ "number": 2457,
+ "message": "The Docker container was unable to find the FFmpeg executable despite it being installed via pyffmpeg, causing EdgeTTS and other audio processing features to fail with `FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'`.\n\n## Root Cause\n\nThe issue occurred because:\n1. Docker installs pyffmpeg and downloads FFmpeg binary to `/root/.pyffmpeg/bin/ffmpeg` \n2. The original Dockerfile added this path to `.bashrc`: `RUN echo 'export PATH=$PATH:/root/.pyffmpeg/bin' >> ~/.bashrc`\n3. When Python runs via `CMD [\"python\", \"main.py\"]`, it doesn't source `.bashrc`, so the PATH modification never takes effect\n4. Python subprocess calls to `ffmpeg` fail because the executable isn't found in PATH\n\n## Solution\n\n### 1. Fixed Dockerfile PATH Setting\nChanged from modifying `.bashrc` to using `ENV` directive:\n```dockerfile\n# Before (only works in interactive shells)\nRUN echo 'export PATH=$PATH:/root/.pyffmpeg/bin' >> ~/.bashrc\n\n# After (works for all container processes)\nENV PATH=$PATH:/root/.pyffmpeg/bin\n```\n\n### 2. Added Robust FFmpeg Path Resolution\nCreated `astrbot/core/utils/ffmpeg_helper.py` with intelligent path detection:\n- First tries to find `ffmpeg` in PATH using `shutil.which()`\n- Falls back to common installation paths including `/root/.pyffmpeg/bin/ffmpeg`\n- Handles missing FFmpeg gracefully\n\n### 3. Updated Audio Processing Modules\nModified both `edge_tts_source.py` and `tencent_record_helper.py` to use the centralized FFmpeg path resolution instead of hardcoded `\"ffmpeg\"` command.\n\n## Testing\n\nThe fix has been tested with:\n- Unit tests for path resolution logic\n- Integration tests for import compatibility\n- Fallback path functionality verification\n- Code quality checks with ruff\n\n## Impact\n\n- \u2705 EdgeTTS adapter now works correctly in Docker\n- \u2705 Other audio processing features using FFmpeg are fixed\n- \u2705 Backwards compatible with existing installations\n- \u2705 Graceful handling when FFmpeg is not available\n- \u2705 Centralized logic makes future maintenance easier\n\nFixes #2284.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Created `astrbot/core/utils/ffmpeg_helper.py` with intelligent path detection:"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Backwards compatible with existing installations"
+  }
+ ],
+ "order": "d2fe4a833c76a854070c3609701cff30640e93b56d213441c21b23cd1f02b002"
+}

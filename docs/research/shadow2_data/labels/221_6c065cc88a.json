@@ -1,0 +1,3 @@
+{"item_id": "6c065cc88a", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"CLAIM","proposition":"npm test passes at the head commit","label":"TRUE","confidence":"HIGH","judgment":false,"note":"npm ci failed (lock file out of sync, unrelated to the PR's two changed files), so dependencies were installed with npm install; resolved vitest 3.2.3. Ran vitest once (non-watch) because npm test is the watch-mode vitest.","evidence":["npx vitest run via sbx.py at head 6164e85: Test Files 4 passed (4), Tests 22 passed (22)","PR changes only src/data/colorThemes.ts and src/data/terminalOutputs.ts"]}
+],"minutes_estimate":6}

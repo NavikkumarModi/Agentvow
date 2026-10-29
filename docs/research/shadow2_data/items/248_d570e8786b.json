@@ -1,0 +1,22 @@
+{
+ "id": "d570e8786b",
+ "url": "https://github.com/filso/ng-dependency-graph/pull/24",
+ "repo": "filso/ng-dependency-graph",
+ "number": 24,
+ "message": "This PR implements a comprehensive JSON export feature for the AngularJS dependency graph extension, allowing users to export their current graph data for external analysis and integration workflows.\n\n## Changes\n\n**UI Enhancement:**\n- Added an \"Export as JSON\" button in the Options section of the info panel\n- Applied consistent styling that matches the existing UI design\n\n**Core Implementation:**\n- Created `exportService.js` with methods to serialize graph data and handle file downloads\n- Updated `InfoPanelCtrl.js` to handle export functionality with proper error handling  \n- Added the new service to the application module loading sequence\n\n**Export Features:**\n- Exports complete graph structure including all nodes, links, and dependency relationships\n- Captures current view state (active filters, scope selection, selected node)\n- Includes node positions for visual state recreation\n- Adds comprehensive metadata (export timestamp, version, graph statistics)\n- Handles circular references properly to create clean JSON output\n- Works seamlessly with both modules and components views\n\n**Data Structure:**\nThe exported JSON follows a structured format containing:\n```json\n{\n  \"metadata\": {\n    \"exportedAt\": \"2025-09-08T10:20:12.186Z\",\n    \"exportVersion\": \"1.0.0\",\n    \"scope\": \"components\",\n    \"totalNodes\": 60,\n    \"totalLinks\": 77\n  },\n  \"currentView\": {\n    \"scope\": \"components\",\n    \"filters\": { /* current filter state */ },\n    \"options\": { /* current options state */ },\n    \"selectedNode\": { /* currently selected node */ }\n  },\n  \"graph\": {\n    \"nodes\": [ /* all graph nodes with dependencies */ ],\n    \"links\": [ /* all connections between nodes */ ]\n  }\n}\n```\n\n**Testing & Quality:**\n- Created comprehensive unit tests covering all export scenarios\n- Manually tested functionality in both modules and components views\n- Verified proper error handling for edge cases\n- Updated README.md documentation with feature details\n\nThe feature enables users to backup their current graph state, perform external data analysis, and integrate dependency information with other development tools and workflows.\n\n![Export Feature](https://github.com/user-attachments/assets/1078a093-ec52-42f1-85c4-910c8fe82caa)\n\nFixes #22.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/filso/ng-dependency-graph/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Created `exportService.js` with methods to serialize graph data and handle file downloads"
+  },
+  {
+   "n": 2,
+   "text": "- Updated `InfoPanelCtrl.js` to handle export functionality with proper error handling"
+  },
+  {
+   "n": 3,
+   "text": "- Updated README.md documentation with feature details"
+  }
+ ],
+ "order": "de48e554d1f45c017a58002e8c701d720f0c6b2ea76234d951b73ee12c49ccda"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "f39f25b72c",
+ "url": "https://github.com/trufflesecurity/trufflehog/pull/4478",
+ "repo": "trufflesecurity/trufflehog",
+ "number": 4478,
+ "message": "### Description:\nThis PR introduces a new GitHub Action workflow (`.github/workflows/pr-approval-check.yml`) that enforces a required approval from a member of the `@trufflesecurity/product-eng` team for all pull requests.\n\nThe workflow creates a `product-eng-approval` status check, which will be `success` only if an active `@trufflesecurity/product-eng` team member has approved the PR. A `README.md` is also included to explain the workflow and how to configure branch protection to make this check mandatory.\n\n### Checklist:\n* [x] Tests passing (`make test-community`)?\n* [x] Lint passing (`make lint` this requires [golangci-lint](https://golangci-lint.run/welcome/install/#local-installation))?\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-b2adf043-98b3-4e01-a317-c610741faf22\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\"><img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\"></picture></a>&nbsp;<a href=\"https://cursor.com/agents?id=bc-b2adf043-98b3-4e01-a317-c610741faf22\"><picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\"><img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\"></picture></a>\n\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* [x] Tests passing (`make test-community`)?"
+  }
+ ],
+ "order": "2b9590ce4dc1dc9ad22287bf4b4e0285f88fff9226f81513ad675f752e238bce"
+}

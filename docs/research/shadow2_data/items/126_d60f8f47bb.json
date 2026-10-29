@@ -1,0 +1,18 @@
+{
+ "id": "d60f8f47bb",
+ "url": "https://github.com/vespa-engine/pyvespa/pull/1119",
+ "repo": "vespa-engine/pyvespa",
+ "number": 1119,
+ "message": "This PR adds support for providing certificate and key content directly as strings to the `Vespa` class constructor, eliminating the need to write certificates to temporary files when they are stored in environment variables or retrieved from secret management systems.\n\n## Changes\n\n### New Parameters\n- `cert_content: Optional[str]` - Content of the data plane certificate as a string\n- `key_content: Optional[str]` - Content of the data plane key as a string\n\n### Key Features\n- **Mutual exclusivity validation**: `cert`/`cert_content` and `key`/`key_content` are mutually exclusive\n- **Automatic temporary file handling**: When content parameters are used, temporary files are created automatically and cleaned up when context managers exit\n- **Full backward compatibility**: Existing `cert` and `key` file path parameters continue to work unchanged\n- **Support for both sync and async**: Works with both `VespaSync` and `VespaAsync` classes\n\n### Usage Examples\n\n```python\n# New functionality - certificate content directly from environment variables\napp = Vespa(\n    url=\"https://my-endpoint.vespa-app.cloud\",\n    cert_content=os.getenv('VESPA_CERT_CONTENT'),\n    key_content=os.getenv('VESPA_KEY_CONTENT')\n)\n\n# Traditional file-based approach still works\napp = Vespa(\n    url=\"https://my-endpoint.vespa-app.cloud\", \n    cert=\"/path/to/cert.pem\",\n    key=\"/path/to/key.pem\"\n)\n\n# Use with context managers for automatic cleanup\nwith app.syncio() as sync_app:\n    response = sync_app.query(body={\"yql\": \"select * from sources *\"})\n\nasync with app.asyncio() as async_app:\n    response = await async_app.query(body={\"yql\": \"select * from sources *\"})\n```\n\n### Validation\nThe implementation includes comprehensive validation:\n- `cert_content` and `key_content` must be provided together\n- Cannot mix file paths with content parameters\n- Clear error messages for invalid parameter combinations\n\n### Testing\n- **8 new unit tests** covering parameter validation, temporary file handling, and content verification\n- **3 new integration tests** demonstrating end-to-end functionality\n- **Example script** showing real-world usage patterns\n- All existing tests continue to pass\n\nThis enhancement is particularly useful for containerized deployments, CI/CD pipelines, and environments where certificates are managed through secret management systems rather than filesystem access.\n\nFixes #1118.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/vespa-engine/pyvespa/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Full backward compatibility**: Existing `cert` and `key` file path parameters continue to work unchanged"
+  },
+  {
+   "n": 2,
+   "text": "- Cannot mix file paths with content parameters"
+  }
+ ],
+ "order": "6e1e587e4776674e8a187a7d4abcdee2a95c26f6c2b67c2262d1f75d189c9691"
+}

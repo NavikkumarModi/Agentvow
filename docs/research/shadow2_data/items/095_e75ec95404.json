@@ -1,0 +1,26 @@
+{
+ "id": "e75ec95404",
+ "url": "https://github.com/openvm-org/openvm/pull/1735",
+ "repo": "openvm-org/openvm",
+ "number": 1735,
+ "message": "# Add VERSIONING.md documentation\n\nThis PR adds a new `VERSIONING.md` file to the root directory of the OpenVM repository to document our semantic versioning principles and backward compatibility guarantees.\n\n## Changes\n- Created `VERSIONING.md` with comprehensive documentation of:\n  - Semantic versioning approach (major.minor.patch)\n  - Core principle: \"Patch upgrade should be backward compatible\"\n  - Backward compatibility guarantees for patch versions\n  - Exceptions for purely additive changes\n  - Guidelines for patch-level changes\n\n## Ticket\n- Linear ticket: **INT-4159**\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/ba99b2c95a5e4506b1d1ed5f42fe570c\n\n## Testing\nThis is a documentation-only change with no code modifications required.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "This PR adds a new `VERSIONING.md` file to the root directory of the OpenVM repository to document our semantic versioning principles and backward compatibility guarantees."
+  },
+  {
+   "n": 2,
+   "text": "- Created `VERSIONING.md` with comprehensive documentation of:"
+  },
+  {
+   "n": 3,
+   "text": "- Core principle: \"Patch upgrade should be backward compatible\""
+  },
+  {
+   "n": 4,
+   "text": "- Backward compatibility guarantees for patch versions"
+  }
+ ],
+ "order": "4c083db07f1121cf886163a2c7c0cecbd0aef9256cbfb353a0751f3c4a433fdd"
+}

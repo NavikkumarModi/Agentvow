@@ -1,0 +1,26 @@
+{
+ "id": "86267a6448",
+ "url": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6709",
+ "repo": "RocketChat/Rocket.Chat.ReactNative",
+ "number": 6709,
+ "message": "<!-- This is a pull request template, you do not need to uncomment or remove the comments, they won't show up in the PR text. -->\r\n\r\n## Proposed changes\r\n<!-- Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. If it fixes a bug or resolves a feature request, be sure to link to that issue below. -->\r\n\r\n## Issue(s)\t\r\n<!-- Link the issues being closed by or related to this PR. For example, you can use #594 if this PR closes issue number 594 -->\r\n\r\n## How to test or reproduce\r\n<!-- Mention how you would reproduce the bug if not mentioned on the issue page already. Also mention which screens are going to have the changes if applicable -->\r\n\r\n## Screenshots\r\n\r\n## Types of changes\r\n<!-- What types of changes does your code introduce to Rocket.Chat? -->\r\n<!-- Put an `x` in the boxes that apply -->\r\n\r\n- [ ] Bugfix (non-breaking change which fixes an issue)\r\n- [ ] Improvement (non-breaking change which improves a current function)\r\n- [ ] New feature (non-breaking change which adds functionality)\r\n- [ ] Documentation update (if none of the other choices apply)\r\n\r\n## Checklist\r\n<!-- Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before merging your code. -->\r\n\r\n- [ ] I have read the [CONTRIBUTING](https://github.com/RocketChat/Rocket.Chat/blob/develop/.github/CONTRIBUTING.md#contributing-to-rocketchat) doc\r\n- [ ] I have signed the [CLA](https://cla-assistant.io/RocketChat/Rocket.Chat.ReactNative)\r\n- [ ] Lint and unit tests pass locally with my changes\r\n- [ ] I have added tests that prove my fix is effective or that my feature works (if applicable)\r\n- [ ] I have added necessary documentation (if applicable)\r\n- [ ] Any dependent changes have been merged and published in downstream modules\r\n\r\n## Further comments\r\n<!-- If this is a relatively large or complex change, kick off the discussion by explaining why you chose the solution you did and what alternatives you considered, etc... -->\r\n\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n- New Features\n  - Default server auto-connect to https://edu97.ir\n  - Persian set as default language (RTL)\n  - Added designer credit in App Version screen\n- Refactor\n  - Rebranded app name, share extension, and deep-link scheme to \u201candishe2\u201d\n  - Simplified login, server selection, and workspace screens; registration option removed\n  - Updated titles and labels to localized Persian text\n  - Saved media now goes to \u201c\u062f\u0628\u0633\u062a\u0627\u0646 \u0627\u0646\u062f\u06cc\u0634\u0647 \u062d\u0633\u06cc\u0646\u06cc\u201d album\n- Tests\n  - Updated deep-link tests to new scheme\n- Chores\n  - Added CI workflows to build and publish Android APKs (GitHub Actions, Codemagic)\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [ ] Bugfix (non-breaking change which fixes an issue)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Improvement (non-breaking change which improves a current function)"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 4,
+   "text": "- [ ] Lint and unit tests pass locally with my changes"
+  }
+ ],
+ "order": "fda98eef035e0841d2e41909fc3454019ebe7b5464ce6dd06be6662785c4fc02"
+}

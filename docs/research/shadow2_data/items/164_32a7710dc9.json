@@ -1,0 +1,14 @@
+{
+ "id": "32a7710dc9",
+ "url": "https://github.com/KomodoPlatform/komodo-wallet/pull/3194",
+ "repo": "KomodoPlatform/komodo-wallet",
+ "number": 3194,
+ "message": "## Summary\n- remove the scroll_attempt_outside_content analytics wiring and note that it will return later\n- refresh required_analytics_events.csv to flag the implemented events as completed\n- document the temporary removal in the analytics implementation plan\n\n## Testing\n- flutter analyze *(fails: current Flutter SDK 3.32.5 < required 3.35.3)*\n\n------\nhttps://chatgpt.com/codex/tasks/task_e_68f125e42ba88326a97aea29dd727dc3\n\n<!-- CURSOR_SUMMARY -->\n---\n\n> [!NOTE]\n> Removes the scroll_attempt_outside_content analytics event and all references, updates the required events CSV to mark implemented items as complete, and documents the temporary removal.\n> \n> - **Analytics**:\n>   - Remove `scroll_attempt_outside_content` event: delete event classes/wrappers in `lib/analytics/analytics_factory.dart` and `lib/analytics/events/misc_events.dart`, drop logging from `wallet_main.dart`, and remove category mapping in `bloc/analytics/matomo_analytics_api.dart`.\n> - **Data/Docs**:\n>   - Update `lib/analytics/required_analytics_events.csv`: mark many events as `TRUE` and remove `scroll_attempt_outside_content` row.\n>   - Add note in `docs/ANALYTICS_EVENT_IMPLEMENTATION_PLAN.md` about temporary removal of `scroll_attempt_outside_content`.\n> \n> <sup>Written by [Cursor Bugbot](https://cursor.com/dashboard?tab=bugbot) for commit d786295de3fbc5b2ba4608a9306e6f9c77efaeb8. This will update automatically on new commits. Configure [here](https://cursor.com/dashboard?tab=bugbot).</sup>\n<!-- /CURSOR_SUMMARY -->\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **Chores**\n  * Removed the scroll_attempt_outside_content analytics event. This event has been temporarily disabled and will be re-implemented when updated instrumentation is ready. No impact to user-facing features or app functionality.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "No impact to user-facing features or app functionality."
+  }
+ ],
+ "order": "97312ec83066df79125ced599bf098e12bd5d19d948c54914e7f27770fd05e83"
+}

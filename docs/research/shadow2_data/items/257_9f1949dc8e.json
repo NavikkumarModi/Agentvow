@@ -1,0 +1,22 @@
+{
+ "id": "9f1949dc8e",
+ "url": "https://github.com/spcl/dace/pull/2041",
+ "repo": "spcl/dace",
+ "number": 2041,
+ "message": "This PR addresses a CUDA code generation error that occurs when trying to copy between GPU_Global storage locations within GPU_Device maps. The issue manifested as compilation errors due to attempts to generate calls to non-existent higher-dimensional `dace::GlobalToGlobal` functions.\n\n## Problem\nWhen the CUDA code generator encounters a copy operation between two `GPU_Global` arrays within a `GPU_Device` map context, it attempts to generate function calls like:\n- `dace::GlobalToGlobal2D`  \n- `dace::GlobalToGlobal3D`\n\nWhile 1D versions exist in the runtime library (`GlobalToGlobal1D` and `GlobalToGlobal1DDynamic`), higher-dimensional versions (2D, 3D) are not implemented, leading to compilation failures with cryptic \"cannot be found\" errors.\n\n## Solution\nThe fix now correctly identifies which GlobalToGlobal operations are actually unsupported:\n\n- **1D copies**: Allowed to proceed (runtime functions exist)\n- **Higher-dimensional copies (2D, 3D)**: Blocked with clear error message\n\nWhen a higher-dimensional GlobalToGlobal copy is detected, the code now raises a clear `NotImplementedError`:\n\n```\nGPU global memory to global memory copies for higher dimensions (2D, 3D) are not implemented. \nConsider moving the copy to a map using the CopyToMap transformation or manually.\n```\n\n## Changes Made\n- **`dace/codegen/targets/cuda.py`**: Updated check in `_emit_copy()` method to only block higher-dimensional GlobalToGlobal cases (`dims > 1`)\n- **`tests/codegen/gpu_memcpy_test.py`**: Updated test case documentation to reflect the more precise behavior\n\n## Benefits\n- Users get clear, actionable error messages for genuinely unsupported operations\n- 1D GlobalToGlobal copies (which have runtime support) now work correctly\n- Guides developers toward proper solutions like CopyToMap transformation\n- Maintains backward compatibility for all working use cases\n- Fixes CI test failures caused by overly broad error blocking\n\nFixes #335.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "While 1D versions exist in the runtime library (`GlobalToGlobal1D` and `GlobalToGlobal1DDynamic`), higher-dimensional versions (2D, 3D) are not implemented, leading to compilation failures with cryptic \"cannot be found\" errors."
+  },
+  {
+   "n": 2,
+   "text": "- **`tests/codegen/gpu_memcpy_test.py`**: Updated test case documentation to reflect the more precise behavior"
+  },
+  {
+   "n": 3,
+   "text": "- Maintains backward compatibility for all working use cases"
+  }
+ ],
+ "order": "e6b1210485a02f029de0b5af4dcd0121f37ab45fa5c75f0de55bd3f621491687"
+}

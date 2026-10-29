@@ -1,0 +1,3 @@
+{"item_id": "d5d7a79fba", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"CLAIM","proposition":"This change modifies build_index.py","label":"TRUE","confidence":"HIGH","judgment":false,"note":"Verb 'modified' matches status modified; unique filename in the change list.","evidence":["gh api repos/simonw/tools/pulls/64/files: 'modified build_index.py' (also 'added index.html')"]}
+], "minutes_estimate": 1}

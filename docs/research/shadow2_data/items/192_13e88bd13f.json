@@ -1,0 +1,18 @@
+{
+ "id": "13e88bd13f",
+ "url": "https://github.com/dotnet/aspire/pull/10642",
+ "repo": "dotnet/aspire",
+ "number": 10642,
+ "message": "Updates the `aspire deploy` command to use secure project-relative directories for deployment artifacts instead of system temporary directories, addressing security concerns while maintaining stable paths.\n\n## Problem\n\nThe previous implementation used `Directory.CreateTempSubdirectory()` which creates directories under the system temp path (e.g., `/tmp` on Unix). This posed security risks because:\n- System temp directories often have broader permissions\n- Multiple users on the system might access deployment artifacts\n- Deployment artifacts contain sensitive information (connection strings, API keys, infrastructure configs)\n- Using predictable folder names in `/tmp` creates denial-of-service vulnerabilities\n\n## Solution\n\nModified `DeployCommand.CreateDefaultOutputPath()` to use project-relative directories:\n\n**Before:**\n```csharp\nreturn Directory.CreateTempSubdirectory($\"aspire-deploy-{hashString}-\").FullName;\n```\n\n**After:**\n```csharp\nvar outputDir = Path.Combine(sourcePath, \".aspire\", \"deploy\", hashString);\nreturn outputDir;\n```\n\nAdded `.aspire/` to `.gitignore` to prevent accidental commits of deployment artifacts to source control.\n\n## Benefits\n\n- **Secure**: Keeps sensitive deployment artifacts within the user's project directory with proper file permissions\n- **Stable**: Same project always generates the same SHA256-based path for predictable directory naming\n- **Isolated**: Each project gets its own hash-based subdirectory for separation\n- **Clean**: Uses hidden `.aspire` directory to avoid cluttering the project root\n- **Cross-platform**: Works consistently across different operating systems\n- **Source Control Safe**: Prevents accidental commits of sensitive deployment artifacts\n- **Backward compatible**: Users can still specify custom paths via `--output-path`\n\n## Example\n\n```bash\n# Before: created /tmp/aspire-deploy-8f7b9048-cd6Fxz/ (security risk)\naspire deploy\n\n# After: creates ./myproject/.aspire/deploy/8f7b9048/ (secure, project-relative)\naspire deploy\n\n# Same project, different invocation: reuses ./myproject/.aspire/deploy/8f7b9048/\naspire deploy\n\n# Different project: uses ./otherproject/.aspire/deploy/7195df27/\naspire deploy --project /path/to/other/project.csproj\n\n# Custom path still works as before\naspire deploy --output-path ./my-custom-deploy\n```\n\n## Testing\n\n- All existing tests pass with updated expectations for project-relative paths\n- Added error handling for graceful fallback if path generation fails\n- Verified stable hash generation across different invocations\n- Confirmed proper isolation between different projects\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward compatible**: Users can still specify custom paths via `--output-path`"
+  },
+  {
+   "n": 2,
+   "text": "- All existing tests pass with updated expectations for project-relative paths"
+  }
+ ],
+ "order": "aed186c51ee497818f8a0ca886e2646e64a509f65dff4cec801c4ad3836c418e"
+}

@@ -1,0 +1,3 @@
+{"item_id": "01c18178bd", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change adds the file tests/kernels/moe/test_batched_triton_fallback.py containing unit tests.", "label": "FALSE", "confidence": "HIGH", "judgment": false, "note": "The PR's change list has only two modified files and no test file; the named test file does not exist at the head commit either.", "evidence": ["gh api pulls/26983/files: modified vllm/envs.py (+7), modified vllm/model_executor/layers/fused_moe/batched_triton_or_deep_gemm_moe.py (+28); nothing else", "gh api compare base 37593de...head 320e717 lists only those two files", "gh api contents/tests/kernels/moe/test_batched_triton_fallback.py?ref=head returns not found"]}
+], "minutes_estimate": 4}

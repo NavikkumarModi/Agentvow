@@ -1,0 +1,22 @@
+{
+ "id": "51fe4c8bdc",
+ "url": "https://github.com/deepmodeling/dpdata/pull/870",
+ "repo": "deepmodeling/dpdata",
+ "number": 870,
+ "message": "The `amber/md` format previously only supported orthogonal unit cells (90\u00b0 angles), raising a `RuntimeError(\"Unsupported cells\")` for any simulation with non-orthogonal cells. This limitation prevented users from processing AMBER trajectories with triclinic, monoclinic, or hexagonal crystal systems.\n\n## Changes\n\n- **Added `cell_lengths_angles_to_cell()` function** that converts cell lengths and angles to 3\u00d73 cell vector matrices using standard crystallographic conventions\n- **Removed orthogonal-only restriction** in `read_amber_traj()` by replacing the angle check with general cell conversion\n- **Maintains full backward compatibility** - orthogonal cells produce identical results to the previous implementation\n\n## Supported Crystal Systems\n\nThe implementation now handles all crystal systems:\n- **Cubic/Orthorhombic**: \u03b1 = \u03b2 = \u03b3 = 90\u00b0\n- **Monoclinic**: \u03b1 = \u03b3 = 90\u00b0, \u03b2 \u2260 90\u00b0 \n- **Hexagonal**: \u03b1 = \u03b2 = 90\u00b0, \u03b3 = 120\u00b0\n- **Triclinic**: \u03b1, \u03b2, \u03b3 \u2260 90\u00b0\n\n## Example Usage\n\n```python\nimport dpdata\n\n# Previously would raise RuntimeError for non-orthogonal cells\nsystem = dpdata.LabeledSystem(\"simulation\", fmt=\"amber/md\")\n# Now works with any cell angles, including:\n# - Protein crystals with monoclinic cells\n# - Hexagonal ice simulations \n# - Triclinic organic crystals\n```\n\n## Testing\n\nAdded comprehensive test coverage including:\n- Unit tests for all crystal system types\n- Edge case validation (extreme angles, multiple frames)\n- Integration tests verifying RuntimeError elimination\n- Backward compatibility verification\n\nAll existing amber/md tests continue to pass, ensuring no breaking changes.\n\nFixes #869.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/deepmodeling/dpdata/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Maintains full backward compatibility** - orthogonal cells produce identical results to the previous implementation"
+  },
+  {
+   "n": 2,
+   "text": "- Backward compatibility verification"
+  },
+  {
+   "n": 3,
+   "text": "All existing amber/md tests continue to pass, ensuring no breaking changes."
+  }
+ ],
+ "order": "c70226a33a46348466aaab05ad42f0b2d92aa22d7cf5f97f7d8fbfb5e4d00c13"
+}

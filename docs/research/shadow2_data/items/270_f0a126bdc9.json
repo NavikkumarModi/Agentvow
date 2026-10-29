@@ -1,0 +1,14 @@
+{
+ "id": "f0a126bdc9",
+ "url": "https://github.com/softmaple/softmaple/pull/239",
+ "repo": "softmaple/softmaple",
+ "number": 239,
+ "message": "# Complete Node.js Version Update to 22.16.0\n\nThis PR completes the Node.js version update to 22.16.0 by updating the remaining GitHub Actions workflow file that still referenced the old version.\n\n## Changes Made\n\n- Updated `.github/workflows/prisma-migrate.yml` to use `node-version: 22.16.0` instead of `node-version: 20`\n\n## Context\n\nThis builds upon the recent commit f6bd2fd which already updated most Node.js version references to 22.16.0, including:\n- Root `package.json` engines field: `\"node\": \">=22.16.0\"`\n- `.github/workflows/test-md2latex.yml` workflow: `node-version: 22.16.0`\n- Updated `@types/node` dependencies to match\n\nThe only remaining file that needed updating was the prisma-migrate.yml workflow file, which this PR addresses.\n\n## Verification\n\n- \u2705 Searched for remaining references to old Node.js versions - none found\n- \u2705 All GitHub Actions workflows now consistently use Node.js 22.16.0\n- \u26a0\ufe0f Local lint failed due to missing dependencies (environment issue, not related to this change)\n\n## Testing\n\nNo functional changes were made - this is purely a configuration update to ensure consistency across all CI workflows.\n\n---\n\n**Link to Devin run:** https://app.devin.ai/sessions/4fbadc182aea479aa1c5bb73889dc95e\n\n**Requested by:** Yadong (Adam) Zhang (zhyd007@gmail.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated `.github/workflows/prisma-migrate.yml` to use `node-version: 22.16.0` instead of `node-version: 20`"
+  }
+ ],
+ "order": "f488d8d0512ca785bda422cd7e74a8d5a2babbf353037f396d9495c5ba423e8f"
+}

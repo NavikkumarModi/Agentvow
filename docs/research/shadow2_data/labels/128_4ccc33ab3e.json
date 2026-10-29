@@ -1,0 +1,3 @@
+{"item_id": "4ccc33ab3e", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change modifies documentation/docs/install-pmm/install-pmm-server/deployment-options/docker/preview_env_var.md to update the HA variable documentation.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "File is in the change list as modified and the patch renames the eight PMM_TEST_HA_* variables to PMM_HA_* in the variable table.", "evidence": ["gh api pulls/4673/files: modified documentation/docs/install-pmm/install-pmm-server/deployment-options/docker/preview_env_var.md +8 -8", "patch: table rows changed from `PMM_TEST_HA_ENABLE` etc. to `PMM_HA_ENABLE` etc."]}
+], "minutes_estimate": 2}

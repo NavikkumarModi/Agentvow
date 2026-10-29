@@ -1,0 +1,4 @@
+{"item_id": "c12a7a74c1", "labeller": "sonnet", "statements": [
+{"n": 1, "step_a": "CLAIM", "proposition": "This change modifies the example in the documentation index page (apps/docs/content/index.mdx).", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "files_scope/docs: index.mdx modified, the code example block replaced with curl form.", "evidence": ["gh api pulls/190/files: modified apps/docs/content/index.mdx +6/-7", "patch replaces ```http POST block with ```bash curl block using $LLM_GATEWAY_API_KEY"]},
+{"n": 2, "step_a": "CLAIM", "proposition": "This change modifies the example in README.md.", "label": "TRUE", "confidence": "HIGH", "judgment": false, "note": "README.md modified, example converted to curl.", "evidence": ["gh api pulls/190/files: modified README.md +6/-7", "patch replaces ```http POST block with curl block using $LLM_GATEWAY_API_KEY"]}
+], "minutes_estimate": 3}

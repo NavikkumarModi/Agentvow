@@ -1,0 +1,14 @@
+{
+ "id": "f471a15a3a",
+ "url": "https://github.com/rsyslog/rsyslog/pull/6264",
+ "repo": "rsyslog/rsyslog",
+ "number": 6264,
+ "message": "Summary\r\n- Include doc/tools and doc/source/_static/vendor in dist tarball\r\n- Make sitemap generation opt-in; add `html-with-sitemap` target\r\n- Default `make html` no longer produces sitemap.xml\r\n- Update README/BUILDS_README to prefer Makefile usage and SPHINXOPTS\r\n\r\nMotivation\r\n- Address feedback from https://github.com/rsyslog/rsyslog/pull/6260\r\n- Keep local/manual builds clean (no sitemap), ensure dist contains assets\r\n\r\nDetails\r\n- configure.ac: add vendor/tools files to DOC_FILES\r\n- doc/source/conf.py: load sphinx_sitemap only with tag `with_sitemap`\r\n- doc/Makefile: new `html-with-sitemap` target; forward `-t with_sitemap`\r\n- doc/README.md, doc/BUILDS_README.md: prefer `make`, document sitemap opt-in\r\n\r\nBackward compatibility\r\n- Local/default builds unchanged except sitemap disabled by default\r\n- Sitemap generated only when explicitly requested",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Backward compatibility"
+  }
+ ],
+ "order": "c032b2b3a75a07cbfa7734cfa9b1c78088225cbc41337eceeb8e6e0ba483fc78"
+}

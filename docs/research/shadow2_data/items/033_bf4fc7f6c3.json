@@ -1,0 +1,22 @@
+{
+ "id": "bf4fc7f6c3",
+ "url": "https://github.com/IAHispano/Applio/pull/1083",
+ "repo": "IAHispano/Applio",
+ "number": 1083,
+ "message": "This PR implements comprehensive Docker support for Applio with proper docker-compose configuration and Portainer integration, addressing the need for containerized deployment on NAS systems and container orchestration platforms.\n\n## Changes Made\n\n### \ud83d\udc33 Docker Configuration\n- **Rewrote `docker-compose.yaml`** with proper service definitions, volume mappings, and environment variables\n- **Updated `Dockerfile`** to bind to `0.0.0.0` for proper container networking\n- **Added `.env.example`** with configurable environment variables\n- **Created separate CPU and GPU profiles** for flexible deployment options\n\n### \ud83d\udcda Documentation\n- **Added Docker Support section** to `README.md` with quick start guide\n- **Created comprehensive `DOCKER.md`** with detailed installation instructions\n- **Included troubleshooting guide** and management commands\n- **Added Portainer-specific deployment instructions**\n\n### \ud83d\udd27 Portainer Integration\n- **Created `portainer-app-template.json`** for easy deployment through Portainer UI\n- **Both CPU and GPU variants** available in the app template\n- **Stack deployment support** using the docker-compose.yaml file\n- **Complete environment variable configuration** through Portainer interface\n\n## Key Features\n\n### Volume Persistence\nAutomatic volume mapping for:\n- Application logs and training data\n- AI models and pre-trained weights\n- Audio files and processed samples\n- Configuration and cache files\n\n### Environment Configuration\n```bash\n# Example .env configuration\nAPPLIO_HOST=0.0.0.0\nAPPLIO_PORT=6969\nAPPLIO_SHARE=false\nAPPLIO_DEBUG=false\nCUDA_VISIBLE_DEVICES=0  # For GPU profile\n```\n\n### Deployment Options\n```bash\n# CPU-only deployment\ndocker compose up -d\n\n# GPU-enabled deployment\ndocker compose --profile gpu up -d\n\n# Portainer stack deployment\n# Use docker-compose.yaml directly in Portainer stacks\n```\n\n## Benefits for Users\n\n1. **Easy NAS deployment** with persistent storage and proper networking\n2. **Portainer stack management** for container orchestration\n3. **GPU acceleration support** with optional NVIDIA Docker integration\n4. **Production-ready configuration** with restart policies and health monitoring\n5. **Comprehensive documentation** for all deployment scenarios\n\n## Testing\n\nAll configurations have been validated:\n- \u2705 Docker Compose syntax validation\n- \u2705 CPU and GPU profile testing\n- \u2705 Volume mapping verification\n- \u2705 Environment variable configuration\n- \u2705 Portainer app template JSON validation\n\nThis implementation provides exactly what was requested: a proper docker-compose that builds the image, assigns containers correctly, and maps volumes appropriately for use with Portainer and other container management systems.\n\nFixes #1076.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Rewrote `docker-compose.yaml`** with proper service definitions, volume mappings, and environment variables"
+  },
+  {
+   "n": 2,
+   "text": "- **Added Docker Support section** to `README.md` with quick start guide"
+  },
+  {
+   "n": 3,
+   "text": "- **Created `portainer-app-template.json`** for easy deployment through Portainer UI"
+  }
+ ],
+ "order": "1caa08604618c2fdd1a6fe71fcc54692e84b66769f4dc0a2cc3d8a131317852d"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "2ad3bbfc99",
+ "url": "https://github.com/NewFuture/DDNS/pull/559",
+ "repo": "NewFuture/DDNS",
+ "number": 559,
+ "message": "## Problem\nWindows x86 builds in the publish workflow were prone to timeout failures with the current 10-minute limit.\n\n## Solution\nExtended the timeout specifically for Windows x86 builds to 20 minutes while maintaining the 10-minute timeout for all other platforms.\n\n## Changes\nModified `.github/workflows/publish.yml` to use a conditional timeout expression:\n\n```yaml\n# Before\ntimeout-minutes: 10\n\n# After\ntimeout-minutes: ${{ matrix.arch == 'x86' && 20 || 10 }}\n```\n\nThis conditional expression:\n- Sets timeout to **20 minutes** when `matrix.arch == 'x86'`\n- Keeps timeout at **10 minutes** for all other architectures (x64, arm64)\n\n## Impact\n- Windows x86 builds now have sufficient time to complete during release publishing\n- Other platform builds remain unchanged with their original 10-minute timeout\n- Follows the same pattern already used in `build.yml` workflow for consistency\n\nFixes the issue where Windows x86 builds would timeout during the Nuitka compilation and testing phase.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n\n\n<details>\n\n<summary>Original prompt</summary>\n\n> \n> ----\n> \n> *This section details on the original issue you should resolve*\n> \n> <issue_title>publish.yaml \u5ef6\u957fwindows x86\u7684timeout\u65f6\u95f4</issue_title>\n> <issue_description>windows x86 build \u5bb9\u6613\u8d85\u65f6\uff0c\u8bf7\u5ef6\u957f windows x86\u7684 timeout-minutes \u4e3a 20</issue_description>\n> \n> ## Comments on the Issue (you are @copilot in this section)\n> \n> <comments>\n> </comments>\n> \n\n\n</details>\n\nFixes NewFuture/DDNS#558\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Modified `.github/workflows/publish.yml` to use a conditional timeout expression:"
+  }
+ ],
+ "order": "8202dbbc49f666ba6b1a3c3439354b865fa70959596df8c1a8e419f81cfce1d5"
+}

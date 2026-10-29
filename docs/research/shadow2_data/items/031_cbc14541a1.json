@@ -1,0 +1,22 @@
+{
+ "id": "cbc14541a1",
+ "url": "https://github.com/db-ux-design-system/core-web/pull/4830",
+ "repo": "db-ux-design-system/core-web",
+ "number": 4830,
+ "message": "This PR enhances the Custom Select component's keyboard navigation by adding Enter key functionality to address user confusion reported in usability testing.\r\n\r\n## Problem\r\n\r\nUsers found the Custom Select keyboard navigation unintuitive:\r\n- Enter key had no function, while users expected it to select/deselect options\r\n- Space key worked for selection but users didn't think to use it\r\n- This led to confusion and users thinking the component was broken\r\n\r\n## Solution\r\n\r\nAdded Enter key support to the `handleKeyboardPress` function with behavior that matches user expectations:\r\n\r\n### Single Select (Radio buttons)\r\n- **Enter key**: Selects the focused option and closes the dropdown\r\n- **Space key**: Unchanged - continues to work for consistency\r\n\r\n### Multiple Select (Checkboxes)  \r\n- **Enter key**: Toggles selection of the focused option, keeps dropdown open\r\n- **Space key**: Unchanged - continues to work for consistency\r\n\r\n### Escape key\r\n- Unchanged - still closes the dropdown\r\n\r\n## Implementation Details\r\n\r\nThe solution detects when Enter is pressed on a focused checkbox or radio input and triggers a `click()` event to simulate the native Space key behavior. For single select scenarios, it additionally closes the dropdown and returns focus to the summary element. This is handled by the regular `.click()` behaviour.\r\n\r\n## Testing\r\n\r\nAdded comprehensive test coverage for both single and multiple select scenarios:\r\n- Single select: Verifies Enter selects option and closes dropdown\r\n- Multiple select: Verifies Enter toggles selection while keeping dropdown open\r\n- Existing Space key functionality remains unchanged\r\n\r\nManual testing confirms the implementation works as expected:\r\n\r\n![Enter Key Functionality Test](https://github.com/user-attachments/assets/66f797c5-85ac-4be6-b16c-7acc0436b9d4)\r\n\r\nThe screenshot shows successful testing of both scenarios - single select properly shows \"Option 1\" selected after Enter key usage.\r\n\r\n## Backward Compatibility\r\n\r\nThis change is fully backward compatible:\r\n- All existing Space key behavior is preserved\r\n- Escape key functionality unchanged  \r\n- No breaking changes to the API\r\n- New Enter key functionality is purely additive\r\n\r\nFixes #4641.\r\n\r\n> [!WARNING]\r\n>\r\n> <details>\r\n> <summary>Firewall rules blocked me from connecting to one or more addresses (expand for details)</summary>\r\n>\r\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\r\n>\r\n> - `googlechromelabs.github.io`\r\n>   - Triggering command: `node install.js` (dns block)\r\n>\r\n> If you need me to access, download, or install something from one of these locations, you can either:\r\n>\r\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\r\n> - Add the appropriate URLs or hosts to the custom allowlist in this repository's [Copilot coding agent settings](https://github.com/db-ux-design-system/core-web/settings/copilot/coding_agent) (admins only)\r\n>\r\n> </details>\r\n\r\n\r\n\r\n<!-- START COPILOT CODING AGENT TIPS -->\r\n---\r\n\r\n\u2728 Let Copilot coding agent [set things up for you](https://github.com/db-ux-design-system/core-web/issues/new?title=\u2728+Set+up+Copilot+instructions&body=Configure%20instructions%20for%20this%20repository%20as%20documented%20in%20%5BBest%20practices%20for%20Copilot%20coding%20agent%20in%20your%20repository%5D%28https://gh.io/copilot-coding-agent-tips%29%2E%0A%0A%3COnboard%20this%20repo%3E&assignees=copilot) \u2014 coding agent works faster and does higher quality work when set up for your repo.\r\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "## Backward Compatibility"
+  },
+  {
+   "n": 2,
+   "text": "This change is fully backward compatible:"
+  },
+  {
+   "n": 3,
+   "text": "- No breaking changes to the API"
+  }
+ ],
+ "order": "1921baa7f9f5789a47afd4b6e62de091f060468abe12b5ab5c69587c1aa5e39d"
+}

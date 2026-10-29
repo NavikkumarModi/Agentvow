@@ -1,0 +1,14 @@
+{
+ "id": "56f69303a6",
+ "url": "https://github.com/jxxghp/MoviePilot/pull/4713",
+ "repo": "jxxghp/MoviePilot",
+ "number": 4713,
+ "message": "Fixes a `ValueError` that occurs when processing torrent titles containing Unicode superscript characters like '\u00b2', '\u00b3', '\u00b9'.\n\n## Problem\n\nThe error occurs in `app/core/meta/metavideo.py` when the code uses `isdigit()` to check if a string contains only digits, then attempts to convert it with `int()`:\n\n```python\nif name.isdigit() \\\n        and int(name) < 1800 \\\n```\n\n**Issue**: `str.isdigit()` returns `True` for Unicode digit characters including superscripts (\u00b2), but `int()` can only parse standard ASCII digits (0-9).\n\n**Example failure**:\n```python\n>>> \"\u00b2\".isdigit()\nTrue\n>>> int(\"\u00b2\")\nValueError: invalid literal for int() with base 10: '\u00b2'\n```\n\n## Root Cause\n\nWhen processing torrent titles like \"E=mc\u00b2 The Movie 2023\", the parsing logic encounters the superscript '\u00b2' character. The `isdigit()` method incorrectly identifies it as a digit, leading to a failed `int()` conversion.\n\n## Solution\n\nReplace `isdigit()` with `isdecimal()` in all locations where the result is passed to `int()`:\n\n- `str.isdecimal()` only returns `True` for characters that can form decimal numbers (0-9)\n- `str.isdigit()` includes Unicode digit characters like superscripts\n\n## Changes Made\n\nFixed 3 locations in `app/core/meta/metavideo.py`:\n\n1. **Line 73**: File title processing\n2. **Line 203**: Name fixing function (original reported issue)  \n3. **Line 346**: Year processing\n\n## Validation\n\nBefore fix:\n```python\n>>> \"\u00b2\".isdigit()\nTrue\n>>> int(\"\u00b2\")  # Crashes with ValueError\n```\n\nAfter fix:\n```python\n>>> \"\u00b2\".isdecimal()\nFalse\n>>> # No int() conversion attempted - safe!\n```\n\nNormal digits continue to work exactly as before:\n```python\n>>> \"1234\".isdecimal()\nTrue\n>>> int(\"1234\")\n1234\n```\n\nThis is a minimal, surgical fix that prevents the crash while preserving all existing functionality.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udcac Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Fixed 3 locations in `app/core/meta/metavideo.py`:"
+  }
+ ],
+ "order": "765e4fb3940f25e037eec13d50b92dc98d17bea2f824a9625abeded590082299"
+}

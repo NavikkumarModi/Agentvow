@@ -1,0 +1,14 @@
+{
+ "id": "42e50324f2",
+ "url": "https://github.com/microsoft/sbom-tool/pull/1094",
+ "repo": "microsoft/sbom-tool",
+ "number": 1094,
+ "message": "The Build badge in the README was displaying as broken because it referenced a non-existent GitHub Actions workflow file (`.github/workflows/build.yml`).\n\n## Problem\nThe badge URL was pointing to:\n```\nhttps://github.com/microsoft/sbom-tool/actions/workflows/build.yml/badge.svg?branch=main\n```\n\nBut the `build.yml` workflow file didn't exist, causing the badge to appear broken while other badges (downloads, releases) displayed correctly.\n\n## Solution\nCreated a minimal GitHub Actions workflow at `.github/workflows/build.yml` that:\n- Runs on push to main and pull requests to main\n- Sets up .NET 8.0 environment\n- Restores dependencies, builds the solution, and runs tests\n- Uses Release configuration for consistency with production builds\n\n## Impact\n- **Minimal change**: Only 29 lines added, 0 lines deleted\n- **No disruption**: Preserves existing Azure DevOps pipeline as the primary CI/CD system\n- **Standard approach**: Uses conventional .NET build commands and GitHub Actions practices\n- **Immediate fix**: Badge will display build status once the workflow runs\n\nThe repository continues to use Azure DevOps Pipelines for its main CI/CD process. This GitHub Actions workflow provides basic build validation to support the badge display.\n\nFixes #1057.\n\n> [!WARNING]\n>\n> <details>\n> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>\n>\n> #### I tried to connect to the following addresses, but was blocked by firewall rules:\n>\n> - `www.microsoft.com`\n>   - Triggering command: `dotnet build Microsoft.Sbom.sln ` (dns block)\n>\n> If you need me to access, download, or install something from one of these locations, you can either:\n>\n> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled\n> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)\n>\n> </details>\n\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "Created a minimal GitHub Actions workflow at `.github/workflows/build.yml` that:"
+  }
+ ],
+ "order": "c44913e64788f45acd833a647fb019a11da40ac20d0edad87cfd7a1d5715b6a0"
+}

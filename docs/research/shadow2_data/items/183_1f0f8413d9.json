@@ -1,0 +1,14 @@
+{
+ "id": "1f0f8413d9",
+ "url": "https://github.com/livestorejs/livestore/pull/490",
+ "repo": "livestorejs/livestore",
+ "number": 490,
+ "message": "## Summary\nThis PR fixes an issue where optional Schema fields in client documents without default values would be `undefined` when querying after being set.\n\n## Problem\nWhen using optional fields in client documents without providing default values, the fields would be lost when querying the document back, even after explicitly setting them. This was due to:\n1. The `mergeDefaultValues` function only iterating over keys from the default values object\n2. SessionIdSymbol not being replaced in synchronous `store.query()` calls\n\n## Solution\n1. **Fixed `mergeDefaultValues`** to preserve all keys from both default and explicit values\n2. **Added SessionIdSymbol replacement** in the synchronous `store.query()` method\n3. **Added comprehensive tests** to prevent regression\n\n## Test Plan\n- [x] Added unit tests for `mergeDefaultValues` function\n- [x] Added integration test reproducing the exact scenario from issue #487\n- [x] All existing tests pass\n\n## Changes\n- `packages/@livestore/common/src/schema/state/sqlite/client-document-def.ts`: Fixed `mergeDefaultValues` to iterate over all keys\n- `packages/@livestore/livestore/src/store/store.ts`: Added SessionIdSymbol replacement in query method\n- `tests/package-common/src/issue-487.test.ts`: Added integration test\n- `packages/@livestore/common/src/schema/state/sqlite/client-document-def.test.ts`: Added unit tests\n\nFixes #487\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] All existing tests pass"
+  }
+ ],
+ "order": "a8aaf46e25326a116c9599d3b2bce4aafd7a4c5727c7c1b451073b745584f9b0"
+}

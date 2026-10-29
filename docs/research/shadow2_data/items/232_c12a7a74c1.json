@@ -1,0 +1,18 @@
+{
+ "id": "c12a7a74c1",
+ "url": "https://github.com/theopenco/llmgateway/pull/190",
+ "repo": "theopenco/llmgateway",
+ "number": 190,
+ "message": "# Update HTTP examples to use curl with environment variable\n\nThis PR updates the HTTP examples in the UI landing page and documentation to use curl commands with the `$LLM_GATEWAY_API_KEY` environment variable instead of plain HTTP requests.\n\n## Changes\n\n- Updated the code example in the UI landing page to use curl format\n- Updated the example in the documentation index page\n- Updated the example in the README file\n\n## Testing\n\nThe UI changes have been tested locally and the code example displays correctly:\n\n![UI Landing Page](https://devin-public-attachments.s3.dualstack.us-west-2.amazonaws.com/attachments_private/org_IrRLpYTBnfbMGLDM/8bd1d41b-9b57-4087-8284-a2c2fd57384e/localhost_3002_135630.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAT64VHFT7QETLA7K6%2F20250524%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250524T135737Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEE4aCXVzLWVhc3QtMSJGMEQCIAD3vAbs9lLe%2Bm%2FrBe7Mzena1eKWAN9O3ax2ipL5p454AiAvo8Dy7smYwHYv0ErMzuBmxKRl71FR%2FQkwlfJ8Vl6Xeyq3BQgXEAEaDDI3MjUwNjQ5ODMwMyIMMrHUl9cMbbbhNZgwKpQFJnXOybU7KQTmVn6b9Mdk6s5qt4m3Zdo8oinvChgC8KRDfeGSJLzdNRQjdb0bZh6VJ3CQhqZfenoOvn%2BrUsXBaL3czs%2FFdLN6AjnJbkFZ3GH83q85NAlhcMsx%2FEEjSlDyFyIeX8JH6p%2FYSVMbs0errosBXqObe1QCjykPyb4Aa9CmsBFkN14D%2BV9NrWEGskvmYmZjB7AGu165%2B2uuV8r4mIUU21IYugB8H10GNqv17XZkaxQusIKS5yNV9f95hWWg2kHHXsbmVVaklFk%2BwvkIrZEvpIaBHLtb1cSC1vZ3efpL69NxyAVn2tUnTTT4jyrDY4RfAJxx5x4AVr0%2FeKY9rEF22xvd8lN7Cj46ku4n%2BSmY4W0U%2FfDUU51rVa5X5GfnKJnh%2BGlDiHmL9je3EnZszFp2t7VtRao%2BAvJlg7QeKal0Qm9udD4PsDACS70pj%2FZQ7jAyoi7gLsKe%2BU4WjW29sdpLkxlqw14Px7%2BgQ0Z5%2FmyPHsCKlrJ%2BoTs%2FOpYV8wvnQI86bH%2FTQ98fBBleyK81r%2BXgOEiOi%2BWV%2Byh35Cww5RGqASO5yc0lDK2a3IYf7p9oYNXR0lGbYrM69YfCS47TKS7CDdgzd40lXbphOANzM%2BNWGDDRf9Iq5mxoih5BD2buG1NYRJ4yEsOkoLPTGIYEppxspk78ZYmdcx%2FfnJwmWn8iqC7NlmMaX030mGN6p5mDMRhY7a7DWj57u6lycFObRkjLsT2UAicJk5TWXMvtRd%2FdVsTlxzcyIcf%2BCCrTLMGO68NThTzJPtLlzcydqo724QF0DaaxUg53VbqJCkZ7%2FPYGjHs9GPfO2fUNSYtRs3psaF2oVa0i%2FlpEniP4w0oCwoHLa3RfxwpqBZ12GN0PJVakpwbcMOKex8EGOpkBdpYUyr3AmvZPwM4qZmIqsctqDM8Tn%2BS%2BEBKkjwRS6zd%2FMS9cL4C%2F7msALkeMZOYhE5i60YoyGvACbbiVf%2FneF9qC3zlW0%2Fmpv%2FB7MY3x6oP9IA5kKe7d91G8KRNZpXZ2CZ6NyU1ltpXHGhICHIxQL7xjvsX0CtIfD7Ru0%2FwN2pP%2B%2BbPjZQKsg7x39UpzPRd4%2F8N6YD2MuyEX&X-Amz-Signature=2ef54c55eb9fa61c7160a3786eb4663c39f7511d110aad32e8f34d51405dbab5)\n\n## Link to Devin run\nhttps://app.devin.ai/sessions/6af3c9b6b8e44dc9bb20319f725421ec\n\nRequested by: Luca Steeb (contact@luca-steeb.com)\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated the example in the documentation index page"
+  },
+  {
+   "n": 2,
+   "text": "- Updated the example in the README file"
+  }
+ ],
+ "order": "cec8a3e31c63ddec629e9aa1627e09eec4e9fbf47545aec96dba4dc6209fa3e5"
+}

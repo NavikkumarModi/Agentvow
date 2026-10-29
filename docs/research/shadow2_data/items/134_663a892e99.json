@@ -1,0 +1,26 @@
+{
+ "id": "663a892e99",
+ "url": "https://github.com/czlonkowski/n8n-mcp/pull/281",
+ "repo": "czlonkowski/n8n-mcp",
+ "number": 281,
+ "message": "## \ud83e\udd16 AI Workflow Validation Fixes - v2.17.0\n\n### Summary\n\nThis PR fixes **critical bugs that caused ALL AI-specific validation to be silently skipped**. Before this fix, 0% of AI validation was functional.\n\n### Root Cause\n\n**Node Type Normalization Mismatch**: \n- `NodeTypeNormalizer.normalizeToFullForm()` returns SHORT form: `'nodes-langchain.agent'`\n- But validation code compared against FULL form: `'@n8n/n8n-nodes-langchain.agent'`\n- **Result**: Every comparison was FALSE \u2192 validation never executed\n\n### Issues Fixed\n\n#### \ud83d\udea8 HIGH-01: Missing Language Model Detection\n- **Before**: AI Agent without language model passed validation\n- **After**: Returns error with code `MISSING_LANGUAGE_MODEL`\n- **Fix**: 21 node type comparisons corrected\n\n#### \ud83d\udea8 HIGH-04: AI Tool Connection Detection  \n- **Before**: False \"no tools connected\" warnings when tools WERE connected\n- **After**: Correctly detects ai_tool connections, no false warnings\n- **Fix**: Reverse connection mapping now works correctly\n\n#### \ud83d\udea8 HIGH-08: Streaming Mode Validation\n- **Before**: Streaming mode with main output not detected\n- **After**: Validates BOTH scenarios:\n  - Chat Trigger `responseMode=\"streaming\"` \u2192 AI Agent \u2192 main output\n  - AI Agent `options.streamResponse=true` \u2192 main output\n- **Fix**: Added streaming detection for AI Agent's own setting\n\n#### \ud83d\udc1b MEDIUM-02: get_node_essentials Examples\n- **Before**: `includeExamples=true` always returned empty array\n- **After**: Returns examples correctly\n- **Fix**: Use consistent `workflowNodeType` construction\n\n### Changes\n\n**Files Modified:**\n- `src/services/ai-node-validator.ts` - 7 node type comparison fixes\n- `src/services/ai-tool-validators.ts` - 14 node type comparison fixes\n- `src/mcp/server.ts` - Examples retrieval fix\n- `README.md` - AI validation features documented\n- `CHANGELOG.md` - v2.17.0 release notes\n- `package.json` - Version bumped to 2.17.0\n\n**Test Files:**\n- `scripts/test-ai-validation-debug.ts` - Debug test suite (3/3 passing)\n- All existing AI validator tests now passing\n\n### Test Results\n\n\u2705 **All 25 AI validator unit tests**: PASS (100%)\n\u2705 **Debug tests**: 3/3 PASS\n\u2705 **Build**: Clean (0 errors)\n\u2705 **Overall improvement**: 24/64 \u2192 40+/64 tests (+67% improvement)\n\n### Breaking Changes\n\n**\u26a0\ufe0f AI validation now actually runs** (was completely non-functional before)\n\nWorkflows with AI Agent nodes that were incorrectly configured may now fail validation. This is the correct behavior - they were always invalid, but the validation was silently skipped.\n\n### Documentation\n\n- `PHASE_2_TEST_SCENARIOS.md` - 5 comprehensive test scenarios\n- `PHASE_1_2_SUMMARY.md` - Phases 1-2 completion summary\n- `PHASE_2_COMPLETE.md` - Detailed Phase 2 analysis\n\n### How to Test\n\nSee `PHASE_2_TEST_SCENARIOS.md` for 5 detailed test cases with complete workflow JSON and expected results.\n\n### Commits\n\n- `91ad084` - Phase 1: TypeScript compilation fixes\n- `92eb4ef` - Phase 2: Node type normalization fix (21 locations)\n- `81dfbbb` - Phase 2: Examples retrieval fix\n- `3ba3f10` - Phase 2 completion summary\n- `1eedb43` - Phase 2 test scenarios\n- `53b5dc3` - Updated Phase 1-2 summary\n- `4cf8bb5` - Phase 4: Documentation and version bump\n\n### Related Issues\n\nFixes validation bugs discovered during AI validation implementation.\n\n---\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- `scripts/test-ai-validation-debug.ts` - Debug test suite (3/3 passing)"
+  },
+  {
+   "n": 2,
+   "text": "- All existing AI validator tests now passing"
+  },
+  {
+   "n": 3,
+   "text": "\u2705 **All 25 AI validator unit tests**: PASS (100%)"
+  },
+  {
+   "n": 4,
+   "text": "\u2705 **Debug tests**: 3/3 PASS"
+  }
+ ],
+ "order": "7d9e91415f9e771315782429e9a84b2703d74dd1136ed80839a3ec5a9ced3f52"
+}

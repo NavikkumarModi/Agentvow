@@ -1,0 +1,14 @@
+{
+ "id": "9e7c35ba84",
+ "url": "https://github.com/pdfme/pdfme/pull/812",
+ "repo": "pdfme/pdfme",
+ "number": 812,
+ "message": "# Fix lint errors across multiple packages\n\nThis PR addresses TypeScript lint errors across multiple packages in the pdfme repository.\n\n## Changes\n\n- Fixed TypeScript type safety issues in common, schemas, generator, and UI packages\n- Replaced `any` types with more specific types like `Map<string | number, unknown>`\n- Added proper type assertions in UI components to ensure type compatibility\n- Created `BarcodeRenderOptions` interface to improve type safety in barcode rendering\n- Fixed unsafe member access and return value issues in helper functions\n- Ensured type safety in React components with proper type narrowing\n\n## Testing\n\n- All packages build successfully\n- All tests pass across all packages\n- Verified that the changes do not affect functionality\n\nLink to Devin run: https://app.devin.ai/sessions/fc5360f17cf94bd390927b359412782c\n",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All tests pass across all packages"
+  }
+ ],
+ "order": "fc33d615a6dcc82f132974d1d8001dcae14dec27e07205e823945c66967cb114"
+}

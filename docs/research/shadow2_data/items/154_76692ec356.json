@@ -1,0 +1,14 @@
+{
+ "id": "76692ec356",
+ "url": "https://github.com/elie222/inbox-zero/pull/776",
+ "repo": "elie222/inbox-zero",
+ "number": 776,
+ "message": "Add an A/B test to conditionally show/hide the testimonial on the welcome upgrade page to measure its impact on conversions.\n\nThis test introduces a `welcome-testimonial` feature flag with 'control' (show testimonial) and 'hidden' (hide testimonial) variants.\n\n---\n<a href=\"https://cursor.com/background-agent?bcId=bc-615dbefe-84c9-4f3c-88db-c0135ce9e661\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-cursor-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-cursor-light.svg\">\n    <img alt=\"Open in Cursor\" src=\"https://cursor.com/open-in-cursor.svg\">\n  </picture>\n</a>\n<a href=\"https://cursor.com/agents?id=bc-615dbefe-84c9-4f3c-88db-c0135ce9e661\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://cursor.com/open-in-web-dark.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"https://cursor.com/open-in-web-light.svg\">\n    <img alt=\"Open in Web\" src=\"https://cursor.com/open-in-web.svg\">\n  </picture>\n</a>\n\n\n\n<!-- This is an auto-generated comment: release notes by coderabbit.ai -->\n\n## Summary by CodeRabbit\n\n* **New Features**\n  * The Welcome Upgrade page now supports a feature-flagged Testimonial section. Depending on rollout, some users will see the testimonial while others won\u2019t, enabling targeted experiments.\n  * Default behavior remains unchanged for most users; no impact on navigation or upgrade flows.\n  * No user action required.\n\n<!-- end of auto-generated comment: release notes by coderabbit.ai -->",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* Default behavior remains unchanged for most users; no impact on navigation or upgrade flows."
+  }
+ ],
+ "order": "86cbc9c85532f3478763d8ba4637c7f12464b55b34854cfa772b9f26a96ef500"
+}

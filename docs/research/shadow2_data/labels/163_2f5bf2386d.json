@@ -1,0 +1,3 @@
+{"item_id":"2f5bf2386d","labeller":"sonnet","statements":[
+{"n":1,"step_a":"CLAIM","proposition":"This change adds unit tests for core modules including EnvilderFactory and AwsSsmStoreSecrets.","label":"TRUE","confidence":"MEDIUM","judgment":false,"note":"New test files exist for both named modules; 'simple' and the purpose clause ('ensure the suite passes', 'foundation') are not checked beyond the files being added.","evidence":["gh api pulls/47/files: added tests/cli/domain/EnvilderFactory.test.ts","added tests/cli/infrastructure/AwsSsmStoreSecrets.test.ts","also added tests/cli/Cli.unit.test.ts, EnvilderHandler.test.ts, EnvFileManager.test.ts"]}
+],"minutes_estimate":3}

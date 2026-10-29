@@ -1,0 +1,257 @@
+{
+ "items": 52,
+ "statements": 124,
+ "agreement": [
+  99,
+  124
+ ],
+ "kappa": 0.711,
+ "claims_only": {
+  "n": 107,
+  "agree": 82,
+  "kappa": 0.624
+ },
+ "per_kind": {
+  "?": {
+   "n": 1,
+   "agree": 1,
+   "kappa": null
+  },
+  "backward_compatible": {
+   "n": 81,
+   "agree": 60,
+   "kappa": 0.644
+  },
+  "docs_updated": {
+   "n": 4,
+   "agree": 4,
+   "kappa": null
+  },
+  "files_scope": {
+   "n": 13,
+   "agree": 13,
+   "kappa": 1.0
+  },
+  "lint_clean": {
+   "n": 2,
+   "agree": 2,
+   "kappa": 1.0
+  },
+  "no_downstream_impact": {
+   "n": 3,
+   "agree": 3,
+   "kappa": 1.0
+  },
+  "tests_pass": {
+   "n": 15,
+   "agree": 12,
+   "kappa": 0.575
+  },
+  "unchecked": {
+   "n": 5,
+   "agree": 4,
+   "kappa": 0.643
+  }
+ },
+ "pr_class": {
+  "n": 52,
+  "agree": 40,
+  "kappa": 0.637,
+  "table": {
+   "negative|negative": 20,
+   "negative|positive": 2,
+   "negative|unscorable": 1,
+   "positive|negative": 3,
+   "positive|positive": 8,
+   "unscorable|negative": 4,
+   "unscorable|positive": 2,
+   "unscorable|unscorable": 12
+  }
+ },
+ "disagreement_count": 25,
+ "disagreements_by_pair": {
+  "CANNOT_TELL->TRUE": 8,
+  "TRUE->FALSE": 2,
+  "FALSE->CANNOT_TELL": 6,
+  "NOT_A_CLAIM->TRUE": 1,
+  "TRUE->CANNOT_TELL": 2,
+  "CANNOT_TELL->FALSE": 6
+ },
+ "disagreements": [
+  {
+   "item": "002_9da8d35135",
+   "n": 4,
+   "kind": "unchecked",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "042_e5812f5d1b",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "052_b8dd56bf91",
+   "n": 1,
+   "kind": "tests_pass",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "060_9ccf4a4e12",
+   "n": 4,
+   "kind": "backward_compatible",
+   "first": "TRUE",
+   "second": "FALSE"
+  },
+  {
+   "item": "068_0d4d1f4b6d",
+   "n": 4,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "072_d422519fc6",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "072_d422519fc6",
+   "n": 3,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "072_d422519fc6",
+   "n": 4,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "072_d422519fc6",
+   "n": 5,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "079_4209d0282f",
+   "n": 3,
+   "kind": "backward_compatible",
+   "first": "NOT_A_CLAIM",
+   "second": "TRUE"
+  },
+  {
+   "item": "079_4209d0282f",
+   "n": 5,
+   "kind": "backward_compatible",
+   "first": "TRUE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "094_fa885f23cf",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "094_fa885f23cf",
+   "n": 3,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "126_d60f8f47bb",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "TRUE",
+   "second": "FALSE"
+  },
+  {
+   "item": "127_2a76ba0d58",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "132_9a9ad7cb42",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "132_9a9ad7cb42",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "135_59487ac0f8",
+   "n": 2,
+   "kind": "tests_pass",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "136_3d937723bf",
+   "n": 2,
+   "kind": "tests_pass",
+   "first": "CANNOT_TELL",
+   "second": "TRUE"
+  },
+  {
+   "item": "138_3b29338fb9",
+   "n": 4,
+   "kind": "backward_compatible",
+   "first": "FALSE",
+   "second": "CANNOT_TELL"
+  },
+  {
+   "item": "273_5e1769b93c",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "273_5e1769b93c",
+   "n": 2,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "273_5e1769b93c",
+   "n": 4,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "273_5e1769b93c",
+   "n": 5,
+   "kind": "backward_compatible",
+   "first": "CANNOT_TELL",
+   "second": "FALSE"
+  },
+  {
+   "item": "275_d067698f27",
+   "n": 1,
+   "kind": "backward_compatible",
+   "first": "TRUE",
+   "second": "CANNOT_TELL"
+  }
+ ]
+}

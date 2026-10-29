@@ -1,0 +1,22 @@
+{
+ "id": "b55d8a6598",
+ "url": "https://github.com/1mcp-app/agent/pull/97",
+ "repo": "1mcp-app/agent",
+ "number": 97,
+ "message": "## Summary\n\nAdds comprehensive restart configuration options for MCP stdio servers, enabling automatic process recovery and enhanced reliability for long-running agent deployments.\n\n## \ud83d\ude80 New Features\n\n### Restart Configuration Options\n- **`restartOnExit`**: Automatically restart stdio processes when they exit\n- **`maxRestarts`**: Configurable limit on restart attempts (unlimited by default)\n- **`restartDelay`**: Customizable delay between restart attempts (1000ms default)\n\n### Enhanced Environment Processing\n- **Advanced Environment Filtering**: Support for wildcard patterns and exclusion rules\n- **Environment Variable Arrays**: Support for both object and array formats\n- **Inheritance Control**: Fine-grained control over parent environment inheritance\n\n### RestartableStdioTransport\n- New transport wrapper providing automatic restart functionality\n- Maintains compatibility with existing Transport interface\n- Comprehensive error handling and cleanup\n- Detailed logging and monitoring\n\n## \ud83d\udcdd Configuration Example\n\n```json\n{\n  \"mcpServers\": {\n    \"resilient-server\": {\n      \"command\": \"node\",\n      \"args\": [\"server.js\"],\n      \"restartOnExit\": true,\n      \"maxRestarts\": 5,\n      \"restartDelay\": 2000,\n      \"inheritParentEnv\": true,\n      \"envFilter\": [\"PATH\", \"NODE_*\", \"!SECRET_*\"]\n    }\n  }\n}\n```\n\n## \ud83e\uddea Testing Coverage\n\n- **Unit Tests**: RestartableStdioTransport with comprehensive mocking\n- **Environment Processing**: Advanced filtering and inheritance scenarios\n- **E2E Tests**: Full restart workflows and configuration validation\n- **Transport Factory**: Integration testing with new transport creation\n\n## \ud83d\udcda Documentation Updates\n\n- **English & Chinese**: Updated configuration guides\n- **MCP Commands**: Enhanced `add` and `update` command documentation\n- **Examples**: Real-world configuration patterns\n\n## \ud83d\udd27 Implementation Details\n\n- **Backward Compatible**: Existing configurations work without changes\n- **Resource Management**: Proper cleanup and memory management\n- **Error Recovery**: Graceful handling of restart failures and timeouts\n- **Performance**: Minimal overhead for non-restart configurations\n\n## Test Plan\n\n- [x] Unit tests pass with full coverage\n- [x] E2E tests validate restart scenarios\n- [x] Configuration validation works correctly\n- [x] Documentation builds successfully\n- [x] Backward compatibility verified\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- **Backward Compatible**: Existing configurations work without changes"
+  },
+  {
+   "n": 2,
+   "text": "- [x] Unit tests pass with full coverage"
+  },
+  {
+   "n": 3,
+   "text": "- [x] Backward compatibility verified"
+  }
+ ],
+ "order": "2599c9b1f6e1e4132198d066acce9c5950774953ee646f455e25a8a105e547f7"
+}

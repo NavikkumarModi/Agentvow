@@ -1,0 +1,3 @@
+{"item_id": "94891f8286", "labeller": "sonnet", "statements": [
+{"n":1,"step_a":"NOT_A_CLAIM","proposition":"States the purpose of the [V1 Translations] prefix (to identify legacy V1 tests that must keep running for backward compatibility); it does not assert that the author did or verified something.","label":null,"confidence":"MEDIUM","judgment":true,"note":"A rationale/intent sentence, not a statement of an action or verification in this change (the actual edits are described in the preceding sentences). The change list shows 11 modified e2e files under apps/api/src/app/translations/e2e/v1.","evidence":["gh api pulls/9162/files: changed_files=11, all modified e2e-ee.ts files under apps/api/src/app/translations/e2e/v1"]}
+], "minutes_estimate": 2}

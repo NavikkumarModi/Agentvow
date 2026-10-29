@@ -1,0 +1,14 @@
+{
+ "id": "ffd808500f",
+ "url": "https://github.com/katspaugh/wavesurfer.js/pull/4215",
+ "repo": "katspaugh/wavesurfer.js",
+ "number": 4215,
+ "message": "## Short description\n- replace the Rollup-based tooling with Vite for builds and local development while keeping example code unbundled.\n\n## Implementation details\n- swap the Rollup scripts for `vite` commands, add dev/preview helpers, and drop the old Rollup dependencies.\n- introduce a `vite.config.ts` that mirrors the previous multi-format outputs for the core build and plugins, emits type bundles, and exposes the `examples` directory through a static middleware.\n- update `tsconfig.json` so that library type-checking ignores the Vite configuration file.\n\n## How to test it\n- yarn lint\n- yarn build\n\n## Screenshots\n- N/A\n\n## Checklist\n* [ ] This PR is covered by e2e tests\n* [x] It introduces no breaking API changes\n\n------\nhttps://chatgpt.com/codex/tasks/task_b_68dea2834e70832fbf46e8605fa0cb5e",
+ "statements": [
+  {
+   "n": 1,
+   "text": "* [x] It introduces no breaking API changes"
+  }
+ ],
+ "order": "e4fb937809dbfc3c71c26636efe4656e35ded02cd922a183b7a93ea26de7a503"
+}

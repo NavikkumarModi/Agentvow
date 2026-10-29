@@ -1,0 +1,26 @@
+{
+ "id": "f5d8b49812",
+ "url": "https://github.com/Codehagen/Badget/pull/294",
+ "repo": "Codehagen/Badget",
+ "number": 294,
+ "message": "```\n## Description\nThis PR integrates `content-collections.dev` to introduce a comprehensive content management system for blog posts and help documentation, inspired by the structure and styling of `dub.sh`.\n\nIt also enhances the article viewing experience by adding:\n- An `Author` MDX component to display author details (picture, name, Twitter handle).\n- A dynamic `TableOfContents` component that tracks scroll position and allows for quick navigation within articles.\n\nThis enables the project to easily publish and manage content, improving user engagement and support.\n\n## Type of Change\n- [x] New feature (non-breaking change which adds functionality)\n\n## Changes Made\n- [x] Integrated `content-collections` for managing MDX-based blog and help content.\n- [x] Created dedicated routes for blog (`/blog`, `/blog/[slug]`) and help (`/help`, `/help/[slug]`) pages.\n- [x] Implemented MDX rendering with syntax highlighting using `rehype-pretty-code` and automatic heading links.\n- [x] Added an `Author` MDX component for displaying author information within articles.\n- [x] Developed a scroll-tracking `TableOfContents` component for improved article navigation on both desktop and mobile.\n- [x] Updated the main navigation to include \"Blog\" and \"Help\" links.\n- [x] Integrated `tailwindcss/typography` for enhanced prose styling of MDX content.\n- [x] Added sample blog posts and help articles.\n- [x] Added new dependencies: `@content-collections/core`, `@content-collections/mdx`, `reading-time`, `rehype-autolink-headings`, `rehype-pretty-code`, `rehype-slug`, `@tailwindcss/typography`.\n\n## Testing\nPlease describe the tests that you ran to verify your changes:\n\n- [ ] Unit tests pass\n- [ ] Integration tests pass\n- [x] Manual testing completed (Verified blog and help pages load, navigation works, MDX renders correctly, Author component displays, and TOC tracks scroll and navigates.)\n- [x] Tested on different screen sizes (UI changes for TOC and general layout)\n\n## Screenshots (if applicable)\nPlease add screenshots of any UI changes:\n\n**Before:**\n<!-- Add screenshot -->\n\n**After:**\n<!-- Add screenshot -->\n\n## Database Changes\n- [x] No database changes\n\n## Checklist\n- [x] My code follows the project's style guidelines\n- [x] I have performed a self-review of my code\n- [x] I have commented my code, particularly in hard-to-understand areas\n- [ ] I have made corresponding changes to the documentation\n- [x] My changes generate no new warnings\n- [x] I have added tests that prove my fix is effective or that my feature works (manual verification of functionality)\n- [x] New and existing unit tests pass locally with my changes (implied by successful build)\n- [ ] Any dependent changes have been merged and published\n\n## Additional Notes\nThis integration provides a robust and scalable solution for managing content. The new author and table of contents components significantly enhance the user experience for reading articles, making them more navigable and informative, similar to the best practices seen on sites like `dub.sh`.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- [x] New feature (non-breaking change which adds functionality)"
+  },
+  {
+   "n": 2,
+   "text": "- [ ] Unit tests pass"
+  },
+  {
+   "n": 3,
+   "text": "- [ ] Integration tests pass"
+  },
+  {
+   "n": 4,
+   "text": "- [x] New and existing unit tests pass locally with my changes (implied by successful build)"
+  }
+ ],
+ "order": "1155641c7480bd0f32d3f554e058d2128b2c53f64ade471277b865dd6ee0f8dd"
+}

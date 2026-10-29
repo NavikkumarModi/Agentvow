@@ -1,0 +1,14 @@
+{
+ "id": "dae5870ca3",
+ "url": "https://github.com/jpillora/chisel/pull/572",
+ "repo": "jpillora/chisel",
+ "number": 572,
+ "message": "The CI workflow was failing because of a Go version mismatch. The `go.mod` file specifies Go `1.25.1` as the required version, but the CI workflow was using `go-version: [\"stable\"]`, which defaults to Go `1.25.0`.\n\nThis mismatch was causing the 'test' job to fail during the build and test phases, as Go `1.25.0` doesn't satisfy the minimum version requirement specified in `go.mod`.\n\n**Changes made:**\n- Updated `.github/workflows/ci.yml` to explicitly use Go version `1.25.1` instead of `\"stable\"`\n- This ensures the CI environment matches the exact Go version required by the project\n\n**Impact:**\n- Resolves CI test failures caused by the Go version mismatch\n- Ensures consistent Go version usage across development and CI environments\n- Maintains compatibility with the project's minimum Go version requirement\n\nThe fix is minimal and surgical - only changing the Go version specification in the CI matrix to match the `go.mod` requirement.\n\n<!-- START COPILOT CODING AGENT SUFFIX -->\n\n*This pull request was created as a result of the following prompt from Copilot chat.*\n> The 'test' job in the CI workflow is failing because the Go version required by the `go.mod` file is `1.25.1`, but the job is running with Go `1.25.0`.\n> \n> To fix this, please update the `.github/workflows/ci.yml` file to use Go version `1.25.1`.\n\n<!-- START COPILOT CODING AGENT TIPS -->\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- Updated `.github/workflows/ci.yml` to explicitly use Go version `1.25.1` instead of `\"stable\"`"
+  }
+ ],
+ "order": "0b2a28762e3ce740fe1b69e3f35fc2cb3f888a9f6be1f6f3a1b04b7d0b874625"
+}

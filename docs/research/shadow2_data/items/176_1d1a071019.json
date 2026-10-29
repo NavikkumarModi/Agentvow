@@ -1,0 +1,22 @@
+{
+ "id": "1d1a071019",
+ "url": "https://github.com/aku11i/phantom/pull/150",
+ "repo": "aku11i/phantom",
+ "number": 150,
+ "message": "## Summary\n- Converted the phantom project to a monorepo structure with 5 distinct packages as specified in issue #146\n- Improved modularity and maintainability through better separation of concerns\n- All tests passing and functionality preserved\n\n## Packages Created\n1. **@aku11i/phantom-shared** - Shared utilities and types (Result type, BaseError)\n2. **@aku11i/phantom-process** - Process execution utilities (spawn, exec, tmux operations)\n3. **@aku11i/phantom-git** - Git operations library (git command executor, worktree operations)\n4. **@aku11i/phantom-core** - Core business logic (worktree management, config handling)\n5. **@aku11i/phantom-cli** - CLI application (command handlers, user interface)\n\n## Technical Details\n- Using pnpm workspaces for monorepo management\n- TypeScript with `noEmit: true` for type checking only\n- Source imports between packages (no build step for internal packages)\n- esbuild for building only the CLI package\n- Node.js experimental features for type stripping and module mocking\n\n## Test Results\n- All tests passing: 141 tests total across all packages\n  - process: 10/10 \u2705\n  - git: 11/11 \u2705\n  - core: 94/94 \u2705\n  - cli: 26/26 \u2705\n\n## Migration Impact\n- No breaking changes to CLI functionality\n- All existing commands work exactly as before\n- Improved code organization and maintainability\n\nResolves #146\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All tests passing and functionality preserved"
+  },
+  {
+   "n": 2,
+   "text": "- All tests passing: 141 tests total across all packages"
+  },
+  {
+   "n": 3,
+   "text": "- No breaking changes to CLI functionality"
+  }
+ ],
+ "order": "a3d24bbd305b31829638918167cbcbfce6c7605e788fa6b8101181b27dad2ea4"
+}

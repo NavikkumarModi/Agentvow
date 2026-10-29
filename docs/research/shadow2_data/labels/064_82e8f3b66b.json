@@ -1,0 +1,35 @@
+{
+ "item_id": "82e8f3b66b",
+ "labeller": "sonnet",
+ "statements": [
+  {
+   "n": 1,
+   "step_a": "CLAIM",
+   "proposition": "All tests (128 tests) pass at the head commit.",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Test run was blocked by the harness permission system, and no CI result exists on the head commit, so neither the pass nor the count of 128 was observed.",
+   "evidence": [
+    "gh api pulls/621/files: .changeset/thin-terms-add.md (added), package-lock.json, package.json, plugins/responsive-widths.js (modified)",
+    "gh api commits/194d0f5.../check-runs: none returned; CI workflow runs `npm ci` then `npm run test` and `npm run lint`",
+    "npm ci --ignore-scripts succeeded in the sandbox, but running `npm run test` / `npm run lint` was denied by the harness permission system"
+   ]
+  },
+  {
+   "n": 2,
+   "step_a": "CLAIM",
+   "proposition": "`npm run lint` (eslint) passes at the head commit.",
+   "label": "CANNOT_TELL",
+   "confidence": "LOW",
+   "judgment": false,
+   "note": "Lint run was blocked by the harness permission system and no CI result exists; not observed.",
+   "evidence": [
+    "gh api pulls/621/files: .changeset/thin-terms-add.md (added), package-lock.json, package.json, plugins/responsive-widths.js (modified)",
+    "gh api commits/194d0f5.../check-runs: none returned; CI workflow runs `npm ci` then `npm run test` and `npm run lint`",
+    "npm ci --ignore-scripts succeeded in the sandbox, but running `npm run test` / `npm run lint` was denied by the harness permission system"
+   ]
+  }
+ ],
+ "minutes_estimate": 8
+}

@@ -1,0 +1,5 @@
+{"item_id":"833cfcd9ee","labeller":"sonnet","statements":[
+{"n":1,"step_a":"NOT_A_CLAIM","proposition":"Unticked template checkbox for bug fix.","label":null,"confidence":"HIGH","judgment":false,"note":"Unticked checkbox is a template, not a claim (rule 2.2).","evidence":["Statement text begins with '- [ ]'"]},
+{"n":2,"step_a":"CLAIM","proposition":"This change is a non-breaking new feature: it only adds new functionality without modifying or removing existing files.","label":"TRUE","confidence":"MEDIUM","judgment":false,"note":"The change list contains only two added shell scripts and no modified or deleted files, so nothing existing can break; the scripts add local-simulation functionality.","evidence":["gh api pulls/3887/files: added scripts/simulate-build-and-test.sh (+109/-0); added scripts/simulate-e2e-next-dev.sh (+107/-0); no other files"]},
+{"n":3,"step_a":"NOT_A_CLAIM","proposition":"Unticked template checkbox for tests passing.","label":null,"confidence":"HIGH","judgment":false,"note":"Unticked checkbox is a template, not a claim (rule 2.2).","evidence":["Statement text begins with '- [ ]'"]}
+],"minutes_estimate":3}

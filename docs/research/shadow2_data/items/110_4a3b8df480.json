@@ -1,0 +1,14 @@
+{
+ "id": "4a3b8df480",
+ "url": "https://github.com/projectdiscovery/nuclei-templates/pull/12521",
+ "repo": "projectdiscovery/nuclei-templates",
+ "number": 12521,
+ "message": "## Summary\n\nThis PR comprehensively updates EPSS (Exploit Prediction Scoring System) scores for ALL CVE templates across the entire nuclei-templates repository with the latest data from FIRST.org API.\n\n## Changes Made\n\n- \u2705 **Recursively searched** for all CVE-*.yaml files across the entire repository\n- \u2705 **Updated 3,147 CVE templates** with the latest EPSS scores and percentiles  \n- \u2705 **Comprehensive coverage** across all directories:\n  - `http/cves/` (2,951 files updated in previous commits)\n  - `code/cves/` (21 files updated)\n  - `network/cves/` (18 files updated)\n  - `javascript/cves/` (10 files updated)\n  - `dast/cves/` (6 files updated)\n  - `headless/cves/` (6 files updated)\n  - `passive/cves/` (4 files updated)\n  - `cloud/kubernetes/cves/` (1 file)\n\n## Technical Details\n\n- **Total CVE files processed**: 3,183 across 62 directories\n- **Successfully updated**: 3,147 (98.9% success rate)\n- **EPSS data not found**: 36 CVEs (mostly very recent CVEs where EPSS data is not yet available)\n- **API source**: FIRST.org EPSS API with latest scoring data\n- **Batch processing**: Efficient batch API calls with proper rate limiting\n\n## What are EPSS Scores?\n\nEPSS (Exploit Prediction Scoring System) provides a probability score (0.0-1.0) that a vulnerability will be exploited in the wild within the next 30 days. This complements CVSS scores by providing threat intelligence-based prioritization.\n\n## Files Updated in This PR\n\nThis latest commit includes updates to CVE templates across multiple categories:\n- **Code analysis templates** (CVE-2024-3094, CVE-2017-1000353, etc.)\n- **Network security templates** (CVE-2020-0796, CVE-2022-0543, etc.)\n- **JavaScript/Node.js templates** (CVE-2024-23897, CVE-2023-46604, etc.)\n- **DAST templates** (CVE-2022-22965, CVE-2021-45046, etc.)\n- **Headless browser templates** (CVE-2024-29882, CVE-2025-25062, etc.)\n- **Passive detection templates** (CVE-2024-25723, CVE-2018-17207, etc.)\n\n## Validation\n\n- \u2705 All updates maintain existing file structure and formatting\n- \u2705 Only EPSS scores and percentiles modified, no other changes\n- \u2705 Verified against FIRST.org EPSS API data\n- \u2705 Backward compatible with existing Nuclei workflows\n\n## Impact\n\nThis comprehensive update provides security teams with the most current exploit prediction data to better prioritize vulnerability remediation efforts based on real-world threat intelligence across all CVE template categories.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 Backward compatible with existing Nuclei workflows"
+  }
+ ],
+ "order": "5e4acce17655b44537cbf28c5ae4c02ea767a6d090acca39167941903e850ef6"
+}

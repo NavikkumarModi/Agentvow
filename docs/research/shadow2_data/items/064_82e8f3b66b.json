@@ -1,0 +1,18 @@
+{
+ "id": "82e8f3b66b",
+ "url": "https://github.com/primer/stylelint-config/pull/621",
+ "repo": "primer/stylelint-config",
+ "number": 621,
+ "message": "This PR addresses the stylelint upgrade requirements and fixes a deprecation warning in the responsive-widths plugin.\n\n## Changes Made\n\n### 1. Upgraded stylelint version\n- Updated stylelint from `16.11.0` to `16.20.0` (latest version)\n- Updated package.json and package-lock.json\n\n### 2. Fixed deprecation warning in responsive-widths plugin\nThe responsive-widths plugin was showing a deprecation warning:\n```\nDeprecationWarning: Partial position information in the `utils.report()` function is deprecated (\"primer/responsive-widths\").\nPlease pass both `index` and `endIndex` as arguments in the `utils.report()` function of \"primer/responsive-widths\".\n```\n\nFixed by adding the missing `endIndex` parameter to all `stylelint.utils.report()` calls in the responsive-widths plugin, matching the pattern used in other plugins like spacing.js, borders.js, etc.\n\n### 3. Verified existing imports\nConfirmed that all plugin imports are already correctly using the updated path:\n```javascript\nimport {declarationValueIndex} from 'stylelint/lib/utils/nodeFieldIndices.cjs'\n```\n\n## Testing\n- \u2705 All tests pass (128 tests)\n- \u2705 Build completes successfully\n- \u2705 Linting passes\n- \u2705 No more deprecation warnings\n- \u2705 Verified declarationValueIndex function imports correctly from new location\n\nThe declarationValueIndex function import path was already correctly updated in all plugins to use `stylelint/lib/utils/nodeFieldIndices.cjs` instead of the old `lib/utils/declarationValueIndex` path.\n\nFixes #620.\n\n---\n\n\ud83d\udca1 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- \u2705 All tests pass (128 tests)"
+  },
+  {
+   "n": 2,
+   "text": "- \u2705 Linting passes"
+  }
+ ],
+ "order": "364fb500c30c3f61e14f7b3a07e207208a814702847d400000ad80bca72502b7"
+}

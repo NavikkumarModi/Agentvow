@@ -1,0 +1,14 @@
+{
+ "id": "b8dd56bf91",
+ "url": "https://github.com/ethereum-optimism/optimism/pull/17797",
+ "repo": "ethereum-optimism/optimism",
+ "number": 17797,
+ "message": "# refactor(test): improve ResourceMetering test coverage and quality\n\n## Summary\nEnhances the ResourceMetering test file with three mechanical improvements:\n\n1. **Consolidates duplicate tests**: Replaced 3 separate empty block tests (`updateOneEmptyBlock`, `updateTwoEmptyBlocks`, `updateTenEmptyBlocks`) with a single fuzz test that covers 1-1000 block differences\n2. **Fixes semgrep violation**: Changed `vm.expectRevert(\"UNDEFINED\")` to `vm.expectRevert(bytes(\"UNDEFINED\"))` to comply with repository lint rules that require revert expectations to have arguments\n3. **Reorganizes test structure**: Reordered test contracts to match source function declaration order (`metered` modifier tests before `__ResourceMeteringInit` tests)\n\nThe changes reduce file size by 20 lines while maintaining equivalent test coverage through more efficient fuzz testing.\n\n## Review & Testing Checklist for Human\n- [ ] **Verify fuzz test coverage**: Run the new `testFuzz_metered_emptyBlocks_succeeds` test and confirm it covers the same scenarios as the original 3 tests (especially block differences 1, 2, and 10)\n- [ ] **Test semgrep fix**: Ensure `vm.expectRevert(bytes(\"UNDEFINED\"))` still properly tests the intended revert behavior and doesn't change test semantics\n- [ ] **Run all ResourceMetering tests locally**: Verify test reorganization didn't introduce any execution order dependencies or break existing functionality\n\n### Notes\n- All tests pass locally and CI validation (`just pre-pr`) completed successfully\n- No business logic changes, only test structure improvements\n- Net reduction of 20 lines (62 insertions, 82 deletions)\n\n---\n**Link to Devin run**: https://app.devin.ai/sessions/ce3c0d3c1a5049dfaf21cfc32ea01f17  \n**Requested by**: @aliersh",
+ "statements": [
+  {
+   "n": 1,
+   "text": "- All tests pass locally and CI validation (`just pre-pr`) completed successfully"
+  }
+ ],
+ "order": "28d3d5e1ca03c3b2faff54606c2c019c1e6422d9193afc1ef5c96b8c6f033187"
+}
