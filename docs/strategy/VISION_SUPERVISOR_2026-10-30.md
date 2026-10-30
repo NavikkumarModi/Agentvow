@@ -31,3 +31,18 @@ North star: agent tasks accepted without manual intervention, next to independen
 
 ## Open decisions
 Whether this reframing replaces the audit framing (owner), and who produces the human labels for the next evaluation.
+
+## Candidate extension: decision application audit
+**Status: hypothesis, not an adopted product direction. The mission in `CLAUDE.md` is unchanged.**
+
+In multi-agent software development a human decision can change the requirements or constraints of work that agents have already started or finished. That raises a verification question: what did the human decide, which existing outputs does it affect, did the later changes implement it, and are earlier artefacts now inconsistent with it?
+
+**Possible Agentvow application.** Express one bounded human decision as explicit, checkable claims. After the agent receives the guidance and changes its work, compare the resulting repository state against those claims with the existing deterministic checks and evidence mechanisms. Initial scope: one decision, one affected work item, one before-and-after code comparison. Example: the decision "the existing API contract must stay backward compatible", checked by the public-API diff. What is verified is whether the work satisfies explicit consequences of the decision, not whether the agent understood it. Many architectural or strategic decisions will not reduce to deterministic checks, and they should not be forced into the model.
+
+**Not proposed:** a universal decision graph; a generic human-agent coordination platform; an authority or approval engine; automatic propagation across repositories; any change to the research mission.
+
+**Evidence required before further investment:** (1) real engineering teams show that decision fragmentation is a recurring problem; (2) the consequences of selected decisions can be written as independently checkable claims; (3) existing mechanisms can detect whether they were applied; (4) the audit adds value beyond tests, CI and existing workflow tools.
+
+**Prior art.** BoardroomAI (arXiv, August 2026, evolving decision graphs; prototype on synthetic graphs and a 12-case pilot per its own abstract), Orako, Wakalix, Camunda and agent-workspace products have been named as possibly related. **Their primary sources have not been read (`[snippet]` at best); no novelty or differentiation claim is made.**
+
+**Priority order (owner, 2026-10-30):** (1) find out from engineering teams whether claim reliability or decision fragmentation is their recurring problem; (2) continue the existing research programme; (3) test one bounded decision-application case if a real example appears; (4) read the prior art from primary sources; (5) revisit direction only on new evidence.
