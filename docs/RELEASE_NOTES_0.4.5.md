@@ -8,6 +8,9 @@ Agentvow checks what a coding agent says it did against what it can independentl
 
 **What this means in practice:** a pull request that edits an existing test file, or whose description names a file it does not touch, now needs an acknowledgement under the default policy. Ordinary changes are unaffected. **A policy file that uses either new key is rejected by Agentvow 0.4.4 and earlier** (an unknown key blocks): pin the gate's `agentvow-version` to 0.4.5 or later, and, if you run the control plane service, raise `AGENTVOW_CP_MIN_TOOL_VERSION` to 0.4.5 so a caller cannot choose an older version to avoid the rules.
 
+## Fixed: an empty change list no longer makes file statements look false
+A closed pull request with no changed files used to turn every "added `x.py`" statement into CONTRADICTED. It is now UNKNOWN, with a note saying why. Found by an experiment that compared Agentvow's flags with CI on 278 labelled pull requests (results and limits: `docs/research/SHADOW_EXPERIMENT_RESULTS.md`; it did not show Agentvow beating CI at a fixed review budget).
+
 ## New: three more kinds of statement are checked
 - **Files changed or left alone** ("added `x.py`", "I did not touch `y.py`"), from git's own change list.
 - **Documentation updated** ("updated the README"): a documentation file is among the changed files; "documentation" with only Python files changed is UNKNOWN because the agent may mean docstrings.
