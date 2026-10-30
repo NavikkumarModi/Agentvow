@@ -259,6 +259,8 @@ def resolve(repo: Path, changed: list, path: str, tracked: list):
 
 def check_files(repo: Path, changed: list, detail: dict):
     """-> (verdict, why, evidence). CONTRADICTED only when a statement is certainly false; UNKNOWN when the path cannot be settled."""
+    if not changed:
+        return "UNKNOWN", "Git's change list for this change is empty (no changed files), so what the agent said about files cannot be compared with it. Found by the shadow experiment: an empty list made every 'changed' statement look false.", []
     tracked = _tracked(repo)
     bad, unsure, ok = [], [], []
     for c in detail["checks"]:

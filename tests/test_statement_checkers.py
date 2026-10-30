@@ -40,6 +40,12 @@ def find(d, kind):
 
 
 class Extraction(unittest.TestCase):
+    def test_empty_change_list_is_unknown_not_contradicted(self):
+        d = repo_with_change()
+        v, why, _ = statements.check_files(d, [], {"checks": [{"path": "a/util.py", "expect": "changed"}]})
+        self.assertEqual(v, "UNKNOWN")
+        self.assertIn("empty", why)
+
     def test_a_verb_that_governs_a_backticked_path_is_a_file_claim(self):
         for text, want in (("Added `skip_keys` support to `x/provider.py`.", ("x/provider.py", "changed")), ("I fixed `src/a.py`.", ("src/a.py", "changed")),
                            ("Wrote `docs/new.md`.", ("docs/new.md", "changed")), ("Removed `old/dead.py`.", ("old/dead.py", "absent")),
