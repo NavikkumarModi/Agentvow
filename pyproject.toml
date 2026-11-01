@@ -33,3 +33,6 @@ agentvow = "agentvow.cli:run"
 
 [tool.setuptools]
 packages = ["agentvow"]
+
+[tool.setuptools.package-data]
+agentvow = ["ts/*.js"]

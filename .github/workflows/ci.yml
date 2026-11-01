@@ -24,7 +24,11 @@ jobs:
           python -m pip install -q pytest pyyaml cryptography starlette httpx uvicorn ruff griffe
           git config --global user.email ci@example.com && git config --global user.name ci
           git config --global init.defaultBranch main
+      - name: TypeScript engine for the API check (parser only)
+        run: npm install --silent --no-audit --no-fund --prefix "$RUNNER_TEMP/tsmod" typescript@5
       - name: Python tests
+        env:
+          AGENTVOW_TYPESCRIPT: ${{ runner.temp }}/tsmod/node_modules
         run: python -m unittest discover -s tests
       - name: Node tests
         run: node --test vscode/test/extension.test.js vscode/test/helpers.test.js

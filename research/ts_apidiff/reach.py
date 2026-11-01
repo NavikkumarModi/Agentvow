@@ -64,7 +64,7 @@ def entry_candidates(pkg_dir, pj):
 
 
 def reexports(src, fn):
-    p = subprocess.run(["node", str(Path(__file__).parent / "reexports.js")], input=json.dumps({"src": src, "file": fn}), capture_output=True, text=True, env=os.environ, timeout=30)
+    p = subprocess.run(["node", str(ROOT / "agentvow/ts/reexports.js")], input=json.dumps({"src": src, "file": fn}), capture_output=True, text=True, env=os.environ, timeout=30)
     try:
         return json.loads(p.stdout)
     except Exception:

@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import claims as C
-from . import api_diff, changedcov, lint as lint_mod, statements as S
+from . import api_diff, changedcov, lint as lint_mod, statements as S, ts_api
 from . import reality as R
 
 WEAK_KINDS = ("files_scope", "docs_updated", "lint_clean")   # checks that restate git or run a style tool: they never count as support for a change on their own
@@ -269,19 +269,35 @@ def _lint(c, repo, changed, runner_fn) -> Finding:
 
 def _compat(c, repo, base, changed) -> Finding:
     py = [f for f in changed if f.endswith(".py") and not R.is_test(f)]
-    if not py:
-        return Finding(c.text, c.kind, "UNKNOWN", "No changed non-test Python files were found, so the claim cannot be checked.")
-    found, gaps = api_diff.diff(repo, base, py)
+    ts = [f for f in changed if ts_api.is_candidate(f)]
+    if not py and not ts:
+        return Finding(c.text, c.kind, "UNKNOWN", "No changed non-test Python or TypeScript files were found, so the claim cannot be checked.")
+    found, gaps, skipped = [], [], []
+    if py:
+        found, gaps = api_diff.diff(repo, base, py)
+    ts_note = ""
+    if ts:
+        if ts_api.available():
+            f2, g2, skipped = ts_api.check(repo, base, ts)
+            found, gaps = found + f2, gaps + g2
+            ts_note = " TypeScript files were compared without a build (parser only), and only those exported from a non-private package entry count."
+        else:
+            gaps = gaps + [f"{len(ts)} TypeScript file(s) changed, but the TypeScript engine is not available (needs Node and the typescript package; see AGENTVOW_TYPESCRIPT)"]
+    meta = {"api_engines": api_diff.engine_info()}
+    if skipped:
+        meta["not_public_api"] = skipped[:8]
     if found:   # attention, not CONTRADICTED: on 40 real pull requests this check was right in 4 of 9 decisive flags (docs/research/AUDIT_STUDY_RESULTS_STAGE2.md); whether a changed API breaks anyone is a judgment
         return Finding(c.text, c.kind, "UNKNOWN",
                        f"The agent said the change is backward compatible, but the public API changed in {len(found)} way(s) (removed or renamed names or parameters, new required parameters, changed kinds). "
-                       "A person should check whether that breaks users: in a test on real pull requests this check was right in fewer than half of the cases a second reader could decide, so it does not decide by itself.",
-                       evidence=found[:8], attention=True, meta={"mismatch": True, "api_engines": api_diff.engine_info()})
+                       "A person should check whether that breaks users: in a test on real pull requests this check was right in fewer than half of the cases a second reader could decide, so it does not decide by itself." + ts_note,
+                       evidence=found[:8], attention=True, meta={**meta, "mismatch": True})
     if gaps:
-        return Finding(c.text, c.kind, "UNKNOWN", "Some changed files could not be compared.", unknowns=gaps)
+        return Finding(c.text, c.kind, "UNKNOWN", "Some changed files could not be compared." + ts_note, unknowns=gaps, meta=meta)
+    if ts and not py and len(skipped) == len(ts):
+        return Finding(c.text, c.kind, "UNKNOWN", "None of the changed TypeScript files is part of a public package API that could be compared (" + "; ".join(skipped[:3]) + ")." + ts_note, unknowns=skipped[:8], meta=meta)
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",
-                   "No removed names or incompatible signature changes in changed Python files. Behaviour changes, "
-                   "other languages, config and runtime compatibility are not checked.")
+                   "No removed names or incompatible signature changes in the changed Python or TypeScript files that are public API." + ts_note + " Behaviour changes, "
+                   "other languages, config and runtime compatibility are not checked.", meta=meta)
 
 
 CI_CONFIG = (".github/workflows/", ".github/actions/", ".circleci/", ".gitlab-ci", "azure-pipelines", "jenkinsfile", ".travis.yml", "buildkite", "tox.ini", "noxfile.py")

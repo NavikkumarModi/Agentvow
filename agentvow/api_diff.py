@@ -95,6 +95,13 @@ def engine_info() -> dict:
         info["griffe"] = version("griffe")
     except Exception:
         pass
+    try:
+        from . import ts_api
+        v = ts_api.available()
+        if v:
+            info["typescript"] = v
+    except Exception:
+        pass
     return info
 
 

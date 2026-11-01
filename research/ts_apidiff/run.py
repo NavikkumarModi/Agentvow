@@ -44,7 +44,7 @@ def main():
             new = raw(x["repo"], fn, x["head"])
             if new is None:
                 rec["files"].append({"file": fn, "note": "head unreadable"}); continue
-            p = subprocess.run(["node", str(Path(__file__).parent / "exports.js")], input=json.dumps({"old": old, "new": new, "file": fn}), capture_output=True, text=True, env=os.environ, timeout=60)
+            p = subprocess.run(["node", str(ROOT / "agentvow/ts/exports.js")], input=json.dumps({"old": old, "new": new, "file": fn}), capture_output=True, text=True, env=os.environ, timeout=60)
             try:
                 rec["files"].append({"file": fn, **json.loads(p.stdout)})
             except Exception:
