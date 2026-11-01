@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **Optional second engine for the public-API check: griffe** (`pip install agentvow[api]`; ISC; used statically, nothing is imported or run). It adds findings only for files the built-in check found nothing in (inherited members removed, dataclass fields changed, default values changed, in the bake-off on 620 files), marked `griffe, ...`; the receipt's `api_engines` records the versions used. Without griffe the built-in result is unchanged. **A changed wildcard re-export in a package `__init__` is now reported as a gap** (the names cannot be known from one file) instead of being ignored. 4 tests; CI installs griffe.
 - **Impact check: `from __future__ import ...` in a package `__init__` is no longer treated as a re-exported public name** (found by the griffe bake-off, `docs/research/API_DIFF_BAKEOFF_PYTHON.md`; removing it was reported as a removed name; 1 test). Repository (not in the wheel): the bake-off script and data, the API-tool survey.
 
 ## 0.4.5 (2026-10-30)

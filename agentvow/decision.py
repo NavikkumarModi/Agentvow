@@ -276,7 +276,7 @@ def _compat(c, repo, base, changed) -> Finding:
         return Finding(c.text, c.kind, "UNKNOWN",
                        f"The agent said the change is backward compatible, but the public API changed in {len(found)} way(s) (removed or renamed names or parameters, new required parameters, changed kinds). "
                        "A person should check whether that breaks users: in a test on real pull requests this check was right in fewer than half of the cases a second reader could decide, so it does not decide by itself.",
-                       evidence=found[:8], attention=True, meta={"mismatch": True})
+                       evidence=found[:8], attention=True, meta={"mismatch": True, "api_engines": api_diff.engine_info()})
     if gaps:
         return Finding(c.text, c.kind, "UNKNOWN", "Some changed files could not be compared.", unknowns=gaps)
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",

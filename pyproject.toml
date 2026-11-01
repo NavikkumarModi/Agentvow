@@ -21,6 +21,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+api = ["griffe>=1"]   # optional second engine for the public-API check (static; see docs/research/API_DIFF_BAKEOFF_PYTHON.md)
+
 [project.urls]
 Homepage = "https://github.com/NavikkumarModi/Agentvow"
 Issues = "https://github.com/NavikkumarModi/Agentvow/issues"

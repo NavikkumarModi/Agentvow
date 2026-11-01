@@ -1,6 +1,8 @@
 """Public-API diff between two commits (Python, static): removed names and incompatible signature changes."""
 import ast
+import hashlib
 import subprocess
+import tempfile
 
 from .reality import safe_prefix
 from pathlib import Path
@@ -84,6 +86,44 @@ def breaking(old: dict, new: dict) -> list:
     return out
 
 
+def engine_info() -> dict:
+    """Which engines compared the API. griffe (ISC, https://github.com/mkdocstrings/griffe) is optional: `pip install griffe` or `agentvow[api]`; it is used statically (nothing is imported or run) and its findings are added only for files the built-in check found nothing in."""
+    info = {"builtin": "ast"}
+    try:
+        from importlib.metadata import version
+        import griffe  # noqa: F401
+        info["griffe"] = version("griffe")
+    except Exception:
+        pass
+    return info
+
+
+def _griffe(old_src: str, new_src: str, file: str) -> list:
+    """Breaking changes griffe finds in one module (static load, no inspection, no package context). [] when griffe is missing or fails: the built-in result then stands."""
+    try:
+        import griffe
+    except Exception:
+        return []
+    name = "m_" + hashlib.sha1(file.encode()).hexdigest()[:10]
+    try:
+        with tempfile.TemporaryDirectory(prefix="agentvow_griffe_") as d:
+            for sub, src in (("old", old_src), ("new", new_src)):
+                (Path(d) / sub).mkdir()
+                (Path(d) / sub / f"{name}.py").write_text(src, encoding="utf-8")
+            o = griffe.load(name, search_paths=[str(Path(d) / "old")], try_relative_path=False, allow_inspection=False)
+            n = griffe.load(name, search_paths=[str(Path(d) / "new")], try_relative_path=False, allow_inspection=False)
+            return sorted(f"griffe, {b.kind.value.lower()}: {b.obj.path.split('.', 1)[-1] if '.' in b.obj.path else b.obj.path}" for b in griffe.find_breaking_changes(o, n))
+    except Exception:
+        return []
+
+
+def _wildcards(source: str) -> set:
+    try:
+        return {(n.level, n.module) for n in ast.walk(ast.parse(source)) if isinstance(n, ast.ImportFrom) and any(a.name == "*" for a in n.names)}
+    except SyntaxError:
+        return set()
+
+
 def diff(repo: Path, base: str, files: list):
     """Return (breaking_changes, gaps). Files that fail to parse are gaps, never silently OK."""
     found, gaps = [], []
@@ -98,7 +138,10 @@ def diff(repo: Path, base: str, files: list):
             if new_src is None:
                 found.append(f"removed file: {f}")
                 continue
-            found += [f"{f}: {x}" for x in breaking(public_api(old, f.endswith('__init__.py')), public_api(new_src, f.endswith('__init__.py')))]
+            ours = [f"{f}: {x}" for x in breaking(public_api(old, f.endswith('__init__.py')), public_api(new_src, f.endswith('__init__.py')))]
+            found += ours or [f"{f}: {x}" for x in _griffe(old, new_src, f)]
+            if f.endswith("__init__.py") and _wildcards(old) != _wildcards(new_src):
+                gaps.append(f"a wildcard re-export in {f} changed; the names it exports cannot be known from one file")
         except (SyntaxError, UnicodeDecodeError, RecursionError, MemoryError, ValueError):
             gaps.append(f"could not parse {f} for API comparison")
     return found, gaps

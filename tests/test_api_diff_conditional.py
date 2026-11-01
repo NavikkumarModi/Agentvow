@@ -36,3 +36,40 @@ class FutureImport(unittest.TestCase):
         new = "from .core import run\n"
         self.assertEqual(api_diff.breaking(api_diff.public_api(old, True), api_diff.public_api(new, True)), [])
         self.assertIn("run", api_diff.public_api(old, True))
+
+
+class WildcardAndGriffe(unittest.TestCase):
+    def _repo(self, old, new, name="pkg/__init__.py"):
+        import subprocess
+        import tempfile
+        d = Path(tempfile.mkdtemp())
+        g = lambda *a: subprocess.run(["git", "-C", str(d), *a], check=True, capture_output=True, text=True)
+        g("init", "-q", "-b", "main"); g("config", "user.email", "a@b"); g("config", "user.name", "t")
+        (d / name).parent.mkdir(parents=True, exist_ok=True); (d / name).write_text(old)
+        g("add", "-A"); g("commit", "-qm", "base")
+        (d / name).write_text(new)
+        return d, name
+
+    def test_a_changed_wildcard_reexport_is_a_gap_not_silence(self):   # found by the griffe bake-off: the built-in check ignored `import *` silently
+        d, name = self._repo("from .a import *\nfrom .b import *\n", "from .a import *\n")
+        found, gaps = api_diff.diff(d, "HEAD", [name])
+        self.assertTrue(any("wildcard" in g for g in gaps))
+
+    def test_an_unchanged_wildcard_is_not_a_gap(self):
+        d, name = self._repo("from .a import *\n", "from .a import *\nx = 1\n")
+        self.assertEqual(api_diff.diff(d, "HEAD", [name]), ([], []))
+
+    @unittest.skipUnless("griffe" in api_diff.engine_info(), "griffe not installed")
+    def test_griffe_adds_a_removed_dataclass_field_the_builtin_check_misses(self):   # bake-off: halmos, GameSentenceMiner
+        old = "from dataclasses import dataclass\n@dataclass\nclass V:\n    a: int = 1\n    backup: str = 'x'\n"
+        new = "from dataclasses import dataclass\n@dataclass\nclass V:\n    a: int = 1\n"
+        d, name = self._repo(old, new, "m.py")
+        found, gaps = api_diff.diff(d, "HEAD", [name])
+        self.assertTrue(any(x.startswith("m.py: griffe") and "backup" in x for x in found), found)
+
+    def test_without_griffe_the_builtin_result_stands(self):
+        from unittest import mock
+        d, name = self._repo("def f(a): pass\n", "def f(a, b): pass\n", "m.py")
+        with mock.patch.dict(sys.modules, {"griffe": None}):
+            found, _ = api_diff.diff(d, "HEAD", [name])
+        self.assertEqual(found, ["m.py: f: new required parameter(s): b"])
