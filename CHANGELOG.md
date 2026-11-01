@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **Impact check: `from __future__ import ...` in a package `__init__` is no longer treated as a re-exported public name** (found by the griffe bake-off, `docs/research/API_DIFF_BAKEOFF_PYTHON.md`; removing it was reported as a removed name; 1 test). Repository (not in the wheel): the bake-off script and data, the API-tool survey.
+
 ## 0.4.5 (2026-10-30)
 Two additions to the default policy that ask a person more often, three new kinds of checked statement, and three opt-in environment features that were measured and did not help. Items marked "repository" are not in the wheel.
 - **Policy rule `harness_warning`** (default `needs_acknowledgement`): when the replay passed but the change modified an existing test file, added or edited a file that runs when tests start, or changed the test runner's configuration, the result is no longer simply allowed: a named person must acknowledge it (set it to `allow` to keep the old behaviour, or `block`). The receipt records why in a new per-claim field `harness_warning` (`modified_test_file`, `autorun_file`, `test_config`). **A behaviour change for the default policy**: a pull request that edits an existing test file now needs an acknowledgement. A policy file that uses the new key is rejected by older Agentvow versions (unknown key blocks), so pin the gate's `agentvow-version` to the release that has it; receipts from older versions lack the field and are unaffected. When this ships, raise the control plane's minimum tool version (`AGENTVOW_CP_MIN_TOOL_VERSION`) to it so a caller cannot pick an older Agentvow to avoid the rule.

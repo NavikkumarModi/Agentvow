@@ -51,7 +51,7 @@ def public_api(source: str, is_init: bool = False) -> dict:
                     api[f"{n.name}.{m.name}"] = _sig(m)
         elif isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) and not n.target.id.startswith("_"):
             api[n.target.id] = {"const": True}
-        elif is_init and isinstance(n, ast.ImportFrom):
+        elif is_init and isinstance(n, ast.ImportFrom) and n.module != "__future__":   # `from __future__ import annotations` is a compiler directive, not a re-exported name (bake-off false positive)
             for a in n.names:  # names re-exported from a package __init__ are part of its public API
                 nm = a.asname or a.name
                 if not nm.startswith("_") and nm != "*":

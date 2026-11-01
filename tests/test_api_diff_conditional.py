@@ -28,3 +28,11 @@ class ConditionalDefinitions(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FutureImport(unittest.TestCase):
+    def test_a_future_import_in_a_package_init_is_not_a_public_name(self):   # found by the griffe bake-off: removing it was reported as a removed name
+        old = "from __future__ import annotations\nfrom .core import run\n"
+        new = "from .core import run\n"
+        self.assertEqual(api_diff.breaking(api_diff.public_api(old, True), api_diff.public_api(new, True)), [])
+        self.assertIn("run", api_diff.public_api(old, True))

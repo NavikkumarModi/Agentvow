@@ -1,0 +1,6117 @@
+[
+ {
+  "pr": "https://github.com/axllent/mailpit/pull/565",
+  "repo": "axllent/mailpit",
+  "number": 565,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/Kocoro-lab/Shannon/pull/26",
+  "repo": "Kocoro-lab/Shannon",
+  "number": 26,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/microsoft/typespec/pull/8311",
+  "repo": "microsoft/typespec",
+  "number": 8311,
+  "files": [
+   {
+    "file": "packages/http-client-python/eng/scripts/ci/util.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/base.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: BaseType.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m90994484.BaseType.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/client.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: Client.imports_for_multiapi",
+     "removed: Config.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m49356158.Client.imports_for_multiapi",
+     "Public object was removed: m49356158.Config.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/constant_type.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: ConstantType.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m84449595.ConstantType.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/imports.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/operation.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: OperationBase.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m71828836.Operation.imports_for_multiapi",
+     "Public object was removed: m71828836.OperationBase.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/operation_group.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: OperationGroup.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m46086346.OperationGroup.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/paging_operation.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/parameter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [
+     "Public object was removed: m97319093.BodyParameter.imports_for_multiapi",
+     "Public object was removed: m97319093.ClientParameter.imports_for_multiapi",
+     "Public object was removed: m97319093.ConfigParameter.imports_for_multiapi",
+     "Public object was removed: m97319093.Parameter.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/response.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: Response.imports_for_multiapi",
+     "removed: PagingResponse.imports_for_multiapi",
+     "removed: LROResponse.imports_for_multiapi",
+     "removed: LROPagingResponse.imports_for_multiapi"
+    ],
+    "griffe": [
+     "Public object was removed: m53111361.LROPagingResponse.imports_for_multiapi",
+     "Public object was removed: m53111361.LROResponse.imports_for_multiapi",
+     "Public object was removed: m53111361.PagingResponse.imports_for_multiapi",
+     "Public object was removed: m53111361.Response.imports_for_multiapi"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/__init__.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: MetadataSerializer"
+    ],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/builder_serializer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/client_serializer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/metadata_serializer.py",
+    "status": "removed",
+    "agentvow": [
+     "removed file: packages/http-client-python/generator/pygen/codegen/serializers/metadata_serializer.py"
+    ],
+    "griffe": [
+     "removed file: packages/http-client-python/generator/pygen/codegen/serializers/metadata_serializer.py"
+    ]
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/operations_init_serializer.py",
+    "status": "modified",
+    "agentvow": [
+     "get_pylint_disable: parameter(s) removed or renamed: code_model"
+    ],
+    "griffe": [
+     "Parameter was removed: m19079286.get_pylint_disable",
+     "Positional parameter was moved: m19079286.get_pylint_disable"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/parameter_serializer.py",
+    "status": "modified",
+    "agentvow": [
+     "ParameterSerializer.pop_kwargs_from_signature: parameter(s) removed or renamed: operation_name"
+    ],
+    "griffe": [
+     "Parameter was removed: m77070986.ParameterSerializer.pop_kwargs_from_signature"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/sample_serializer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/utils.py",
+    "status": "modified",
+    "agentvow": [
+     "get_namespace_config: parameter(s) removed or renamed: multiapi"
+    ],
+    "griffe": [
+     "Parameter was removed: m29511694.get_namespace_config"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/567-labs/instructor/pull/1754",
+  "repo": "567-labs/instructor",
+  "number": 1754,
+  "files": [
+   {
+    "file": "instructor/auto_client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "instructor/mode.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "instructor/providers/bedrock/client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "instructor/providers/bedrock/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reflex-dev/reflex-web/pull/1576",
+  "repo": "reflex-dev/reflex-web",
+  "number": 1576,
+  "files": [
+   {
+    "file": "pcweb/components/docpage/sidebar/sidebar_items/component_lib.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pcweb/pages/docs/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/AgentOps-AI/agentops/pull/1098",
+  "repo": "AgentOps-AI/agentops",
+  "number": 1098,
+  "files": [
+   {
+    "file": "agentops/instrumentation/providers/openai/stream_wrapper.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI-tools/pull/419",
+  "repo": "crewAIInc/crewAI-tools",
+  "number": 419,
+  "files": [
+   {
+    "file": "crewai_tools/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "crewai_tools/tools/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "crewai_tools/tools/pdf_text_writing_tool/pdf_text_writing_tool.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: PDFTextWritingTool.embed_font"
+    ],
+    "griffe": [
+     "Parameter default was changed: m19743521.PDFTextWritingTool.run",
+     "Public object was removed: m19743521.PDFTextWritingTool.embed_font"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/tools/test_search_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/AgentOps-AI/agentops/pull/865",
+  "repo": "AgentOps-AI/agentops",
+  "number": 865,
+  "files": [
+   {
+    "file": "agentops/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/client/api/base.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/client/client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/config.py",
+    "status": "modified",
+    "agentvow": [
+     "Config.configure: parameter(s) removed or renamed: auto_start_session, skip_auto_end_session"
+    ],
+    "griffe": [
+     "Parameter was removed: m77371448.Config.__init__",
+     "Parameter was removed: m77371448.Config.__init__",
+     "Parameter was removed: m77371448.Config.configure",
+     "Parameter was removed: m77371448.Config.configure",
+     "Public object was removed: m77371448.Config.auto_start_session",
+     "Public object was removed: m77371448.Config.skip_auto_end_session",
+     "Public object was removed: m77371448.ConfigDict.auto_start_session",
+     "Public object was removed: m77371448.ConfigDict.skip_auto_end_session"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/exceptions.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/helpers/validation.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/legacy/__init__.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: Session",
+     "removed: Session.__init__",
+     "removed: Session.create_agent",
+     "removed: Session.record",
+     "removed: Session.end_session",
+     "removed: start_session"
+    ],
+    "griffe": [
+     "Public object was removed: m44178119.start_session"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/sdk/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/sdk/core.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/sdk/decorators/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/sdk/decorators/factory.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/sdk/decorators/utility.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "agentops/semconv/span_kinds.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/agents-examples/basic/hello_world.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/crewai-basic.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/opentelemetry/token_importance.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/opentelemetry/token_importance_2.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/sdk/basic.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/benchmark/benchmark_init.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit/conftest.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit/sdk/instrumentation_tester.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit/sdk/test_decorators.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit/test_session_legacy.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/567-labs/instructor/pull/1568",
+  "repo": "567-labs/instructor",
+  "number": 1568,
+  "files": [
+   {
+    "file": "instructor/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": "CyclicAliasError: Cyclic aliases detected:\n  m73790682.patch.patch"
+   },
+   {
+    "file": "instructor/auto_client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "instructor/client.py",
+    "status": "modified",
+    "agentvow": [
+     "Response.create: new required parameter(s): model, messages",
+     "Response.create: positional parameter order changed",
+     "Response.create_with_completion: new required parameter(s): model, messages",
+     "Response.create_with_completion: positional parameter order changed",
+     "Response.create_iterable: new required parameter(s): model, messages",
+     "Response.create_iterable: positional parameter order changed",
+     "Response.create_partial: new required parameter(s): model, messages",
+     "Response.create_partial: positional parameter order changed",
+     "AsyncResponse.create: new required parameter(s): model, messages",
+     "AsyncResponse.create: positional parameter order changed",
+     "AsyncResponse.create_with_completion: new required parameter(s): model, messages",
+     "AsyncResponse.create_with_completion: positional parameter order changed",
+     "AsyncResponse.create_iterable: new required parameter(s): model, messages",
+     "AsyncResponse.create_iterable: positional parameter order changed",
+     "Instructor.__init__: positional parameter order changed",
+     "Instructor.on: parameter(s) removed or renamed: hook_name, handler",
+     "Instructor.on: new required parameter(s): hook",
+     "Instructor.off: parameter(s) removed or renamed: hook_name, handler",
+     "Instructor.off: new required parameter(s): hook",
+     "Instructor.clear: parameter(s) removed or renamed: hook_name",
+     "Instructor.create: new required parameter(s): model",
+     "Instructor.create: positional parameter order changed",
+     "Instructor.create_partial: new required parameter(s): model",
+     "Instructor.create_partial: positional parameter order changed",
+     "Instructor.create_iterable: new required parameter(s): model",
+     "Instructor.create_iterable: positional parameter order changed",
+     "Instructor.create_with_completion: new required parameter(s): model",
+     "Instructor.create_with_completion: positional parameter order changed",
+     "AsyncInstructor.__init__: positional parameter order changed",
+     "AsyncInstructor.create: new required parameter(s): model",
+     "AsyncInstructor.create: positional parameter order changed",
+     "AsyncInstructor.create_partial: new required parameter(s): model",
+     "AsyncInstructor.create_partial: positional parameter order changed",
+     "AsyncInstructor.create_iterable: new required parameter(s): model",
+     "AsyncInstructor.create_iterable: positional parameter order changed",
+     "AsyncInstructor.create_with_completion: new required parameter(s): model",
+     "AsyncInstructor.create_with_completion: positional parameter order changed"
+    ],
+    "griffe": [
+     "Base class was removed: m51375415.AsyncInstructor",
+     "Parameter default was changed: m51375415.AsyncInstructor.__init__",
+     "Parameter default was changed: m51375415.Instructor.__init__",
+     "Parameter kind was changed: m51375415.AsyncResponse.create",
+     "Parameter kind was changed: m51375415.AsyncResponse.create",
+     "Parameter kind was changed: m51375415.AsyncResponse.create_iterable",
+     "Parameter kind was changed: m51375415.AsyncResponse.create_with_completion",
+     "Parameter kind was changed: m51375415.Response.create",
+     "Parameter kind was changed: m51375415.Response.create",
+     "Parameter kind was changed: m51375415.Response.create_iterable",
+     "Parameter kind was changed: m51375415.Response.create_partial",
+     "Parameter kind was changed: m51375415.Response.create_with_completion",
+     "Parameter was added as required: m51375415.AsyncInstructor.create",
+     "Parameter was added as required: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was added as required: m51375415.AsyncInstructor.create_partial",
+     "Parameter was added as required: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was added as required: m51375415.AsyncResponse.create",
+     "Parameter was added as required: m51375415.AsyncResponse.create",
+     "Parameter was added as required: m51375415.AsyncResponse.create_iterable",
+     "Parameter was added as required: m51375415.AsyncResponse.create_iterable",
+     "Parameter was added as required: m51375415.AsyncResponse.create_with_completion",
+     "Parameter was added as required: m51375415.AsyncResponse.create_with_completion",
+     "Parameter was added as required: m51375415.Instructor.__getattr__",
+     "Parameter was added as required: m51375415.Instructor.create",
+     "Parameter was added as required: m51375415.Instructor.create_iterable",
+     "Parameter was added as required: m51375415.Instructor.create_partial",
+     "Parameter was added as required: m51375415.Instructor.create_with_completion",
+     "Parameter was added as required: m51375415.Instructor.off",
+     "Parameter was added as required: m51375415.Instructor.on",
+     "Parameter was added as required: m51375415.Response.create",
+     "Parameter was added as required: m51375415.Response.create",
+     "Parameter was added as required: m51375415.Response.create_iterable",
+     "Parameter was added as required: m51375415.Response.create_iterable",
+     "Parameter was added as required: m51375415.Response.create_partial",
+     "Parameter was added as required: m51375415.Response.create_partial",
+     "Parameter was added as required: m51375415.Response.create_with_completion",
+     "Parameter was added as required: m51375415.Response.create_with_completion",
+     "Parameter was removed: m51375415.AsyncInstructor.__init__",
+     "Parameter was removed: m51375415.AsyncInstructor.create",
+     "Parameter was removed: m51375415.AsyncInstructor.create",
+     "Parameter was removed: m51375415.AsyncInstructor.create",
+     "Parameter was removed: m51375415.AsyncInstructor.create",
+     "Parameter was removed: m51375415.AsyncInstructor.create",
+     "Parameter was removed: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was removed: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was removed: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was removed: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was removed: m51375415.AsyncInstructor.create_iterable",
+     "Parameter was removed: m51375415.AsyncInstructor.create_partial",
+     "Parameter was removed: m51375415.AsyncInstructor.create_partial",
+     "Parameter was removed: m51375415.AsyncInstructor.create_partial",
+     "Parameter was removed: m51375415.AsyncInstructor.create_partial",
+     "Parameter was removed: m51375415.AsyncInstructor.create_partial",
+     "Parameter was removed: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was removed: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was removed: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was removed: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was removed: m51375415.AsyncInstructor.create_with_completion",
+     "Parameter was removed: m51375415.AsyncResponse.create",
+     "Parameter was removed: m51375415.AsyncResponse.create",
+     "Parameter was removed: m51375415.AsyncResponse.create",
+     "Parameter was removed: m51375415.AsyncResponse.create",
+     "Parameter was removed: m51375415.AsyncResponse.create_iterable",
+     "Parameter was removed: m51375415.AsyncResponse.create_iterable",
+     "Parameter was removed: m51375415.AsyncResponse.create_with_completion",
+     "Parameter was removed: m51375415.AsyncResponse.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.__getattr__",
+     "Parameter was removed: m51375415.Instructor.__init__",
+     "Parameter was removed: m51375415.Instructor.clear",
+     "Parameter was removed: m51375415.Instructor.create",
+     "Parameter was removed: m51375415.Instructor.create",
+     "Parameter was removed: m51375415.Instructor.create",
+     "Parameter was removed: m51375415.Instructor.create",
+     "Parameter was removed: m51375415.Instructor.create",
+     "Parameter was removed: m51375415.Instructor.create_iterable",
+     "Parameter was removed: m51375415.Instructor.create_iterable",
+     "Parameter was removed: m51375415.Instructor.create_iterable",
+     "Parameter was removed: m51375415.Instructor.create_iterable",
+     "Parameter was removed: m51375415.Instructor.create_iterable",
+     "Parameter was removed: m51375415.Instructor.create_partial",
+     "Parameter was removed: m51375415.Instructor.create_partial",
+     "Parameter was removed: m51375415.Instructor.create_partial",
+     "Parameter was removed: m51375415.Instructor.create_partial",
+     "Parameter was removed: m51375415.Instructor.create_partial",
+     "Parameter was removed: m51375415.Instructor.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.create_with_completion",
+     "Parameter was removed: m51375415.Instructor.off",
+     "Parameter was removed: m51375415.Instructor.off",
+     "Parameter was removed: m51375415.Instructor.on",
+     "Parameter was removed: m51375415.Instructor.on",
+     "Parameter was removed: m51375415.Response.create",
+     "Parameter was removed: m51375415.Response.create",
+     "Parameter was removed: m51375415.Response.create",
+     "Parameter was removed: m51375415.Response.create",
+     "Parameter was removed: m51375415.Response.create_iterable",
+     "Parameter was removed: m51375415.Response.create_iterable",
+     "Parameter was removed: m51375415.Response.create_partial",
+     "Parameter was removed: m51375415.Response.create_partial",
+     "Parameter was removed: m51375415.Response.create_with_completion",
+     "Parameter was removed: m51375415.Response.create_with_completion",
+     "Positional parameter was moved: m51375415.AsyncInstructor.create_iterable",
+     "Positional parameter was moved: m51375415.AsyncInstructor.create_with_completion",
+     "Positional parameter was moved: m51375415.Instructor.create_iterable",
+     "Positional parameter was moved: m51375415.Instructor.create_with_completion",
+     "Public object points to a different kind of object: m51375415.Instructor.chat",
+     "Public object points to a different kind of object: m51375415.Instructor.completions",
+     "Public object points to a different kind of object: m51375415.Instructor.messages",
+     "Public object was removed: m51375415.AsyncInstructor.__getattr__",
+     "Public object was removed: m51375415.AsyncInstructor.chat",
+     "Public object was removed: m51375415.AsyncInstructor.clear",
+     "Public object was removed: m51375415.AsyncInstructor.completions",
+     "Public object was removed: m51375415.AsyncInstructor.create_fn",
+     "Public object was removed: m51375415.AsyncInstructor.default_model",
+     "Public object was removed: m51375415.AsyncInstructor.handle_kwargs",
+     "Public object was removed: m51375415.AsyncInstructor.messages",
+     "Public object was removed: m51375415.AsyncInstructor.off",
+     "Public object was removed: m51375415.AsyncInstructor.on",
+     "Public object was removed: m51375415.AsyncResponse.create_partial",
+     "Public object was removed: m51375415.Instructor.create_fn",
+     "Public object was removed: m51375415.Instructor.default_model"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/567-labs/instructor/pull/1774",
+  "repo": "567-labs/instructor",
+  "number": 1774,
+  "files": [
+   {
+    "file": "instructor/auto_client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/llm/test_litellm.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/567-labs/instructor/pull/1737",
+  "repo": "567-labs/instructor",
+  "number": 1737,
+  "files": [
+   {
+    "file": "instructor/core/retry.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/blorm-network/ZerePy/pull/108",
+  "repo": "blorm-network/ZerePy",
+  "number": 108,
+  "files": [
+   {
+    "file": "src/action_handler.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/agent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/connection_manager.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/connections/base_connection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reflex-dev/reflex-web/pull/1508",
+  "repo": "reflex-dev/reflex-web",
+  "number": 1508,
+  "files": [
+   {
+    "file": "pcweb/components/docpage/navbar/typesense.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "scripts/typesense_indexer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/esphome/esphome/pull/10949",
+  "repo": "esphome/esphome",
+  "number": 10949,
+  "files": [
+   {
+    "file": "esphome/components/mqtt/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "esphome/const.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "esphome/cpp_helpers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "esphome/helpers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit_tests/test_cpp_helpers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/unit_tests/test_helpers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/julep-ai/julep/pull/1429",
+  "repo": "julep-ai/julep",
+  "number": 1429,
+  "files": [
+   {
+    "file": "agents-api/agents_api/queries/usage/create_usage_record.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/DannyMac180/meta-agent/pull/170",
+  "repo": "DannyMac180/meta-agent",
+  "number": 170,
+  "files": [
+   {
+    "file": "src/meta_agent/generators/guardrail_generator.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/meta_agent/models/spec_schema.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/meta_agent/parsers/tool_spec_parser.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/typespec/pull/8454",
+  "repo": "microsoft/typespec",
+  "number": 8454,
+  "files": [
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/models/paging_operation.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/pygen/codegen/serializers/builder_serializer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/test/generic_mock_api_tests/asynctests/test_payload_pageable_async.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/generator/test/generic_mock_api_tests/test_payload_pageable.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/typespec/pull/7760",
+  "repo": "microsoft/typespec",
+  "number": 7760,
+  "files": [
+   {
+    "file": "packages/http-client-python/eng/scripts/setup/build_pygen_wheel.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/eng/scripts/setup/install.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/eng/scripts/setup/prepare.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "packages/http-client-python/eng/scripts/setup/venvtools.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: create",
+     "removed: create_venv_with_package"
+    ],
+    "griffe": [
+     "Public object was removed: m25700200.create",
+     "Public object was removed: m25700200.create_venv_with_package"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/port-labs/ocean/pull/1776",
+  "repo": "port-labs/ocean",
+  "number": 1776,
+  "files": [
+   {
+    "file": "integrations/jira/jira/client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/jira/jira/overrides.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/jira/kinds.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/jira/main.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gerlero/foamlib/pull/435",
+  "repo": "gerlero/foamlib",
+  "number": 435,
+  "files": [
+   {
+    "file": "foamlib/_files/_files.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "foamlib/_files/_parsing.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "foamlib/_files/_types.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_files/test_parsing/test_loads.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/django-cms/django-cms/pull/8326",
+  "repo": "django-cms/django-cms",
+  "number": 8326,
+  "files": [
+   {
+    "file": "cms/admin/pageadmin.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/scottrogowski/mongita/pull/51",
+  "repo": "scottrogowski/mongita",
+  "number": 51,
+  "files": [
+   {
+    "file": "mongita/collection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_mongita.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mlflow/mlflow/pull/17008",
+  "repo": "mlflow/mlflow",
+  "number": 17008,
+  "files": [
+   {
+    "file": "dev/clint/src/clint/__init__.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: annotations"
+    ],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/comments.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/index.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/linter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/base.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/do_not_disable.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/invalid_abstract_method.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/lazy_builtin_import.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/log_model_artifact_path.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/mlflow_class_name.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/no_rst.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/pytest_mark_repeat.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/rules/unparameterized_generic_type.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "dev/clint/src/clint/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vespa-engine/pyvespa/pull/1119",
+  "repo": "vespa-engine/pyvespa",
+  "number": 1119,
+  "files": [
+   {
+    "file": "tests/unit/test_application.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "vespa/application.py",
+    "status": "modified",
+    "agentvow": [
+     "Vespa.__init__: positional parameter order changed"
+    ],
+    "griffe": [
+     "Positional parameter was moved: m33107062.Vespa.__init__",
+     "Positional parameter was moved: m33107062.Vespa.__init__",
+     "Positional parameter was moved: m33107062.Vespa.__init__",
+     "Positional parameter was moved: m33107062.Vespa.__init__"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/djlint/djLint/pull/1357",
+  "repo": "djlint/djLint",
+  "number": 1357,
+  "files": [
+   {
+    "file": "src/djlint/formatter/indent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Lightning-AI/LitServe/pull/613",
+  "repo": "Lightning-AI/LitServe",
+  "number": 613,
+  "files": [
+   {
+    "file": "src/litserve/api.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/litserve/loops/streaming_loops.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42317",
+  "repo": "Azure/azure-sdk-for-python",
+  "number": 42317,
+  "files": [
+   {
+    "file": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/simulator/_adversarial_simulator.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/evaluation/azure-ai-evaluation/tests/unittests/test_safety_evaluation.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/onnxscript/pull/2385",
+  "repo": "microsoft/onnxscript",
+  "number": 2385,
+  "files": [
+   {
+    "file": "onnxscript/function_libs/torch_lib/ops/core.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gerlero/foamlib/pull/477",
+  "repo": "gerlero/foamlib",
+  "number": 477,
+  "files": [
+   {
+    "file": "foamlib/_files/_parsing.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_files/test_parsing/test_intermediate.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/livingbio/typed-ffmpeg/pull/742",
+  "repo": "livingbio/typed-ffmpeg",
+  "number": 742,
+  "files": [
+   {
+    "file": "src/ffmpeg/compile/compile_cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/ffmpeg/compile/tests/test_compile_cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/AzureTRE/pull/4609",
+  "repo": "microsoft/AzureTRE",
+  "number": 4609,
+  "files": [
+   {
+    "file": "api_app/_version.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/api/routes/airlock.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/core/config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/core/credentials.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/db/repositories/airlock_requests.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/models/domain/airlock_request.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/models/schemas/airlock_request.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/resources/strings.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/services/airlock.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/tests_ma/test_api/test_routes/test_airlock.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/tests_ma/test_db/test_repositories/test_airlock_request_repository.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api_app/tests_ma/test_services/test_airlock.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mlflow/mlflow/pull/17771",
+  "repo": "mlflow/mlflow",
+  "number": 17771,
+  "files": [
+   {
+    "file": "dev/mcps/review.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/OWASP/mastg/pull/3373",
+  "repo": "OWASP/mastg",
+  "number": 3373,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/ohcnetwork/care/pull/3127",
+  "repo": "ohcnetwork/care",
+  "number": 3127,
+  "files": [
+   {
+    "file": "care/emr/api/viewsets/user.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "care/emr/models/organization.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "care/emr/resources/allergy_intolerance/spec.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "care/emr/resources/base.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "care/emr/resources/medication/administration/spec.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Ljzd-PRO/KToolBox/pull/303",
+  "repo": "Ljzd-PRO/KToolBox",
+  "number": 303,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/spacetx/starfish/pull/2104",
+  "repo": "spacetx/starfish",
+  "number": 2104,
+  "files": [
+   {
+    "file": "examples/pipelines/baristaseq_pipeline.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/pipelines/dartfish_pipeline.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/pipelines/merfish_pipeline.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/pipelines/osmfish_pipeline.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/pipelines/starmap_pipeline.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/enkama/hass-variables/pull/144",
+  "repo": "enkama/hass-variables",
+  "number": 144,
+  "files": [
+   {
+    "file": "custom_components/variable/device_tracker.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "custom_components/variable/sensor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/lisa/pull/3888",
+  "repo": "microsoft/lisa",
+  "number": 3888,
+  "files": [
+   {
+    "file": "microsoft/testsuites/network/sriov.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/frappe/mail/pull/266",
+  "repo": "frappe/mail",
+  "number": 266,
+  "files": [
+   {
+    "file": "mail/hooks.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "mail/jmap.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "mail/mail/doctype/mail_account/mail_account.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "mail/mail/doctype/mail_account/test_mail_account.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42195",
+  "repo": "Azure/azure-sdk-for-python",
+  "number": 42195,
+  "files": [
+   {
+    "file": "sdk/identity/azure-identity/azure/identity/_credentials/azure_cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/identity/azure-identity/azure/identity/aio/_credentials/azure_cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/identity/azure-identity/tests/test_cli_credential.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/identity/azure-identity/tests/test_cli_credential_async.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/deepmodeling/dpdata/pull/884",
+  "repo": "deepmodeling/dpdata",
+  "number": 884,
+  "files": [
+   {
+    "file": "dpdata/qe/scf.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ia-usgs/Xeno/pull/34",
+  "repo": "ia-usgs/Xeno",
+  "number": 34,
+  "files": [
+   {
+    "file": "utils/display.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "web_server.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vllm-project/vllm/pull/23601",
+  "repo": "vllm-project/vllm",
+  "number": 23601,
+  "files": [
+   {
+    "file": "vllm/envs.py",
+    "status": "removed",
+    "agentvow": [
+     "removed file: vllm/envs.py"
+    ],
+    "griffe": [
+     "removed file: vllm/envs.py"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gerlero/foamlib/pull/520",
+  "repo": "gerlero/foamlib",
+  "number": 520,
+  "files": [
+   {
+    "file": "foamlib/_cases/async_.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "foamlib/_cases/sync.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dvershinin/lastversion/pull/187",
+  "repo": "dvershinin/lastversion",
+  "number": 187,
+  "files": [
+   {
+    "file": "src/lastversion/holder_factory.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/lastversion/repo_holders/base.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_gitlab.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/espressif/esptool/pull/1103",
+  "repo": "espressif/esptool",
+  "number": 1103,
+  "files": [
+   {
+    "file": "esptool/cli_util.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "test/test_esptool.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/fabric-cicd/pull/471",
+  "repo": "microsoft/fabric-cicd",
+  "number": 471,
+  "files": [
+   {
+    "file": "src/fabric_cicd/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/fabric_cicd/publish.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/djlint/djLint/pull/1360",
+  "repo": "djlint/djLint",
+  "number": 1360,
+  "files": [
+   {
+    "file": "src/djlint/formatter/js.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_config/test_format_js.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/langchain-ai/langchain/pull/32148",
+  "repo": "langchain-ai/langchain",
+  "number": 32148,
+  "files": [
+   {
+    "file": "libs/core/langchain_core/output_parsers/openai_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "libs/core/tests/unit_tests/output_parsers/test_openai_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dr5hn/countries-states-cities-database/pull/1221",
+  "repo": "dr5hn/countries-states-cities-database",
+  "number": 1221,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/resilient-tech/india-compliance/pull/3727",
+  "repo": "resilient-tech/india-compliance",
+  "number": 3727,
+  "files": [
+   {
+    "file": "india_compliance/gst_india/report/hsn_wise_summary_of_outward_supplies/hsn_wise_summary_of_outward_supplies.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/openstreetmap-ng/openstreetmap-ng/pull/189",
+  "repo": "openstreetmap-ng/openstreetmap-ng",
+  "number": 189,
+  "files": [
+   {
+    "file": "app/controllers/reports.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "app/controllers/web_reports.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "app/lib/standard_pagination.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "app/queries/report_query.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: ReportQuery.count_requiring_attention"
+    ],
+    "griffe": [
+     "Public object was removed: m40142963.ReportQuery.count_requiring_attention"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/lib/test_standard_pagination.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/OpShin/opshin/pull/531",
+  "repo": "OpShin/opshin",
+  "number": 531,
+  "files": [
+   {
+    "file": "opshin/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "opshin/type_inference.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/onnxscript/pull/2384",
+  "repo": "microsoft/onnxscript",
+  "number": 2384,
+  "files": [
+   {
+    "file": "onnxscript/function_libs/torch_lib/ops/core.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [
+     "Parameter default was changed: m37873058.aten_embedding_bag_padding_idx"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/metimol/BlackWave/pull/9",
+  "repo": "metimol/BlackWave",
+  "number": 9,
+  "files": [
+   {
+    "file": "bot-system/app/clients/llm/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "bot-system/app/core/settings.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/tarun7r/Vocal-Agent/pull/5",
+  "repo": "tarun7r/Vocal-Agent",
+  "number": 5,
+  "files": [
+   {
+    "file": "main.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: is_playing"
+    ],
+    "griffe": [
+     "Public object was removed: m37782587.is_playing"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/FalkorDB/QueryWeaver/pull/43",
+  "repo": "FalkorDB/QueryWeaver",
+  "number": 43,
+  "files": [
+   {
+    "file": "api/routes/database.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "api/routes/graphs.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/pyscout/Webscout/pull/79",
+  "repo": "pyscout/Webscout",
+  "number": 79,
+  "files": [
+   {
+    "file": "webscout/Provider/TTS/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "webscout/Provider/TTS/base.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "webscout/Provider/TTS/openai_fm.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "webscout/Provider/TTS/streamElements.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42048",
+  "repo": "Azure/azure-sdk-for-python",
+  "number": 42048,
+  "files": [
+   {
+    "file": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluate/_batch_run/proxy_client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/evaluation/azure-ai-evaluation/tests/unittests/test_batch_run_context.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/pySTEPS/pysteps/pull/527",
+  "repo": "pySTEPS/pysteps",
+  "number": 527,
+  "files": [
+   {
+    "file": "setup.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: requirements"
+    ],
+    "griffe": [
+     "Public object was removed: m60210545.requirements"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MervinPraison/PraisonAI/pull/984",
+  "repo": "MervinPraison/PraisonAI",
+  "number": 984,
+  "files": [
+   {
+    "file": "src/praisonai-agents/praisonaiagents/agent/agent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/autogen/pull/6796",
+  "repo": "microsoft/autogen",
+  "number": 6796,
+  "files": [
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/messages.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_chat_agent_container.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-core/src/autogen_core/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/AIOpsLab/pull/78",
+  "repo": "microsoft/AIOpsLab",
+  "number": 78,
+  "files": [
+   {
+    "file": "scripts/terraform/deploy.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: REPO",
+     "removed: logger",
+     "removed: run_command",
+     "removed: setup_aiopslab",
+     "removed: destroy_aiopslab",
+     "removed: get_terraform_output",
+     "removed: save_private_key",
+     "removed: copy_and_execute_script",
+     "removed: get_kubeadm_join_remote",
+     "removed: run_kubeadm_join_on_worker",
+     "removed: add_ssh_key",
+     "removed: deploy_prometheus"
+    ],
+    "griffe": [
+     "Public object was removed: m10800376.REPO",
+     "Public object was removed: m10800376.add_ssh_key",
+     "Public object was removed: m10800376.copy_and_execute_script",
+     "Public object was removed: m10800376.deploy_prometheus",
+     "Public object was removed: m10800376.destroy_aiopslab",
+     "Public object was removed: m10800376.get_kubeadm_join_remote",
+     "Public object was removed: m10800376.get_terraform_output",
+     "Public object was removed: m10800376.logger",
+     "Public object was removed: m10800376.run_command",
+     "Public object was removed: m10800376.run_kubeadm_join_on_worker",
+     "Public object was removed: m10800376.save_private_key",
+     "Public object was removed: m10800376.setup_aiopslab"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure/azure-sdk-for-python/pull/42866",
+  "repo": "Azure/azure-sdk-for-python",
+  "number": 42866,
+  "files": [
+   {
+    "file": "eng/tools/azure-sdk-tools/packaging_tools/package_utils.py",
+    "status": "modified",
+    "agentvow": [
+     "change_log_generate: parameter(s) removed or renamed: is_multiapi"
+    ],
+    "griffe": [
+     "Parameter was removed: m46721851.change_log_generate"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "eng/tools/azure-sdk-tools/tests/test_servicemetadata.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gradio-app/gradio/pull/11600",
+  "repo": "gradio-app/gradio",
+  "number": 11600,
+  "files": [
+   {
+    "file": "gradio/components/json_component.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "gradio/data_classes.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "test/components/test_json.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/posit-dev/py-shiny/pull/2031",
+  "repo": "posit-dev/py-shiny",
+  "number": 2031,
+  "files": [
+   {
+    "file": "shiny/ui/_accordion.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/deepmodeling/deepmd-kit/pull/4945",
+  "repo": "deepmodeling/deepmd-kit",
+  "number": 4945,
+  "files": [
+   {
+    "file": "deepmd/tf/cluster/local.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/common.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/descriptor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/hybrid.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/loc_frame.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_a.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_a_ebd.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_a_ebd_v2.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_a_ef.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_a_mask.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_atten.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_atten_v2.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_r.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/descriptor/se_t.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/change_bias.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/compress.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/convert.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/freeze.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/train.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/entrypoints/transfer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/env.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/fit/dipole.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/fit/dos.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/fit/ener.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/fit/fitting.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/fit/polar.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/infer/deep_dipole.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/infer/deep_eval.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/infer/deep_tensor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/infer/ewald_recp.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/loss/dos.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/loss/ener.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/loss/tensor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/dos.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/ener.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/frozen.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/linear.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/model.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/pairtab.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/pairwise_dprc.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/model/tensor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/modifier/base_modifier.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/modifier/dipole_charge.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/descriptor/se_a.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/descriptor/se_atten.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/entrypoints/freeze.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/entrypoints/mapt.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/entrypoints/train.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/entrypoints/wrap.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/encode.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/fio.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/network.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/op.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/nvnmd/utils/weight.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_add_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_copy_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_dotmul_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_gelu.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_map_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_matmul_fitnet_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_matmul_flt2fix_nvnmd.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_matmul_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_mul_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_force_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_force_se_a_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_force_se_a_mask_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_force_se_r_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_virial_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_virial_se_a_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_prod_virial_se_r_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_quantize_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_soft_min_force_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_soft_min_virial_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_tabulate_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/op/_tanh4_flt_nvnmd_grad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/train/run_options.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/train/trainer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/compress.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/convert.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/finetune.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/graph.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/neighbor_stat.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/network.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/nlist.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/region.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/sess.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/spin.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/tabulate.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "deepmd/tf/utils/type_embed.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/stefankoegl/python-json-patch/pull/168",
+  "repo": "stefankoegl/python-json-patch",
+  "number": 168,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/Ljzd-PRO/KToolBox/pull/266",
+  "repo": "Ljzd-PRO/KToolBox",
+  "number": 266,
+  "files": [
+   {
+    "file": "ktoolbox/action/search.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "ktoolbox/api/posts/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [
+     "Public object was removed: m96074387.m96074387/get_post_revisions/*"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "ktoolbox/cli.py",
+    "status": "modified",
+    "agentvow": [
+     "KToolBoxCli.get_post: parameter(s) removed or renamed: revision_id",
+     "KToolBoxCli.download_post: parameter(s) removed or renamed: revision_id",
+     "KToolBoxCli.sync_creator: parameter(s) removed or renamed: keywords, keywords_exclude"
+    ],
+    "griffe": [
+     "Parameter was removed: m46452759.KToolBoxCli.download_post",
+     "Parameter was removed: m46452759.KToolBoxCli.get_post",
+     "Parameter was removed: m46452759.KToolBoxCli.sync_creator",
+     "Parameter was removed: m46452759.KToolBoxCli.sync_creator",
+     "Positional parameter was moved: m46452759.KToolBoxCli.download_post"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "ktoolbox/utils.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: extract_external_links",
+     "removed: check_for_updates"
+    ],
+    "griffe": [
+     "Public object was removed: m58365722.check_for_updates",
+     "Public object was removed: m58365722.extract_external_links"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/ktoolbox/test_cli.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: NOW",
+     "removed: POST_PUBLISHED",
+     "removed: MOCK_CREATORS",
+     "removed: MOCK_POSTS",
+     "removed: isolate_cli_state",
+     "test_version: parameter(s) removed or renamed: isolate_cli_state"
+    ],
+    "griffe": [
+     "Parameter was removed: m38595248.test_version",
+     "Public object was removed: m38595248.MOCK_CREATORS",
+     "Public object was removed: m38595248.MOCK_POSTS",
+     "Public object was removed: m38595248.NOW",
+     "Public object was removed: m38595248.POST_PUBLISHED",
+     "Public object was removed: m38595248.isolate_cli_state"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/internetarchive/openlibrary/pull/11231",
+  "repo": "internetarchive/openlibrary",
+  "number": 11231,
+  "files": [
+   {
+    "file": "openlibrary/core/lending.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "openlibrary/tests/core/test_lending.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/a16z/halmos/pull/541",
+  "repo": "a16z/halmos",
+  "number": 541,
+  "files": [
+   {
+    "file": "src/halmos/__main__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/halmos/processes.py",
+    "status": "modified",
+    "agentvow": [
+     "PopenFuture.__init__: new required parameter(s): tag",
+     "PopenFuture.__init__: positional parameter order changed"
+    ],
+    "griffe": [
+     "Parameter was added as required: m26385762.PopenFuture.__init__",
+     "Positional parameter was moved: m26385762.PopenFuture.__init__"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "src/halmos/solve.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [
+     "Parameter was added as required: m66818430.PathContext.__init__",
+     "Parameter was removed: m66818430.SolvingContext.__init__",
+     "Positional parameter was moved: m66818430.PathContext.__init__",
+     "Positional parameter was moved: m66818430.SolvingContext.__init__",
+     "Public object was removed: m66818430.SolvingContext.executor"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/livekit/agents/pull/3399",
+  "repo": "livekit/agents",
+  "number": 3399,
+  "files": [
+   {
+    "file": "livekit-plugins/livekit-plugins-google/livekit/plugins/google/tts.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/DeepLabCut/DeepLabCut/pull/3046",
+  "repo": "DeepLabCut/DeepLabCut",
+  "number": 3046,
+  "files": [
+   {
+    "file": "examples/testscript_3d.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/testscript_pretrained_models.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/testscript_tensorflow_multi_animal.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "examples/testscript_tensorflow_single_animal.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/yutto-dev/yutto/pull/539",
+  "repo": "yutto-dev/yutto",
+  "number": 539,
+  "files": [
+   {
+    "file": "src/yutto/__main__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/bangumi.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/cheese.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/collection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/danmaku.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/space.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/ugc_video.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/api/user_info.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/cli/cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/cli/settings.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/download_manager.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/downloader/downloader.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: start_downloader"
+    ],
+    "griffe": [
+     "Public object was removed: m4115543.start_downloader"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/downloader/selector.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/_abc.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/bangumi.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/bangumi_batch.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/cheese.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/cheese_batch.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/collection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/common.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/favourites.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/series.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/ugc_video.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/ugc_video_batch.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/user_all_favourites.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/user_all_ugc_videos.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/extractor/user_watch_later.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/input_parser.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/mcp_server.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/media/__init__.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/media/codec.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/media/quality.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/path_templates.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/types.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/ffmpeg.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/file_buffer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/__init__.py",
+    "status": "renamed",
+    "agentvow": [
+     "removed: filter_none_value"
+    ],
+    "griffe": [],
+    "griffe_error": "CyclicAliasError: Cyclic aliases detected:\n  m28923208.aobject.aobject"
+   },
+   {
+    "file": "src/yutto/utils/functional/async_object.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/async_to_sync.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/data_access.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/filter_none_values.py",
+    "status": "renamed",
+    "agentvow": [
+     "removed: filter_none_value"
+    ],
+    "griffe": [
+     "Public object was removed: m17428002.filter_none_value"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/functional.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/singleton.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/utils/functional/xmerge.py",
+    "status": "renamed",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/yutto/validator.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_bangumi.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_cheese.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_collection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_danmaku.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_space.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_ugc_video.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_api/test_user_info.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_processor/test_downloader.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_processor/test_path_resolver.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_processor/test_selector.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_utils/test_data_access.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/huggingface/huggingface_hub/pull/3108",
+  "repo": "huggingface/huggingface_hub",
+  "number": 3108,
+  "files": [
+   {
+    "file": "src/huggingface_hub/hf_api.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_hf_api.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/CravateRouge/bloodyAD/pull/90",
+  "repo": "CravateRouge/bloodyAD",
+  "number": 90,
+  "files": [
+   {
+    "file": "bloodyAD/cli_modules/get.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vietnlp/etnlp/pull/22",
+  "repo": "vietnlp/etnlp",
+  "number": 22,
+  "files": [
+   {
+    "file": "src/codes/utils/emb_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/langchain-ai/langgraph/pull/5697",
+  "repo": "langchain-ai/langgraph",
+  "number": 5697,
+  "files": [
+   {
+    "file": "libs/prebuilt/langgraph/prebuilt/chat_agent_executor.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/frappe/frappe/pull/33989",
+  "repo": "frappe/frappe",
+  "number": 33989,
+  "files": [
+   {
+    "file": "frappe/core/doctype/system_settings/system_settings.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "frappe/core/doctype/system_settings/test_system_settings.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "frappe/database/schema.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/lisa/pull/4061",
+  "repo": "microsoft/lisa",
+  "number": 4061,
+  "files": [
+   {
+    "file": "lisa/transformers/kernel_installer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/autogen/pull/6877",
+  "repo": "microsoft/autogen",
+  "number": 6877,
+  "files": [
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/agents/_code_executor_agent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-core/src/autogen_core/_component_config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-ext/src/autogen_ext/teams/magentic_one.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/joaovitoriasilva/endurain/pull/331",
+  "repo": "joaovitoriasilva/endurain",
+  "number": 331,
+  "files": [
+   {
+    "file": "backend/app/activities/activity/models.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/activities/activity/schema.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/activities/activity/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/fit/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/gpx/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/migrations/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/tcx/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/users/user/models.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "backend/app/users/user/schema.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/pangeo-data/climpred/pull/877",
+  "repo": "pangeo-data/climpred",
+  "number": 877,
+  "files": [
+   {
+    "file": "src/climpred/conftest.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/autogen/pull/6565",
+  "repo": "microsoft/autogen",
+  "number": 6565,
+  "files": [
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_graph/_digraph_group_chat.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/teams/_group_chat/_graph/_graph_builder.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-agentchat/tests/test_group_chat_graph.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: test_graph_builder_with_filter_agent"
+    ],
+    "griffe": [
+     "Public object was removed: m57005422.test_graph_builder_with_filter_agent"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/holoviz/geoviews/pull/803",
+  "repo": "holoviz/geoviews",
+  "number": 803,
+  "files": [
+   {
+    "file": "geoviews/element/geo.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "geoviews/tests/test_element.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "geoviews/tests/test_projection.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/feast-dev/feast/pull/5657",
+  "repo": "feast-dev/feast",
+  "number": 5657,
+  "files": [
+   {
+    "file": "sdk/python/feast/type_map.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "sdk/python/tests/unit/test_on_demand_feature_view.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/AstrBotDevs/AstrBot/pull/2461",
+  "repo": "AstrBotDevs/AstrBot",
+  "number": 2461,
+  "files": [
+   {
+    "file": "astrbot/core/config/default.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: CONFIG_METADATA_3",
+     "removed: CONFIG_METADATA_3_SYSTEM"
+    ],
+    "griffe": [
+     "Public object was removed: m56162820.CONFIG_METADATA_3",
+     "Public object was removed: m56162820.CONFIG_METADATA_3_SYSTEM"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/provider/sources/zhipu_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/autogen/pull/6876",
+  "repo": "microsoft/autogen",
+  "number": 6876,
+  "files": [
+   {
+    "file": "python/packages/autogen-agentchat/src/autogen_agentchat/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-core/src/autogen_core/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-ext/src/autogen_ext/agents/magentic_one/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-ext/src/autogen_ext/teams/magentic_one.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/spcl/dace/pull/2053",
+  "repo": "spcl/dace",
+  "number": 2053,
+  "files": [
+   {
+    "file": "dace/symbolic.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/OpShin/opshin/pull/525",
+  "repo": "OpShin/opshin",
+  "number": 525,
+  "files": [
+   {
+    "file": "opshin/type_inference.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: method_name",
+     "removed: AggressiveTypeInferencer.resolve_compare_dunder",
+     "removed: AggressiveTypeInferencer.resolve_self_annotations",
+     "removed: AggressiveTypeInferencer.ensure_function_id",
+     "removed: AggressiveTypeInferencer.build_function_type",
+     "removed: AggressiveTypeInferencer.declare_class_type",
+     "removed: AggressiveTypeInferencer.predeclare_class_symbols",
+     "removed: AggressiveTypeInferencer.predeclare_function_symbols",
+     "removed: AggressiveTypeInferencer.predeclare_sequence_symbols",
+     "removed: AggressiveTypeInferencer.lower_class_methods_in_sequence",
+     "removed: AggressiveTypeInferencer.visit_sequence_under_typechecks",
+     "removed: AggressiveTypeInferencer.merge_fallthrough_scopes",
+     "removed: ReturnExtractor.visit_Assert"
+    ],
+    "griffe": [
+     "Public object was removed: m25505474.AggressiveTypeInferencer.build_function_type",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.declare_class_type",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.ensure_function_id",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.first_function_definition_scopes",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.lower_class_methods_in_sequence",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.merge_fallthrough_scopes",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.predeclare_class_symbols",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.predeclare_function_symbols",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.predeclare_sequence_symbols",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.resolve_compare_dunder",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.resolve_self_annotations",
+     "Public object was removed: m25505474.AggressiveTypeInferencer.visit_sequence_under_typechecks",
+     "Public object was removed: m25505474.ReturnExtractor.visit_Assert",
+     "Public object was removed: m25505474.method_name"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "opshin/util.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: get_class_annotations",
+     "removed: set_class_annotations"
+    ],
+    "griffe": [
+     "Public object was removed: m83777411.get_class_annotations",
+     "Public object was removed: m83777411.set_class_annotations"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_Unions.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: Union_tests.test_error_message_list_union_2",
+     "removed: Union_tests.test_error_message_list_union_indirect"
+    ],
+    "griffe": [
+     "Public object was removed: m72359731.Union_tests.test_error_message_list_union_2",
+     "Public object was removed: m72359731.Union_tests.test_error_message_list_union_indirect",
+     "Public object was removed: m72359731.opshin/ledger/api_v3/*"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_misc.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: ASSERT_ANYTHING_CONFIG",
+     "removed: MiscTest.test_assert_isinstance_anything_int",
+     "removed: MiscTest.test_assert_isinstance_anything_int_cast_if",
+     "removed: MiscTest.test_assert_isinstance_anything_int_cast_if_wrong_config",
+     "removed: MiscTest.test_assert_isinstance_anything_int_wrong_config",
+     "removed: MiscTest.test_assert_isinstance_anything_int_illegal",
+     "removed: MiscTest.test_assert_isinstance_anything_bytes",
+     "removed: MiscTest.test_assert_isinstance_anything_bytes_illegal",
+     "removed: MiscTest.test_assert_isinstance_anything_list",
+     "removed: MiscTest.test_assert_isinstance_anything_list_illegal",
+     "removed: MiscTest.test_assert_isinstance_anything_dict",
+     "removed: MiscTest.test_assert_isinstance_anything_dict_illegal",
+     "removed: MiscTest.test_assert_isinstance_anything_user_defined_type",
+     "removed: MiscTest.test_assert_isinstance_anything_user_defined_type_wrong_config",
+     "removed: MiscTest.test_assert_isinstance_anything_user_defined_type_illegal",
+     "removed: MiscTest.test_mutual_recursion_forward_declaration",
+     "removed: MiscTest.test_nested_mutual_recursion_forward_declaration",
+     "removed: MiscTest.test_three_function_recursion_cycle",
+     "removed: MiscTest.test_five_function_recursion_cycle",
+     "removed: MiscTest.test_forward_global_variable_in_function",
+     "removed: MiscTest.test_forward_class_reference_in_function",
+     "removed: MiscTest.test_revisit_function_body_resets_local_union_scope",
+     "removed: MiscTest.test_assert_false_return_analysis_compile_o0",
+     "removed: MiscTest.test_assert_if_return",
+     "removed: MiscTest.test_assert_if_return_nested_if_all_paths_return",
+     "removed: MiscTest.test_assert_if_return_nested_if_then_return",
+     "removed: MiscTest.test_assert_if_return_nested_in_else",
+     "removed: MiscTest.test_assert_if_else_does_not_fall_through",
+     "removed: MiscTest.test_assert_if_else_does_not_fall_through_then_use_narrowed_type",
+     "removed: MiscTest.test_assert_if_assert_false_does_not_fall_through",
+     "removed: MiscTest.test_assert_if_while_else_return_does_not_fall_through",
+     "removed: MiscTest.test_assert_if_for_else_return_does_not_fall_through",
+     "removed: MiscTest.test_opt_remove_unreachable_after_return",
+     "removed: MiscTest.test_opt_remove_unreachable_after_if_both_branches_return",
+     "removed: MiscTest.test_opt_remove_unreachable_after_while_else_return",
+     "removed: MiscTest.test_opt_remove_unreachable_after_for_else_return",
+     "removed: MiscTest.test_opt_fold_if_tail_into_else_branch",
+     "removed: MiscTest.test_opt_fold_if_tail_into_body_branch",
+     "removed: MiscTest.test_type_inference_stops_after_if_both_branches_return",
+     "removed: MiscTest.test_type_inference_stops_after_if_both_branches_return_nested",
+     "removed: MiscTest.test_dict_union_keys",
+     "removed: MiscTest.test_return_none",
+     "removed: MiscTest.test_assign_list",
+     "removed: MiscTest.test_assign_dict"
+    ],
+    "griffe": [
+     "Public object was removed: m27450733.ASSERT_ANYTHING_CONFIG",
+     "Public object was removed: m27450733.MiscTest.test_assert_false_return_analysis_compile_o0",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_assert_false_does_not_fall_through",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_else_does_not_fall_through",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_else_does_not_fall_through_then_use_narrowed_type",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_for_else_return_does_not_fall_through",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_return",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_return_nested_if_all_paths_return",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_return_nested_if_then_return",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_return_nested_in_else",
+     "Public object was removed: m27450733.MiscTest.test_assert_if_while_else_return_does_not_fall_through",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_bytes",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_bytes_illegal",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_dict",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_dict_illegal",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_int",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_int_cast_if",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_int_cast_if_wrong_config",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_int_illegal",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_int_wrong_config",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_list",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_list_illegal",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_user_defined_type",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_user_defined_type_illegal",
+     "Public object was removed: m27450733.MiscTest.test_assert_isinstance_anything_user_defined_type_wrong_config",
+     "Public object was removed: m27450733.MiscTest.test_assign_dict",
+     "Public object was removed: m27450733.MiscTest.test_assign_list",
+     "Public object was removed: m27450733.MiscTest.test_dict_union_keys",
+     "Public object was removed: m27450733.MiscTest.test_five_function_recursion_cycle",
+     "Public object was removed: m27450733.MiscTest.test_forward_class_reference_in_function",
+     "Public object was removed: m27450733.MiscTest.test_forward_global_variable_in_function",
+     "Public object was removed: m27450733.MiscTest.test_mutual_recursion_forward_declaration",
+     "Public object was removed: m27450733.MiscTest.test_nested_mutual_recursion_forward_declaration",
+     "Public object was removed: m27450733.MiscTest.test_opt_fold_if_tail_into_body_branch",
+     "Public object was removed: m27450733.MiscTest.test_opt_fold_if_tail_into_else_branch",
+     "Public object was removed: m27450733.MiscTest.test_opt_remove_unreachable_after_for_else_return",
+     "Public object was removed: m27450733.MiscTest.test_opt_remove_unreachable_after_if_both_branches_return",
+     "Public object was removed: m27450733.MiscTest.test_opt_remove_unreachable_after_return",
+     "Public object was removed: m27450733.MiscTest.test_opt_remove_unreachable_after_while_else_return",
+     "Public object was removed: m27450733.MiscTest.test_return_none",
+     "Public object was removed: m27450733.MiscTest.test_revisit_function_body_resets_local_union_scope",
+     "Public object was removed: m27450733.MiscTest.test_three_function_recursion_cycle",
+     "Public object was removed: m27450733.MiscTest.test_type_inference_stops_after_if_both_branches_return",
+     "Public object was removed: m27450733.MiscTest.test_type_inference_stops_after_if_both_branches_return_nested",
+     "Public object was removed: m27450733.opshin/ledger/api_v3/*"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/jeroenterheerdt/HAsmartirrigation/pull/604",
+  "repo": "jeroenterheerdt/HAsmartirrigation",
+  "number": 604,
+  "files": [
+   {
+    "file": "custom_components/smart_irrigation/const.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "custom_components/smart_irrigation/websockets.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/deepmodeling/dpdata/pull/879",
+  "repo": "deepmodeling/dpdata",
+  "number": 879,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/gerlero/foamlib/pull/454",
+  "repo": "gerlero/foamlib",
+  "number": 454,
+  "files": [
+   {
+    "file": "foamlib/_files/_files.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "foamlib/_files/_parsing.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Josverl/micropython-stubber/pull/679",
+  "repo": "Josverl/micropython-stubber",
+  "number": 679,
+  "files": [
+   {
+    "file": "mip/v6/createstubs.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/stubber/board/createstubs.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/appledragon/everythingByMdfind/pull/9",
+  "repo": "appledragon/everythingByMdfind",
+  "number": 9,
+  "files": [
+   {
+    "file": "everything.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/bpwhelan/GameSentenceMiner/pull/169",
+  "repo": "bpwhelan/GameSentenceMiner",
+  "number": 169,
+  "files": [
+   {
+    "file": "GameSentenceMiner/config_gui.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "GameSentenceMiner/gsm.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "GameSentenceMiner/util/configuration.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [
+     "Parameter was removed: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Positional parameter was moved: m57946085.VAD.__init__",
+     "Public object was removed: m57946085.VAD.backup_vad_model"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "GameSentenceMiner/vad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "GameSentenceMiner/web/database_api.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/djlint/djLint/pull/1359",
+  "repo": "djlint/djLint",
+  "number": 1359,
+  "files": [
+   {
+    "file": "src/djlint/formatter/attributes.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/djlint/formatter/compress.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/djlint/formatter/indent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure/azure-kusto-python/pull/579",
+  "repo": "Azure/azure-kusto-python",
+  "number": 579,
+  "files": [
+   {
+    "file": "build_packages.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/BerriAI/litellm/pull/14926",
+  "repo": "BerriAI/litellm",
+  "number": 14926,
+  "files": [
+   {
+    "file": "litellm/caching/redis_cache.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "litellm/proxy/hooks/parallel_request_limiter_v3.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/home-assistant/core/pull/150941",
+  "repo": "home-assistant/core",
+  "number": 150941,
+  "files": [
+   {
+    "file": "homeassistant/components/camera/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "homeassistant/components/go2rtc/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "homeassistant/components/go2rtc/const.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/components/go2rtc/test_init.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vietnlp/etnlp/pull/21",
+  "repo": "vietnlp/etnlp",
+  "number": 21,
+  "files": [
+   {
+    "file": "src/codes/utils/emb_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/pyscout/Webscout/pull/88",
+  "repo": "pyscout/Webscout",
+  "number": 88,
+  "files": [
+   {
+    "file": "webscout/Provider/Deepinfra.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "webscout/Provider/scira_chat.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/feincms/django-tree-queries/pull/96",
+  "repo": "feincms/django-tree-queries",
+  "number": 96,
+  "files": [
+   {
+    "file": "tests/testapp/test_queries.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: TestTreeQueries.test_tree_query_select_related"
+    ],
+    "griffe": [
+     "Public object was removed: m88001604.TestTreeQueries.test_tree_query_select_related"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tree_queries/compiler.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/bloomberg/memray/pull/838",
+  "repo": "bloomberg/memray",
+  "number": 838,
+  "files": [
+   {
+    "file": "src/memray/commands/attach.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/python-telegram-bot/python-telegram-bot/pull/4875",
+  "repo": "python-telegram-bot/python-telegram-bot",
+  "number": 4875,
+  "files": [
+   {
+    "file": "src/telegram/ext/_application.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/ext/test_application.py",
+    "status": "modified",
+    "agentvow": [
+     "TestApplication.test_signal_handlers: parameter(s) removed or renamed: app",
+     "TestApplication.test_signal_handlers: new required parameter(s): offline_bot"
+    ],
+    "griffe": [
+     "Parameter was added as required: m127842.TestApplication.test_signal_handlers",
+     "Parameter was removed: m127842.TestApplication.test_signal_handlers"
+    ],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vllm-project/vllm/pull/23571",
+  "repo": "vllm-project/vllm",
+  "number": 23571,
+  "files": [
+   {
+    "file": "vllm/v1/attention/backends/flashinfer.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: FlashInferMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m64330296.FlashInferMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/mamba1_attn.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/mamba2_attn.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/mamba_attn.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: BaseMambaAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m5622536.BaseMambaAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/mla/common.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: MLACommonMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m21721985.MLACommonMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/rocm_aiter_fa.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: AiterFlashAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m11155027.AiterFlashAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/triton_attn.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: TritonAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m39181179.TritonAttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/attention/backends/utils.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: AttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe": [
+     "Public object was removed: m87213780.AttentionMetadataBuilder.build_for_cudagraph_capture"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "vllm/v1/worker/gpu_model_runner.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/port-labs/ocean/pull/1778",
+  "repo": "port-labs/ocean",
+  "number": 1778,
+  "files": [
+   {
+    "file": "integrations/bitbucket-cloud/bitbucket_cloud/client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/bitbucket-cloud/integration.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/bitbucket-cloud/main.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "integrations/bitbucket-cloud/tests/test_integrations.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/AstrBotDevs/AstrBot/pull/2457",
+  "repo": "AstrBotDevs/AstrBot",
+  "number": 2457,
+  "files": [
+   {
+    "file": "astrbot/cli/utils/plugin.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/config/default.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: CONFIG_METADATA_3",
+     "removed: CONFIG_METADATA_3_SYSTEM"
+    ],
+    "griffe": [
+     "Public object was removed: m56162820.CONFIG_METADATA_3",
+     "Public object was removed: m56162820.CONFIG_METADATA_3_SYSTEM"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/db/vec_db/faiss_impl/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/message/components.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/pipeline/process_stage/agent_runner/base.py",
+    "status": "modified",
+    "note": "base file unreadable"
+   },
+   {
+    "file": "astrbot/core/platform/sources/dingtalk/dingtalk_event.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/discord/client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/discord/components.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/discord/discord_platform_event.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/slack/slack_adapter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/slack/slack_event.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/telegram/tg_event.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/webchat/webchat_queue_mgr.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/wechatpadpro/wechatpadpro_adapter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/wecom/wecom_kf.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/wecom/wecom_kf_message.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/weixin_official_account/weixin_offacc_adapter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/platform/sources/weixin_official_account/weixin_offacc_event.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/provider/sources/edge_tts_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/star/context.py",
+    "status": "modified",
+    "agentvow": [
+     "Context.__init__: parameter(s) removed or renamed: message_history_manager, persona_manager, astrbot_config_mgr",
+     "Context.get_config: parameter(s) removed or renamed: umo",
+     "removed: Context.get_platform_inst"
+    ],
+    "griffe": [
+     "Parameter was removed: m2094175.Context.__init__",
+     "Parameter was removed: m2094175.Context.__init__",
+     "Parameter was removed: m2094175.Context.__init__",
+     "Parameter was removed: m2094175.Context.get_config",
+     "Public object was removed: m2094175.Context.astrbot_config_mgr",
+     "Public object was removed: m2094175.Context.get_platform_inst",
+     "Public object was removed: m2094175.Context.message_history_manager",
+     "Public object was removed: m2094175.Context.persona_manager"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/star/filter/command_group.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/star/star_handler.py",
+    "status": "modified",
+    "agentvow": [
+     "StarHandlerRegistry.get_handlers_by_event_type: parameter(s) removed or renamed: plugins_name"
+    ],
+    "griffe": [
+     "Parameter was removed: m91010834.StarHandlerRegistry.get_handlers_by_event_type"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/star/star_manager.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/star/star_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/updator.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/utils/shared_preferences.py",
+    "status": "modified",
+    "agentvow": [
+     "SharedPreferences.__init__: parameter(s) removed or renamed: db_helper, json_storage_path",
+     "removed: SharedPreferences.get_async",
+     "removed: SharedPreferences.range_get_async",
+     "removed: SharedPreferences.session_get",
+     "removed: SharedPreferences.global_get",
+     "removed: SharedPreferences.put_async",
+     "removed: SharedPreferences.session_put",
+     "removed: SharedPreferences.global_put",
+     "removed: SharedPreferences.remove_async",
+     "removed: SharedPreferences.session_remove",
+     "removed: SharedPreferences.global_remove",
+     "removed: SharedPreferences.clear_async",
+     "SharedPreferences.get: parameter(s) removed or renamed: scope, scope_id",
+     "removed: SharedPreferences.range_get",
+     "SharedPreferences.put: parameter(s) removed or renamed: scope, scope_id",
+     "SharedPreferences.remove: parameter(s) removed or renamed: scope, scope_id",
+     "SharedPreferences.clear: parameter(s) removed or renamed: scope, scope_id"
+    ],
+    "griffe": [
+     "Parameter was removed: m70666229.SharedPreferences.__init__",
+     "Parameter was removed: m70666229.SharedPreferences.__init__",
+     "Parameter was removed: m70666229.SharedPreferences.clear",
+     "Parameter was removed: m70666229.SharedPreferences.clear",
+     "Parameter was removed: m70666229.SharedPreferences.get",
+     "Parameter was removed: m70666229.SharedPreferences.get",
+     "Parameter was removed: m70666229.SharedPreferences.put",
+     "Parameter was removed: m70666229.SharedPreferences.put",
+     "Parameter was removed: m70666229.SharedPreferences.remove",
+     "Parameter was removed: m70666229.SharedPreferences.remove",
+     "Public object was removed: m70666229.SharedPreferences.clear_async",
+     "Public object was removed: m70666229.SharedPreferences.db_helper",
+     "Public object was removed: m70666229.SharedPreferences.get_async",
+     "Public object was removed: m70666229.SharedPreferences.global_get",
+     "Public object was removed: m70666229.SharedPreferences.global_put",
+     "Public object was removed: m70666229.SharedPreferences.global_remove",
+     "Public object was removed: m70666229.SharedPreferences.put_async",
+     "Public object was removed: m70666229.SharedPreferences.range_get",
+     "Public object was removed: m70666229.SharedPreferences.range_get_async",
+     "Public object was removed: m70666229.SharedPreferences.remove_async",
+     "Public object was removed: m70666229.SharedPreferences.session_get",
+     "Public object was removed: m70666229.SharedPreferences.session_put",
+     "Public object was removed: m70666229.SharedPreferences.session_remove"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/core/utils/tencent_record_helper.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/dashboard/routes/config.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: ConfigRoute.get_t2i_template",
+     "removed: ConfigRoute.post_t2i_template",
+     "removed: ConfigRoute.delete_t2i_template",
+     "removed: ConfigRoute.get_abconf_list",
+     "removed: ConfigRoute.create_abconf",
+     "removed: ConfigRoute.get_abconf",
+     "removed: ConfigRoute.delete_abconf",
+     "removed: ConfigRoute.update_abconf",
+     "removed: ConfigRoute.get_platform_list"
+    ],
+    "griffe": [
+     "Public object was removed: m3272810.ConfigRoute.acm",
+     "Public object was removed: m3272810.ConfigRoute.create_abconf",
+     "Public object was removed: m3272810.ConfigRoute.delete_abconf",
+     "Public object was removed: m3272810.ConfigRoute.delete_t2i_template",
+     "Public object was removed: m3272810.ConfigRoute.get_abconf",
+     "Public object was removed: m3272810.ConfigRoute.get_abconf_list",
+     "Public object was removed: m3272810.ConfigRoute.get_platform_list",
+     "Public object was removed: m3272810.ConfigRoute.get_t2i_template",
+     "Public object was removed: m3272810.ConfigRoute.post_t2i_template",
+     "Public object was removed: m3272810.ConfigRoute.update_abconf"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "astrbot/dashboard/routes/log.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/XKNX/xknx/pull/1720",
+  "repo": "XKNX/xknx",
+  "number": 1720,
+  "files": [
+   {
+    "file": "xknx/secure/security_primitives.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "xknx/secure/util.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/benknight/hue-alfred-workflow/pull/71",
+  "repo": "benknight/hue-alfred-workflow",
+  "number": 71,
+  "files": [
+   {
+    "file": "src/action.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/setup.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/deepmodeling/deepmd-kit/pull/4933",
+  "repo": "deepmodeling/deepmd-kit",
+  "number": 4933,
+  "files": [
+   {
+    "file": "deepmd/pt/model/model/dp_linear_model.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Lightning-AI/lightning-thunder/pull/2553",
+  "repo": "Lightning-AI/lightning-thunder",
+  "number": 2553,
+  "files": [
+   {
+    "file": "thunder/dynamo/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/spcl/dace/pull/2041",
+  "repo": "spcl/dace",
+  "number": 2041,
+  "files": [
+   {
+    "file": "dace/codegen/targets/cuda.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/codegen/gpu_memcpy_test.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/lisa/pull/3862",
+  "repo": "microsoft/lisa",
+  "number": 3862,
+  "files": [
+   {
+    "file": "lisa/tools/ntttcp.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "microsoft/testsuites/performance/common.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/feincms/django-tree-queries/pull/92",
+  "repo": "feincms/django-tree-queries",
+  "number": 92,
+  "files": [
+   {
+    "file": "tests/testapp/test_queries.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: TestTreeQueries.test_tree_query_select_related"
+    ],
+    "griffe": [
+     "Public object was removed: m88001604.TestTreeQueries.test_tree_query_select_related"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tree_queries/query.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/kuelumbus/rdkit-pypi/pull/136",
+  "repo": "kuelumbus/rdkit-pypi",
+  "number": 136,
+  "files": [
+   {
+    "file": "conan_boost_mod/all/conanfile.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "conan_boost_mod/all/test_v1_package/conanfile.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/DrewThomasson/ebook2audiobook/pull/1033",
+  "repo": "DrewThomasson/ebook2audiobook",
+  "number": 1033,
+  "files": [
+   {
+    "file": "lib/classes/tts_engines/coqui.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "lib/lang.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "lib/models.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI/pull/3309",
+  "repo": "crewAIInc/crewAI",
+  "number": 3309,
+  "files": [
+   {
+    "file": "src/crewai/agents/agent_builder/base_agent.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/crew.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/security/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/security/security_config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/tools/agent_tools/agent_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/tools/agent_tools/base_agent_tools.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/utilities/events/event_listener.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/utilities/events/utils/console_formatter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gudgud96/frechet-audio-distance/pull/38",
+  "repo": "gudgud96/frechet-audio-distance",
+  "number": 38,
+  "files": [
+   {
+    "file": "frechet_audio_distance/fad.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Azure-Samples/azure-search-openai-demo/pull/2752",
+  "repo": "Azure-Samples/azure-search-openai-demo",
+  "number": 2752,
+  "files": [
+   {
+    "file": "app/backend/app.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "app/backend/prepdocs.py",
+    "status": "modified",
+    "agentvow": [
+     "setup_embeddings_service: parameter(s) removed or renamed: azure_credential, azure_openai_service, azure_openai_custom_url, azure_openai_key, azure_openai_api_version, openai_key, openai_org",
+     "setup_embeddings_service: new required parameter(s): open_ai_client, azure_openai_endpoint",
+     "setup_openai_client: parameter(s) removed or renamed: azure_openai_api_version",
+     "removed: azure_openai_api_version",
+     "removed: openai_client"
+    ],
+    "griffe": [
+     "Parameter was added as required: m90744776.setup_embeddings_service",
+     "Parameter was added as required: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_embeddings_service",
+     "Parameter was removed: m90744776.setup_openai_client",
+     "Positional parameter was moved: m90744776.setup_embeddings_service",
+     "Positional parameter was moved: m90744776.setup_embeddings_service",
+     "Positional parameter was moved: m90744776.setup_embeddings_service",
+     "Positional parameter was moved: m90744776.setup_openai_client",
+     "Positional parameter was moved: m90744776.setup_openai_client",
+     "Positional parameter was moved: m90744776.setup_openai_client",
+     "Positional parameter was moved: m90744776.setup_openai_client",
+     "Public object was removed: m90744776.azure_openai_api_version",
+     "Public object was removed: m90744776.openai_client"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "app/backend/prepdocslib/embeddings.py",
+    "status": "modified",
+    "agentvow": [
+     "OpenAIEmbeddings.__init__: new required parameter(s): open_ai_client",
+     "OpenAIEmbeddings.__init__: positional parameter order changed",
+     "removed: OpenAIEmbeddings.create_client",
+     "removed: AzureOpenAIEmbeddingService",
+     "removed: AzureOpenAIEmbeddingService.__init__",
+     "removed: AzureOpenAIEmbeddingService.create_client",
+     "removed: OpenAIEmbeddingService",
+     "removed: OpenAIEmbeddingService.__init__",
+     "removed: OpenAIEmbeddingService.create_client"
+    ],
+    "griffe": [
+     "Parameter kind was changed: m88302921.OpenAIEmbeddings.__init__",
+     "Parameter was added as required: m88302921.OpenAIEmbeddings.__init__",
+     "Positional parameter was moved: m88302921.OpenAIEmbeddings.__init__",
+     "Positional parameter was moved: m88302921.OpenAIEmbeddings.__init__",
+     "Public object was removed: m88302921.AzureOpenAIEmbeddingService",
+     "Public object was removed: m88302921.OpenAIEmbeddingService",
+     "Public object was removed: m88302921.OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL",
+     "Public object was removed: m88302921.OpenAIEmbeddings.create_client"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "app/backend/prepdocslib/integratedvectorizerstrategy.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "app/backend/prepdocslib/searchmanager.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_app_config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_prepdocs.py",
+    "status": "modified",
+    "agentvow": [
+     "test_compute_embedding_success: parameter(s) removed or renamed: monkeypatch",
+     "removed: create_auth_error_limit_client",
+     "test_compute_embedding_autherror: parameter(s) removed or renamed: capsys",
+     "removed: test_azure_embedding_service_create_client_uses_token_provider"
+    ],
+    "griffe": [
+     "Parameter was removed: m8357540.test_compute_embedding_autherror",
+     "Parameter was removed: m8357540.test_compute_embedding_success",
+     "Public object was removed: m8357540.create_auth_error_limit_client",
+     "Public object was removed: m8357540.test_azure_embedding_service_create_client_uses_token_provider"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_searchmanager.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_upload.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/openmc-dev/openmc/pull/3471",
+  "repo": "openmc-dev/openmc",
+  "number": 3471,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/poppopjmp/spiderfoot/pull/311",
+  "repo": "poppopjmp/spiderfoot",
+  "number": 311,
+  "files": [
+   {
+    "file": "sflib.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ai-shifu/ai-shifu/pull/739",
+  "repo": "ai-shifu/ai-shifu",
+  "number": 739,
+  "files": [
+   {
+    "file": "src/api/flaskr/common/config.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/api/flaskr/service/user/common.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/onnx/onnx/pull/7057",
+  "repo": "onnx/onnx",
+  "number": 7057,
+  "files": [
+   {
+    "file": "onnx/reference/ops/op_resize.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/swingerman/ha-dual-smart-thermostat/pull/394",
+  "repo": "swingerman/ha-dual-smart-thermostat",
+  "number": 394,
+  "files": [
+   {
+    "file": "custom_components/dual_smart_thermostat/climate.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "custom_components/dual_smart_thermostat/const.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "custom_components/dual_smart_thermostat/hvac_device/hvac_device_factory.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Clay-foundation/model/pull/372",
+  "repo": "Clay-foundation/model",
+  "number": 372,
+  "files": [
+   {
+    "file": "claymodel/datamodule.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "claymodel/model.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "claymodel/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/janbjorge/pgqueuer/pull/479",
+  "repo": "janbjorge/pgqueuer",
+  "number": 479,
+  "files": [
+   {
+    "file": "pgqueuer/cli.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/completion.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/executors.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/qb.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/qm.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/queries.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pgqueuer/types.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/wasi-master/fastero/pull/9",
+  "repo": "wasi-master/fastero",
+  "number": 9,
+  "files": [
+   {
+    "file": "docs/source/conf.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "fastero/core.py",
+    "status": "modified",
+    "agentvow": [
+     "app: new required parameter(s): plain, chart_title",
+     "app: positional parameter order changed"
+    ],
+    "griffe": [
+     "Parameter was added as required: m32685351.app",
+     "Parameter was added as required: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app",
+     "Positional parameter was moved: m32685351.app"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "fastero/exporter.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "fastero/utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/autogen/pull/6799",
+  "repo": "microsoft/autogen",
+  "number": 6799,
+  "files": [
+   {
+    "file": "python/packages/autogen-ext/src/autogen_ext/models/openai/_message_transform.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "python/packages/autogen-ext/tests/models/test_openai_model_client.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/open-compass/opencompass/pull/2286",
+  "repo": "open-compass/opencompass",
+  "number": 2286,
+  "files": [
+   {
+    "file": "opencompass/cli/main.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "opencompass/utils/run.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/huggingface/huggingface_hub/pull/3225",
+  "repo": "huggingface/huggingface_hub",
+  "number": 3225,
+  "files": [
+   {
+    "file": "setup.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/_cli_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/delete_cache.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/download.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/env.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/lfs.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/repo.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/repo_files.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/scan_cache.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/tag.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/upload.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/upload_large_folder.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/user.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/huggingface_hub/commands/version.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gerlero/foamlib/pull/437",
+  "repo": "gerlero/foamlib",
+  "number": 437,
+  "files": [
+   {
+    "file": "foamlib/_files/_parsing.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_files/test_parsing/test_intermediate.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mlco2/codecarbon/pull/883",
+  "repo": "mlco2/codecarbon",
+  "number": 883,
+  "files": [
+   {
+    "file": "codecarbon/core/resource_tracker.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "codecarbon/emissions_tracker.py",
+    "status": "modified",
+    "agentvow": [
+     "BaseEmissionsTracker.__init__: positional parameter order changed"
+    ],
+    "griffe": [
+     "Positional parameter was moved: m73980825.BaseEmissionsTracker.__init__",
+     "Positional parameter was moved: m73980825.BaseEmissionsTracker.__init__",
+     "Positional parameter was moved: m73980825.BaseEmissionsTracker.__init__",
+     "Positional parameter was moved: m73980825.BaseEmissionsTracker.__init__"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_resource_tracker.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/deepmodeling/dpdata/pull/870",
+  "repo": "deepmodeling/dpdata",
+  "number": 870,
+  "files": [
+   {
+    "file": "dpdata/amber/md.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dvershinin/lastversion/pull/186",
+  "repo": "dvershinin/lastversion",
+  "number": 186,
+  "files": [
+   {
+    "file": "src/lastversion/holder_factory.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/lastversion/repo_holders/gitea.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_gitea.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/econ-ark/HARK/pull/1584",
+  "repo": "econ-ark/HARK",
+  "number": 1584,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/deepmodeling/deepmd-kit/pull/4954",
+  "repo": "deepmodeling/deepmd-kit",
+  "number": 4954,
+  "files": [
+   {
+    "file": "deepmd/pt/entrypoints/main.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/machinewrapped/llm-subtrans/pull/254",
+  "repo": "machinewrapped/llm-subtrans",
+  "number": 254,
+  "files": []
+ },
+ {
+  "pr": "https://github.com/bugsink/bugsink/pull/166",
+  "repo": "bugsink/bugsink",
+  "number": 166,
+  "files": [
+   {
+    "file": "bsmain/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "bugsink/middleware.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "bugsink/settings/development.py",
+    "status": "modified",
+    "agentvow": [
+     "removed: INTERNAL_IPS",
+     "removed: MIDDLEWARE",
+     "removed: show_toolbar_for_queryparam",
+     "removed: DEBUG_TOOLBAR_CONFIG"
+    ],
+    "griffe": [
+     "Public object was removed: m20794666.DEBUG_TOOLBAR_CONFIG",
+     "Public object was removed: m20794666.INTERNAL_IPS",
+     "Public object was removed: m20794666.show_toolbar_for_queryparam"
+    ],
+    "griffe_error": null
+   },
+   {
+    "file": "bugsink/transaction.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "bugsink/urls.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "events/models.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "ingest/views.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/pythonbpf/Python-BPF/pull/39",
+  "repo": "pythonbpf/Python-BPF",
+  "number": 39,
+  "files": [
+   {
+    "file": "pythonbpf/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/binary_ops.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/codegen.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/debuginfo/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/debuginfo/debug_info_generator.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/debuginfo/dtypes.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/debuginfo/dwarf_constants.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/decorators.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/expr/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/expr/expr_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/expr/type_normalization.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/functions/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/functions/func_registry_handlers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/functions/functions_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/functions/return_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/globals_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/helper/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/helper/bpf_helper_handler.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/helper/helper_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/helper/helpers.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/license_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/maps/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/maps/maps.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/maps/maps_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/maps/maps_utils.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/structs/__init__.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/structs/struct_type.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/structs/structs_pass.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pythonbpf/type_deducer.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/passing_tests/ringbuf.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/FastLED/FastLED/pull/2004",
+  "repo": "FastLED/FastLED",
+  "number": 2004,
+  "files": [
+   {
+    "file": "ci/compiler/clang_compiler.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "ci/compiler/test_compiler.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "ci/tests/test_build_flags_toml.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/rsyslog/rsyslog/pull/6264",
+  "repo": "rsyslog/rsyslog",
+  "number": 6264,
+  "files": [
+   {
+    "file": "doc/source/conf.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/datahub-project/datahub/pull/15089",
+  "repo": "datahub-project/datahub",
+  "number": 15089,
+  "files": [
+   {
+    "file": "metadata-ingestion/src/datahub/ingestion/source/elastic_search.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "metadata-ingestion/tests/unit/test_elasticsearch_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/openvm-org/openvm/pull/1731",
+  "repo": "openvm-org/openvm",
+  "number": 1731,
+  "files": [
+   {
+    "file": "ci/scripts/bench.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI/pull/3520",
+  "repo": "crewAIInc/crewAI",
+  "number": 3520,
+  "files": [
+   {
+    "file": "src/crewai/knowledge/source/base_file_knowledge_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/knowledge/source/crew_docling_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/knowledge/source/excel_knowledge_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "src/crewai/utilities/paths.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI/pull/3575",
+  "repo": "crewAIInc/crewAI",
+  "number": 3575,
+  "files": [
+   {
+    "file": "src/crewai/knowledge/source/base_file_knowledge_source.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/knowledge/test_knowledge.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI/pull/3083",
+  "repo": "crewAIInc/crewAI",
+  "number": 3083,
+  "files": [
+   {
+    "file": "src/crewai/llm.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/agent_test.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/crewAIInc/crewAI/pull/3630",
+  "repo": "crewAIInc/crewAI",
+  "number": 3630,
+  "files": [
+   {
+    "file": "src/crewai/flow/flow.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "tests/test_flow.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reflex-dev/reflex-web/pull/1465",
+  "repo": "reflex-dev/reflex-web",
+  "number": 1465,
+  "files": [
+   {
+    "file": "pcweb/meta/meta.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   },
+   {
+    "file": "pcweb/pages/blog/blog.py",
+    "status": "modified",
+    "agentvow": [],
+    "griffe": [],
+    "griffe_error": null
+   }
+  ]
+ }
+]
