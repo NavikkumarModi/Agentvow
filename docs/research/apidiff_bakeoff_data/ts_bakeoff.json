@@ -1,0 +1,4586 @@
+[
+ {
+  "pr": "https://github.com/pulumi/pulumi-kubernetes-operator/pull/1023",
+  "repo": "pulumi/pulumi-kubernetes-operator",
+  "files": [
+   {
+    "file": "examples/pulumi-ts/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/sugyan/claude-code-webui/pull/195",
+  "repo": "sugyan/claude-code-webui",
+  "files": [
+   {
+    "file": "backend/cli/node.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ekalinin/sitemap.js/pull/456",
+  "repo": "ekalinin/sitemap.js",
+  "files": [
+   {
+    "file": "lib/sitemap-stream.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/1mcp-app/agent/pull/107",
+  "repo": "1mcp-app/agent",
+  "files": [
+   {
+    "file": "docs/.vitepress/config/en.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/.vitepress/config/zh.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/backups.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/consolidate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/discover.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/list.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/restore.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/app/status.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/add.ts",
+    "breaking": [
+     "removed: AddCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/enable.ts",
+    "breaking": [
+     "removed: EnableDisableCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/list.ts",
+    "breaking": [
+     "removed: ListCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/remove.ts",
+    "breaking": [
+     "removed: RemoveCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/status.ts",
+    "breaking": [
+     "removed: StatusCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/tokens.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/update.ts",
+    "breaking": [
+     "removed: UpdateCommandArgs.config"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/server/agentConfig.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/server/serverManager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/types/server.ts",
+    "breaking": [],
+    "changed": [
+     "InboundConnectionConfig.tagFilterMode: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/handlers/requestHandlers.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/transport/http/middlewares/scopeAuthMiddleware.ts",
+    "breaking": [],
+    "changed": [
+     "getTagFilterMode: return type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/transport/http/middlewares/tagsExtractor.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/transport/http/routes/sseRoutes.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/transport/http/routes/streamableHttpRoutes.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/tagQueryParser.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/166",
+  "repo": "vfarcic/dot-ai",
+  "files": [
+   {
+    "file": "src/core/ai-provider-factory.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/ai-provider.interface.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/embedding-service.ts",
+    "breaking": [],
+    "changed": [
+     "EmbeddingConfig.provider: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/core/model-config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/platform-utils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/providers/anthropic-provider.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/providers/provider-debug-utils.ts",
+    "breaking": [],
+    "changed": [
+     "EvaluationMetrics.failure_analysis: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/core/providers/vercel-provider.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/schema.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/unified-creation-session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/evaluation/eval-runner.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/evaluation/evaluators/base-comparative.ts",
+    "breaking": [
+     "removed: ComparativeEvaluationResult.overall_assessment"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/interfaces/mcp.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/tools/generate-manifests.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/tools/recommend.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/tools/remediate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/tools/version.ts",
+    "breaking": [],
+    "changed": [
+     "SystemStatus.aiProvider: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MCPJam/inspector/pull/194",
+  "repo": "MCPJam/inspector",
+  "files": [
+   {
+    "file": "server/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/src/shared/TransportFactory.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/aku11i/phantom/pull/150",
+  "repo": "aku11i/phantom",
+  "files": [
+   {
+    "file": "packages/cli/build.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/bin/phantom.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/errors.ts",
+    "breaking": [
+     "exitCodes: changed kind var -> reexport"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/attach.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/completion.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/create.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/delete.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/exec.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/list.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/shell.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/version.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/handlers/where.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/attach.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/completion.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/create.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/delete.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/exec.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/list.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/shell.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/version.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/help/where.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/output.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/version.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/config/loader.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/config/validate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/exec.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/paths.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/shell.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/worktree/attach.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/cloud-atlas-ai/obsidian-ics/pull/196",
+  "repo": "cloud-atlas-ai/obsidian-ics",
+  "files": [
+   {
+    "file": "src/IEvent.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/icalUtils.ts",
+    "breaking": [
+     "removed: extractMeetingInfo"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/main.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/settings/ICSSettings.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/settings/ICSSettingsTab.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/sugyan/claude-code-webui/pull/157",
+  "repo": "sugyan/claude-code-webui",
+  "files": [
+   {
+    "file": "backend/cli/deno.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/CoderGamester/mcp-unity/pull/44",
+  "repo": "CoderGamester/mcp-unity",
+  "files": [
+   {
+    "file": "Server~/src/resources/getConsoleLogsResource.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Server~/src/tools/getConsoleLogsTool.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/apache/superset/pull/34995",
+  "repo": "apache/superset",
+  "files": [
+   {
+    "file": "superset-frontend/packages/superset-ui-core/src/components/Collapse/CollapseLabelInModal.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "superset-frontend/packages/superset-ui-core/src/components/Icons/BaseIcon.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/800",
+  "repo": "ruvnet/claude-flow",
+  "files": [
+   {
+    "file": "src/cli/simple-cli.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/320",
+  "repo": "czlonkowski/n8n-mcp",
+  "files": [
+   {
+    "file": "src/http-server-single-session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MCPJam/inspector/pull/193",
+  "repo": "MCPJam/inspector",
+  "files": [
+   {
+    "file": "server/src/shared/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/shakacode/react_on_rails/pull/1786",
+  "repo": "shakacode/react_on_rails",
+  "files": [
+   {
+    "file": "eslint.config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/1mcp-app/agent/pull/97",
+  "repo": "1mcp-app/agent",
+  "files": [
+   {
+    "file": "src/commands/mcp/add.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/list.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/commands/mcp/update.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/config/mcpConfigManager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/types/transport.ts",
+    "breaking": [],
+    "changed": [
+     "StdioTransportConfig.stderr: type text changed",
+     "StdioTransportConfig.env: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/transport/transportFactory.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1077",
+  "repo": "tphakala/birdnet-go",
+  "files": [
+   {
+    "file": "frontend/src/lib/stores/settings.ts",
+    "breaking": [
+     "removed: BirdNetSettings.database",
+     "removed: RangeFilterSettings.model",
+     "removed: DatabaseSettings",
+     "removed: DatabaseSettings.type",
+     "removed: DatabaseSettings.path",
+     "removed: DatabaseSettings.host",
+     "removed: DatabaseSettings.port",
+     "removed: DatabaseSettings.name",
+     "removed: DatabaseSettings.username",
+     "removed: DatabaseSettings.password",
+     "removed: SupportSettings.telemetry",
+     "removed: OutputSettings.file",
+     "OutputSettings.sqlite: property made required",
+     "OutputSettings.mysql: property made required"
+    ],
+    "changed": [
+     "OutputSettings.sqlite: type text changed",
+     "OutputSettings.mysql: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "frontend/src/lib/utils/settingsApi.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "frontend/src/lib/utils/settingsChanges.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ceedaragents/cyrus/pull/133",
+  "repo": "ceedaragents/cyrus",
+  "files": [
+   {
+    "file": "packages/claude-runner/src/ClaudeRunner.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/312",
+  "repo": "czlonkowski/n8n-mcp",
+  "files": [
+   {
+    "file": "src/http-server-single-session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp-engine.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp/server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "files": [
+   {
+    "file": "src/cli/commands/generate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/commands/gitignore.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/commands/import.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/generator.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/importer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/mcp-generator.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/commands/claudecode.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/commands/roo.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/mcp/augmentcode.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/mcp/copilot.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/mcp/shared-factory.ts",
+    "breaking": [
+     "removed: configWrappers"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/rules/geminicli.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/rules/generator-registry.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/rules/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./augmentcode.js\";",
+     "wildcard re-export: export * from \"./claudecode.js\";",
+     "wildcard re-export: export * from \"./cline.js\";",
+     "wildcard re-export: export * from \"./codexcli.js\";",
+     "wildcard re-export: export * from \"./copilot.js\";",
+     "wildcard re-export: export * from \"./cursor.js\";",
+     "wildcard re-export: export * from \"./geminicli.js\";",
+     "wildcard re-export: export * from \"./junie.js\";",
+     "wildcard re-export: export * from \"./kiro.js\";",
+     "wildcard re-export: export * from \"./roo.js\";",
+     "wildcard re-export: export * from \"./windsurf.js\";",
+     "wildcard re-export: export * from \"./opencode.js\";"
+    ]
+   },
+   {
+    "file": "src/parsers/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./augmentcode.js\";",
+     "wildcard re-export: export * from \"./claudecode.js\";",
+     "wildcard re-export: export * from \"./cline.js\";",
+     "wildcard re-export: export * from \"./codexcli.js\";",
+     "wildcard re-export: export * from \"./copilot.js\";",
+     "wildcard re-export: export * from \"./cursor.js\";",
+     "wildcard re-export: export * from \"./geminicli.js\";",
+     "wildcard re-export: export * from \"./junie.js\";",
+     "wildcard re-export: export * from \"./roo.js\";",
+     "wildcard re-export: export * from \"./windsurf.js\";",
+     "wildcard re-export: export * from \"./opencode.js\";"
+    ]
+   },
+   {
+    "file": "src/test-utils/index.ts",
+    "breaking": [
+     "removed: createTestDirectory",
+     "removed: cleanupTestDirectory"
+    ],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./logger-mock.js\";",
+     "wildcard re-export: export * from \"./mock-config.js\";"
+    ]
+   },
+   {
+    "file": "src/test-utils/logger-mock.ts",
+    "breaking": [
+     "removed: createLoggerMock"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/test-utils/mock-config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/types/config-options.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/types/mcp.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/types/tool-targets.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/command-generators.ts",
+    "breaking": [
+     "removed: createMarkdownCommandGenerator"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/file.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/frontmatter.ts",
+    "breaking": [
+     "removed: safeParseFrontmatter",
+     "removed: extractFrontmatterField"
+    ],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/jamubc/gemini-mcp-tool/pull/21",
+  "repo": "jamubc/gemini-mcp-tool",
+  "files": [
+   {
+    "file": "src/constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/commandExecutor.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/geminiExecutor.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/209",
+  "repo": "czlonkowski/n8n-mcp",
+  "files": [
+   {
+    "file": "src/config/n8n-api.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/http-server-single-session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp-engine.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp/handlers-n8n-manager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp/handlers-workflow-diff.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp/server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/anthropics/claude-code-action/pull/449",
+  "repo": "anthropics/claude-code-action",
+  "files": [
+   {
+    "file": "src/create-prompt/index.ts",
+    "breaking": [
+     "buildAllowedToolsString: parameter(s) removed: useCommitSigning",
+     "generatePrompt: parameter(s) removed: mode",
+     "generateDefaultPrompt: parameter(s) removed: useCommitSigning"
+    ],
+    "changed": [
+     "generatePrompt: parameter mode type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp/install-mcp-server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/modes/remote-agent/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/modes/tag/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/modes/types.ts",
+    "breaking": [],
+    "changed": [
+     "Mode: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/727",
+  "repo": "ruvnet/claude-flow",
+  "files": [
+   {
+    "file": "src/adapters/cliffy-node.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/agents/agent-manager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/agents/agent-registry.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/agents/analyst.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/agents/architect.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/luohy15/y-router/pull/2",
+  "repo": "luohy15/y-router",
+  "files": [
+   {
+    "file": "env.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "formatRequest.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mattpocock/evalite/pull/165",
+  "repo": "mattpocock/evalite",
+  "files": [
+   {
+    "file": "apps/evalite-ui/app/routes/__root.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/db.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/evalite.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./create-scorer.js\";",
+     "wildcard re-export: export * from \"./evalite.js\";"
+    ]
+   },
+   {
+    "file": "packages/evalite/src/reporter.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/sdk.ts",
+    "breaking": [],
+    "changed": [
+     "GetMenuItemsResultEval: type text changed",
+     "GetMenuItemsResult: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/evalite/src/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/benborla/mcp-server-mysql/pull/77",
+  "repo": "benborla/mcp-server-mysql",
+  "files": [
+   {
+    "file": "src/config/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/db/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "files": [
+   {
+    "file": "src/cli/commands/generate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/generator.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/importer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/augmentcode.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/augmentcode.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/codexcli.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/codexcli.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/junie.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/junie.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/kiro.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/kiro.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/opencode.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/opencode.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/qwencode.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/qwencode.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/shared-factory.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/shared-factory.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/shared-helpers.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/shared-helpers.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/generators/ignore/windsurf.ts",
+    "breaking": [
+     "removed file: src/generators/ignore/windsurf.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/test-utils/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./logger-mock.js\";",
+     "wildcard re-export: export * from \"./mock-config.js\";"
+    ]
+   },
+   {
+    "file": "src/types/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./claudecode.js\";",
+     "wildcard re-export: export * from \"./commands.js\";",
+     "wildcard re-export: export * from \"./config.js\";",
+     "wildcard re-export: export * from \"./config-options.js\";",
+     "wildcard re-export: export * from \"./mcp.js\";",
+     "wildcard re-export: export * from \"./rules.js\";",
+     "wildcard re-export: export * from \"./shared.js\";",
+     "wildcard re-export: export * from \"./tool-targets.js\";",
+     "wildcard re-export: export * from \"./ignore.js\";"
+    ]
+   },
+   {
+    "file": "src/utils/permission-merger.ts",
+    "breaking": [
+     "removed file: src/utils/permission-merger.ts"
+    ],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Shopify/remote-dom/pull/593",
+  "repo": "Shopify/remote-dom",
+  "files": [
+   {
+    "file": "packages/polyfill/source/selectors.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ar-io/ar-io-node/pull/492",
+  "repo": "ar-io/ar-io-node",
+  "files": [
+   {
+    "file": "src/app.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/arweave/composite-client.ts",
+    "breaking": [
+     "removed: ArweaveCompositeClient.initializeDnsResolution",
+     "removed: ArweaveCompositeClient.stopDnsResolution",
+     "removed: ArweaveCompositeClient.refreshPeers",
+     "removed: ArweaveCompositeClient.getPeers",
+     "removed: ArweaveCompositeClient.selectPeers"
+    ],
+    "changed": [
+     "ArweaveCompositeClient: heritage changed",
+     "ArweaveCompositeClient.constructor: parameter {\n    log,\n    arweave,\n    trustedNodeUrl,\n    blockStore,\n    txStore,\n    failureSimulator,\n    peerManager,\n    requestTimeout = DEFAULT_REQUEST_TIMEOUT_MS,\n    requestRetryCount = DEFAULT_REQUEST_RETRY_COUNT,\n    maxRequestsPerSecond = DEFAULT_MAX_REQUESTS_PER_SECOND,\n    maxConcurrentRequests = DEFAULT_MAX_CONCURRENT_REQUESTS,\n    blockPrefetchCount = DEFAULT_BLOCK_PREFETCH_COUNT,\n    blockTxPrefetchCount = DEFAULT_BLOCK_TX_PREFETCH_COUNT,\n    skipCache = false,\n    cacheCheckPeriodSeconds = 10,\n  } type text changed",
+     "ArweaveCompositeClient.handlePeerSuccess: parameter sourceType type text changed",
+     "ArweaveCompositeClient.handlePeerSuccess: parameter category type text changed",
+     "ArweaveCompositeClient.handlePeerFailure: parameter sourceType type text changed",
+     "ArweaveCompositeClient.handlePeerFailure: parameter category type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/data/ar-io-chunk-source.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/data/ar-io-data-source.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/metrics.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/peers/ar-io-peer-manager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/routes/ar-io.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/routes/chunk/handlers.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/routes/chunk/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/system.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/349",
+  "repo": "ruvnet/claude-flow",
+  "files": [
+   {
+    "file": "src/integration/system-integration.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gtg922r/obsidian-numerals/pull/113",
+  "repo": "gtg922r/obsidian-numerals",
+  "files": [
+   {
+    "file": "src/main.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/numerals.types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/numeralsUtilities.ts",
+    "breaking": [
+     "removed: StringReplaceMap",
+     "removed: StringReplaceMap.regex",
+     "removed: StringReplaceMap.replaceStr"
+    ],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mastra-ai/mastra/pull/9154",
+  "repo": "mastra-ai/mastra",
+  "files": [
+   {
+    "file": "stores/_test-utils/src/domains/observability/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "stores/pg/src/storage/domains/operations/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ceedaragents/cyrus/pull/170",
+  "repo": "ceedaragents/cyrus",
+  "files": [
+   {
+    "file": "apps/cli/app.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/316",
+  "repo": "czlonkowski/n8n-mcp",
+  "files": [
+   {
+    "file": "src/http-server-single-session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/mcp-engine.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/tinylibs/tinypool/pull/126",
+  "repo": "tinylibs/tinypool",
+  "files": [
+   {
+    "file": "src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './common'"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/CodebuffAI/codebuff/pull/282",
+  "repo": "CodebuffAI/codebuff",
+  "files": [
+   {
+    "file": "backend/src/llm-apis/vercel-ai-sdk/ai-sdk.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/189",
+  "repo": "dyoshikawa/rulesync",
+  "files": [
+   {
+    "file": "src/cli/commands/generate.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/importer.ts",
+    "breaking": [],
+    "changed": [
+     "ImportResult.subagentsCreated: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/miurla/morphic/pull/611",
+  "repo": "miurla/morphic",
+  "files": [
+   {
+    "file": "components/artifact/chat-artifact-container.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/GongRzhe/Gmail-MCP-Server/pull/43",
+  "repo": "GongRzhe/Gmail-MCP-Server",
+  "files": [
+   {
+    "file": "src/evals/evals.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utl.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/50",
+  "repo": "vfarcic/dot-ai",
+  "files": [
+   {
+    "file": "src/core/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/core/pattern-vector-service.ts",
+    "breaking": [
+     "removed: PatternSearchOptions.limit",
+     "removed: PatternSearchOptions.scoreThreshold",
+     "removed: PatternSearchOptions.keywordWeight",
+     "removed: PatternSearchResult.pattern",
+     "removed: PatternSearchResult.score",
+     "removed: PatternSearchResult.matchType",
+     "removed: PatternVectorService.initialize",
+     "removed: PatternVectorService.getSearchMode",
+     "removed: PatternVectorService.healthCheck"
+    ],
+    "changed": [
+     "PatternVectorService: heritage changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/core/schema.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/tools/organizational-data.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vercel/next.js/pull/82941",
+  "repo": "vercel/next.js",
+  "files": [
+   {
+    "file": "packages/next/src/server/dev/middleware-turbopack.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ng-select/ng-select/pull/2602",
+  "repo": "ng-select/ng-select",
+  "files": [
+   {
+    "file": "src/ng-select/lib/ng-select.component.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/usesend/useSend/pull/232",
+  "repo": "usesend/useSend",
+  "files": [
+   {
+    "file": "apps/web/src/instrumentation.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/web/src/server/redis.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/web/src/server/service/email-queue-service.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/web/src/server/service/ses-settings-service.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/elastic/kibana/pull/237964",
+  "repo": "elastic/kibana",
+  "files": [
+   {
+    "file": "src/platform/packages/shared/kbn-doc-links/src/get_doc_links.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/platform/packages/shared/kbn-doc-links/src/types.ts",
+    "breaking": [],
+    "changed": [
+     "DocLinks.apis: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "x-pack/platform/packages/shared/security/api_key_management/src/components/api_key_flyout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Myriad-Dreamin/tinymist/pull/2052",
+  "repo": "Myriad-Dreamin/tinymist",
+  "files": [
+   {
+    "file": "tools/editor-tools/src/main.base.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ant-design/ant-design/pull/54318",
+  "repo": "ant-design/ant-design",
+  "files": [
+   {
+    "file": "components/layout/style/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/intellectronica/ruler/pull/147",
+  "repo": "intellectronica/ruler",
+  "files": [
+   {
+    "file": "src/cli/handlers.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/taiga-family/taiga-ui/pull/11349",
+  "repo": "taiga-family/taiga-ui",
+  "files": [
+   {
+    "file": "projects/core/utils/miscellaneous/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './font-scaling';",
+     "wildcard re-export: export * from './is-editing-key';",
+     "wildcard re-export: export * from './is-obscured';",
+     "wildcard re-export: export * from './override-options';",
+     "wildcard re-export: export * from './size-bigger';",
+     "wildcard re-export: export * from './to-animation-options';",
+     "wildcard re-export: export * from './provide-taiga';"
+    ]
+   },
+   {
+    "file": "projects/demo/src/modules/app/home/home.component.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6709",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "files": [
+   {
+    "file": "app/containers/AppVersion.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/containers/LoginServices/serviceLogin.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/i18n/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/sagas/selectServer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/AttachmentView.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/ForgotPasswordView.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/LoginView/UserForm.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/LoginView/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/LoginView/styles.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/NewServerView/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/NewServerView/styles.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/RoomMembersView/components/ActionsSection.tsx",
+    "breaking": [],
+    "changed": [
+     "ActionsSection: return type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "app/views/RoomsListView/components/ServersList.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/SendEmailConfirmationView.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/SettingsView/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/WorkspaceView/RegisterDisabledComponent.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/views/WorkspaceView/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1190",
+  "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+  "files": [
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/Schema/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13595",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "modules/dchain.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/adapterManager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/prebid.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/storageManager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/selfxyz/self/pull/1008",
+  "repo": "selfxyz/self",
+  "files": [
+   {
+    "file": "common/src/utils/passports/passport_parsing/parsePassportData.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4179",
+  "repo": "katspaugh/wavesurfer.js",
+  "files": [
+   {
+    "file": "src/plugins/record.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4166",
+  "repo": "katspaugh/wavesurfer.js",
+  "files": [
+   {
+    "file": "src/base-plugin.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/fft.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/player.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/plugins/spectrogram-windowed.ts",
+    "breaking": [],
+    "changed": [
+     "WindowedSpectrogramPluginEvents: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/plugins/spectrogram-worker.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/plugins/spectrogram.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/timer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/hsuanxyz/ion2-calendar/pull/357",
+  "repo": "hsuanxyz/ion2-calendar",
+  "files": [
+   {
+    "file": "dev/src/ion2-calendar/calendar.module.ts",
+    "breaking": [],
+    "changed": [
+     "CalendarModule.forRoot: return type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "dev/src/ion2-calendar/components/calendar.modal.ts",
+    "breaking": [
+     "CalendarModal.constructor: parameter(s) removed: calSvc"
+    ],
+    "changed": [
+     "CalendarModal.constructor: parameter modalCtrl type text changed",
+     "CalendarModal.constructor: parameter ref type text changed",
+     "CalendarModal.constructor: parameter calSvc type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/calendar.module.ts",
+    "breaking": [],
+    "changed": [
+     "CalendarModule.forRoot: return type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/components/calendar.modal.ts",
+    "breaking": [
+     "CalendarModal.constructor: parameter(s) removed: calSvc"
+    ],
+    "changed": [
+     "CalendarModal.constructor: parameter modalCtrl type text changed",
+     "CalendarModal.constructor: parameter ref type text changed",
+     "CalendarModal.constructor: parameter calSvc type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1214",
+  "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+  "files": [
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/CodeSnippets/code-snippets-types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/CodeSnippets/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/CodeSnippets/languages.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/buildPostmanRequest.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/giselles-ai/giselle/pull/1378",
+  "repo": "giselles-ai/giselle",
+  "files": [
+   {
+    "file": "packages/giselle-engine/src/core/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./experimental_storage\";",
+     "wildcard re-export: export * from \"./experimental_vector-store\";",
+     "wildcard re-export: export * from \"./integrations\";",
+     "wildcard re-export: export * from \"./telemetry\";",
+     "wildcard re-export: export * from \"./types\";",
+     "wildcard re-export: export * from \"./usage-limits\";",
+     "wildcard re-export: export * from \"./vault\";",
+     "wildcard re-export: export * from \"./vector-store\";",
+     "wildcard re-export: export * from \"./error\";"
+    ]
+   },
+   {
+    "file": "packages/supabase-driver/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./storage/supabase-storage-driver\";",
+     "wildcard re-export: export * from \"./vault/supabase-vault-driver\";"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4167",
+  "repo": "katspaugh/wavesurfer.js",
+  "files": [
+   {
+    "file": "src/plugins/envelope.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/giselles-ai/giselle/pull/983",
+  "repo": "giselles-ai/giselle",
+  "files": [
+   {
+    "file": "internal-packages/workflow-designer-ui/src/editor/properties-panel/text-generation-node-properties-panel/generation-panel.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "internal-packages/workflow-designer-ui/src/ui/generation-view.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/data-type/src/generation/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from \"./context\";",
+     "wildcard re-export: export * from \"./template\";",
+     "wildcard re-export: export * from \"./output\";"
+    ]
+   },
+   {
+    "file": "packages/giselle-engine/src/core/generations/generate-text.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ltwlf/json-diff-ts/pull/301",
+  "repo": "ltwlf/json-diff-ts",
+  "files": [
+   {
+    "file": "src/helpers.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/jsonCompare.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/jsonDiff.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4174",
+  "repo": "katspaugh/wavesurfer.js",
+  "files": [
+   {
+    "file": "src/plugins/regions.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/recharts/recharts/pull/6229",
+  "repo": "recharts/recharts",
+  "files": [
+   {
+    "file": "src/animation/JavascriptAnimate.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/component/Cursor.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/component/Label.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/component/Legend.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/state/RechartsStoreProvider.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/state/reduxDevtoolsJsonStringifyReplacer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ActiveShapeUtils.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/BarUtils.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/CartesianUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ChartUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/CssPrefixUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/DOMUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/DataUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/FunnelUtils.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/LogUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/PolarUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/RadialBarUtils.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ReactUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ReduceCSSCalc.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ScatterUtils.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/ShallowEqual.ts",
+    "breaking": [],
+    "changed": [
+     "shallowEqual: parameter a type text changed",
+     "shallowEqual: parameter b type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/util/TickUtils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/isDomainSpecifiedByUser.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/scale/getNiceTickValues.ts",
+    "breaking": [],
+    "changed": [
+     "getNiceTickValues: var text changed",
+     "getTickValuesFixedDomain: var text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/util/scale/util/arithmetic.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/scale/util/utils.ts",
+    "breaking": [],
+    "changed": [
+     "map: var text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "src/util/useElementOffset.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/util/useReportScale.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1220",
+  "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+  "files": [
+   {
+    "file": "packages/docusaurus-plugin-openapi-docs/src/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/Authorization/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/Body/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/CodeSnippets/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/CodeTabs/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/ContentType/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/FormTextInput/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/ParamOptions/ParamFormItems/ParamArrayFormItem.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/ParamOptions/ParamFormItems/ParamBooleanFormItem.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/ParamOptions/ParamFormItems/ParamMultiSelectFormItem.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/ParamOptions/ParamFormItems/ParamSelectFormItem.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiExplorer/Server/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/docusaurus-theme-openapi-docs/src/theme/ApiItem/Layout/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/campfirein/cipher/pull/283",
+  "repo": "campfirein/cipher",
+  "files": [
+   {
+    "file": "src/core/knowledge_graph/backend/neo4j.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/giselles-ai/giselle/pull/1310",
+  "repo": "giselles-ai/giselle",
+  "files": [
+   {
+    "file": "apps/playground/app/ui/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "internal-packages/workflow-designer-ui/src/editor/properties-panel/text-generation-node-properties-panel/tools/tool-provider/github.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "internal-packages/workflow-designer-ui/src/editor/properties-panel/text-generation-node-properties-panel/tools/tool-provider/postgres.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13609",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "modules/multibid/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/adUnits.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/adapters/bidderFactory.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/targeting.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Portkey-AI/gateway/pull/1149",
+  "repo": "Portkey-AI/gateway",
+  "files": [
+   {
+    "file": "plugins/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/db-ux-design-system/core-web/pull/4830",
+  "repo": "db-ux-design-system/core-web",
+  "files": [
+   {
+    "file": "packages/components/src/components/custom-select/custom-select.lite.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/vscode/pull/268387",
+  "repo": "microsoft/vscode",
+  "files": [
+   {
+    "file": "src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/vs/workbench/contrib/tasks/browser/task.contribution.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/vs/workbench/contrib/tasks/common/taskService.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/vs/workbench/contrib/tasks/common/tasks.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/task/createAndRunTaskTool.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/task/runTaskTool.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ajthinking/data-story/pull/466",
+  "repo": "ajthinking/data-story",
+  "files": [
+   {
+    "file": "packages/core/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './Param'"
+    ]
+   },
+   {
+    "file": "packages/nodejs/src/server/messageHandlers/run.ts",
+    "breaking": [
+     "removed: RunMessage"
+    ],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Maintainerr/Maintainerr/pull/1895",
+  "repo": "Maintainerr/Maintainerr",
+  "files": [
+   {
+    "file": "server/src/modules/rules/constants/rules.constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/src/modules/rules/helpers/rule.comparator.service.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ReactTooltip/react-tooltip/pull/1258",
+  "repo": "ReactTooltip/react-tooltip",
+  "files": [
+   {
+    "file": "src/components/Tooltip/Tooltip.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/SwitchbackTech/compass/pull/1101",
+  "repo": "SwitchbackTech/compass",
+  "files": [
+   {
+    "file": "packages/backend/src/common/constants/collections.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/backend/src/common/services/mongo.service.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/types/calendar.types.ts",
+    "breaking": [
+     "removed: CompassCalendar"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/core/src/types/type.utils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scripts/src/common/zod-to-mongo-schema.ts",
+    "breaking": [
+     "removed: zObjectIdMini",
+     "removed: zObjectId"
+    ],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/react-native-windows/pull/15092",
+  "repo": "microsoft/react-native-windows",
+  "files": [
+   {
+    "file": "packages/@react-native-windows/cli/src/commands/initWindows/initWindowsOptions.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/genaiscript/pull/1896",
+  "repo": "microsoft/genaiscript",
+  "files": [
+   {
+    "file": "packages/core/src/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/runtime/src/docker.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/operately/operately/pull/3378",
+  "repo": "operately/operately",
+  "files": [
+   {
+    "file": "app/assets/js/pages/TaskV2Page/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/hoylabs/OpenDTU-OnBattery/pull/2194",
+  "repo": "hoylabs/OpenDTU-OnBattery",
+  "files": [
+   {
+    "file": "webapp/src/types/GridChargerConfig.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/vscode-pull-request-github/pull/7222",
+  "repo": "microsoft/vscode-pull-request-github",
+  "files": [
+   {
+    "file": "src/github/copilotRemoteAgent.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/lm/tools/copilotRemoteAgentTool.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/microsoft/AzureTRE/pull/4607",
+  "repo": "microsoft/AzureTRE",
+  "files": [
+   {
+    "file": "ui/app/src/components/shared/CostsTag.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "ui/app/src/components/shared/ResourceCard.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/gradio-app/gradio/pull/11601",
+  "repo": "gradio-app/gradio",
+  "files": [
+   {
+    "file": "js/chatbot/shared/utils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/jeroenterheerdt/HAsmartirrigation/pull/602",
+  "repo": "jeroenterheerdt/HAsmartirrigation",
+  "files": [
+   {
+    "file": "custom_components/smart_irrigation/frontend/src/views/info/view-info.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "custom_components/smart_irrigation/frontend/src/views/zones/view-zones.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/9486",
+  "repo": "langfuse/langfuse",
+  "files": [
+   {
+    "file": "web/src/ee/features/billing/components/BillingSwitchPlanDialog.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "web/src/ee/features/billing/utils/stripeCatalogue.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/7762",
+  "repo": "langfuse/langfuse",
+  "files": [
+   {
+    "file": "web/src/features/prompts/components/prompt-detail.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/colorstackorg/oyster/pull/845",
+  "repo": "colorstackorg/oyster",
+  "files": [
+   {
+    "file": "apps/admin-dashboard/app/routes/_dashboard.applications.$id._index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/admin-dashboard/app/routes/_dashboard.events.$id.check-in.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/admin-dashboard/app/routes/_dashboard.resume-books.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/admin-dashboard/app/routes/_dashboard.students.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/admin-dashboard/app/shared/constants.server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mastra-ai/mastra/pull/7225",
+  "repo": "mastra-ai/mastra",
+  "files": [
+   {
+    "file": "packages/deployer/src/server/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/4ian/GDevelop/pull/7766",
+  "repo": "4ian/GDevelop",
+  "files": [
+   {
+    "file": "Extensions/BBText/bbtextruntimeobject-pixi-renderer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Extensions/BBText/bbtextruntimeobject.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Extensions/BitmapText/bitmaptextruntimeobject-pixi-renderer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Extensions/BitmapText/bitmaptextruntimeobject.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Extensions/TextObject/textruntimeobject-pixi-renderer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "Extensions/TextObject/textruntimeobject.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/9725",
+  "repo": "langfuse/langfuse",
+  "files": [
+   {
+    "file": "web/src/pages/api/trpc/[trpc].ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/thirdweb-dev/js/pull/7860",
+  "repo": "thirdweb-dev/js",
+  "files": [
+   {
+    "file": "packages/thirdweb/src/react/web/ui/ConnectWallet/Details.tsx",
+    "breaking": [],
+    "changed": [
+     "UseWalletDetailsModalOptions: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/inboundemail/inbound/pull/57",
+  "repo": "inboundemail/inbound",
+  "files": [
+   {
+    "file": "@inboundemail/sdk/src/client.ts",
+    "breaking": [
+     "removed: InboundEmailClient.emailAddress"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "@inboundemail/sdk/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './webhook-types'",
+     "wildcard re-export: export * from './utils'"
+    ]
+   },
+   {
+    "file": "@inboundemail/sdk/src/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Codehagen/Badget/pull/294",
+  "repo": "Codehagen/Badget",
+  "files": [
+   {
+    "file": "next.config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/components/nav-menu.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/components/sections/navbar.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/lib/blur-image.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/lib/config.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/open-metadata/OpenMetadata/pull/21940",
+  "repo": "open-metadata/OpenMetadata",
+  "files": [
+   {
+    "file": "openmetadata-ui/src/main/resources/ui/playwright/support/entity/TableClass.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/datahub-project/datahub/pull/14611",
+  "repo": "datahub-project/datahub",
+  "files": [
+   {
+    "file": "datahub-web-react/src/app/settingsV2/settingsPaths.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "datahub-web-react/src/appConfigContext.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/imbhargav5/rooks/pull/1840",
+  "repo": "imbhargav5/rooks",
+  "files": [
+   {
+    "file": "packages/rooks/src/hooks/useAudio.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5662",
+  "repo": "elizaOS/eliza",
+  "files": [
+   {
+    "file": "packages/plugin-training/src/actions/start-training.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3888",
+  "repo": "module-federation/core",
+  "files": [
+   {
+    "file": "apps/next-app-router/next-app-router-4000/app/context/context-click-counter.tsx",
+    "breaking": [
+     "removed: Counter",
+     "removed: default"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/app/error-handling/[categorySlug]/[subCategorySlug]/error.tsx",
+    "breaking": [],
+    "changed": [
+     "Error: parameter {\n  error,\n  reset,\n} type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/app/error-handling/[categorySlug]/error.tsx",
+    "breaking": [],
+    "changed": [
+     "Error: parameter {\n  error,\n  reset,\n} type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/app/error-handling/error.tsx",
+    "breaking": [],
+    "changed": [
+     "Error: parameter {\n  error,\n  reset,\n} type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/app/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/ui/buggy-button.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/next-app-router/next-app-router-4000/ui/button.tsx",
+    "breaking": [],
+    "changed": [
+     "Button: parameter {\n  children,\n  onClick,\n  className = '',\n} type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "packages/bridge/bridge-shared/src/type.ts",
+    "breaking": [],
+    "changed": [
+     "ProviderParams.style: type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "packages/data-prefetch/src/react/hooks.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/modernjs/src/runtime/AwaitDataFetch.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/modernjs/src/ssr-runtime/SSRLiveReload.tsx",
+    "breaking": [],
+    "changed": [
+     "SSRLiveReload: return type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MetaMask/core/pull/6307",
+  "repo": "MetaMask/core",
+  "files": [
+   {
+    "file": "packages/assets-controllers/src/NftController.ts",
+    "breaking": [
+     "removed: NftController.openSeaApiKey",
+     "removed: NftController.setApiKey"
+    ],
+    "changed": [
+     "NftController.constructor: parameter {\n    ipfsGateway = IPFS_DEFAULT_GATEWAY_URL,\n    displayNftMedia = undefined,\n    // Deprecated: accept legacy option for backward-compat\n    // eslint-disable-next-line @typescript-eslint/no-unused-vars\n    openSeaEnabled = undefined,\n    useIpfsSubdomains = true,\n    isIpfsGatewayEnabled = true,\n    onNftAdded,\n    messenger,\n    state = {},\n  } type text changed"
+    ],
+    "gaps": []
+   },
+   {
+    "file": "packages/preferences-controller/src/PreferencesController.ts",
+    "breaking": [],
+    "changed": [
+     "PreferencesState: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mastra-ai/mastra/pull/6084",
+  "repo": "mastra-ai/mastra",
+  "files": [
+   {
+    "file": "stores/clickhouse/src/storage/index.ts",
+    "breaking": [
+     "removed: ClickhouseStore.getSqlType",
+     "removed: ClickhouseStore.getThreadById",
+     "removed: ClickhouseStore.getThreadsByResourceId",
+     "removed: ClickhouseStore.saveThread",
+     "removed: ClickhouseStore.updateThread",
+     "removed: ClickhouseStore.deleteThread",
+     "removed: ClickhouseStore.getMessages",
+     "removed: ClickhouseStore.getMessages#overload1",
+     "removed: ClickhouseStore.getMessages#overload2",
+     "removed: ClickhouseStore.saveMessages",
+     "removed: ClickhouseStore.saveMessages#overload1",
+     "removed: ClickhouseStore.saveMessages#overload2",
+     "removed: ClickhouseStore.persistWorkflowSnapshot",
+     "removed: ClickhouseStore.loadWorkflowSnapshot",
+     "removed: ClickhouseStore.getWorkflowRuns",
+     "removed: ClickhouseStore.getWorkflowRunById",
+     "removed: ClickhouseStore.getTracesPaginated",
+     "removed: ClickhouseStore.getThreadsByResourceIdPaginated",
+     "removed: ClickhouseStore.getMessagesPaginated",
+     "removed: ClickhouseStore.close",
+     "removed: ClickhouseStore.updateMessages",
+     "removed: ClickhouseStore.getScoreById",
+     "removed: ClickhouseStore.saveScore",
+     "removed: ClickhouseStore.getScoresByRunId",
+     "removed: ClickhouseStore.getScoresByEntityId",
+     "removed: ClickhouseStore.getScoresByScorerId"
+    ],
+    "changed": [
+     "ClickhouseStore.getTraces: parameter args type text changed",
+     "ClickhouseStore.getTraces: return type text changed",
+     "ClickhouseStore.createTable: parameter {\n    tableName,\n    schema,\n  } type text changed",
+     "ClickhouseStore.load: parameter { tableName, keys } type text changed"
+    ],
+    "gaps": [
+     "parse errors: 146"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mastra-ai/mastra/pull/6292",
+  "repo": "mastra-ai/mastra",
+  "files": [
+   {
+    "file": "packages/core/src/agent/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './types';"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/OHIF/Viewers/pull/5457",
+  "repo": "OHIF/Viewers",
+  "files": [
+   {
+    "file": "extensions/default/src/Panels/StudyBrowser/PanelStudyBrowser.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MCPJam/inspector/pull/433",
+  "repo": "MCPJam/inspector",
+  "files": [
+   {
+    "file": "client/src/App.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "client/src/components/ServersTab.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "client/src/components/ToolsTab.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "client/src/hooks/use-app-state.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/routes/mcp/connect.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/routes/mcp/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/routes/mcp/prompts.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/routes/mcp/resources.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/routes/mcp/tools.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/tsup.config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5395",
+  "repo": "elizaOS/eliza",
+  "files": [
+   {
+    "file": "packages/client/src/components/ui/split-button.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/specklesystems/speckle-server/pull/5502",
+  "repo": "specklesystems/speckle-server",
+  "files": [
+   {
+    "file": "packages/frontend-2/lib/workspaces/composables/management.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/modelcontextprotocol/typescript-sdk/pull/900",
+  "repo": "modelcontextprotocol/typescript-sdk",
+  "files": [
+   {
+    "file": "src/server/mcp.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5661",
+  "repo": "elizaOS/eliza",
+  "files": [
+   {
+    "file": "packages/plugin-training/src/cli/commands/test-fine-tuned.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/thirdweb-dev/js/pull/7587",
+  "repo": "thirdweb-dev/js",
+  "files": [
+   {
+    "file": "apps/portal/src/app/Header.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/transactions/v2/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/transactions/v2/sidebar.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/transactions/v3/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/transactions/v3/sidebar.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/app/unreal-engine/blueprints/sidebar.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/components/others/DocSearch.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/portal/src/components/others/EngineVersionSelector.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/mastra-ai/mastra/pull/8736",
+  "repo": "mastra-ai/mastra",
+  "files": [
+   {
+    "file": "packages/deployer/src/server/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/playground/src/App.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/playground/src/components/ui/app-sidebar.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/server/src/server/handlers.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/novuhq/novu/pull/9336",
+  "repo": "novuhq/novu",
+  "files": [
+   {
+    "file": "apps/dashboard/src/components/schema-editor/components/property-type-selector.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/hooks/use-property-paths.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/hooks/use-schema-property-type.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/schema-property-row.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/utils/property-manager.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/utils/schema-converter.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/components/schema-editor/utils/validation-schema.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/thirdweb-dev/js/pull/7696",
+  "repo": "thirdweb-dev/js",
+  "files": [
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/(team)/TeamSidebarLayout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/[project_slug]/(sidebar)/account-abstraction/AAFooterSection.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/[project_slug]/(sidebar)/account-abstraction/factories/AccountFactories/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/[project_slug]/(sidebar)/components/ProjectSidebarLayout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/[project_slug]/(sidebar)/universal-bridge/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/dashboard/src/app/(app)/team/[team_slug]/[project_slug]/(sidebar)/wallets/_components/footer.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/navLinks.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/backend/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/backend/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/backend/reference/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/backend/utils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/commerce/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/components/CodeGen.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/components/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/embed/LeftSection.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/embed/RightSection.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/embed/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/fund-wallet/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/payments/transactions/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/_hooks/useEngineTxStatus.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/actions.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/airdrop/_components/airdrop-card.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/airdrop/_components/airdrop-code.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/airdrop/_components/airdrop-preview.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/airdrop/constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/airdrop/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/minting/_components/mint-code.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/playground-web/src/app/transactions/minting/_components/mint-preview.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/MetaMask/metamask-mobile/pull/19572",
+  "repo": "MetaMask/metamask-mobile",
+  "files": [
+   {
+    "file": "app/components/UI/Perps/components/PerpsCandlePeriodBottomSheet/PerpsCandlePeriodBottomSheet.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/components/UI/Perps/constants/chartConfig.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6395",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "files": [
+   {
+    "file": ".storybook/main.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5572",
+  "repo": "elizaOS/eliza",
+  "files": [
+   {
+    "file": "packages/plugin-sql/src/migration-service.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/wannabespace/conar/pull/112",
+  "repo": "wannabespace/conar",
+  "files": [
+   {
+    "file": "apps/desktop/src/routes/(protected)/_protected/database/$id/tables.$schema/$table/-components/header-actions-delete.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/desktop/src/routes/(protected)/_protected/database/$id/tables.$schema/$table/-components/table-selection.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/desktop/src/routes/(protected)/_protected/database/$id/tables.$schema/$table/-components/table.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/desktop/src/routes/(protected)/_protected/database/$id/tables.$schema/$table/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/vercel/vercel/pull/13445",
+  "repo": "vercel/vercel",
+  "files": [
+   {
+    "file": "packages/cli/src/commands/dev/dev.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/commands/dev/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/util/dev/server.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/cli/src/util/dev/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/enzonotario/vitepress-openapi/pull/289",
+  "repo": "enzonotario/vitepress-openapi",
+  "files": [
+   {
+    "file": "src/composables/usePlayground.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/lib/codeSamples/buildRequest.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/moinulmoin/chadnext/pull/312",
+  "repo": "moinulmoin/chadnext",
+  "files": [
+   {
+    "file": "src/app/api/auth/login/github/callback/route.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/lib/server/auth/session.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1853",
+  "repo": "firecrawl/firecrawl",
+  "files": [
+   {
+    "file": "apps/api/src/controllers/v2/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/api/src/routes/v2.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1718",
+  "repo": "firecrawl/firecrawl",
+  "files": [
+   {
+    "file": "apps/api/src/controllers/v1/crawl-ongoing.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/api/src/controllers/v1/types.ts",
+    "breaking": [],
+    "changed": [
+     "OngoingCrawlsResponse: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1735",
+  "repo": "firecrawl/firecrawl",
+  "files": [
+   {
+    "file": "apps/api/src/controllers/v1/types.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/api/src/lib/canonical-url.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1756",
+  "repo": "firecrawl/firecrawl",
+  "files": [
+   {
+    "file": "apps/api/src/lib/html-transformer.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/api/src/scraper/scrapeURL/lib/extractLinks.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/cloudflare/workers-sdk/pull/10955",
+  "repo": "cloudflare/workers-sdk",
+  "files": [
+   {
+    "file": "packages/wrangler/src/api/startDevWorker/BundlerController.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/wrangler/src/utils/debounce.ts",
+    "breaking": [],
+    "changed": [
+     "debounce: parameter fn type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/calcom/cal.com/pull/21927",
+  "repo": "calcom/cal.com",
+  "files": [
+   {
+    "file": "packages/app-store/routing-forms/pages/form-edit/[...appPages].tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/Mail-0/Zero/pull/1968",
+  "repo": "Mail-0/Zero",
+  "files": [
+   {
+    "file": "apps/server/src/lib/server-utils.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/server/src/routes/agent/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/server/src/workflows/sync-threads-workflow.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/hasanharman/form-builder/pull/81",
+  "repo": "hasanharman/form-builder",
+  "files": [
+   {
+    "file": "components/blocks/schema.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/components/autocomplete-form.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/components/credit-card-form.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/components/location-form.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/components/signature-form.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/contact.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/forgot-password.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/login.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/newsletter.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/register.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "components/templates/reset-password.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "registry/schema.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "screens/form-preview/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "screens/form-wrapper/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "screens/generate-code-parts/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "scripts/build-registry.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reown-com/appkit/pull/4678",
+  "repo": "reown-com/appkit",
+  "files": [
+   {
+    "file": "packages/controllers/src/controllers/ModalController.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/stack-auth/stack-auth/pull/527",
+  "repo": "stack-auth/stack-auth",
+  "files": [
+   {
+    "file": "apps/backend/src/lib/openapi.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/appsmithorg/appsmith/pull/38759",
+  "repo": "appsmithorg/appsmith",
+  "files": [
+   {
+    "file": "app/client/src/pages/Editor/WidgetsEditor/components/PropertyPaneWrapper.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "files": [
+   {
+    "file": "docs/src/app/(home)/layout.tsx",
+    "breaking": [
+     "removed file: docs/src/app/(home)/layout.tsx"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/(home)/page.tsx",
+    "breaking": [
+     "removed file: docs/src/app/(home)/page.tsx"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/[[...slug]]/edit-gh.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/[[...slug]]/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/docs/[[...slug]]/edit-button.tsx",
+    "breaking": [
+     "removed file: docs/src/app/docs/[[...slug]]/edit-button.tsx"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/docs/layout.tsx",
+    "breaking": [
+     "removed file: docs/src/app/docs/layout.tsx"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/layout.config.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/layout.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/app/not-found.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "docs/src/lib/source.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reown-com/appkit/pull/4447",
+  "repo": "reown-com/appkit",
+  "files": [
+   {
+    "file": "apps/demo/components/preview-content.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/laboratory/src/components/AppKitButtons.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/laboratory/src/components/AppKitButtonsMultiChain.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/laboratory/src/components/AppKitWalletButtons.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/next-ak-basic-app-router/src/app/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/next-ethers-app-router/src/app/page.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/next-ethers-app-router/src/components/ConnectButton.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/react-ak-basic/src/App.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/react-ethers5/src/App.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/adapters/wagmi/src/client.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/appkit/src/library/react/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from '@reown/appkit-controllers/react'"
+    ]
+   },
+   {
+    "file": "packages/scaffold-ui/src/modal/w3m-modal/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/partials/w3m-activity-list/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/partials/w3m-all-wallets-list-item/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/partials/w3m-connecting-wc-qrcode/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/partials/w3m-email-login-widget/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/views/w3m-connecting-farcaster-view/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/views/w3m-register-account-name-view/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/scaffold-ui/src/views/w3m-update-email-wallet-view/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/ui-new/src/utils/JSXTypeUtil.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/ui-new/src/utils/TransactionUtil.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/ui/src/utils/JSXTypeUtil.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/ui/src/utils/TransactionUtil.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/wallet-button/exports/react.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "wildcard re-export: export * from './index.js'"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/reown-com/appkit/pull/4800",
+  "repo": "reown-com/appkit",
+  "files": [
+   {
+    "file": "apps/demo/lib/config.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/demo/lib/constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/demo/lib/networks.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "apps/demo/lib/presets.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/OpenRouterTeam/ai-sdk-provider/pull/88",
+  "repo": "OpenRouterTeam/ai-sdk-provider",
+  "files": [
+   {
+    "file": "src/types/index.ts",
+    "breaking": [],
+    "changed": [
+     "OpenRouterProviderOptions: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/appsmithorg/appsmith/pull/38586",
+  "repo": "appsmithorg/appsmith",
+  "files": [
+   {
+    "file": "app/client/src/components/editorComponents/ActionCreator/Field/FieldConfig.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/components/editorComponents/ActionCreator/FieldGroup/FieldGroupConfig.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/components/editorComponents/ActionCreator/FieldGroup/index.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/components/editorComponents/ActionCreator/constants.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/components/editorComponents/ActionCreator/helpers.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/sagas/ActionExecution/NavigateActionSaga.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "app/client/src/workers/Evaluation/fns/navigateTo.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/different-ai/zero-finance/pull/144",
+  "repo": "different-ai/zero-finance",
+  "files": [
+   {
+    "file": "packages/web/src/components/transfers/simplified-off-ramp.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/assistant-ui/assistant-ui/pull/2125",
+  "repo": "assistant-ui/assistant-ui",
+  "files": [
+   {
+    "file": "apps/registry/components/assistant-ui/attachment.tsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/react/src/primitives/attachment/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/react/src/runtimes/adapters/attachment/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/react/src/types/AttachmentTypes.ts",
+    "breaking": [],
+    "changed": [
+     "PendingAttachment: type text changed"
+    ],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/lingodotdev/lingo.dev/pull/915",
+  "repo": "lingodotdev/lingo.dev",
+  "files": [
+   {
+    "file": "packages/cli/src/cli/utils/auth.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "packages/sdk/src/index.ts",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ }
+]
