@@ -44,7 +44,7 @@ function api(src, file) {
     } else if (ts.isClassDeclaration(st) && exported(st) && st.name) {
       out[st.name.text] = { kind: "class", ext: (st.heritageClauses || []).map(h => text(h, sf)).join(",") }; members(st, sf, out, st.name.text);
     } else if (ts.isInterfaceDeclaration(st) && exported(st)) {
-      out[st.name.text] = { kind: "interface" }; members(st, sf, out, st.name.text);
+      out[st.name.text] = { kind: "interface", ext: (st.heritageClauses || []).map(h => text(h, sf)).join(",") }; members(st, sf, out, st.name.text);
     } else if (ts.isTypeAliasDeclaration(st) && exported(st)) {
       out[st.name.text] = { kind: "type", type: text(st.type, sf) };
     } else if (ts.isEnumDeclaration(st) && exported(st)) {
@@ -69,11 +69,16 @@ function diff(o, n) {
   const breaking = [], changed = [];
   for (const [k, a] of Object.entries(o)) {
     const b = n[k];
-    if (!b) { breaking.push(`removed: ${k}`); continue; }
+    if (!b) {
+      const parent = k.includes(".") ? k.split(".")[0] : null;
+      const po = parent && o[parent], pn = parent && n[parent];
+      if (po && pn && (po.kind === "class" || po.kind === "interface") && po.ext !== pn.ext) { changed.push(`removed from ${parent} (its base types changed, so the member may be inherited): ${k}`); continue; }
+      breaking.push(`removed: ${k}`); continue;
+    }
     if (a.kind !== b.kind) { breaking.push(`${k}: changed kind ${a.kind} -> ${b.kind}`); continue; }
     if (a.kind === "fn") {
       const ap = a.params, bp = b.params;
-      const removed = ap.slice(bp.length).filter(p => !p.rest);
+      const bnames = new Set(bp.map(p => p.name)); const removed = bp.length < ap.length ? ap.filter(p => !p.rest && !bnames.has(p.name)) : [];
       if (removed.length) breaking.push(`${k}: parameter(s) removed: ${removed.map(p => p.name).join(", ")}`);
       for (let i = 0; i < Math.min(ap.length, bp.length); i++) {
         if (ap[i].optional && !bp[i].optional) breaking.push(`${k}: parameter ${bp[i].name} made required`);
@@ -99,6 +104,9 @@ process.stdin.on("end", () => {
   const { old, new: nw, file } = JSON.parse(buf);
   try {
     const o = api(old, file), n = api(nw, file);
+    if (o.gaps.some(g => g.startsWith("parse errors")) || n.gaps.some(g => g.startsWith("parse errors"))) {
+      console.log(JSON.stringify({ breaking: [], changed: [], gaps: [`parse errors in the ${o.gaps.some(g => g.startsWith("parse errors")) ? "old" : "new"} version; no comparison made`] })); return;
+    }
     const d = diff(o.out, n.out);
     const gaps = [...new Set([...o.gaps, ...n.gaps])];
     console.log(JSON.stringify({ ...d, gaps }));

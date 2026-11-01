@@ -1,0 +1,312 @@
+[
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/166",
+  "repo": "vfarcic/dot-ai",
+  "file": "src/evaluation/evaluators/base-comparative.ts",
+  "class": "unreachable",
+  "breaking": [
+   "removed: ComparativeEvaluationResult.overall_assessment"
+  ]
+ },
+ {
+  "pr": "https://github.com/aku11i/phantom/pull/150",
+  "repo": "aku11i/phantom",
+  "file": "packages/cli/src/errors.ts",
+  "class": "private",
+  "breaking": [
+   "exitCodes: changed kind var -> reexport"
+  ]
+ },
+ {
+  "pr": "https://github.com/cloud-atlas-ai/obsidian-ics/pull/196",
+  "repo": "cloud-atlas-ai/obsidian-ics",
+  "file": "src/icalUtils.ts",
+  "class": "unreachable",
+  "breaking": [
+   "removed: extractMeetingInfo"
+  ]
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1077",
+  "repo": "tphakala/birdnet-go",
+  "file": "frontend/src/lib/stores/settings.ts",
+  "class": "private",
+  "breaking": [
+   "removed: BirdNetSettings.database",
+   "removed: RangeFilterSettings.model",
+   "removed: DatabaseSettings",
+   "removed: DatabaseSettings.type",
+   "removed: DatabaseSettings.path"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/mcp/shared-factory.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed: configWrappers"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/test-utils/index.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed: createTestDirectory",
+   "removed: cleanupTestDirectory"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/test-utils/logger-mock.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed: createLoggerMock"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/utils/command-generators.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed: createMarkdownCommandGenerator"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/utils/frontmatter.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed: safeParseFrontmatter",
+   "removed: extractFrontmatterField"
+  ]
+ },
+ {
+  "pr": "https://github.com/anthropics/claude-code-action/pull/449",
+  "repo": "anthropics/claude-code-action",
+  "file": "src/create-prompt/index.ts",
+  "class": "private",
+  "breaking": [
+   "buildAllowedToolsString: parameter(s) removed: useCommitSigning",
+   "generatePrompt: parameter(s) removed: useCommitSigning",
+   "generateDefaultPrompt: parameter(s) removed: useCommitSigning"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/augmentcode.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/augmentcode.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/codexcli.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/codexcli.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/junie.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/junie.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/kiro.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/kiro.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/opencode.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/opencode.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/qwencode.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/qwencode.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/shared-factory.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/shared-factory.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/shared-helpers.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/shared-helpers.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/generators/ignore/windsurf.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/generators/ignore/windsurf.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "file": "src/utils/permission-merger.ts",
+  "class": "no entry found",
+  "breaking": [
+   "removed file: src/utils/permission-merger.ts"
+  ]
+ },
+ {
+  "pr": "https://github.com/gtg922r/obsidian-numerals/pull/113",
+  "repo": "gtg922r/obsidian-numerals",
+  "file": "src/numeralsUtilities.ts",
+  "class": "unreachable",
+  "breaking": [
+   "removed: StringReplaceMap",
+   "removed: StringReplaceMap.regex",
+   "removed: StringReplaceMap.replaceStr"
+  ]
+ },
+ {
+  "pr": "https://github.com/hsuanxyz/ion2-calendar/pull/357",
+  "repo": "hsuanxyz/ion2-calendar",
+  "file": "dev/src/ion2-calendar/components/calendar.modal.ts",
+  "class": "private",
+  "breaking": [
+   "CalendarModal.constructor: parameter(s) removed: params"
+  ]
+ },
+ {
+  "pr": "https://github.com/hsuanxyz/ion2-calendar/pull/357",
+  "repo": "hsuanxyz/ion2-calendar",
+  "file": "src/components/calendar.modal.ts",
+  "class": "reachable",
+  "breaking": [
+   "CalendarModal.constructor: parameter(s) removed: params"
+  ]
+ },
+ {
+  "pr": "https://github.com/ajthinking/data-story/pull/466",
+  "repo": "ajthinking/data-story",
+  "file": "packages/nodejs/src/server/messageHandlers/run.ts",
+  "class": "unreachable",
+  "breaking": [
+   "removed: RunMessage"
+  ]
+ },
+ {
+  "pr": "https://github.com/SwitchbackTech/compass/pull/1101",
+  "repo": "SwitchbackTech/compass",
+  "file": "packages/core/src/types/calendar.types.ts",
+  "class": "private",
+  "breaking": [
+   "removed: CompassCalendar"
+  ]
+ },
+ {
+  "pr": "https://github.com/SwitchbackTech/compass/pull/1101",
+  "repo": "SwitchbackTech/compass",
+  "file": "packages/scripts/src/common/zod-to-mongo-schema.ts",
+  "class": "private",
+  "breaking": [
+   "removed: zObjectIdMini",
+   "removed: zObjectId"
+  ]
+ },
+ {
+  "pr": "https://github.com/inboundemail/inbound/pull/57",
+  "repo": "inboundemail/inbound",
+  "file": "@inboundemail/sdk/src/client.ts",
+  "class": "reachable",
+  "breaking": [
+   "removed: InboundEmailClient.emailAddress"
+  ]
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3888",
+  "repo": "module-federation/core",
+  "file": "apps/next-app-router/next-app-router-4000/app/context/context-click-counter.tsx",
+  "class": "private",
+  "breaking": [
+   "removed: Counter",
+   "removed: default"
+  ]
+ },
+ {
+  "pr": "https://github.com/MetaMask/core/pull/6307",
+  "repo": "MetaMask/core",
+  "file": "packages/assets-controllers/src/NftController.ts",
+  "class": "reachable",
+  "breaking": [
+   "removed: NftController.openSeaApiKey",
+   "removed: NftController.setApiKey"
+  ]
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "file": "docs/src/app/(home)/layout.tsx",
+  "class": "private",
+  "breaking": [
+   "removed file: docs/src/app/(home)/layout.tsx"
+  ]
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "file": "docs/src/app/(home)/page.tsx",
+  "class": "private",
+  "breaking": [
+   "removed file: docs/src/app/(home)/page.tsx"
+  ]
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "file": "docs/src/app/docs/[[...slug]]/edit-button.tsx",
+  "class": "private",
+  "breaking": [
+   "removed file: docs/src/app/docs/[[...slug]]/edit-button.tsx"
+  ]
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "file": "docs/src/app/docs/layout.tsx",
+  "class": "private",
+  "breaking": [
+   "removed file: docs/src/app/docs/layout.tsx"
+  ]
+ }
+]

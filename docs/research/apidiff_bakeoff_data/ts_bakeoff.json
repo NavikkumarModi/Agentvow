@@ -95,18 +95,18 @@
    },
    {
     "file": "src/commands/mcp/add.ts",
-    "breaking": [
-     "removed: AddCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from AddCommandArgs (its base types changed, so the member may be inherited): AddCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
     "file": "src/commands/mcp/enable.ts",
-    "breaking": [
-     "removed: EnableDisableCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from EnableDisableCommandArgs (its base types changed, so the member may be inherited): EnableDisableCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
@@ -117,26 +117,26 @@
    },
    {
     "file": "src/commands/mcp/list.ts",
-    "breaking": [
-     "removed: ListCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from ListCommandArgs (its base types changed, so the member may be inherited): ListCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
     "file": "src/commands/mcp/remove.ts",
-    "breaking": [
-     "removed: RemoveCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from RemoveCommandArgs (its base types changed, so the member may be inherited): RemoveCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
     "file": "src/commands/mcp/status.ts",
-    "breaking": [
-     "removed: StatusCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from StatusCommandArgs (its base types changed, so the member may be inherited): StatusCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
@@ -147,10 +147,10 @@
    },
    {
     "file": "src/commands/mcp/update.ts",
-    "breaking": [
-     "removed: UpdateCommandArgs.config"
+    "breaking": [],
+    "changed": [
+     "removed from UpdateCommandArgs (its base types changed, so the member may be inherited): UpdateCommandArgs.config"
     ],
-    "changed": [],
     "gaps": []
    },
    {
@@ -1104,7 +1104,7 @@
     "file": "src/create-prompt/index.ts",
     "breaking": [
      "buildAllowedToolsString: parameter(s) removed: useCommitSigning",
-     "generatePrompt: parameter(s) removed: mode",
+     "generatePrompt: parameter(s) removed: useCommitSigning",
      "generateDefaultPrompt: parameter(s) removed: useCommitSigning"
     ],
     "changed": [
@@ -1437,16 +1437,15 @@
    },
    {
     "file": "src/arweave/composite-client.ts",
-    "breaking": [
-     "removed: ArweaveCompositeClient.initializeDnsResolution",
-     "removed: ArweaveCompositeClient.stopDnsResolution",
-     "removed: ArweaveCompositeClient.refreshPeers",
-     "removed: ArweaveCompositeClient.getPeers",
-     "removed: ArweaveCompositeClient.selectPeers"
-    ],
+    "breaking": [],
     "changed": [
      "ArweaveCompositeClient: heritage changed",
      "ArweaveCompositeClient.constructor: parameter {\n    log,\n    arweave,\n    trustedNodeUrl,\n    blockStore,\n    txStore,\n    failureSimulator,\n    peerManager,\n    requestTimeout = DEFAULT_REQUEST_TIMEOUT_MS,\n    requestRetryCount = DEFAULT_REQUEST_RETRY_COUNT,\n    maxRequestsPerSecond = DEFAULT_MAX_REQUESTS_PER_SECOND,\n    maxConcurrentRequests = DEFAULT_MAX_CONCURRENT_REQUESTS,\n    blockPrefetchCount = DEFAULT_BLOCK_PREFETCH_COUNT,\n    blockTxPrefetchCount = DEFAULT_BLOCK_TX_PREFETCH_COUNT,\n    skipCache = false,\n    cacheCheckPeriodSeconds = 10,\n  } type text changed",
+     "removed from ArweaveCompositeClient (its base types changed, so the member may be inherited): ArweaveCompositeClient.initializeDnsResolution",
+     "removed from ArweaveCompositeClient (its base types changed, so the member may be inherited): ArweaveCompositeClient.stopDnsResolution",
+     "removed from ArweaveCompositeClient (its base types changed, so the member may be inherited): ArweaveCompositeClient.refreshPeers",
+     "removed from ArweaveCompositeClient (its base types changed, so the member may be inherited): ArweaveCompositeClient.getPeers",
+     "removed from ArweaveCompositeClient (its base types changed, so the member may be inherited): ArweaveCompositeClient.selectPeers",
      "ArweaveCompositeClient.handlePeerSuccess: parameter sourceType type text changed",
      "ArweaveCompositeClient.handlePeerSuccess: parameter category type text changed",
      "ArweaveCompositeClient.handlePeerFailure: parameter sourceType type text changed",
@@ -1692,19 +1691,18 @@
    },
    {
     "file": "src/core/pattern-vector-service.ts",
-    "breaking": [
-     "removed: PatternSearchOptions.limit",
-     "removed: PatternSearchOptions.scoreThreshold",
-     "removed: PatternSearchOptions.keywordWeight",
-     "removed: PatternSearchResult.pattern",
-     "removed: PatternSearchResult.score",
-     "removed: PatternSearchResult.matchType",
-     "removed: PatternVectorService.initialize",
-     "removed: PatternVectorService.getSearchMode",
-     "removed: PatternVectorService.healthCheck"
-    ],
+    "breaking": [],
     "changed": [
-     "PatternVectorService: heritage changed"
+     "removed from PatternSearchOptions (its base types changed, so the member may be inherited): PatternSearchOptions.limit",
+     "removed from PatternSearchOptions (its base types changed, so the member may be inherited): PatternSearchOptions.scoreThreshold",
+     "removed from PatternSearchOptions (its base types changed, so the member may be inherited): PatternSearchOptions.keywordWeight",
+     "removed from PatternSearchResult (its base types changed, so the member may be inherited): PatternSearchResult.pattern",
+     "removed from PatternSearchResult (its base types changed, so the member may be inherited): PatternSearchResult.score",
+     "removed from PatternSearchResult (its base types changed, so the member may be inherited): PatternSearchResult.matchType",
+     "PatternVectorService: heritage changed",
+     "removed from PatternVectorService (its base types changed, so the member may be inherited): PatternVectorService.initialize",
+     "removed from PatternVectorService (its base types changed, so the member may be inherited): PatternVectorService.getSearchMode",
+     "removed from PatternVectorService (its base types changed, so the member may be inherited): PatternVectorService.healthCheck"
     ],
     "gaps": []
    },
@@ -2111,7 +2109,7 @@
    {
     "file": "dev/src/ion2-calendar/components/calendar.modal.ts",
     "breaking": [
-     "CalendarModal.constructor: parameter(s) removed: calSvc"
+     "CalendarModal.constructor: parameter(s) removed: params"
     ],
     "changed": [
      "CalendarModal.constructor: parameter modalCtrl type text changed",
@@ -2131,7 +2129,7 @@
    {
     "file": "src/components/calendar.modal.ts",
     "breaking": [
-     "CalendarModal.constructor: parameter(s) removed: calSvc"
+     "CalendarModal.constructor: parameter(s) removed: params"
     ],
     "changed": [
      "CalendarModal.constructor: parameter modalCtrl type text changed",
@@ -3285,42 +3283,10 @@
   "files": [
    {
     "file": "stores/clickhouse/src/storage/index.ts",
-    "breaking": [
-     "removed: ClickhouseStore.getSqlType",
-     "removed: ClickhouseStore.getThreadById",
-     "removed: ClickhouseStore.getThreadsByResourceId",
-     "removed: ClickhouseStore.saveThread",
-     "removed: ClickhouseStore.updateThread",
-     "removed: ClickhouseStore.deleteThread",
-     "removed: ClickhouseStore.getMessages",
-     "removed: ClickhouseStore.getMessages#overload1",
-     "removed: ClickhouseStore.getMessages#overload2",
-     "removed: ClickhouseStore.saveMessages",
-     "removed: ClickhouseStore.saveMessages#overload1",
-     "removed: ClickhouseStore.saveMessages#overload2",
-     "removed: ClickhouseStore.persistWorkflowSnapshot",
-     "removed: ClickhouseStore.loadWorkflowSnapshot",
-     "removed: ClickhouseStore.getWorkflowRuns",
-     "removed: ClickhouseStore.getWorkflowRunById",
-     "removed: ClickhouseStore.getTracesPaginated",
-     "removed: ClickhouseStore.getThreadsByResourceIdPaginated",
-     "removed: ClickhouseStore.getMessagesPaginated",
-     "removed: ClickhouseStore.close",
-     "removed: ClickhouseStore.updateMessages",
-     "removed: ClickhouseStore.getScoreById",
-     "removed: ClickhouseStore.saveScore",
-     "removed: ClickhouseStore.getScoresByRunId",
-     "removed: ClickhouseStore.getScoresByEntityId",
-     "removed: ClickhouseStore.getScoresByScorerId"
-    ],
-    "changed": [
-     "ClickhouseStore.getTraces: parameter args type text changed",
-     "ClickhouseStore.getTraces: return type text changed",
-     "ClickhouseStore.createTable: parameter {\n    tableName,\n    schema,\n  } type text changed",
-     "ClickhouseStore.load: parameter { tableName, keys } type text changed"
-    ],
+    "breaking": [],
+    "changed": [],
     "gaps": [
-     "parse errors: 146"
+     "parse errors in the new version; no comparison made"
     ]
    }
   ]
