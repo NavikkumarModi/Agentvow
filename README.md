@@ -21,6 +21,7 @@ When a coding agent says "all tests pass" or "nothing else depends on this", Age
 - **Team gate.** A reusable GitHub workflow replays on the runner, builds a receipt and applies your policy from the base branch; a pull request that is contradicted cannot be merged when `agentvow/evidence` is a required check, and a person can acknowledge an UNKNOWN result by name (`/agentvow acknowledge <id>`). A self-hostable control plane service publishes that check; see below.
 - **Plain-language decisions.** The check, the job summary and the CLI (`agentvow policy explain`) say what happened, what it means for the merge, what to do next, who can acknowledge and how, and what a pass does *not* show; the control plane also notifies the listed acknowledgers on the pull request and refreshes open pull requests when the policy file changes (both tested against fakes, not yet seen on GitHub).
 - **Policy as a file.** `agentvow policy` turns a receipt into allow, needs acknowledgement or block under rules you write (contradictions always block; unauthenticated captures and unmeasured coverage can require a named acknowledger).
+- **A review queue.** `agentvow queue --receipts ./receipts` ranks the agent pull requests that need a person (stop first, then needs a person, acknowledged, no flag raised) with the policy's plain-language reasons, so a reviewer sees the exceptions first. "No flag raised" is never a safety verdict.
 - **Evidence for a team.** `agentvow pilot-report` summarises a folder of receipts mechanically (decisions, reproducibility, coverage, what could not be recreated) and states what it does not show.
 - **Where you work.** Claude Code hooks (`agentvow init`), GitHub Copilot in VS Code, the VS Code extension, the command line, GitHub Actions.
 - **Safe by construction.** Sandboxed test runs (macOS `sandbox-exec`, Linux bubblewrap), network denied, sealed results, text from agents escaped in reports.
@@ -86,6 +87,7 @@ agentvow capture --repo . --export bundle.json && agentvow check --repo . --tran
 agentvow check --repo . --transcript msg.txt --json > d.json && agentvow receipt --decision d.json --repo-slug you/project --repo . -o receipt.json
 agentvow policy init > policy.json && agentvow policy evaluate --receipt receipt.json --policy policy.json > result.json   # allow / needs_acknowledgement / block
 agentvow policy explain --result result.json                                              # the same decision in plain words (0.4.4+): what happened, what to do, who can acknowledge
+agentvow queue --receipts ./receipts                                                       # the pull requests that need a person, ranked, with reasons (exit 1 if any)
 agentvow pilot-report --receipts ./receipts -o report.md                                  # a mechanical evidence report over many receipts
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
@@ -152,4 +154,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 736 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 740 Python tests, 32 node tests -->

@@ -529,6 +529,12 @@ def main(argv=None) -> int:
     pr_.add_argument("--title", default="Agent pull request evidence report")
     pr_.add_argument("--example", action="store_true", help="label the report as built from synthetic data")
     pr_.add_argument("-o", "--output", default="-")
+    qu = sub.add_parser("queue", help="a ranked list of the agent pull requests that need a person, from a directory of receipts and a policy (what to look at first and why; never a safety verdict)")
+    qu.add_argument("--receipts", required=True, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
+    qu.add_argument("--acks", default=None, help="directory of acknowledgement JSON files")
+    qu.add_argument("--policy", default=None)
+    qu.add_argument("--markdown", action="store_true", help="write Markdown instead of plain text")
+    qu.add_argument("-o", "--output", default="-")
     ini = sub.add_parser("init", help="add the Claude Code hooks (capture after tests, check at stop) to a settings file, with a preview, a confirmation and a backup")
     ini.add_argument("--repo", default=".")
     ini.add_argument("--agent", choices=["claude"], default="claude", help="only Claude Code is supported by this command (GitHub Copilot: the VS Code extension command 'Agentvow: Add the agent hook')")
@@ -587,6 +593,22 @@ def main(argv=None) -> int:
         ap.error("--base must be a commit or branch name, not an option")
     if a.cmd == "init":
         return run_init(a)
+    if a.cmd == "queue":
+        from . import pilot_report as pr_mod, queue as queue_mod
+        try:
+            rcpts, bad = pr_mod.load(a.receipts)
+            acks = pr_mod.load_acks(a.acks) if a.acks else []
+            pol = json.loads(Path(a.policy).read_text(encoding="utf-8")) if a.policy else None
+        except (OSError, ValueError) as e:
+            print(f"agentvow queue: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+            return 3
+        items = queue_mod.build(rcpts, pol, acks)
+        text = (queue_mod.render_markdown(items) if a.markdown else queue_mod.render_text(items)) + (f"\n{bad} file(s) in the receipts directory were not valid receipts and were skipped.\n" if bad else "")
+        if a.output == "-":
+            print(text, end="")
+        else:
+            Path(a.output).write_text(text, encoding="utf-8")
+        return 1 if any(i["state"] in ("block", "needs_acknowledgement") for i in items) else 0
     if a.cmd == "pilot-report":
         from . import pilot_report as pr_mod
         try:
