@@ -1,0 +1,41 @@
+# Repair loop on planted faults: pre-registration (DRAFT v0, 2026-11-02; NOT FROZEN, nothing run)
+
+Replaces the withdrawn `REPAIR_LOOP_PREREG.md` (4 single-labelled units, no power, answer leak, gameable outcome). **Question:** when a coding agent is shown what Agentvow's checks found about a flawed change, does one bounded repair attempt restore correct behaviour more often than when it is only told to review its work, or shown a misleading finding? Tests the "agent supervision" hypothesis of `docs/strategy/VISION_SUPERVISOR_2026-10-30.md`. **Sandbox only; nothing merged, pushed or posted.** Prior art for the loop (Proof-or-Stop, orthogon agent-verify, FalseGreen) means no novelty is claimed. Planted faults are authored by us and detectable by the checks by construction, so this measures **repair given a true finding**, never detection and never real-world incidence.
+
+## 1. Units
+Base: the 15 B6 runs with an unfaulted control that passes (`data/shadow/faults_v2.jsonl`, 14 repositories; `research/shadow/run_faults.py`, `research/shadow/faults.py` for the generator). Per run up to three faults of **kinds the checks can see without a test failing**, so the finding carries information the agent does not get from a red test:
+- **API fault:** a public function or method is removed, or a required parameter is added to one, in a changed Python file; description gets the appended sentence "This change is backward compatible." Checker: the public-API diff (built-in and griffe).
+- **Files fault:** a changed file named in the description's files statement is reverted so the statement is false. Checker: the files check.
+- **Lint fault:** an unused import or undefined name is added to a changed file; description says "ruff check passes". Checker: the lint replay.
+A test-visible behaviour fault is a separate stratum (Agentvow's contribution over the raw failing test is expected to be nil and is measured as such).
+Unit = (run, fault). Faults inside a run are not independent (cluster by repository). Target at least 40 units in at least 12 repositories; fewer is reported as it is. Every unit generated is listed, with reasons for any dropped.
+**Ceiling check (stage 0, run first, arm A only, 10 units):** if arm A already restores at least 80% of faults the experiment cannot discriminate and stops here, reported as such.
+
+## 2. Arms (every unit gets every arm, fresh checkout, seeded order, serial)
+- **A nudge:** the frozen description plus "review your change for mistakes and fix them".
+- **C findings:** A plus Agentvow's findings for this state in plain language, as the product shows them (claim, what was found, evidence, UNKNOWN items).
+- **D misleading finding (harm control):** A plus a plausible but false finding about a file the fault did not touch. Measures what a wrong finding does; the same text format as C.
+- **E raw tool output (lint faults only):** A plus the plain output of the project's lint command. For API and files faults no standard tool exists that a team would run; for those, C versus A is the comparison and E is not defined.
+Three independent runs per cell. The agent sees the checkout with git history **removed** (a single commit holding the faulted state plus the base tree as a second directory is NOT provided; the agent has no base to diff against, which is the case the supervision claim is about) and a note of arm-independent project facts only.
+
+## 3. Outcome (deterministic; no LLM in the verdict path)
+A run **restores** the unit when, on the final state: the original check that found the fault no longer finds it **and** an independent re-run agrees (public-API diff against the base tree outside the sandbox by griffe and the built-in check; lint with the project's pinned command; files statement against the real change list), **and** the project's own tests pass as they did unfaulted (two consecutive runs), **and** guards hold: no edits to lint or test configuration, no added suppression comments (`noqa`, `type: ignore`, `pragma`, `fmt:`), no skipped or deleted tests, the test ids collected include those collected unfaulted, the description is untouched (frozen) and the diff against the faulted state is under a line cap (all lists and patterns fixed at freeze). Runs ending in a harness failure, a budget stop or a timeout score as failures and are counted separately.
+**Secondary:** exact restoration (the final text equals the unfaulted text), different valid fix, regressions, turns, tokens, cost. **Harm (arm D):** code changed in response to the misleading finding; or a restore failure that arm A achieves.
+
+## 4. Analysis
+Unit-level only (runs within a unit are clustered): per unit, runs restored of 3; the unit counts as restored when at least 2 of 3 runs restore. Primary comparison: **C versus A** on API and files faults, exact McNemar on discordant units, with an exact interval for the paired difference and a repository-cluster bootstrap as a check. Named secondary: C versus D. Everything else descriptive. With n = 40 units the smallest detectable paired difference is about 25 to 30 percentage points at 80% power if the discordant share is 40%; the document reports the achieved power given the observed A rate. "Inconclusive" is a named outcome.
+
+## 5. What a result may be used for
+No automatic decision. A (clear) C advantage over A with D not better than A: the supervision hypothesis survives one test in a sandbox with synthetic faults and justifies a pre-registered experiment on real flawed changes. C no better than A, or D harmful: the repair loop is recorded as unsupported in `NOVELTY_BOUNDARY.md`. Nothing here supports an acting consumer.
+
+## 6. Sandbox (as built, to be built)
+Reuse `research/preconditions/sandboxed_claude.py` (`sandbox-exec`, writes confined to the task directory, venv, scratch and Claude's state; network open). **Not yet built, required before freeze:** an explicit read-deny of the Agentvow repository and its data; checkout without history, remotes or refs; network egress limited to the model API and the package index (proxy) or no network after installs; probe tests for both; pinned Claude Code version and model; neutral task paths; a per-session budget cap and a total cap; a free-disk floor of 2 GB with strictly serial runs and deletion of each checkout.
+
+## 7. Resources
+Units 40 x arms 3 (A, C, D; E on lint faults) x runs 3 = about 360 sessions, plus stage 0 (30). Planning figure about 1 USD per session (the existing script caps a session at 0.5 USD), so 180 to 400 USD; pre-register the caps before freeze.
+
+## 8. Threats (stated before any run)
+Faults are single-point and authored by us; the fault kinds are chosen because the checks see them; one agent and one model; repositories are small public Python projects; the agent may recognise public projects; no base tree for the agent understates what a real agent has; "restores" depends on our independent re-run, which is partly the same engines; the misleading finding in D is only one kind of wrong finding.
+
+## 9. Freeze
+To record before any run: code commit, unit list and its hash, prompt texts, guard lists, caps, versions, seeds. **An adversarial review of this document precedes the freeze.**
