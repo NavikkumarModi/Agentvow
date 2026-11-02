@@ -104,3 +104,6 @@ Version 0.5.0 is prepared (version bump in the three files, changelog entry "not
 
 ### 0.5.0 validated (2026-11-02), awaiting the owner's yes to publish
 After freeing disk, `scripts/validate_all.sh`: 38 of 38 (736 Python, 32 node tests). The built wheel `dist/agentvow-0.5.0-py3-none-any.whl` contains `agentvow/ts/exports.js`, `agentvow/ts/reexports.js` and `agentvow/ts_api.py`; installed into a clean environment it reports 0.5.0, finds the TypeScript engine (with `AGENTVOW_TYPESCRIPT` set) and detects a removed export. Changelog dated; nothing tagged or uploaded.
+
+### 0.5.0 published and verified (2026-11-02)
+GitHub release v0.5.0 created from commit `1551d81` (CI green on ubuntu and macos; local validation 38 of 38); the trusted-publishing workflow succeeded and PyPI `agentvow` 0.5.0 is live. Verified by installing `agentvow[api]==0.5.0` from the registry into a clean environment: `agentvow --version` (0.5.0), `demo`, `doctor`; `api_diff.engine_info()` lists griffe 2.4.1 and typescript 5.9.3 (with `AGENTVOW_TYPESCRIPT` set); a removed dataclass field is found by griffe and a removed TypeScript export by the TypeScript engine. `dist/agentvow-0.5.0.vsix` is attached to the release; the Marketplace upload is optional (no functional extension change) and needs the publisher's login.
