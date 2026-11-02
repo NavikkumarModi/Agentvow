@@ -1,0 +1,9493 @@
+[
+ {
+  "pr": "https://github.com/pulumi/pulumi-kubernetes-operator/pull/1023",
+  "repo": "pulumi/pulumi-kubernetes-operator",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/sugyan/claude-code-webui/pull/195",
+  "repo": "sugyan/claude-code-webui",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ekalinin/sitemap.js/pull/456",
+  "repo": "ekalinin/sitemap.js",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.19.5",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 829,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "core-js",
+    "unrs-resolver"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 258182,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ludo-technologies/pyscn/pull/120",
+  "repo": "ludo-technologies/pyscn",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/jdx/mise/pull/6481",
+  "repo": "jdx/mise",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "echo \"Error: no test specified\" && exit 1",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/oven-sh/bun/pull/23279",
+  "repo": "oven-sh/bun",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node scripts/runner.node.mjs --exec-path ./build/debug/bun-debug",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [],
+  "git_deps": [
+   "bun-tracestrings"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/instructure/instructure-ui/pull/2172",
+  "repo": "instructure/instructure-ui",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=22",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/freenet/freenet-core/pull/1963",
+  "repo": "freenet/freenet-core",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/nextflow-io/nextflow/pull/6354",
+  "repo": "nextflow-io/nextflow",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/aku11i/phantom/pull/150",
+  "repo": "aku11i/phantom",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=22.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm -r test",
+  "lint": {
+   "status": "recognised",
+   "runner": "biome"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ceedaragents/cyrus/pull/159",
+  "repo": "ceedaragents/cyrus",
+  "kinds": [
+   "docs_updated",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm -r test",
+  "lint": {
+   "status": "recognised",
+   "runner": "biome"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62570",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1372",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/222",
+  "repo": "FinAegis/core-banking-prototype-laravel",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 207,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 119752,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1222",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean",
+   "no_downstream_impact",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tokuhirom/dcv/pull/208",
+  "repo": "tokuhirom/dcv",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/40",
+  "repo": "FinAegis/core-banking-prototype-laravel",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 207,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 119676,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/UfoMiao/zcf/pull/100",
+  "repo": "UfoMiao/zcf",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5489",
+  "repo": "elizaOS/eliza",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "bun",
+  "nvmrc": true,
+  "engines_node": "23.3.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test --concurrency 3 --filter=!./packages/plugin-starter --filter=!./packages/project-starter --filter=!./pack",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Deepractice/PromptX/pull/453",
+  "repo": "Deepractice/PromptX",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=18.17.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/rcourtman/Pulse/pull/192",
+  "repo": "rcourtman/Pulse",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 280,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 125693,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/SciML/DataDrivenDiffEq.jl/pull/560",
+  "repo": "SciML/DataDrivenDiffEq.jl",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/TimeWarpEngineering/timewarp-state/pull/554",
+  "repo": "TimeWarpEngineering/timewarp-state",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/CoderGamester/mcp-unity/pull/44",
+  "repo": "CoderGamester/mcp-unity",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/evmts/guillotine/pull/396",
+  "repo": "evmts/guillotine",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/oven-sh/bun/pull/23421",
+  "repo": "oven-sh/bun",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node scripts/runner.node.mjs --exec-path ./build/debug/bun-debug",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [],
+  "git_deps": [
+   "bun-tracestrings"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/TykTechnologies/tyk/pull/7313",
+  "repo": "TykTechnologies/tyk",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/oven-sh/bun/pull/23572",
+  "repo": "oven-sh/bun",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node scripts/runner.node.mjs --exec-path ./build/debug/bun-debug",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [],
+  "git_deps": [
+   "bun-tracestrings"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/hmislk/hmis/pull/14470",
+  "repo": "hmislk/hmis",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/202",
+  "repo": "FinAegis/core-banking-prototype-laravel",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 207,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 119752,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/eyaltoledano/claude-task-master/pull/1297",
+  "repo": "eyaltoledano/claude-task-master",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2258,
+   "non_registry": 0,
+   "git_or_file": 8,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "@tailwindcss/oxide",
+    "@vscode/vsce-sign",
+    "esbuild",
+    "keytar",
+    "protobufjs",
+    "puppeteer",
+    "sharp",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 610070,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62462",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/800",
+  "repo": "ruvnet/claude-flow",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm",
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "NODE_OPTIONS='--experimental-vm-modules' jest --bail --maxWorkers=1 --forceExit",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1194,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@swc/core",
+    "better-sqlite3",
+    "claude-flow",
+    "diskusage",
+    "esbuild",
+    "fsevents",
+    "node-pty",
+    "onnxruntime-node",
+    "protobufjs",
+    "puppeteer",
+    "better-sqlite3",
+    "sharp"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 602310,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/freenet/freenet-core/pull/1937",
+  "repo": "freenet/freenet-core",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/TurboDocx/html-to-docx/pull/135",
+  "repo": "TurboDocx/html-to-docx",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "npm run build && node example/example-node.js",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1003,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 482633,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/evmts/guillotine/pull/179",
+  "repo": "evmts/guillotine",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/probelabs/probe/pull/206",
+  "repo": "probelabs/probe",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/201",
+  "repo": "FinAegis/core-banking-prototype-laravel",
+  "kinds": [
+   "no_downstream_impact",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 207,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 119752,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1343",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/320",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2478,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@parcel/watcher",
+    "@scarf/scarf",
+    "@sentry-internal/node-native-stacktrace",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1319605,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/eyaltoledano/claude-task-master/pull/1309",
+  "repo": "eyaltoledano/claude-task-master",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/.bin/jest",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2329,
+   "non_registry": 0,
+   "git_or_file": 9,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "@tailwindcss/oxide",
+    "@vscode/vsce-sign",
+    "esbuild",
+    "keytar",
+    "protobufjs",
+    "puppeteer",
+    "sharp",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 645333,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1375",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/modelcontextprotocol/typescript-sdk/pull/163",
+  "repo": "modelcontextprotocol/typescript-sdk",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 519,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 239076,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/taikoxyz/taiko-mono/pull/20455",
+  "repo": "taikoxyz/taiko-mono",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1208",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/freenet/freenet-core/pull/1951",
+  "repo": "freenet/freenet-core",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/livestorejs/livestore/pull/490",
+  "repo": "livestorejs/livestore",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "CI=1 pnpm --parallel run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/cockroachdb/cockroach/pull/150695",
+  "repo": "cockroachdb/cockroach",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/united-manufacturing-hub/united-manufacturing-hub/pull/2236",
+  "repo": "united-manufacturing-hub/united-manufacturing-hub",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/githubnext/gh-aw/pull/2038",
+  "repo": "githubnext/gh-aw",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/rolldown/rolldown/pull/6577",
+  "repo": "rolldown/rolldown",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^20.19.0 || >=22.12.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "echo"
+  },
+  "test_cmd": "echo \"Use just test-node\"",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/razimantv/mazegenerator/pull/14",
+  "repo": "razimantv/mazegenerator",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/1mcp-app/agent/pull/97",
+  "repo": "1mcp-app/agent",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit && pnpm test:e2e",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62568",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/zfogg/ascii-chat/pull/73",
+  "repo": "zfogg/ascii-chat",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1077",
+  "repo": "tphakala/birdnet-go",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 107,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "puppeteer"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 44843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/oven-sh/bun/pull/23832",
+  "repo": "oven-sh/bun",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node scripts/runner.node.mjs --exec-path ./build/debug/bun-debug",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [],
+  "git_deps": [
+   "bun-tracestrings"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ansible/receptor/pull/1457",
+  "repo": "ansible/receptor",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/FinAegis/core-banking-prototype-laravel/pull/209",
+  "repo": "FinAegis/core-banking-prototype-laravel",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 207,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 119752,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/shakacode/react_on_rails/pull/1857",
+  "repo": "shakacode/react_on_rails",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "yarn workspaces run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "nps"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/312",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2478,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@parcel/watcher",
+    "@scarf/scarf",
+    "@sentry-internal/node-native-stacktrace",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1319605,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/201",
+  "repo": "dyoshikawa/rulesync",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --silent",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/jamubc/gemini-mcp-tool/pull/21",
+  "repo": "jamubc/gemini-mcp-tool",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=16.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 522,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 239941,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/209",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2462,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@parcel/watcher",
+    "@scarf/scarf",
+    "@sentry-internal/node-native-stacktrace",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1313598,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/anthropics/claude-code-action/pull/449",
+  "repo": "anthropics/claude-code-action",
+  "kinds": [
+   "backward_compatible",
+   "docs_updated",
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "test_cmd": "bun test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/222",
+  "repo": "dyoshikawa/rulesync",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --silent",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/JuliaDebug/Cthulhu.jl/pull/659",
+  "repo": "JuliaDebug/Cthulhu.jl",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/weiran/Hackers/pull/304",
+  "repo": "weiran/Hackers",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/coollabsio/coolify/pull/6975",
+  "repo": "coollabsio/coolify",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 189,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@tailwindcss/oxide",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 111888,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/phan/phan/pull/5092",
+  "repo": "phan/phan",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/tokuhirom/dcv/pull/255",
+  "repo": "tokuhirom/dcv",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/modelcontextprotocol/inspector/pull/486",
+  "repo": "modelcontextprotocol/inspector",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "npm run prettier-check && cd client && npm test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 803,
+   "non_registry": 0,
+   "git_or_file": 3,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 399843,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --silent",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ludo-technologies/pyscn/pull/125",
+  "repo": "ludo-technologies/pyscn",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/validatorjs/validator.js/pull/2612",
+  "repo": "validatorjs/validator.js",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">= 0.10",
+  "test": {
+   "status": "unrecognised",
+   "runner": "nyc"
+  },
+  "test_cmd": "nyc --reporter=cobertura --reporter=text-summary mocha --require @babel/register --reporter dot --recursive",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/modelcontextprotocol/registry/pull/465",
+  "repo": "modelcontextprotocol/registry",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/Shopify/remote-dom/pull/593",
+  "repo": "Shopify/remote-dom",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "prettier"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62457",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ar-io/ar-io-node/pull/492",
+  "repo": "ar-io/ar-io-node",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node --no-deprecation --import ./register.js --test --test-concurrency 1 --enable-source-maps src/*.test.ts src/**/*.tes",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/gtg922r/obsidian-numerals/pull/113",
+  "repo": "gtg922r/obsidian-numerals",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/wolfi-dev/os/pull/56793",
+  "repo": "wolfi-dev/os",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/oven-sh/bun/pull/22562",
+  "repo": "oven-sh/bun",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node scripts/runner.node.mjs --exec-path ./build/debug/bun-debug",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [],
+  "git_deps": [
+   "bun-tracestrings"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/281",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2500,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@parcel/watcher",
+    "@scarf/scarf",
+    "@sentry-internal/node-native-stacktrace",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1330147,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/SciML/DataDrivenDiffEq.jl/pull/561",
+  "repo": "SciML/DataDrivenDiffEq.jl",
+  "kinds": [
+   "docs_updated",
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ceedaragents/cyrus/pull/170",
+  "repo": "ceedaragents/cyrus",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm -r test",
+  "lint": {
+   "status": "recognised",
+   "runner": "biome"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ansible/receptor/pull/1456",
+  "repo": "ansible/receptor",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/livestorejs/livestore/pull/594",
+  "repo": "livestorejs/livestore",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "CI=1 pnpm --parallel run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/316",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2478,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@parcel/watcher",
+    "@scarf/scarf",
+    "@sentry-internal/node-native-stacktrace",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1319605,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Bash-it/bash-it/pull/2343",
+  "repo": "Bash-it/bash-it",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/czlonkowski/n8n-mcp/pull/106",
+  "repo": "czlonkowski/n8n-mcp",
+  "kinds": [
+   "docs_updated",
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "tsc"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2190,
+   "non_registry": 1,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "better-sqlite3",
+    "better-sqlite3",
+    "@scarf/scarf",
+    "better-sqlite3",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "msw",
+    "better-sqlite3",
+    "fsevents",
+    "protobufjs",
+    "sqlite3",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1142760,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/176",
+  "repo": "dyoshikawa/rulesync",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --silent",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/SciML/RecursiveArrayTools.jl/pull/490",
+  "repo": "SciML/RecursiveArrayTools.jl",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/promptfoo/promptfoo/pull/6001",
+  "repo": "promptfoo/promptfoo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "indirect",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2964,
+   "non_registry": 0,
+   "git_or_file": 2,
+   "install_script_pkgs": [
+    "@playwright/browser-chromium",
+    "@swc/core",
+    "better-sqlite3",
+    "core-js",
+    "core-js-pure",
+    "esbuild",
+    "fsevents",
+    "fsevents",
+    "sharp",
+    "unrs-resolver"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1537019,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/livestorejs/livestore/pull/591",
+  "repo": "livestorejs/livestore",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "CI=1 pnpm --parallel run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/eyaltoledano/claude-task-master/pull/783",
+  "repo": "eyaltoledano/claude-task-master",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node --experimental-vm-modules node_modules/.bin/jest",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 878,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 396255,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tinylibs/tinypool/pull/126",
+  "repo": "tinylibs/tinypool",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "^20.0.0 || >=22.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/apache/superset/pull/35305",
+  "repo": "apache/superset",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/secretlint/secretlint/pull/1146",
+  "repo": "secretlint/secretlint",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "secretlint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/hmislk/hmis/pull/14151",
+  "repo": "hmislk/hmis",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62246",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/TykTechnologies/tyk/pull/7447",
+  "repo": "TykTechnologies/tyk",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/828",
+  "repo": "ruvnet/claude-flow",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm",
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "NODE_OPTIONS='--experimental-vm-modules' jest --bail --maxWorkers=1 --forceExit",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1256,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@swc/core",
+    "better-sqlite3",
+    "better-sqlite3",
+    "claude-flow",
+    "diskusage",
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "node-pty",
+    "onnxruntime-node",
+    "protobufjs",
+    "puppeteer",
+    "better-sqlite3",
+    "sharp"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 631453,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Shopify/roast/pull/244",
+  "repo": "Shopify/roast",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/freenet/freenet-core/pull/1851",
+  "repo": "freenet/freenet-core",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/115",
+  "repo": "vfarcic/dot-ai",
+  "kinds": [
+   "docs_updated",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest --silent",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 574,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 274217,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/hydraide/hydraide/pull/83",
+  "repo": "hydraide/hydraide",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/SciML/LinearSolve.jl/pull/702",
+  "repo": "SciML/LinearSolve.jl",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/oxc-project/oxc/pull/14802",
+  "repo": "oxc-project/oxc",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm --workspace-concurrency=1 --filter \"./napi/*\" --filter \"./apps/*\" test",
+  "lint": {
+   "status": "recognised",
+   "runner": "oxlint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/50",
+  "repo": "vfarcic/dot-ai",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest --silent",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 572,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 272064,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/metabase/metabase/pull/62564",
+  "repo": "metabase/metabase",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn test-unit && yarn test-timezones && yarn test-cypress",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [
+   "xlsx"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dotnet/aspire/pull/10035",
+  "repo": "dotnet/aspire",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/jcputney/scorm-again/pull/1041",
+  "repo": "jcputney/scorm-again",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 972,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "core-js",
+    "esbuild",
+    "fsevents",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 487966,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/s3s-project/s3s/pull/351",
+  "repo": "s3s-project/s3s",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/kyantech/Palmr/pull/286",
+  "repo": "kyantech/Palmr",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dotnet/aspire/pull/10642",
+  "repo": "dotnet/aspire",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/nank1ro/solidart/pull/127",
+  "repo": "nank1ro/solidart",
+  "kinds": [
+   "backward_compatible",
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/alexpfau/calendar-card-pro/pull/254",
+  "repo": "alexpfau/calendar-card-pro",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 334,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 171089,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tokens-studio/figma-plugin/pull/3469",
+  "repo": "tokens-studio/figma-plugin",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "npx"
+  },
+  "test_cmd": "npx turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npx"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/githubnext/gh-aw/pull/1810",
+  "repo": "githubnext/gh-aw",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ng-select/ng-select/pull/2602",
+  "repo": "ng-select/ng-select",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm",
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "ng test ng-select --code-coverage && ng test ng-option-highlight --code-coverage",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1687,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "lmdb",
+    "msgpackr-extract"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 821571,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/githubnext/gh-aw/pull/1882",
+  "repo": "githubnext/gh-aw",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/githubnext/gh-aw/pull/1511",
+  "repo": "githubnext/gh-aw",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/pgdogdev/pgdog/pull/234",
+  "repo": "pgdogdev/pgdog",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/vitejs/vite-plugin-react/pull/934",
+  "repo": "vitejs/vite-plugin-react",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "^20.19.0 || >=22.12.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "pnpm run test-unit && pnpm run test-serve && pnpm run test-build && pnpm --filter ./packages/plugin-react-swc run test",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dotnet/msbuild/pull/12094",
+  "repo": "dotnet/msbuild",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/primer/stylelint-config/pull/621",
+  "repo": "primer/stylelint-config",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">16.0.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "npm run test:jest && npm run test:stylelint",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 731,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 364811,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/intellectronica/ruler/pull/147",
+  "repo": "intellectronica/ruler",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 387,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 190465,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/samanhappy/mcphub/pull/363",
+  "repo": "samanhappy/mcphub",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm",
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "^18.0.0 || >=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 947,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@swc/core",
+    "@tailwindcss/oxide",
+    "bcrypt",
+    "esbuild",
+    "fsevents",
+    "sharp"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 470201,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/microsoft/vscode-pull-request-github/pull/7910",
+  "repo": "microsoft/vscode-pull-request-github",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "yarn run test:preprocess && node ./out/src/test/runTests.js",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Azure/azure-sdk-for-net/pull/51530",
+  "repo": "Azure/azure-sdk-for-net",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 1,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "autorest"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 670,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/OPCFoundation/UA-.NETStandard/pull/3270",
+  "repo": "OPCFoundation/UA-.NETStandard",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/apify/apify-cli/pull/919",
+  "repo": "apify/apify-cli",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=20",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/reflex-dev/reflex-web/pull/1446",
+  "repo": "reflex-dev/reflex-web",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/specs/pull/825",
+  "repo": "ethereum-optimism/specs",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=16",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/specs/pull/820",
+  "repo": "ethereum-optimism/specs",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=16",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/specs/pull/816",
+  "repo": "ethereum-optimism/specs",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=16",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/gojiplus/tuber/pull/149",
+  "repo": "gojiplus/tuber",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/JuliaML/OpenAI.jl/pull/72",
+  "repo": "JuliaML/OpenAI.jl",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/2152",
+  "repo": "onlook-dev/onlook",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "bun",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "test_cmd": "bun --filter '*' test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/AhmedElywa/prisma-tools/pull/351",
+  "repo": "AhmedElywa/prisma-tools",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest --coverage",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/pollinations/pollinations/pull/4192",
+  "repo": "pollinations/pollinations",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/bruin-data/bruin/pull/906",
+  "repo": "bruin-data/bruin",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 344,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 160876,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/macalbert/envilder/pull/47",
+  "repo": "macalbert/envilder",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --reporter verbose --coverage",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 689,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "cpu-features",
+    "esbuild",
+    "fsevents",
+    "protobufjs",
+    "ssh2"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 347555,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6709",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@discord/bottom-sheet",
+   "@rocket.chat/mobile-crypto"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/leoafarias/fvm/pull/855",
+  "repo": "leoafarias/fvm",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ESPresense/ESPresense-companion/pull/1264",
+  "repo": "ESPresense/ESPresense-companion",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/petersalomonsen/wasm-git/pull/103",
+  "repo": "petersalomonsen/wasm-git",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "mocha"
+  },
+  "test_cmd": "mocha test/**/*.spec.js",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 400,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 2
+  },
+  "lock_bytes": 353786,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/danny-avila/LibreChat/pull/7930",
+  "repo": "danny-avila/LibreChat",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "bun",
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 3290,
+   "non_registry": 0,
+   "git_or_file": 5,
+   "install_script_pkgs": [
+    "mongodb-memory-server",
+    "sharp",
+    "es5-ext",
+    "esbuild",
+    "fsevents",
+    "fsevents",
+    "protobufjs"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1773209,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/7410",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3882,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/go-vikunja/vikunja/pull/911",
+  "repo": "go-vikunja/vikunja",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/684",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3856,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/bytebot-ai/bytebot/pull/40",
+  "repo": "bytebot-ai/bytebot",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/wieslawsoltes/Dock/pull/452",
+  "repo": "wieslawsoltes/Dock",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/7026",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3882,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/pull/1214",
+  "repo": "PaloAltoNetworks/docusaurus-openapi-docs",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": ">=14",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ZantFoundation/Z-Ant/pull/418",
+  "repo": "ZantFoundation/Z-Ant",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/746",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3856,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/7419",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3882,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ltwlf/json-diff-ts/pull/301",
+  "repo": "ltwlf/json-diff-ts",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest --config jest.config.mjs",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 506,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "unrs-resolver"
+   ],
+   "lockfileVersion": 2
+  },
+  "lock_bytes": 435378,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/bytebot-ai/bytebot/pull/61",
+  "repo": "bytebot-ai/bytebot",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/bitcoin/bitcoin/pull/32753",
+  "repo": "bitcoin/bitcoin",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/mochilang/mochi/pull/2028",
+  "repo": "mochilang/mochi",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 9,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 3878,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/gkamradt/MultiTerminalCodeViz/pull/1",
+  "repo": "gkamradt/MultiTerminalCodeViz",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 662,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@tailwindcss/oxide",
+    "esbuild",
+    "fsevents",
+    "unrs-resolver"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 322921,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/jdereg/java-util/pull/298",
+  "repo": "jdereg/java-util",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/talex-touch/tuff/pull/168",
+  "repo": "talex-touch/tuff",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=22.0.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/bytebot-ai/bytebot/pull/35",
+  "repo": "bytebot-ai/bytebot",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/campfirein/cipher/pull/283",
+  "repo": "campfirein/cipher",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm",
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 632,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "better-sqlite3",
+    "esbuild",
+    "fsevents",
+    "protobufjs"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 262703,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ceedaragents/cyrus/pull/188",
+  "repo": "ceedaragents/cyrus",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm -r test",
+  "lint": {
+   "status": "recognised",
+   "runner": "biome"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Portkey-AI/gateway/pull/1149",
+  "repo": "Portkey-AI/gateway",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 591,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "esbuild",
+    "workerd"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 275574,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/sei-protocol/sei-chain/pull/2337",
+  "repo": "sei-protocol/sei-chain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/owncast/owncast/pull/4622",
+  "repo": "owncast/owncast",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/githubnext/gh-aw/pull/23",
+  "repo": "githubnext/gh-aw",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/dfinke/PSAI/pull/110",
+  "repo": "dfinke/PSAI",
+  "kinds": [
+   "backward_compatible",
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/ant-design/ant-design-web3/pull/1538",
+  "repo": "ant-design/ant-design-web3",
+  "kinds": [
+   "docs_updated",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "indirect",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/algorand/go-algorand/pull/6457",
+  "repo": "algorand/go-algorand",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/openfoodfacts/openfoodfacts-server/pull/12327",
+  "repo": "openfoodfacts/openfoodfacts-server",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "npm run lint",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 918,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@parcel/watcher",
+    "es5-ext",
+    "fsevents",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 424607,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/javalin/javalin/pull/2453",
+  "repo": "javalin/javalin",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/javalin/javalin/pull/2476",
+  "repo": "javalin/javalin",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/dotnet/runtime/pull/121054",
+  "repo": "dotnet/runtime",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/nikita-volkov/hasql/pull/240",
+  "repo": "nikita-volkov/hasql",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/gitkraken/vscode-gitlens/pull/4646",
+  "repo": "gitkraken/vscode-gitlens",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">= 22.12.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "vscode-test"
+  },
+  "test_cmd": "vscode-test",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ajthinking/data-story/pull/466",
+  "repo": "ajthinking/data-story",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/sgb-io/fta/pull/247",
+  "repo": "sgb-io/fta",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/microsoft/typespec/pull/8623",
+  "repo": "microsoft/typespec",
+  "kinds": [
+   "files_scope",
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "preinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Maintainerr/Maintainerr/pull/1895",
+  "repo": "Maintainerr/Maintainerr",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": "^20.19.0 || >=22.12.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test --",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/kingstinct/react-native-healthkit/pull/217",
+  "repo": "kingstinct/react-native-healthkit",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "cd packages/react-native-healthkit && bun run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bunx"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/github-copilot-resources/copilot-metrics-viewer/pull/247",
+  "repo": "github-copilot-resources/copilot-metrics-viewer",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1380,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "esbuild",
+    "esbuild",
+    "@parcel/watcher",
+    "esbuild",
+    "fsevents",
+    "esbuild",
+    "fsevents",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 662531,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/manusa/electronim/pull/634",
+  "repo": "manusa/electronim",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "pretest",
+   "prepublish"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 906,
+   "non_registry": 0,
+   "git_or_file": 1,
+   "install_script_pkgs": [
+    "electron",
+    "electron-winstaller",
+    "fsevents",
+    "nodehun",
+    "fsevents",
+    "unrs-resolver"
+   ],
+   "lockfileVersion": 2
+  },
+  "lock_bytes": 756539,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Homebrew/brew/pull/20798",
+  "repo": "Homebrew/brew",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/DaveSkender/Stock.Indicators/pull/1588",
+  "repo": "DaveSkender/Stock.Indicators",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": false,
+  "engines_node": ">=22.21.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "dotnet"
+  },
+  "test_cmd": "dotnet test --no-restore",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bash"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 126,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 65070,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Z3Prover/z3/pull/7997",
+  "repo": "Z3Prover/z3",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/owasp-noir/noir/pull/791",
+  "repo": "owasp-noir/noir",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/microsoft/vscode-jupyter/pull/16878",
+  "repo": "microsoft/vscode-jupyter",
+  "kinds": [
+   "docs_updated",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "npm run test:unittests",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "eslint-plugin-local-rules"
+  ],
+  "lock": {
+   "packages": 1495,
+   "non_registry": 0,
+   "git_or_file": 1,
+   "install_script_pkgs": [
+    "@playwright/browser-chromium",
+    "bufferutil",
+    "core-js",
+    "es5-ext",
+    "esbuild",
+    "fsevents",
+    "fsevents",
+    "styled-components",
+    "typemoq",
+    "utf-8-validate",
+    "zeromq",
+    "zeromqold"
+   ],
+   "lockfileVersion": 2
+  },
+  "lock_bytes": 1355504,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/peimanja/artifactory_exporter/pull/173",
+  "repo": "peimanja/artifactory_exporter",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/microsoft/powerplatform-vscode/pull/1202",
+  "repo": "microsoft/powerplatform-vscode",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node node_modules/gulp/bin/gulp.js test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 1618,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@playwright/browser-chromium",
+    "bufferutil",
+    "es5-ext",
+    "fsevents",
+    "keytar",
+    "puppeteer",
+    "utf-8-validate"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 717499,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/rnwood/smtp4dev/pull/1834",
+  "repo": "rnwood/smtp4dev",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/Azure/autorest.typescript/pull/3259",
+  "repo": "Azure/autorest.typescript",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/dotnet/aspire/pull/11879",
+  "repo": "dotnet/aspire",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/DaveSkender/Stock.Indicators/pull/1569",
+  "repo": "DaveSkender/Stock.Indicators",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=22",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 126,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 64956,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dotnet/sdk/pull/51006",
+  "repo": "dotnet/sdk",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/intellectronica/ruler/pull/100",
+  "repo": "intellectronica/ruler",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 387,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 190465,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/JioTV-Go/jiotv_go/pull/634",
+  "repo": "JioTV-Go/jiotv_go",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/dotnet/msbuild/pull/12611",
+  "repo": "dotnet/msbuild",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/chrxh/alien/pull/211",
+  "repo": "chrxh/alien",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/overtrue/socialite/pull/292",
+  "repo": "overtrue/socialite",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/IntelliTect/EssentialCSharp/pull/834",
+  "repo": "IntelliTect/EssentialCSharp",
+  "kinds": [
+   "backward_compatible",
+   "docs_updated",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/jupyterlab/jupyterlab-desktop/pull/908",
+  "repo": "jupyterlab/jupyterlab-desktop",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "echo \"Error: no test specified\" && exit 1",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/thomhurst/TUnit/pull/3052",
+  "repo": "thomhurst/TUnit",
+  "kinds": [
+   "no_downstream_impact",
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/chrxh/alien/pull/186",
+  "repo": "chrxh/alien",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/giselles-ai/giselle/pull/993",
+  "repo": "giselles-ai/giselle",
+  "kinds": [
+   "lint_clean",
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=22",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/microsoft/playwright-mcp/pull/715",
+  "repo": "microsoft/playwright-mcp",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "playwright test"
+  },
+  "test_cmd": "playwright test",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 308,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 152638,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/gookit/color/pull/110",
+  "repo": "gookit/color",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/DaveSkender/Stock.Indicators/pull/1578",
+  "repo": "DaveSkender/Stock.Indicators",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=22",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 126,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 64956,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/dotnet/efcore/pull/36750",
+  "repo": "dotnet/efcore",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/johannesjo/super-productivity/pull/5237",
+  "repo": "johannesjo/super-productivity",
+  "kinds": [
+   "files_scope",
+   "lint_clean",
+   "no_downstream_impact"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "cross-env TZ='Europe/Berlin' ng test --watch=false && npm run test:tz:ci",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [
+   "jira2md"
+  ],
+  "lock": {
+   "packages": 2099,
+   "non_registry": 0,
+   "git_or_file": 4,
+   "install_script_pkgs": [
+    "@parcel/watcher",
+    "core-js",
+    "electron",
+    "electron-winstaller",
+    "esbuild",
+    "fsevents",
+    "husky",
+    "lmdb",
+    "msgpackr-extract",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 784219,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/intellectronica/ruler/pull/254",
+  "repo": "intellectronica/ruler",
+  "kinds": [
+   "docs_updated",
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 385,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 190517,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/RimSort/RimSort/pull/970",
+  "repo": "RimSort/RimSort",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/microsoft/sarif-tools/pull/95",
+  "repo": "microsoft/sarif-tools",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/PostHog/posthog/pull/39883",
+  "repo": "PostHog/posthog",
+  "kinds": [
+   "lint_clean",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=22 <23",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/SkBlaz/py3plex/pull/118",
+  "repo": "SkBlaz/py3plex",
+  "kinds": [
+   "docs_updated",
+   "files_scope",
+   "lint_clean",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/microsoft/presidio/pull/1647",
+  "repo": "microsoft/presidio",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/microsoft/mssql-python/pull/222",
+  "repo": "microsoft/mssql-python",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/usekaneo/kaneo/pull/571",
+  "repo": "usekaneo/kaneo",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/7585",
+  "repo": "langfuse/langfuse",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "20",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/sei-protocol/sei-chain/pull/2366",
+  "repo": "sei-protocol/sei-chain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/9486",
+  "repo": "langfuse/langfuse",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "24",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/nnstreamer/nntrainer/pull/3293",
+  "repo": "nnstreamer/nntrainer",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/7762",
+  "repo": "langfuse/langfuse",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "20",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/vercel/turborepo/pull/10945",
+  "repo": "vercel/turborepo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "22.x",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/68752",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "react-native-image-size",
+   "react-native-picker-select"
+  ],
+  "lock": {
+   "packages": 3316,
+   "non_registry": 0,
+   "git_or_file": 8,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1251435,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-javascript/pull/17237",
+  "repo": "getsentry/sentry-javascript",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "lerna"
+  },
+  "test_cmd": "lerna run --ignore \"@sentry-internal/{browser-integration-tests,e2e-tests,integration-shims,node-integration-tests,node-",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "run-s"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/woocommerce/woocommerce/pull/61135",
+  "repo": "woocommerce/woocommerce",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^20.11.1",
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm -r test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "hooks": [
+   "preinstall",
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-dart/pull/3140",
+  "repo": "getsentry/sentry-dart",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/epicweb-dev/epic-stack/pull/1040",
+  "repo": "epicweb-dev/epic-stack",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": "22",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 1353,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@prisma/client",
+    "@prisma/engines",
+    "@sentry-internal/node-cpu-profiler",
+    "@sentry/cli",
+    "@sentry/cli",
+    "@tailwindcss/oxide",
+    "esbuild",
+    "fsevents",
+    "msw",
+    "prisma",
+    "sharp",
+    "fsevents",
+    "unrs-resolver",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 674894,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/langfuse/langfuse/pull/9603",
+  "repo": "langfuse/langfuse",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "24",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "preinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/formbricks/formbricks/pull/6085",
+  "repo": "formbricks/formbricks",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=16.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test --no-cache",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Codehagen/Badget/pull/294",
+  "repo": "Codehagen/Badget",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "next"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/69386",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "react-native-image-size",
+   "react-native-picker-select"
+  ],
+  "lock": {
+   "packages": 3265,
+   "non_registry": 0,
+   "git_or_file": 7,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 963325,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/felipebarcelospro/igniter-js/pull/15",
+  "repo": "felipebarcelospro/igniter-js",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": false,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 1191,
+   "non_registry": 0,
+   "git_or_file": 9,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "msgpackr-extract",
+    "protobufjs",
+    "sharp",
+    "esbuild",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 601908,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/open-metadata/OpenMetadata/pull/21940",
+  "repo": "open-metadata/OpenMetadata",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=10.0.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "echo \"Error: no test specified\" && exit 1",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/68423",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "react-native-image-size",
+   "react-native-picker-select"
+  ],
+  "lock": {
+   "packages": 3262,
+   "non_registry": 0,
+   "git_or_file": 8,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1222800,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/rsyslog/rsyslog/pull/5902",
+  "repo": "rsyslog/rsyslog",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3888",
+  "repo": "module-federation/core",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^18",
+  "test": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "test_cmd": "nx run-many --target=test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-dart/pull/3069",
+  "repo": "getsentry/sentry-dart",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/vercel/turborepo/pull/10623",
+  "repo": "vercel/turborepo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "22.x",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/laiso/askrepo/pull/12",
+  "repo": "laiso/askrepo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/68624",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "react-native-image-size",
+   "react-native-picker-select"
+  ],
+  "lock": {
+   "packages": 3316,
+   "non_registry": 0,
+   "git_or_file": 8,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1251435,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/70130",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "group-ib-fp",
+   "react-native-image-size"
+  ],
+  "lock": {
+   "packages": 3280,
+   "non_registry": 0,
+   "git_or_file": 7,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 970014,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/TanStack/db/pull/476",
+  "repo": "TanStack/db",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "test_cmd": "pnpm --filter \"./packages/**\" test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "pnpm"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/BoundaryML/baml/pull/2521",
+  "repo": "BoundaryML/baml",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/elizaOS/eliza/pull/5334",
+  "repo": "elizaOS/eliza",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "bun",
+  "nvmrc": true,
+  "engines_node": "23.3.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test --concurrency 3 --filter=!./packages/plugin-starter --filter=!./packages/project-starter --filter=!./pack",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/bcherny/json-schema-to-typescript/pull/663",
+  "repo": "bcherny/json-schema-to-typescript",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=16.0.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "npm run pre-test && ava --timeout=300s --verbose",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 573,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "es5-ext"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 262237,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/RunanywhereAI/runanywhere-sdks/pull/27",
+  "repo": "RunanywhereAI/runanywhere-sdks",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/renegade-fi/renegade/pull/1026",
+  "repo": "renegade-fi/renegade",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-dart/pull/3079",
+  "repo": "getsentry/sentry-dart",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/exogee-technology/graphweaver/pull/1907",
+  "repo": "exogee-technology/graphweaver",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/trufflesecurity/trufflehog/pull/4478",
+  "repo": "trufflesecurity/trufflehog",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/modelcontextprotocol/typescript-sdk/pull/900",
+  "repo": "modelcontextprotocol/typescript-sdk",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 539,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 293093,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/MetaMask/metamask-mobile/pull/17579",
+  "repo": "MetaMask/metamask-mobile",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": "^20.18.0",
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "yarn test:unit",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [
+   "react-native-aes-crypto-forked"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/AdiRishi/turborepo-remote-cache-cloudflare/pull/996",
+  "repo": "AdiRishi/turborepo-remote-cache-cloudflare",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=22",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --coverage",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3887",
+  "repo": "module-federation/core",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^18",
+  "test": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "test_cmd": "nx run-many --target=test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3889",
+  "repo": "module-federation/core",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^18",
+  "test": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "test_cmd": "nx run-many --target=test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "nx"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-javascript/pull/16918",
+  "repo": "getsentry/sentry-javascript",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "lerna"
+  },
+  "test_cmd": "lerna run --ignore \"@sentry-internal/{browser-integration-tests,e2e-tests,integration-shims,node-integration-tests,node-",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "run-s"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-javascript/pull/17225",
+  "repo": "getsentry/sentry-javascript",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "lerna"
+  },
+  "test_cmd": "lerna run --ignore \"@sentry-internal/{browser-integration-tests,e2e-tests,integration-shims,node-integration-tests,node-",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "run-s"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6395",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@discord/bottom-sheet",
+   "rn-root-view"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/Expensify/App/pull/68625",
+  "repo": "Expensify/App",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": "20.19.3",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "TZ=utc NODE_OPTIONS=--experimental-vm-modules jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "@expensify/nitro-utils",
+   "@expensify/react-native-background-task",
+   "@expensify/react-native-hybrid-app",
+   "react-native-image-size",
+   "react-native-picker-select"
+  ],
+  "lock": {
+   "packages": 3316,
+   "non_registry": 0,
+   "git_or_file": 8,
+   "install_script_pkgs": [
+    "modules/ExpensifyNitroUtils",
+    "@firebase/util",
+    "core-js",
+    "core-js",
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "electron",
+    "esbuild",
+    "nitro-codegen",
+    "react-native-nitro-modules",
+    "canvas",
+    "protobufjs",
+    "react-native-nitro-modules",
+    "react-native-nitro-sqlite",
+    "sharp",
+    "shellcheck"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1251435,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/chakra-ui/zag/pull/2637",
+  "repo": "chakra-ui/zag",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "pnpm test-js --run && pnpm test-react --run && pnpm test-svelte --run && pnpm test-solid --run && pnpm test-vue --run",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-dart/pull/3084",
+  "repo": "getsentry/sentry-dart",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/NikolayS/postgres_dba/pull/67",
+  "repo": "NikolayS/postgres_dba",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/vercel/turborepo/pull/10916",
+  "repo": "vercel/turborepo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": "22.x",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo run test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/nnstreamer/nntrainer/pull/3354",
+  "repo": "nnstreamer/nntrainer",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/OneSignal/OneSignal-Website-SDK/pull/1346",
+  "repo": "OneSignal/OneSignal-Website-SDK",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run --coverage",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [
+   "bowser",
+   "jsonp"
+  ],
+  "lock": {
+   "packages": 461,
+   "non_registry": 0,
+   "git_or_file": 2,
+   "install_script_pkgs": [
+    "esbuild",
+    "fsevents",
+    "msw"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 218549,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3832",
+  "repo": "box/box-ui-elements",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "BABEL_ENV=test NODE_ENV=test yarn jest -c scripts/jest/jest.config.js",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npm-run-all"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/liam-hq/liam/pull/1629",
+  "repo": "liam-hq/liam",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/optimism/pull/17347",
+  "repo": "ethereum-optimism/optimism",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/whitphx/stlite/pull/1255",
+  "repo": "whitphx/stlite",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall",
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/antiwork/shortest/pull/439",
+  "repo": "antiwork/shortest",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/liam-hq/liam/pull/2442",
+  "repo": "liam-hq/liam",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/cloudflare/workers-sdk/pull/10159",
+  "repo": "cloudflare/workers-sdk",
+  "kinds": [
+   "files_scope",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=18.20.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "dotenv"
+  },
+  "test_cmd": "dotenv -- turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/antiwork/gumroad/pull/713",
+  "repo": "antiwork/gumroad",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": true,
+  "engines_node": "~20.17.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1130,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 558909,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/calcom/cal.com/pull/20706",
+  "repo": "calcom/cal.com",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/liam-hq/liam/pull/1914",
+  "repo": "liam-hq/liam",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/fern-api/fern/pull/10016",
+  "repo": "fern-api/fern",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test --filter=!@fern-api/ete-tests",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/liam-hq/liam/pull/1251",
+  "repo": "liam-hq/liam",
+  "kinds": [
+   "lint_clean",
+   "no_downstream_impact"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "concurrently"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1714",
+  "repo": "firecrawl/firecrawl",
+  "kinds": [
+   "files_scope",
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/svapnil/iso20022.js/pull/54",
+  "repo": "svapnil/iso20022.js",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "npx jest",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 642,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents",
+    "libxmljs"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 306908,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/moinulmoin/chadnext/pull/312",
+  "repo": "moinulmoin/chadnext",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "next"
+  },
+  "hooks": [
+   "preinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/theopenco/llmgateway/pull/206",
+  "repo": "theopenco/llmgateway",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/cloudflare/workers-sdk/pull/10242",
+  "repo": "cloudflare/workers-sdk",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=18.20.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "dotenv"
+  },
+  "test_cmd": "dotenv -- turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/calcom/cal.com/pull/22302",
+  "repo": "calcom/cal.com",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/calcom/cal.com/pull/22488",
+  "repo": "calcom/cal.com",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/antiwork/gumroad/pull/1367",
+  "repo": "antiwork/gumroad",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "npm",
+  "nvmrc": true,
+  "engines_node": "~20.17.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1260,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "canvas",
+    "core-js",
+    "core-js-pure",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 628727,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/theopenco/llmgateway/pull/212",
+  "repo": "theopenco/llmgateway",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/theopenco/llmgateway/pull/193",
+  "repo": "theopenco/llmgateway",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/theopenco/llmgateway/pull/215",
+  "repo": "theopenco/llmgateway",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1735",
+  "repo": "firecrawl/firecrawl",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/pyth-network/pyth-crosschain/pull/2916",
+  "repo": "pyth-network/pyth-crosschain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^22.14.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/GlareDB/glaredb/pull/3886",
+  "repo": "GlareDB/glaredb",
+  "kinds": [
+   "files_scope",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl/pull/1756",
+  "repo": "firecrawl/firecrawl",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/calcom/cal.com/pull/21449",
+  "repo": "calcom/cal.com",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest run",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/laiso/site2pdf/pull/22",
+  "repo": "laiso/site2pdf",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "none"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+  "lint": {
+   "status": "recognised",
+   "runner": "biome"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/yamadashy/repomix/pull/590",
+  "repo": "yamadashy/repomix",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 475,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "esbuild",
+    "fsevents",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 219863,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/brevdev/brev-cli/pull/259",
+  "repo": "brevdev/brev-cli",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/GlareDB/glaredb/pull/3953",
+  "repo": "GlareDB/glaredb",
+  "kinds": [
+   "files_scope",
+   "lint_clean",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3847",
+  "repo": "box/box-ui-elements",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "BABEL_ENV=test NODE_ENV=test yarn jest -c scripts/jest/jest.config.js",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npm-run-all"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3991",
+  "repo": "box/box-ui-elements",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "BABEL_ENV=test NODE_ENV=test yarn jest -c scripts/jest/jest.config.js",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npm-run-all"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/theopenco/llmgateway/pull/246",
+  "repo": "theopenco/llmgateway",
+  "kinds": [
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "pnpm test:unit",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/optimism/pull/17834",
+  "repo": "ethereum-optimism/optimism",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/brevdev/brev-cli/pull/247",
+  "repo": "brevdev/brev-cli",
+  "kinds": [
+   "backward_compatible",
+   "files_scope",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/pyth-network/pyth-crosschain/pull/2584",
+  "repo": "pyth-network/pyth-crosschain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^22.14.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/firecrawl/firecrawl-mcp-server/pull/87",
+  "repo": "firecrawl/firecrawl-mcp-server",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "node"
+  },
+  "test_cmd": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 478,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 218332,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/pyth-network/pyth-crosschain/pull/2674",
+  "repo": "pyth-network/pyth-crosschain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^22.14.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/antiwork/shortest/pull/427",
+  "repo": "antiwork/shortest",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/pyth-network/pyth-crosschain/pull/3001",
+  "repo": "pyth-network/pyth-crosschain",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^22.14.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/hasanharman/form-builder/pull/81",
+  "repo": "hasanharman/form-builder",
+  "kinds": [
+   "backward_compatible",
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "npm",
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "next"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 1181,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "core-js",
+    "esbuild",
+    "fsevents",
+    "sharp"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 607165,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/onflow/flow-go/pull/7634",
+  "repo": "onflow/flow-go",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/freenet/freenet-core/pull/1600",
+  "repo": "freenet/freenet-core",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/977",
+  "repo": "onlook-dev/onlook",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "test_cmd": "bun --filter '*' test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3861",
+  "repo": "box/box-ui-elements",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "BABEL_ENV=test NODE_ENV=test yarn jest -c scripts/jest/jest.config.js",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npm-run-all"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/lingodotdev/lingo.dev/pull/789",
+  "repo": "lingodotdev/lingo.dev",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/enzonotario/vitepress-openapi/pull/232",
+  "repo": "enzonotario/vitepress-openapi",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/gotalab/cc-sdd/pull/52",
+  "repo": "gotalab/cc-sdd",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/dcSpark/shinkai-local-ai-agents/pull/790",
+  "repo": "dcSpark/shinkai-local-ai-agents",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=20.x.x",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 2905,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@swc/core",
+    "core-js",
+    "cypress",
+    "es5-ext",
+    "esbuild",
+    "fsevents",
+    "nice-napi",
+    "nx",
+    "fsevents",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1490537,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/unibeck/solstatus/pull/109",
+  "repo": "unibeck/solstatus",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/launchdarkly/ld-relay/pull/540",
+  "repo": "launchdarkly/ld-relay",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/stack-auth/stack-auth/pull/527",
+  "repo": "stack-auth/stack-auth",
+  "kinds": [
+   "backward_compatible",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "test_cmd": "pnpm pre && vitest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [
+   "preinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/MultiboxLabs/flow-browser/pull/63",
+  "repo": "MultiboxLabs/flow-browser",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [
+   "electron"
+  ],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3980",
+  "repo": "box/box-ui-elements",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.x",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "BABEL_ENV=test NODE_ENV=test yarn jest -c scripts/jest/jest.config.js",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "npm-run-all"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/GlareDB/glaredb/pull/3765",
+  "repo": "GlareDB/glaredb",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/OneKeyHQ/app-monorepo/pull/6697",
+  "repo": "OneKeyHQ/app-monorepo",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": ">=20",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "yarn jest",
+  "lint": {
+   "status": "indirect",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/tramlinehq/tramline/pull/854",
+  "repo": "tramlinehq/tramline",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/2034",
+  "repo": "onlook-dev/onlook",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "bun",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "test_cmd": "bun --filter '*' test",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/alchemy-run/alchemy/pull/250",
+  "repo": "alchemy-run/alchemy",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "bun"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "bun"
+  },
+  "test_cmd": "bun run test:live",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/fern-api/fern/pull/9981",
+  "repo": "fern-api/fern",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test --filter=!@fern-api/ete-tests",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/pdfme/pdfme/pull/812",
+  "repo": "pdfme/pdfme",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "npm run test --workspaces",
+  "lint": {
+   "status": "indirect",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 990,
+   "non_registry": 0,
+   "git_or_file": 6,
+   "install_script_pkgs": [
+    "canvas",
+    "core-js",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 487065,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/antiwork/shortest/pull/333",
+  "repo": "antiwork/shortest",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/onflow/cadence/pull/4282",
+  "repo": "onflow/cadence",
+  "kinds": [
+   "docs_updated",
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/evergreen-ci/evergreen/pull/9173",
+  "repo": "evergreen-ci/evergreen",
+  "kinds": [
+   "files_scope",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/pdfme/pdfme/pull/1059",
+  "repo": "pdfme/pdfme",
+  "kinds": [
+   "backward_compatible",
+   "files_scope",
+   "lint_clean",
+   "tests_pass",
+   "unchecked"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "indirect",
+   "runner": null
+  },
+  "test_cmd": "npm run test --workspaces",
+  "lint": {
+   "status": "indirect",
+   "runner": null
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "lock": {
+   "packages": 1007,
+   "non_registry": 0,
+   "git_or_file": 7,
+   "install_script_pkgs": [
+    "canvas",
+    "core-js",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 494023,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/lukas-krecan/ShedLock/pull/2965",
+  "repo": "lukas-krecan/ShedLock",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/pyth-network/pyth-crosschain/pull/2976",
+  "repo": "pyth-network/pyth-crosschain",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": "^22.14.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/yamadashy/repomix/pull/538",
+  "repo": "yamadashy/repomix",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "vitest"
+  },
+  "test_cmd": "vitest",
+  "lint": {
+   "status": "shell_syntax",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 448,
+   "non_registry": 0,
+   "git_or_file": 0,
+   "install_script_pkgs": [
+    "@biomejs/biome",
+    "esbuild",
+    "fsevents"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 205207,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/appsmithorg/appsmith/pull/38849",
+  "repo": "appsmithorg/appsmith",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/Yamashou/gqlgenc/pull/290",
+  "repo": "Yamashou/gqlgenc",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/promptfoo/promptfoo/pull/2726",
+  "repo": "promptfoo/promptfoo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2925,
+   "non_registry": 0,
+   "git_or_file": 2,
+   "install_script_pkgs": [
+    "esbuild",
+    "@playwright/browser-chromium",
+    "@swc/core",
+    "better-sqlite3",
+    "core-js",
+    "core-js-pure",
+    "esbuild",
+    "esbuild",
+    "fsevents",
+    "fsevents",
+    "esbuild",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1472057,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/appsmithorg/appsmith/pull/39020",
+  "repo": "appsmithorg/appsmith",
+  "kinds": [
+   "lint_clean",
+   "unchecked"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/promptfoo/promptfoo/pull/3047",
+  "repo": "promptfoo/promptfoo",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "npm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "",
+  "nvmrc": true,
+  "engines_node": ">=18.0.0",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [],
+  "git_deps": [],
+  "lock": {
+   "packages": 2883,
+   "non_registry": 0,
+   "git_or_file": 2,
+   "install_script_pkgs": [
+    "esbuild",
+    "@playwright/browser-chromium",
+    "@swc/core",
+    "better-sqlite3",
+    "core-js",
+    "core-js-pure",
+    "esbuild",
+    "esbuild",
+    "fsevents",
+    "fsevents",
+    "esbuild",
+    "esbuild"
+   ],
+   "lockfileVersion": 3
+  },
+  "lock_bytes": 1488041,
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/lingodotdev/lingo.dev/pull/704",
+  "repo": "lingodotdev/lingo.dev",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/fern-api/fern/pull/9895",
+  "repo": "fern-api/fern",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=20.0.0",
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test --filter=!@fern-api/ete-tests",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/assistant-ui/assistant-ui/pull/2142",
+  "repo": "assistant-ui/assistant-ui",
+  "kinds": [
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/milkshakesoftware/PreMailer.Net/pull/427",
+  "repo": "milkshakesoftware/PreMailer.Net",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/launchql/pgsql-parser/pull/162",
+  "repo": "launchql/pgsql-parser",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "lerna"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/optimism/pull/17797",
+  "repo": "ethereum-optimism/optimism",
+  "kinds": [
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/lingodotdev/lingo.dev/pull/915",
+  "repo": "lingodotdev/lingo.dev",
+  "kinds": [
+   "backward_compatible",
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": false,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": null,
+  "test": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "test_cmd": "turbo test",
+  "lint": {
+   "status": "none",
+   "runner": null
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/softmaple/softmaple/pull/245",
+  "repo": "softmaple/softmaple",
+  "kinds": [
+   "files_scope",
+   "lint_clean"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": true,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": false,
+  "engines_node": ">=22.16.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "prepare"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/laiso/askrepo/pull/11",
+  "repo": "laiso/askrepo",
+  "kinds": [
+   "docs_updated",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/wix/react-native-ui-lib/pull/3515",
+  "repo": "wix/react-native-ui-lib",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "yarn"
+  ],
+  "workspaces": false,
+  "npmrc": false,
+  "yarnrc": true,
+  "pnp": false,
+  "packageManager": "yarn",
+  "nvmrc": true,
+  "engines_node": ">=18",
+  "test": {
+   "status": "recognised",
+   "runner": "jest"
+  },
+  "test_cmd": "jest",
+  "lint": {
+   "status": "recognised",
+   "runner": "eslint"
+  },
+  "hooks": [
+   "pretest"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/ethereum-optimism/optimism/pull/17934",
+  "repo": "ethereum-optimism/optimism",
+  "kinds": [
+   "lint_clean",
+   "tests_pass"
+  ],
+  "status": "no_package_json"
+ },
+ {
+  "pr": "https://github.com/different-ai/zero-finance/pull/265",
+  "repo": "different-ai/zero-finance",
+  "kinds": [
+   "tests_pass"
+  ],
+  "pm": [
+   "pnpm"
+  ],
+  "workspaces": true,
+  "npmrc": false,
+  "yarnrc": false,
+  "pnp": false,
+  "packageManager": "pnpm",
+  "nvmrc": true,
+  "engines_node": ">=22.11.0",
+  "test": {
+   "status": "none",
+   "runner": null
+  },
+  "test_cmd": "",
+  "lint": {
+   "status": "unrecognised",
+   "runner": "turbo"
+  },
+  "hooks": [
+   "postinstall"
+  ],
+  "git_deps": [],
+  "status": "scanned"
+ },
+ {
+  "pr": "https://github.com/airbytehq/airbyte/pull/58615",
+  "repo": "airbytehq/airbyte",
+  "kinds": [
+   "lint_clean"
+  ],
+  "status": "no_package_json"
+ }
+]
