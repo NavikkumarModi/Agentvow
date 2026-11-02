@@ -1,0 +1,17 @@
+[
+ {
+  "pr": "https://github.com/siteboon/claudecodeui/pull/157",
+  "repo": "siteboon/claudecodeui",
+  "old_flagged": [
+   "server/projects.js"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "server/projects.js: not re-exported from a package entry (server/index.js)",
+   "src/App.jsx: not re-exported from a package entry (server/index.js)",
+   "src/components/Sidebar.jsx: not re-exported from a package entry (server/index.js)",
+   "src/utils/api.js: not re-exported from a package entry (server/index.js)"
+  ]
+ }
+]

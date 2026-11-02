@@ -4,9 +4,10 @@
 // "breaking" follows the rules @clerk/break-check documents (removed export or member, required parameter added, optional made required, parameter removed);
 // "changed" is a declared type or return text that differs (break-check calls any type change breaking; here it is reported separately because only text is compared).
 const ts = require("typescript");
+const scriptKind = f => (/\.tsx$/.test(f) ? ts.ScriptKind.TSX : /\.jsx$/.test(f) ? ts.ScriptKind.JSX : /\.(js|mjs|cjs)$/.test(f) ? ts.ScriptKind.JS : ts.ScriptKind.TS);
 
 function parse(src, file) {
-  return ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, file.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  return ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind(file));
 }
 const hasMod = (n, k) => (ts.getCombinedModifierFlags ? !!(ts.canHaveModifiers(n) && (ts.getModifiers(n) || []).some(m => m.kind === k)) : false);
 const exported = n => hasMod(n, ts.SyntaxKind.ExportKeyword);
@@ -108,6 +109,8 @@ process.stdin.on("end", () => {
       console.log(JSON.stringify({ breaking: [], changed: [], gaps: [`parse errors in the ${o.gaps.some(g => g.startsWith("parse errors")) ? "old" : "new"} version; no comparison made`] })); return;
     }
     const d = diff(o.out, n.out);
+    const cjs = t => /(^|\n)\s*(module\.exports\b|exports\.[A-Za-z_$])/.test(t);
+    if (cjs(old) || cjs(nw)) { console.log(JSON.stringify({ breaking: [], changed: [], gaps: ["CommonJS exports (module.exports / exports.x) are not compared"] })); return; }
     const wo = new Set(o.wild), wn = new Set(n.wild);
     const wildChanged = [...wo].filter(x => !wn.has(x)).concat([...wn].filter(x => !wo.has(x)));
     const gaps = [...new Set([...o.gaps, ...n.gaps, ...wildChanged.map(x => `wildcard re-export changed: ${x}`)])];

@@ -15,8 +15,9 @@ from pathlib import Path
 from .api_diff import _show
 
 HERE = Path(__file__).resolve().parent / "ts"
-TEST = re.compile(r"(^|/)(__tests__|__mocks__|tests?|spec|e2e|stories|fixtures?)(/|$)|\.(test|spec|stories)\.[jt]sx?$|\.d\.ts$")
-SRC = re.compile(r"\.tsx?$")
+TEST = re.compile(r"(^|/)(__tests__|__mocks__|tests?|spec|e2e|stories|fixtures?|dist|build|out|node_modules|vendor|umd|bundles?)(/|$)|\.(test|spec|stories)\.[cm]?[jt]sx?$|\.d\.ts$|\.min\.[cm]?js$|(^|/)[^/]*\.config\.[cm]?[jt]s$|(^|/)\.[^/]+rc\.[cm]?js$")
+SRC = re.compile(r"\.([jt]sx?|mjs)$")
+EXTS = (".ts", ".tsx", "/index.ts", ".js", ".jsx", ".mjs", "/index.js")
 
 
 def is_candidate(rel: str) -> bool:
@@ -108,10 +109,12 @@ def _targets(pj: dict) -> list:
 
 def _source_for(pkg_dir: str, target: str) -> list:
     stem = posixpath.splitext(posixpath.normpath(target).lstrip("./"))[0].removesuffix(".d")
+    stems = [stem]
     for build in ("dist", "lib", "build", "out", "esm", "cjs"):
         if stem.startswith(build + "/"):
-            stem = "src/" + stem[len(build) + 1:]
-    return [posixpath.normpath(posixpath.join(pkg_dir, stem + e)) for e in (".ts", ".tsx", "/index.ts")]
+            stems.insert(0, "src/" + stem[len(build) + 1:])   # a built folder usually comes from src/; but lib/ may itself be the source, so the unmapped path stays as the second choice
+            break
+    return [posixpath.normpath(posixpath.join(pkg_dir, st + e)) for st in stems for e in EXTS]
 
 
 def _entries(pkg_dir: str, pj: dict, repo: Path) -> list:
@@ -122,13 +125,13 @@ def _entries(pkg_dir: str, pj: dict, repo: Path) -> list:
             if (repo / c).is_file():
                 found.append(c); break
     if not found:
-        found = [c for c in (posixpath.normpath(posixpath.join(pkg_dir, x)) for x in ("src/index.ts", "index.ts", "src/main.ts")) if (repo / c).is_file()][:1]
+        found = [c for c in (posixpath.normpath(posixpath.join(pkg_dir, x)) for x in ("src/index.ts", "index.ts", "src/main.ts", "src/index.js", "index.js")) if (repo / c).is_file()][:1]
     return list(dict.fromkeys(found))
 
 
 def _resolve(repo: Path, frm: str, spec: str):
     base = posixpath.normpath(posixpath.join(posixpath.dirname(frm), spec))
-    for cand in (base + ".ts", base + ".tsx", base + "/index.ts", base + "/index.tsx", base.removesuffix(".js") + ".ts", base.removesuffix(".js") + ".tsx"):
+    for cand in (base + ".ts", base + ".tsx", base + "/index.ts", base + "/index.tsx", base.removesuffix(".js") + ".ts", base.removesuffix(".js") + ".tsx", base, base + ".js", base + ".jsx", base + ".mjs", base + "/index.js"):
         if (repo / cand).is_file():
             return cand
     return None

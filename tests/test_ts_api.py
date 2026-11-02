@@ -122,10 +122,38 @@ class NamedReachability(unittest.TestCase):
         self.assertTrue(any("wildcard" in g for g in gaps2), gaps2)
 
 
+@NEEDS
+class JavaScriptFiles(unittest.TestCase):
+    def test_a_removed_export_of_a_plain_javascript_library_is_found(self):   # 40 of the 360 non-Python backward-compatibility claims are JavaScript-only changes
+        files = {"package.json": json.dumps({"name": "lib", "main": "lib/index.js"}), "lib/index.js": "export { run } from './run.js';\n", "lib/run.js": "export function run(a, b) {}\nexport function helper() {}\n"}
+        d = make(files, {"lib/run.js": "export function helper() {}\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["lib/run.js"])
+        self.assertEqual(found, ["lib/run.js: removed: run"])
+
+    def test_a_new_required_parameter_in_javascript_is_found(self):
+        files = {"package.json": json.dumps({"name": "lib", "main": "index.js"}), "index.js": "export function f(a) {}\n"}
+        d = make(files, {"index.js": "export function f(a, b) {}\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["index.js"])
+        self.assertEqual(found, ["index.js: f: new required parameter(s): b"])
+
+    def test_commonjs_exports_are_a_gap_not_a_pass(self):
+        files = {"package.json": json.dumps({"name": "lib", "main": "index.js"}), "index.js": "module.exports = { f() {} };\n"}
+        d = make(files, {"index.js": "module.exports = { g() {} };\n"})
+        found, gaps, _ = ts_api.check(d, "HEAD", ["index.js"])
+        self.assertEqual(found, [])
+        self.assertTrue(any("CommonJS" in g for g in gaps), gaps)
+
+    def test_a_main_that_points_at_a_build_folder_maps_to_the_source_when_it_exists(self):
+        files = {"package.json": json.dumps({"name": "lib", "main": "dist/index.js"}), "src/index.js": "export const a = 1;\nexport const b = 2;\n"}
+        d = make(files, {"src/index.js": "export const a = 1;\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["src/index.js"])
+        self.assertEqual(found, ["src/index.js: removed: b"])
+
+
 class WithoutEngine(unittest.TestCase):
     def test_typescript_files_are_candidates_but_tests_and_declarations_are_not(self):
-        self.assertTrue(ts_api.is_candidate("src/a.ts") and ts_api.is_candidate("ui/b.tsx"))
-        self.assertFalse(any(ts_api.is_candidate(f) for f in ("src/a.test.ts", "tests/x.ts", "types/x.d.ts", "a.js")))
+        self.assertTrue(all(ts_api.is_candidate(f) for f in ("src/a.ts", "ui/b.tsx", "lib/c.js", "lib/d.mjs", "src/e.jsx")))
+        self.assertFalse(any(ts_api.is_candidate(f) for f in ("src/a.test.ts", "tests/x.ts", "types/x.d.ts", "dist/a.js", "build/b.js", "app.min.js", "webpack.config.js", ".eslintrc.js", "node_modules/x/i.js", "src/a.py")))
 
 
 if __name__ == "__main__":

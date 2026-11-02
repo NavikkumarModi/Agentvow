@@ -1,6 +1,7 @@
 """Run the shipped TypeScript engine (agentvow.ts_api.check) on real flagged pull requests: shallow, fetch-only clones (no install, no scripts, hooks disabled), one repository at a time, deleted afterwards.
 Usage: AGENTVOW_TYPESCRIPT=<node_modules dir> python3 research/ts_apidiff/validate_clone.py <scratch_dir>   (reads <scratch_dir>/ts_bakeoff.json from run.py)"""
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -19,7 +20,8 @@ def sh(args, cwd, timeout=400):
 
 def main():
     scratch = Path(sys.argv[1])
-    d = json.load(open(scratch / "ts_bakeoff.json"))
+    kind = os.environ.get("KIND", "ts")
+    d = json.load(open(scratch / ("ts_bakeoff.json" if kind == "ts" else "ts_bakeoff_js.json")))
     cheap = {json.loads(l)["pr"]: json.loads(l) for l in (ROOT / "data/shadow2/cheap.jsonl").read_text().splitlines()}
     out = []
     for x in d:
@@ -47,7 +49,7 @@ def main():
         shutil.rmtree(work, ignore_errors=True)
         out.append(rec)
         print(x["repo"], "found" if rec.get("found") else ("error" if rec.get("error") else "none"), flush=True)
-    (scratch / "validate_clone.json").write_text(json.dumps(out, indent=1))
+    (scratch / ("validate_clone.json" if kind == "ts" else "validate_clone_js.json")).write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

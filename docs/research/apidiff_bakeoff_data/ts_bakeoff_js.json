@@ -1,0 +1,852 @@
+[
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/800",
+  "repo": "ruvnet/claude-flow",
+  "files": [
+   {
+    "file": "dist-cjs/src/cli/command-registry.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/help-formatter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "parse errors in the old version; no comparison made"
+    ]
+   },
+   {
+    "file": "dist-cjs/src/cli/help-text.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-cli.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "parse errors in the old version; no comparison made"
+    ]
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/agent.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/hooks.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/init/help.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/init/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/memory.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/performance-metrics.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "dist-cjs/src/cli/simple-commands/sparc.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/command-registry.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/help-text.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/agent.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/init/help.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/init/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/memory.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/performance-metrics.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/cli/simple-commands/sparc.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/frappe/gantt/pull/581",
+  "repo": "frappe/gantt",
+  "files": [
+   {
+    "file": "src/bar.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/siteboon/claudecodeui/pull/157",
+  "repo": "siteboon/claudecodeui",
+  "files": [
+   {
+    "file": "server/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "server/projects.js",
+    "breaking": [
+     "removed: getCodexSessions",
+     "removed: getCodexSessionMessages",
+     "removed: deleteCodexSession"
+    ],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/App.jsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/components/Sidebar.jsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "src/utils/api.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ruvnet/claude-flow/pull/727",
+  "repo": "ruvnet/claude-flow",
+  "files": [
+   {
+    "file": "jest.setup.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/validatorjs/validator.js/pull/2612",
+  "repo": "validatorjs/validator.js",
+  "files": [
+   {
+    "file": "src/lib/isURL.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/dotCMS/core/pull/32663",
+  "repo": "dotCMS/core",
+  "files": [
+   {
+    "file": "dotCMS/src/main/webapp/html/js/dojo/custom-build/dojox/atom/widget/FeedEntryViewer.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/ruvnet/agentic-flow/pull/35",
+  "repo": "ruvnet/agentic-flow",
+  "files": [
+   {
+    "file": "packages/agentdb/scripts/build-browser.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6709",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "files": [
+   {
+    "file": "app/sagas/init.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/petersalomonsen/wasm-git/pull/103",
+  "repo": "petersalomonsen/wasm-git",
+  "files": [
+   {
+    "file": "emscriptenbuild/post-async.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "emscriptenbuild/post.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "emscriptenbuild/pre.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13595",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "libraries/advangUtils/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/audUtils/bidderUtils.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/braveUtils/buildAndInterpret.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/connectionInfo/connectionUtils.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/cookieSync/cookieSync.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/precisoUtils/bidUtils.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/userAgentUtils/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/1plusXRtdProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/33acrossIdSystem.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/addefendBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adgenerationBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adheseBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adlooxAdServerVideo.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adlooxAnalyticsAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adlooxRtdProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/admaticBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adpod.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adrelevantisBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adtrueBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/advertisingBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adxpremiumAnalyticsAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/alkimiBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/apacdexBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/appnexusBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/betweenBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/bmtmBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/bucksenseBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/chtnwBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/clickforceBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/connectadBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/katspaugh/wavesurfer.js/pull/4166",
+  "repo": "katspaugh/wavesurfer.js",
+  "files": [
+   {
+    "file": "examples/spectrogram.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13295",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "libraries/liveIntentId/shared.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/unifiedIdSystem.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13609",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "creative/renderers/display/renderer.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/equativUtils/equativUtils.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/greedy/greedyPromise.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/ortbConverter/processors/default.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "libraries/pbsExtensions/processors/pbs.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adagioBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/admaticBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/admixerBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adplayerproVideoProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adrelevantisBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/advertisingBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/adxcgBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/appnexusBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/bidViewability.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/buzzoolaBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/codefuelBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/concertAnalyticsAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/contxtfulRtdProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/criteoBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/dspxBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/eplanningBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/equativBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/feedadBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/intersectionRtdProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/justpremiumBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/kargoBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/madvertiseBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/mediafuseBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/permutiveRtdProvider.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "modules/prebidServerBidAdapter/bidderConfig.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/prebid/Prebid.js/pull/13602",
+  "repo": "prebid/Prebid.js",
+  "files": [
+   {
+    "file": "modules/yieldlabBidAdapter.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/karam-ajaj/atlas/pull/59",
+  "repo": "karam-ajaj/atlas",
+  "files": [
+   {
+    "file": "data/react-ui/src/components/HostsTable.jsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "data/react-ui/src/components/NetworkMap.jsx",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/zapier/zapier-platform/pull/1151",
+  "repo": "zapier/zapier-platform",
+  "files": [
+   {
+    "file": "packages/core/src/http-middlewares/before/prepare-request.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   },
+   {
+    "file": "packages/core/src/tools/create-app-request-client.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   },
+   {
+    "file": "packages/schema/lib/schemas/AppFlagsSchema.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/4ian/GDevelop/pull/7766",
+  "repo": "4ian/GDevelop",
+  "files": [
+   {
+    "file": "Extensions/BBText/JsExtension.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   },
+   {
+    "file": "Extensions/BitmapText/JsExtension.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   },
+   {
+    "file": "newIDE/app/src/ObjectEditor/Editors/TextEditor.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "newIDE/app/src/ObjectsRendering/Renderers/RenderedTextInstance.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/getsentry/sentry-cli/pull/2677",
+  "repo": "getsentry/sentry-cli",
+  "files": [
+   {
+    "file": "js/helper.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   },
+   {
+    "file": "js/releases/options/uploadSourcemaps.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "CommonJS exports (module.exports / exports.x) are not compared"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/thirdweb-dev/js/pull/7587",
+  "repo": "thirdweb-dev/js",
+  "files": [
+   {
+    "file": "apps/portal/redirects.mjs",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/RocketChat/Rocket.Chat.ReactNative/pull/6395",
+  "repo": "RocketChat/Rocket.Chat.ReactNative",
+  "files": [
+   {
+    "file": "jest.setup.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/box/box-ui-elements/pull/3957",
+  "repo": "box/box-ui-elements",
+  "files": [
+   {
+    "file": "src/elements/content-sidebar/activity-feed/activity-feed/ActivityThread.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "parse errors in the new version; no comparison made"
+    ]
+   },
+   {
+    "file": "src/elements/content-sidebar/activity-feed/activity-feed/ActivityThreadReplies.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": [
+     "parse errors in the new version; no comparison made"
+    ]
+   }
+  ]
+ },
+ {
+  "pr": "https://github.com/probelabs/probe/pull/58",
+  "repo": "probelabs/probe",
+  "files": [
+   {
+    "file": "examples/chat/index.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   },
+   {
+    "file": "examples/chat/probeChat.js",
+    "breaking": [],
+    "changed": [],
+    "gaps": []
+   }
+  ]
+ }
+]

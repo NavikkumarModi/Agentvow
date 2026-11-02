@@ -12,8 +12,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "research/shadow2"))
 from common import gh  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from agentvow import ts_api  # noqa: E402
 
-TEST = re.compile(r"(^|/)(__tests__|__mocks__|tests?|spec|e2e|stories|fixtures?)(/|$)|\.(test|spec|stories)\.[jt]sx?$|\.d\.ts$")
+KIND = os.environ.get("KIND", "ts")   # ts: .ts/.tsx files; js: .js/.jsx/.mjs files (JavaScript, no type annotations)
+OUT = "ts_bakeoff.json" if KIND == "ts" else "ts_bakeoff_js.json"
+
+_OLD_TEST = re.compile(r"(^|/)(__tests__|__mocks__|tests?|spec|e2e|stories|fixtures?)(/|$)|\.(test|spec|stories)\.[jt]sx?$|\.d\.ts$")
 
 
 def raw(repo, path, ref):
@@ -31,7 +36,7 @@ def main():
         files = gh(f"repos/{o}/{n}/pulls/{x['number']}/files?per_page=100")
         if not isinstance(files, list):
             continue
-        ts_files = [f for f in files if re.search(r"\.tsx?$", f["filename"]) and not TEST.search(f["filename"]) and f["status"] in ("modified", "removed", "renamed")]
+        ts_files = [f for f in files if re.search(r"\.tsx?$" if KIND == "ts" else r"\.(jsx?|mjs)$", f["filename"]) and ts_api.is_candidate(f["filename"]) and f["status"] in ("modified", "removed", "renamed")]
         if not ts_files:
             continue
         rec = {"pr": x["pr"], "repo": x["repo"], "files": []}
@@ -52,7 +57,7 @@ def main():
         out.append(rec)
         if i % 25 == 0:
             print(i, len(units), flush=True)
-    (scratch / "ts_bakeoff.json").write_text(json.dumps(out, indent=1))
+    (scratch / OUT).write_text(json.dumps(out, indent=1))
     print("done", len(out))
 
 

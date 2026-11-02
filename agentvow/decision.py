@@ -271,7 +271,7 @@ def _compat(c, repo, base, changed) -> Finding:
     py = [f for f in changed if f.endswith(".py") and not R.is_test(f)]
     ts = [f for f in changed if ts_api.is_candidate(f)]
     if not py and not ts:
-        return Finding(c.text, c.kind, "UNKNOWN", "No changed non-test Python or TypeScript files were found, so the claim cannot be checked.")
+        return Finding(c.text, c.kind, "UNKNOWN", "No changed non-test Python, TypeScript or JavaScript files were found, so the claim cannot be checked.")
     found, gaps, skipped = [], [], []
     if py:
         found, gaps = api_diff.diff(repo, base, py)
@@ -280,9 +280,9 @@ def _compat(c, repo, base, changed) -> Finding:
         if ts_api.available():
             f2, g2, skipped = ts_api.check(repo, base, ts)
             found, gaps = found + f2, gaps + g2
-            ts_note = " TypeScript files were compared without a build (parser only), and only those exported from a non-private package entry count."
+            ts_note = " TypeScript and JavaScript files were compared without a build (parser only), and only those exported from a non-private package entry count."
         else:
-            gaps = gaps + [f"{len(ts)} TypeScript file(s) changed, but the TypeScript engine is not available (needs Node and the typescript package; see AGENTVOW_TYPESCRIPT)"]
+            gaps = gaps + [f"{len(ts)} TypeScript or JavaScript file(s) changed, but the TypeScript engine is not available (needs Node and the typescript package; see AGENTVOW_TYPESCRIPT)"]
     meta = {"api_engines": api_diff.engine_info()}
     if skipped:
         meta["not_public_api"] = skipped[:8]
@@ -296,7 +296,7 @@ def _compat(c, repo, base, changed) -> Finding:
     if ts and not py and len(skipped) == len(ts):
         return Finding(c.text, c.kind, "UNKNOWN", "None of the changed TypeScript files is part of a public package API that could be compared (" + "; ".join(skipped[:3]) + ")." + ts_note, unknowns=skipped[:8], meta=meta)
     return Finding(c.text, c.kind, "NOT_CONTRADICTED",
-                   "No removed names or incompatible signature changes in the changed Python or TypeScript files that are public API." + ts_note + " Behaviour changes, "
+                   "No removed names or incompatible signature changes in the changed Python, TypeScript or JavaScript files that are public API." + ts_note + " Behaviour changes, "
                    "other languages, config and runtime compatibility are not checked.", meta=meta)
 
 

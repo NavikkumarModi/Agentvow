@@ -4,11 +4,12 @@
 //   `export { a, b as c } from "x"`, `export type { T } from` -> names the *underlying* symbols ["a", "b"]
 //   `import { a } from "x"; export { a }` and `export default a` -> an edge to "x" for the underlying symbol
 const ts = require("typescript");
+const scriptKind = f => (/\.tsx$/.test(f) ? ts.ScriptKind.TSX : /\.jsx$/.test(f) ? ts.ScriptKind.JSX : /\.(js|mjs|cjs)$/.test(f) ? ts.ScriptKind.JS : ts.ScriptKind.TS);
 let buf = "";
 process.stdin.on("data", d => (buf += d));
 process.stdin.on("end", () => {
   const { src, file } = JSON.parse(buf);
-  const sf = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, file.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  const sf = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind(file));
   const imports = {};                       // local name -> {spec, orig}
   for (const st of sf.statements) {
     if (!ts.isImportDeclaration(st) || !ts.isStringLiteral(st.moduleSpecifier) || !st.importClause) continue;
