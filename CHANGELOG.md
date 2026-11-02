@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.1 (not yet published)
+A review queue, and a more precise TypeScript public-API check. Items marked "repository" are not in the wheel.
+- **TypeScript check: name-level reachability and all `exports` subpaths.** A name-limited re-export makes only that name public (other names of the same file are reported as "not re-exported", not as breaks); `export *` passes on what is public; every subpath in a `package.json` `exports` map is an entry (data and style targets are ignored). A wildcard re-export is a gap only when it changed (before, any `export *` in an entry made the result UNKNOWN). On the 15 real pull requests flagged earlier the outcomes did not change (3 public-API findings kept, 12 explained); recall is unmeasured. 6 tests.
 - **`agentvow queue`**: a ranked list of the agent pull requests that need a person, from a directory of receipts and a policy (stop, needs a person, acknowledged, no flag raised), with the policy's plain-language reasons and the latest receipt per commit; exit code 1 when anyone is needed, `--markdown` for a shared page. It re-evaluates receipts with the existing policy and adds no judgement; "no flag raised" is never described as safe. 4 tests. Considered and not built: a SARIF export (GitHub shows code-scanning alerts only on specific lines of the diff, and most findings are claim-level).
 
 ## 0.5.0 (2026-11-02)

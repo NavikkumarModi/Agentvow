@@ -1,0 +1,229 @@
+[
+ {
+  "pr": "https://github.com/vfarcic/dot-ai/pull/166",
+  "repo": "vfarcic/dot-ai",
+  "old_flagged": [
+   "src/evaluation/evaluators/base-comparative.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/core/model-config.ts: not re-exported from a package entry (src/index.ts, src/mcp/server.ts)",
+   "src/core/platform-utils.ts: not re-exported from a package entry (src/index.ts, src/mcp/server.ts)",
+   "src/core/providers/anthropic-provider.ts: not re-exported from a package entry (src/index.ts, src/mcp/server.ts)",
+   "src/core/providers/provider-debug-utils.ts: not re-exported from a package entry (src/index.ts, src/mcp/server.ts)"
+  ]
+ },
+ {
+  "pr": "https://github.com/aku11i/phantom/pull/150",
+  "repo": "aku11i/phantom",
+  "old_flagged": [
+   "packages/cli/src/errors.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": []
+ },
+ {
+  "pr": "https://github.com/cloud-atlas-ai/obsidian-ics/pull/196",
+  "repo": "cloud-atlas-ai/obsidian-ics",
+  "old_flagged": [
+   "src/icalUtils.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/IEvent.ts: not re-exported from a package entry (src/main.ts)",
+   "src/icalUtils.ts: not re-exported from a package entry (src/main.ts)",
+   "src/settings/ICSSettings.ts: not re-exported from a package entry (src/main.ts)",
+   "src/settings/ICSSettingsTab.ts: not re-exported from a package entry (src/main.ts)"
+  ]
+ },
+ {
+  "pr": "https://github.com/tphakala/birdnet-go/pull/1077",
+  "repo": "tphakala/birdnet-go",
+  "old_flagged": [
+   "frontend/src/lib/stores/settings.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "frontend/src/lib/stores/settings.ts: in a private package (an application, not a library)",
+   "frontend/src/lib/utils/settingsApi.ts: in a private package (an application, not a library)",
+   "frontend/src/lib/utils/settingsChanges.ts: in a private package (an application, not a library)"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/148",
+  "repo": "dyoshikawa/rulesync",
+  "old_flagged": [
+   "src/generators/mcp/shared-factory.ts",
+   "src/test-utils/index.ts",
+   "src/test-utils/logger-mock.ts",
+   "src/utils/command-generators.ts",
+   "src/utils/frontmatter.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/cli/commands/generate.ts: the package's source entry could not be found",
+   "src/cli/commands/gitignore.ts: the package's source entry could not be found",
+   "src/cli/commands/import.ts: the package's source entry could not be found",
+   "src/cli/index.ts: the package's source entry could not be found"
+  ]
+ },
+ {
+  "pr": "https://github.com/anthropics/claude-code-action/pull/449",
+  "repo": "anthropics/claude-code-action",
+  "old_flagged": [
+   "src/create-prompt/index.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/create-prompt/index.ts: in a private package (an application, not a library)",
+   "src/mcp/install-mcp-server.ts: in a private package (an application, not a library)",
+   "src/modes/remote-agent/index.ts: in a private package (an application, not a library)",
+   "src/modes/tag/index.ts: in a private package (an application, not a library)"
+  ]
+ },
+ {
+  "pr": "https://github.com/dyoshikawa/rulesync/pull/190",
+  "repo": "dyoshikawa/rulesync",
+  "old_flagged": [
+   "src/generators/ignore/augmentcode.ts",
+   "src/generators/ignore/codexcli.ts",
+   "src/generators/ignore/junie.ts",
+   "src/generators/ignore/kiro.ts",
+   "src/generators/ignore/opencode.ts",
+   "src/generators/ignore/qwencode.ts",
+   "src/generators/ignore/shared-factory.ts",
+   "src/generators/ignore/shared-helpers.ts",
+   "src/generators/ignore/windsurf.ts",
+   "src/utils/permission-merger.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/cli/commands/generate.ts: the package's source entry could not be found",
+   "src/cli/index.ts: the package's source entry could not be found",
+   "src/core/generator.ts: the package's source entry could not be found",
+   "src/core/importer.ts: the package's source entry could not be found"
+  ]
+ },
+ {
+  "pr": "https://github.com/gtg922r/obsidian-numerals/pull/113",
+  "repo": "gtg922r/obsidian-numerals",
+  "old_flagged": [
+   "src/numeralsUtilities.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "src/numerals.types.ts: not re-exported from a package entry (src/main.ts)",
+   "src/numeralsUtilities.ts: not re-exported from a package entry (src/main.ts)"
+  ]
+ },
+ {
+  "pr": "https://github.com/hsuanxyz/ion2-calendar/pull/357",
+  "repo": "hsuanxyz/ion2-calendar",
+  "old_flagged": [
+   "dev/src/ion2-calendar/components/calendar.modal.ts",
+   "src/components/calendar.modal.ts"
+  ],
+  "found": [
+   "src/components/calendar.modal.ts: CalendarModal.constructor: parameter(s) removed: params"
+  ],
+  "gaps": [],
+  "skipped": [
+   "dev/src/ion2-calendar/calendar.module.ts: in a private package (an application, not a library)",
+   "dev/src/ion2-calendar/components/calendar.modal.ts: in a private package (an application, not a library)"
+  ]
+ },
+ {
+  "pr": "https://github.com/ajthinking/data-story/pull/466",
+  "repo": "ajthinking/data-story",
+  "old_flagged": [
+   "packages/nodejs/src/server/messageHandlers/run.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "packages/nodejs/src/server/messageHandlers/run.ts: not re-exported from a package entry (packages/nodejs/src/index.ts)"
+  ]
+ },
+ {
+  "pr": "https://github.com/SwitchbackTech/compass/pull/1101",
+  "repo": "SwitchbackTech/compass",
+  "old_flagged": [
+   "packages/core/src/types/calendar.types.ts",
+   "packages/scripts/src/common/zod-to-mongo-schema.ts"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "packages/backend/src/common/constants/collections.ts: the package's source entry could not be found",
+   "packages/backend/src/common/services/mongo.service.ts: the package's source entry could not be found",
+   "packages/core/src/types/calendar.types.ts: in a private package (an application, not a library)",
+   "packages/core/src/types/type.utils.ts: in a private package (an application, not a library)"
+  ]
+ },
+ {
+  "pr": "https://github.com/inboundemail/inbound/pull/57",
+  "repo": "inboundemail/inbound",
+  "old_flagged": [
+   "@inboundemail/sdk/src/client.ts"
+  ],
+  "found": [
+   "@inboundemail/sdk/src/client.ts: removed: InboundEmailClient.emailAddress"
+  ],
+  "gaps": [],
+  "skipped": []
+ },
+ {
+  "pr": "https://github.com/module-federation/core/pull/3888",
+  "repo": "module-federation/core",
+  "old_flagged": [
+   "apps/next-app-router/next-app-router-4000/app/context/context-click-counter.tsx"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "apps/next-app-router/next-app-router-4000/app/context/context-click-counter.tsx: in a private package (an application, not a library)",
+   "apps/next-app-router/next-app-router-4000/app/error-handling/[categorySlug]/[subCategorySlug]/error.tsx: in a private package (an application, not a library)",
+   "apps/next-app-router/next-app-router-4000/app/error-handling/[categorySlug]/error.tsx: in a private package (an application, not a library)",
+   "apps/next-app-router/next-app-router-4000/app/error-handling/error.tsx: in a private package (an application, not a library)"
+  ]
+ },
+ {
+  "pr": "https://github.com/MetaMask/core/pull/6307",
+  "repo": "MetaMask/core",
+  "old_flagged": [
+   "packages/assets-controllers/src/NftController.ts"
+  ],
+  "found": [
+   "packages/assets-controllers/src/NftController.ts: removed: NftController.openSeaApiKey",
+   "packages/assets-controllers/src/NftController.ts: removed: NftController.setApiKey"
+  ],
+  "gaps": [],
+  "skipped": []
+ },
+ {
+  "pr": "https://github.com/onlook-dev/onlook/pull/1855",
+  "repo": "onlook-dev/onlook",
+  "old_flagged": [
+   "docs/src/app/(home)/layout.tsx",
+   "docs/src/app/(home)/page.tsx",
+   "docs/src/app/docs/[[...slug]]/edit-button.tsx",
+   "docs/src/app/docs/layout.tsx"
+  ],
+  "found": [],
+  "gaps": [],
+  "skipped": [
+   "docs/src/app/(home)/layout.tsx: in a private package (an application, not a library)",
+   "docs/src/app/(home)/page.tsx: in a private package (an application, not a library)",
+   "docs/src/app/[[...slug]]/edit-gh.tsx: in a private package (an application, not a library)",
+   "docs/src/app/[[...slug]]/page.tsx: in a private package (an application, not a library)"
+  ]
+ }
+]

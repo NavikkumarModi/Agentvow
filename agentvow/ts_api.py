@@ -81,51 +81,100 @@ def _package_for(repo: Path, rel: str):
         d = posixpath.dirname(d)
 
 
-def _entries(pkg_dir: str, pj: dict) -> list:
-    paths = []
-    ex = pj.get("exports")
-    if isinstance(ex, str):
-        paths.append(ex)
-    elif isinstance(ex, dict):
-        node = ex.get(".", ex)
-        if isinstance(node, str):
-            paths.append(node)
-        elif isinstance(node, dict):
-            for k in ("types", "import", "default", "require"):
-                v = node.get(k)
-                if isinstance(v, str):
-                    paths.append(v)
-    paths += [pj.get(k) for k in ("types", "typings", "module", "main") if isinstance(pj.get(k), str)]
+def _targets(pj: dict) -> list:
+    """Every file the package.json offers to importers: the root entry first, then the other `exports` subpaths, then the legacy fields. Strings only; data, styles and binaries are dropped."""
     out = []
-    for p in paths:
-        stem = posixpath.splitext(posixpath.normpath(p).lstrip("./"))[0].removesuffix(".d")
-        for build in ("dist", "lib", "build", "out", "esm", "cjs"):
-            if stem.startswith(build + "/"):
-                stem = "src/" + stem[len(build) + 1:]
-        out += [posixpath.normpath(posixpath.join(pkg_dir, stem + e)) for e in (".ts", ".tsx", "/index.ts")]
-    out += [posixpath.normpath(posixpath.join(pkg_dir, x)) for x in ("src/index.ts", "index.ts", "src/main.ts")]
-    return list(dict.fromkeys(out))
+
+    def walk(node):
+        if isinstance(node, str):
+            out.append(node)
+        elif isinstance(node, dict):
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+    ex = pj.get("exports")
+    if isinstance(ex, dict) and any(k.startswith(".") for k in ex):
+        walk(ex.get("."))
+        for k, v in ex.items():
+            if k.startswith(".") and k != ".":
+                walk(v)
+    else:
+        walk(ex)
+    out += [pj.get(k) for k in ("types", "typings", "module", "main") if isinstance(pj.get(k), str)]
+    return [t for t in dict.fromkeys(out) if not t.endswith((".json", ".css", ".node", ".wasm", ".map"))]
 
 
-def _reachable(repo: Path, entry: str, limit: int = 150) -> set:
-    seen, todo = {entry}, [entry]
-    while todo and len(seen) < limit:
-        f = todo.pop()
+def _source_for(pkg_dir: str, target: str) -> list:
+    stem = posixpath.splitext(posixpath.normpath(target).lstrip("./"))[0].removesuffix(".d")
+    for build in ("dist", "lib", "build", "out", "esm", "cjs"):
+        if stem.startswith(build + "/"):
+            stem = "src/" + stem[len(build) + 1:]
+    return [posixpath.normpath(posixpath.join(pkg_dir, stem + e)) for e in (".ts", ".tsx", "/index.ts")]
+
+
+def _entries(pkg_dir: str, pj: dict, repo: Path) -> list:
+    """Source files that are entries of the package (existing ones). Falls back to the conventional src/index.ts only when no declared target maps to a file."""
+    found = []
+    for t in _targets(pj):
+        for c in _source_for(pkg_dir, t):
+            if (repo / c).is_file():
+                found.append(c); break
+    if not found:
+        found = [c for c in (posixpath.normpath(posixpath.join(pkg_dir, x)) for x in ("src/index.ts", "index.ts", "src/main.ts")) if (repo / c).is_file()][:1]
+    return list(dict.fromkeys(found))
+
+
+def _resolve(repo: Path, frm: str, spec: str):
+    base = posixpath.normpath(posixpath.join(posixpath.dirname(frm), spec))
+    for cand in (base + ".ts", base + ".tsx", base + "/index.ts", base + "/index.tsx", base.removesuffix(".js") + ".ts", base.removesuffix(".js") + ".tsx"):
+        if (repo / cand).is_file():
+            return cand
+    return None
+
+
+def _public(repo: Path, entries: list, limit: int = 400) -> dict:
+    """-> {file: "*" | set of names}: which names of each file are public API, by following re-exports from the entries. An entry exports all of its own names. A name-limited re-export (`export { a } from "./x"`) makes only
+    `a` public in x; `export *` passes on whatever is public in the re-exporting file. A re-export alias is not tracked through a second hop (the underlying names are passed on), which can only over-include."""
+    pub, work = {}, []
+
+    def grow(f, names):
+        cur = pub.get(f)
+        if cur == "*":
+            return
+        if names == "*":
+            pub[f] = "*"; work.append(f); return
+        new = set(names) - (cur or set())
+        if cur is None or new:
+            pub[f] = (cur or set()) | set(names); work.append(f)
+    for e in entries:
+        grow(e, "*")
+    steps = 0
+    while work and steps < limit:
+        f = work.pop(); steps += 1
         src = _read(repo, f)
-        specs = (_node("reexports.js", {"src": src, "file": f}) or []) if src is not None else []
-        for spec in specs:
-            if not spec.startswith("."):
+        res = _node("reexports.js", {"src": src, "file": f}) if src is not None else None
+        for edge in (res or {}).get("edges", []):
+            target = _resolve(repo, f, edge["spec"]) if edge["spec"].startswith(".") else None
+            if target is None:
                 continue
-            base = posixpath.normpath(posixpath.join(posixpath.dirname(f), spec))
-            for cand in (base + ".ts", base + ".tsx", base + "/index.ts", base + "/index.tsx", base.removesuffix(".js") + ".ts", base.removesuffix(".js") + ".tsx"):
-                if cand not in seen and (repo / cand).is_file():
-                    seen.add(cand); todo.append(cand); break
-    return seen
+            if edge["names"] == "*":
+                grow(target, pub[f])
+            else:
+                grow(target, edge["names"])
+    return pub
+
+
+def _top(finding: str) -> str:
+    """The top-level name a finding is about: 'removed: A.b' -> 'A', 'f: parameter ...' -> 'f', 'A.m: ...' -> 'A'."""
+    t = finding[len("removed: "):] if finding.startswith("removed: ") else finding
+    return t.split(":", 1)[0].split(".", 1)[0].split("#", 1)[0]
 
 
 def check(repo: Path, base: str, files: list):
-    """-> (found, gaps, skipped). found: breaking changes in files that are public API; gaps: could not be compared; skipped: why a changed file was not treated as public API."""
-    found, gaps, skipped, reach_cache = [], [], [], {}
+    """-> (found, gaps, skipped). found: breaking changes in names that are public API; gaps: could not be compared; skipped: why a changed file (or part of one) was not treated as public API."""
+    found, gaps, skipped, pub_cache = [], [], [], {}
     for f in files:
         old = _show(repo, base, f)
         if old is None:
@@ -135,21 +184,30 @@ def check(repo: Path, base: str, files: list):
             skipped.append(f"{f}: no package.json found, so no public API is declared"); continue
         if pj.get("private"):
             skipped.append(f"{f}: in a private package (an application, not a library)"); continue
-        ent = next((e for e in _entries(pdir or "", pj) if (repo / e).is_file()), None)
-        if ent is None:
+        key = (pdir, json.dumps(pj, sort_keys=True))
+        if key not in pub_cache:
+            ents = _entries(pdir or "", pj, repo)
+            pub_cache[key] = (ents, _public(repo, ents) if ents else {})
+        ents, pub = pub_cache[key]
+        if not ents:
             skipped.append(f"{f}: the package's source entry could not be found"); continue
-        if ent not in reach_cache:
-            reach_cache[ent] = _reachable(repo, ent)
         if not (repo / f).exists():
             gaps.append(f"{f} was removed; whether it was public API cannot be told from the working tree (a change to the package entry would show it)"); continue
-        if f not in reach_cache[ent]:
-            skipped.append(f"{f}: not re-exported from the package entry {ent}"); continue
+        names = pub.get(f)
+        if names is None:
+            skipped.append(f"{f}: not re-exported from a package entry ({', '.join(ents[:2])})"); continue
         new = _read(repo, f)
         if new is None:
             gaps.append(f"could not read {f}"); continue
         res = _node("exports.js", {"old": old, "new": new, "file": f})
         if res is None:
             gaps.append(f"could not compare {f}"); continue
-        found += [f"{f}: {x}" for x in res.get("breaking", [])]
+        hits = res.get("breaking", [])
+        if names != "*":
+            private_hits = [h for h in hits if _top(h) not in names]
+            hits = [h for h in hits if _top(h) in names]
+            if private_hits:
+                skipped.append(f"{f}: {len(private_hits)} change(s) to names the package entry does not re-export")
+        found += [f"{f}: {x}" for x in hits]
         gaps += [f"{f}: {g}" for g in res.get("gaps", [])]
     return found, gaps, skipped

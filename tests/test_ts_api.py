@@ -76,6 +76,52 @@ class TypeScriptPublicApi(unittest.TestCase):
         self.assertFalse(marker.exists())
 
 
+@NEEDS
+class NamedReachability(unittest.TestCase):
+    PKG = json.dumps({"name": "lib", "main": "dist/index.js"})
+
+    def test_only_the_names_the_entry_reexports_are_public(self):   # file-level reachability over-flagged internals of a partly exported module
+        files = {"package.json": self.PKG, "src/index.ts": "export { pub } from './a';\n", "src/a.ts": "export function pub() {}\nexport function internal() {}\n"}
+        d = make(files, {"src/a.ts": "export function pub() {}\n"})
+        found, _, skipped = ts_api.check(d, "HEAD", ["src/a.ts"])
+        self.assertEqual(found, [])
+        self.assertTrue(any("do not re-export" in x or "does not re-export" in x for x in skipped), skipped)
+
+    def test_removing_a_name_the_entry_does_reexport_is_found(self):
+        files = {"package.json": self.PKG, "src/index.ts": "export { pub } from './a';\n", "src/a.ts": "export function pub() {}\nexport function internal() {}\n"}
+        d = make(files, {"src/a.ts": "export function internal() {}\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["src/a.ts"])
+        self.assertEqual(found, ["src/a.ts: removed: pub"])
+
+    def test_star_reexport_through_a_named_one_passes_the_names_on(self):
+        files = {"package.json": self.PKG, "src/index.ts": "export { pub } from './mid';\n", "src/mid.ts": "export * from './leaf';\n", "src/leaf.ts": "export const pub = 1;\nexport const hidden = 2;\n"}
+        d = make(files, {"src/leaf.ts": "export const hidden = 2;\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["src/leaf.ts"])
+        self.assertEqual(found, ["src/leaf.ts: removed: pub"])
+
+    def test_a_name_imported_then_exported_counts(self):
+        files = {"package.json": self.PKG, "src/index.ts": "import { f } from './a';\nexport { f };\n", "src/a.ts": "export function f() {}\n"}
+        d = make(files, {"src/a.ts": "export function g() {}\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["src/a.ts"])
+        self.assertEqual(found, ["src/a.ts: removed: f"])
+
+    def test_every_exports_subpath_is_an_entry(self):   # only the root entry used to count
+        pkg = json.dumps({"name": "lib", "exports": {".": "./dist/index.js", "./extra": {"types": "./dist/extra.d.ts", "default": "./dist/extra.js"}, "./package.json": "./package.json"}})
+        files = {"package.json": pkg, "src/index.ts": "export const a = 1;\n", "src/extra.ts": "export const b = 1;\n"}
+        d = make(files, {"src/extra.ts": "export const c = 1;\n"})
+        found, _, _ = ts_api.check(d, "HEAD", ["src/extra.ts"])
+        self.assertEqual(found, ["src/extra.ts: removed: b"])
+
+    def test_a_wildcard_reexport_is_a_gap_only_when_it_changed(self):
+        files = {"package.json": self.PKG, "src/index.ts": "export * from './a';\nexport const x = 1;\n", "src/a.ts": "export const k = 1;\n"}
+        d = make(files, {"src/index.ts": "export * from './a';\nexport const x = 2;\n"})
+        found, gaps, _ = ts_api.check(d, "HEAD", ["src/index.ts"])
+        self.assertEqual((found, gaps), ([], []))
+        d2 = make(files, {"src/index.ts": "export const x = 1;\n"})
+        _, gaps2, _ = ts_api.check(d2, "HEAD", ["src/index.ts"])
+        self.assertTrue(any("wildcard" in g for g in gaps2), gaps2)
+
+
 class WithoutEngine(unittest.TestCase):
     def test_typescript_files_are_candidates_but_tests_and_declarations_are_not(self):
         self.assertTrue(ts_api.is_candidate("src/a.ts") and ts_api.is_candidate("ui/b.tsx"))

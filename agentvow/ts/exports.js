@@ -37,7 +37,7 @@ function members(node, sf, out, prefix) {
 }
 
 function api(src, file) {
-  const sf = parse(src, file), out = {}, gaps = [];
+  const sf = parse(src, file), out = {}, gaps = [], wild = [];
   for (const st of sf.statements) {
     if (ts.isFunctionDeclaration(st) && exported(st) && st.name) {
       const key = st.name.text; out[key + (out[key] ? "#overload" + Object.keys(out).length : "")] = sig(st, sf);
@@ -52,7 +52,7 @@ function api(src, file) {
     } else if (ts.isVariableStatement(st) && exported(st)) {
       for (const d of st.declarationList.declarations) if (ts.isIdentifier(d.name)) out[d.name.text] = { kind: "var", type: text(d.type, sf) };
     } else if (ts.isExportDeclaration(st)) {
-      if (!st.exportClause) gaps.push(`wildcard re-export: ${text(st, sf).slice(0, 80)}`);
+      if (!st.exportClause) wild.push(text(st, sf).slice(0, 80));
       else if (ts.isNamedExports(st.exportClause)) for (const e of st.exportClause.elements) out[e.name.text] = { kind: "reexport" };
       else if (ts.isNamespaceExport(st.exportClause)) out[st.exportClause.name.text] = { kind: "reexport" };
     } else if (ts.isExportAssignment(st)) {
@@ -62,7 +62,7 @@ function api(src, file) {
     }
   }
   if (sf.parseDiagnostics && sf.parseDiagnostics.length) gaps.push(`parse errors: ${sf.parseDiagnostics.length}`);
-  return { out, gaps };
+  return { out, gaps, wild };
 }
 
 function diff(o, n) {
@@ -108,7 +108,9 @@ process.stdin.on("end", () => {
       console.log(JSON.stringify({ breaking: [], changed: [], gaps: [`parse errors in the ${o.gaps.some(g => g.startsWith("parse errors")) ? "old" : "new"} version; no comparison made`] })); return;
     }
     const d = diff(o.out, n.out);
-    const gaps = [...new Set([...o.gaps, ...n.gaps])];
+    const wo = new Set(o.wild), wn = new Set(n.wild);
+    const wildChanged = [...wo].filter(x => !wn.has(x)).concat([...wn].filter(x => !wo.has(x)));
+    const gaps = [...new Set([...o.gaps, ...n.gaps, ...wildChanged.map(x => `wildcard re-export changed: ${x}`)])];
     console.log(JSON.stringify({ ...d, gaps }));
   } catch (e) { console.log(JSON.stringify({ breaking: [], changed: [], gaps: ["exception: " + String(e).slice(0, 120)] })); }
 });
