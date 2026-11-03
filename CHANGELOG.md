@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.1 (not yet published)
+## 0.5.1 (2026-11-03)
 - **The TypeScript engine also reads JavaScript** (`.js`, `.jsx`, `.mjs`): same rules (only public package API counts), entries in `package.json` may point at source files directly, compiled output (`dist/`, `build/`, `*.min.js`) and tool configuration files are never compared. **CommonJS exports (`module.exports`, `exports.x`) are a gap, not a pass.** On 22 real pull requests with JavaScript source files the engine found no public-API change (one flag, in an application server, was correctly not public API) and 8 files were CommonJS gaps, so the yield is low. 4 tests.
 A review queue, and a more precise TypeScript public-API check. Items marked "repository" are not in the wheel.
 - **TypeScript check: name-level reachability and all `exports` subpaths.** A name-limited re-export makes only that name public (other names of the same file are reported as "not re-exported", not as breaks); `export *` passes on what is public; every subpath in a `package.json` `exports` map is an entry (data and style targets are ignored). A wildcard re-export is a gap only when it changed (before, any `export *` in an entry made the result UNKNOWN). On the 15 real pull requests flagged earlier the outcomes did not change (3 public-API findings kept, 12 explained); recall is unmeasured. 6 tests.
