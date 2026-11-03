@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- Repository (not in the wheel): **`.github/workflows/queue.yml`**, a reusable, read-only workflow that writes the review queue (`agentvow queue --github`) as a job summary on a schedule; policy from the default branch, fails closed on an unreadable policy, refused on any event except `schedule` and `workflow_dispatch`. 8 static tests; the shell step was run locally, not yet on GitHub Actions. `docs/GATE_WORKFLOW.md`.
+- Repository (not in the wheel): **`.github/workflows/queue.yml`**, a reusable, read-only workflow that writes the review queue (`agentvow queue --github`) as a job summary on a schedule; policy from the default branch, fails closed on an unreadable policy, refused on any event except `schedule` and `workflow_dispatch`. 8 static tests. Run on GitHub Actions on 2026-11-03 (two `workflow_dispatch` runs in a private test repository with one gated pull request, which it listed as needing a person); `queue --github` itself was also run against 12 real gate receipts. The receipts are still unauthenticated. `docs/GATE_WORKFLOW.md`.
 
 ## 0.5.1 (2026-11-03)
 - **The TypeScript engine also reads JavaScript** (`.js`, `.jsx`, `.mjs`): same rules (only public package API counts), entries in `package.json` may point at source files directly, compiled output (`dist/`, `build/`, `*.min.js`) and tool configuration files are never compared. **CommonJS exports (`module.exports`, `exports.x`) are a gap, not a pass.** On 22 real pull requests with JavaScript source files the engine found no public-API change (one flag, in an application server, was correctly not public API) and 8 files were CommonJS gaps, so the yield is low. 4 tests.

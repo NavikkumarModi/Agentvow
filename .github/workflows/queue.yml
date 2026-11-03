@@ -10,7 +10,7 @@
 #       uses: NavikkumarModi/Agentvow/.github/workflows/queue.yml@<40-character commit sha>
 #       with: { fail-on: never }
 #
-# Needs Agentvow 0.5.1 or later (the `queue --github` option). Not yet run against a repository with open gated pull requests; see docs/GATE_WORKFLOW.md.
+# Needs Agentvow 0.5.1 or later (the `queue --github` option). Run on GitHub Actions (2026-11-03) against a private test repository with one open gated pull request; see docs/GATE_WORKFLOW.md.
 name: agentvow-queue
 on:
   workflow_call:
