@@ -4,7 +4,7 @@
 # Call it from a schedule (or workflow_dispatch) workflow, pinned to a full commit sha:
 #
 #   on: { schedule: [{ cron: "0 7 * * 1-5" }], workflow_dispatch: {} }
-#   permissions: { contents: read, pull-requests: read, actions: read }
+#   permissions: { contents: read, pull-requests: read, actions: read, attestations: read }
 #   jobs:
 #     queue:
 #       uses: NavikkumarModi/Agentvow/.github/workflows/queue.yml@<40-character commit sha>
@@ -31,6 +31,18 @@ on:
         description: "never (default): report only; needs_person: fail when any pull request is stopped or needs a person"
         type: string
         default: "never"
+      verify:
+        description: "off (default) | report | require: check each receipt's GitHub artifact attestation (needs the gate-attest.yml workflow, a public repository, and agentvow-version with --verify, i.e. later than 0.5.1). Unverified receipts are never ranked as no flag raised"
+        type: string
+        default: "off"
+      signer-digests:
+        description: "With verify: the allowed commits (40 hex characters each, separated by spaces or commas) of the gate-attest.yml workflow that signs your receipts. Required whenever verify is not off"
+        type: string
+        default: ""
+      signer-workflow:
+        description: "With verify: the workflow that must have signed the receipts, owner/repo/.github/workflows/name.yml (default: Agentvow's gate-attest.yml)"
+        type: string
+        default: ""
     outputs:
       needs-person:
         description: "true when the queue holds a pull request that is stopped or needs a person"
@@ -39,6 +51,7 @@ permissions:
   contents: read
   pull-requests: read
   actions: read
+  attestations: read
 jobs:
   queue:
     runs-on: ubuntu-latest
@@ -46,6 +59,7 @@ jobs:
       contents: read
       pull-requests: read
       actions: read
+      attestations: read
     outputs:
       needs-person: ${{ steps.rank.outputs.needs-person }}
     steps:
@@ -57,6 +71,9 @@ jobs:
           POLICY_PATH: ${{ inputs.policy-path }}
           LIMIT: ${{ inputs.limit }}
           FAIL_ON: ${{ inputs.fail-on }}
+          VERIFY: ${{ inputs.verify }}
+          SIGNER_DIGESTS: ${{ inputs.signer-digests }}
+          SIGNER_WORKFLOW: ${{ inputs.signer-workflow }}
         run: |
           case "$EVENT" in schedule|workflow_dispatch) ;; *) echo "The queue is meant for schedule or workflow_dispatch (it is refused on '$EVENT')."; exit 1;; esac
           case "$VERSION" in ''|*[!0-9.]*|.*|*.) echo "agentvow-version must be an exact version made of digits and dots."; exit 1;; esac
@@ -64,6 +81,12 @@ jobs:
           case "$LIMIT" in ''|*[!0-9]*) echo "limit must be a whole number."; exit 1;; esac
           [ "$LIMIT" -ge 1 ] && [ "$LIMIT" -le 100 ] || { echo "limit must be between 1 and 100."; exit 1; }
           case "$FAIL_ON" in never|needs_person) ;; *) echo "fail-on must be never or needs_person."; exit 1;; esac
+          case "$VERIFY" in off|report|require) ;; *) echo "verify must be off, report or require."; exit 1;; esac
+          case "$SIGNER_WORKFLOW" in ''|*[!A-Za-z0-9_./-]*) [ -z "$SIGNER_WORKFLOW" ] || { echo "signer-workflow must be owner/repo/.github/workflows/name.yml."; exit 1; };; esac
+          if [ "$VERIFY" != "off" ]; then
+            [ -n "$(echo "$SIGNER_DIGESTS" | tr -d ' ,')" ] || { echo "verify needs signer-digests: the signer path alone does not stop a pull request that edits the signer."; exit 1; }
+            for d in $(echo "$SIGNER_DIGESTS" | tr ',' ' '); do case "$d" in *[!0-9a-f]*) echo "signer-digests must be 40-character commit shas."; exit 1;; esac; [ "${#d}" = "40" ] || { echo "signer-digests must be 40-character commit shas."; exit 1; }; done
+          fi
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with: { python-version: "3.12" }
       - name: Install Agentvow (from PyPI, from the runner's temp directory)
@@ -85,6 +108,9 @@ jobs:
           POLICY_PATH: ${{ inputs.policy-path }}
           LIMIT: ${{ inputs.limit }}
           FAIL_ON: ${{ inputs.fail-on }}
+          VERIFY: ${{ inputs.verify }}
+          SIGNER_DIGESTS: ${{ inputs.signer-digests }}
+          SIGNER_WORKFLOW: ${{ inputs.signer-workflow }}
         run: |
           set +e
           mkdir -p "$RUNNER_TEMP/queue"
@@ -97,7 +123,13 @@ jobs:
           elif [ "$code" != "404" ]; then
             echo "Could not read the policy file (HTTP ${code:-none}); not falling back to a different policy."; exit 1
           fi
-          python -I -m agentvow queue --github "$REPO" --limit "$LIMIT" "${POLICY[@]}" --markdown -o "$RUNNER_TEMP/queue/queue.md"
+          VERIFY_ARGS=()
+          if [ "$VERIFY" != "off" ]; then
+            VERIFY_ARGS=(--verify "$VERIFY")
+            [ -z "$SIGNER_WORKFLOW" ] || VERIFY_ARGS+=(--signer-workflow "$SIGNER_WORKFLOW")
+            for d in $(echo "$SIGNER_DIGESTS" | tr ',' ' '); do VERIFY_ARGS+=(--signer-digest "$d"); done
+          fi
+          python -I -m agentvow queue --github "$REPO" --limit "$LIMIT" "${POLICY[@]}" "${VERIFY_ARGS[@]}" --markdown -o "$RUNNER_TEMP/queue/queue.md"
           rc=$?
           cat "$RUNNER_TEMP/queue/queue.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
           if [ "$rc" = "0" ]; then echo "needs-person=false" >> "$GITHUB_OUTPUT"; elif [ "$rc" = "1" ]; then echo "needs-person=true" >> "$GITHUB_OUTPUT"; else echo "agentvow queue failed (exit $rc)."; exit 1; fi

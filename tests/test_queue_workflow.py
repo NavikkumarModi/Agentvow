@@ -20,7 +20,7 @@ class QueueWorkflow(unittest.TestCase):
 
     def test_it_is_read_only_and_holds_no_oidc_permission(self):
         for perms in (self.doc["permissions"], self.job["permissions"]):
-            self.assertEqual(perms, {"contents": "read", "pull-requests": "read", "actions": "read"})
+            self.assertEqual(perms, {"contents": "read", "pull-requests": "read", "actions": "read", "attestations": "read"})
         self.assertNotIn("id-token", self.text.replace("# ", "").split("permissions:", 1)[1])
 
     def test_it_checks_out_nothing_and_runs_no_pull_request_code(self):
@@ -59,6 +59,19 @@ class QueueWorkflow(unittest.TestCase):
         self.assertEqual(self.doc[True]["workflow_call"]["inputs"]["fail-on"]["default"], "never")
         guard = next(s for s in self.job["steps"] if s.get("name") == "Check the inputs")["run"]
         self.assertIn("never|needs_person", guard)
+
+    def test_verification_is_off_by_default_validated_and_needs_an_allowed_commit_list(self):
+        inputs = self.doc[True]["workflow_call"]["inputs"]
+        self.assertEqual((inputs["verify"]["default"], inputs["signer-digests"]["default"]), ("off", ""))
+        guard = next(s for s in self.job["steps"] if s.get("name") == "Check the inputs")["run"]
+        self.assertIn("off|report|require", guard); self.assertIn("verify needs signer-digests", guard); self.assertIn('"${#d}" = "40"', guard)
+        rank = next(s for s in self.job["steps"] if s.get("id") == "rank")["run"]
+        self.assertIn('--signer-digest "$d"', rank)
+
+    def test_verification_inputs_reach_the_shell_only_through_environment_variables(self):
+        for s in self.job["steps"]:
+            for k in ("VERIFY", "SIGNER_DIGESTS", "SIGNER_WORKFLOW"):
+                self.assertNotIn("inputs.", s.get("run", ""))
 
 
 if __name__ == "__main__":
