@@ -88,6 +88,7 @@ agentvow check --repo . --transcript msg.txt --json > d.json && agentvow receipt
 agentvow policy init > policy.json && agentvow policy evaluate --receipt receipt.json --policy policy.json > result.json   # allow / needs_acknowledgement / block
 agentvow policy explain --result result.json                                              # the same decision in plain words (0.4.4+): what happened, what to do, who can acknowledge
 agentvow queue --receipts ./receipts                                                       # the pull requests that need a person, ranked, with reasons (exit 1 if any)
+agentvow queue --github OWNER/NAME                                                         # the same, from the gate's receipts on a repository's open pull requests (needs `gh`; unauthenticated; lists those without a receipt)
 agentvow pilot-report --receipts ./receipts -o report.md                                  # a mechanical evidence report over many receipts
 ```
 `--recipe recipe.json` replays the agent's *own declared* setup and test command in a clean sandbox (see `docs/RECIPES.md`).
@@ -154,4 +155,4 @@ python3 -m unittest discover -s tests && node --test vscode/test/extension.test.
 ```
 Design and research: `docs/research/` (start with `NOVELTY_BOUNDARY.md`, `RISKS.md`, `PILOT_P0.md`), product notes `docs/product/`, rules for contributors `CLAUDE.md`. License: MIT (`LICENSE`).
 
-<!-- test counts, checked by scripts/validate_all.sh: 750 Python tests, 32 node tests -->
+<!-- test counts, checked by scripts/validate_all.sh: 756 Python tests, 32 node tests -->

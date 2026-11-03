@@ -530,7 +530,9 @@ def main(argv=None) -> int:
     pr_.add_argument("--example", action="store_true", help="label the report as built from synthetic data")
     pr_.add_argument("-o", "--output", default="-")
     qu = sub.add_parser("queue", help="a ranked list of the agent pull requests that need a person, from a directory of receipts and a policy (what to look at first and why; never a safety verdict)")
-    qu.add_argument("--receipts", required=True, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
+    qu.add_argument("--receipts", default=None, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
+    qu.add_argument("--github", metavar="OWNER/NAME", default=None, help="read the gate's receipts for this repository's open pull requests with `gh` (read-only; receipts are not authenticated; pull requests without one are listed)")
+    qu.add_argument("--limit", type=int, default=30, help="with --github: how many open pull requests to read (default 30, at most 100)")
     qu.add_argument("--acks", default=None, help="directory of acknowledgement JSON files")
     qu.add_argument("--policy", default=None)
     qu.add_argument("--markdown", action="store_true", help="write Markdown instead of plain text")
@@ -595,15 +597,24 @@ def main(argv=None) -> int:
         return run_init(a)
     if a.cmd == "queue":
         from . import pilot_report as pr_mod, queue as queue_mod
+        if bool(a.receipts) == bool(a.github):
+            print("agentvow queue: give exactly one of --receipts and --github", file=sys.stderr)
+            return 3
+        missing, note = [], ""
         try:
-            rcpts, bad = pr_mod.load(a.receipts)
+            if a.github:
+                from . import ghreceipts
+                rcpts, missing, note = ghreceipts.fetch(a.github, a.limit)
+                bad = 0
+            else:
+                rcpts, bad = pr_mod.load(a.receipts)
             acks = pr_mod.load_acks(a.acks) if a.acks else []
             pol = json.loads(Path(a.policy).read_text(encoding="utf-8")) if a.policy else None
-        except (OSError, ValueError) as e:
-            print(f"agentvow queue: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+        except (OSError, ValueError, RuntimeError) as e:
+            print(f"agentvow queue: {type(e).__name__}: {str(e)[:160]}", file=sys.stderr)
             return 3
         items = queue_mod.build(rcpts, pol, acks)
-        text = (queue_mod.render_markdown(items) if a.markdown else queue_mod.render_text(items)) + (f"\n{bad} file(s) in the receipts directory were not valid receipts and were skipped.\n" if bad else "")
+        text = (queue_mod.render_markdown(items, missing=missing, note=note) if a.markdown else queue_mod.render_text(items, missing, note)) + (f"\n{bad} file(s) in the receipts directory were not valid receipts and were skipped.\n" if bad else "")
         if a.output == "-":
             print(text, end="")
         else:

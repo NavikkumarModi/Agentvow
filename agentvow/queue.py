@@ -38,7 +38,18 @@ def _name(i: dict) -> str:
     return f"{i['repo']}#{i['pr']}" if i["pr"] else f"{i['repo']}@{i['commit']}"
 
 
-def render_text(items: list) -> str:
+def _missing_text(missing, note):
+    if not missing and not note:
+        return []
+    out = []
+    if missing:
+        out.append(f"{len(missing)} open pull request(s) with no usable receipt (no information, not a clean result): " + ", ".join(f"#{m['pr']} ({m['why']})" for m in missing[:20]) + (f", and {len(missing) - 20} more" if len(missing) > 20 else ""))
+    if note:
+        out.append(note)
+    return out
+
+
+def render_text(items: list, missing: list | None = None, note: str = "") -> str:
     n = {s: sum(1 for i in items if i["state"] == s) for s in ORDER}
     head = f"{len(items)} receipt(s): {n['block']} stop, {n['needs_acknowledgement']} need a person, {n['acknowledged']} acknowledged, {n['allow']} with no flag raised.\n"
     lines = [head]
@@ -48,11 +59,12 @@ def render_text(items: list) -> str:
             lines.append(f"    - {r['text']}")
         if i["more_reasons"]:
             lines.append(f"    - ... and {i['more_reasons']} more")
+    lines += [""] + _missing_text(missing, note)
     lines.append("\n" + FOOTER)
     return "\n".join(lines) + "\n"
 
 
-def render_markdown(items: list, title: str = "Agent pull request review queue") -> str:
+def render_markdown(items: list, title: str = "Agent pull request review queue", missing: list | None = None, note: str = "") -> str:
     md = lambda x: pilot_report._md(x, 220)
     n = {s: sum(1 for i in items if i["state"] == s) for s in ORDER}
     out = [f"# {md(title)}", "", f"{len(items)} receipt(s): **{n['block']}** stop, **{n['needs_acknowledgement']}** need a person, {n['acknowledged']} acknowledged, {n['allow']} with no flag raised.", ""]
@@ -67,5 +79,6 @@ def render_markdown(items: list, title: str = "Agent pull request review queue")
             if i["more_reasons"]:
                 out.append(f"  - ... and {i['more_reasons']} more")
         out.append("")
+    out += [md(x) for x in _missing_text(missing, note)]
     out += ["---", FOOTER, ""]
     return "\n".join(out)
