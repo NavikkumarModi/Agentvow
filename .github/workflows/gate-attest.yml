@@ -13,7 +13,7 @@
 #       with: { fail-on: block }
 #
 # Pull requests from forks get a read-only token without OIDC, so the attest job cannot sign there. Agentvow is installed from PyPI at an exact version. This RUNS THE PULL REQUEST'S CODE (sandboxed); see docs/GATE_WORKFLOW.md.
-# Needs Agentvow 0.4.0 or later (0.4.4 recommended). Not yet run on GitHub with the real gate: only the mechanism was tested in a throwaway repository (docs/research/RECEIPT_AUTH_DESIGN.md).
+# Needs Agentvow 0.4.0 or later (0.4.4 recommended). Run on GitHub in a public throwaway repository (docs/research/RECEIPT_AUTH_DESIGN.md, section 10); fork pull requests and private repositories untested.
 name: agentvow-gate-attest
 on:
   workflow_call:
