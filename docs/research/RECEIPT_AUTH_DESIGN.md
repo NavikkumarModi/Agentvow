@@ -44,3 +44,14 @@ Stop rule: if experiment 2 does not fail, stop and do not ship the feature.
 
 ## 8. Gate
 Prior-art read still owed (attestations for CI results, SLSA/in-toto test-result attestations, commercial PR-gate products): only search summaries were seen. Per CLAUDE.md, no sentence in the docs may call this novel; it is a reuse of GitHub's own mechanism.
+
+## 9. Results of experiments 1 to 3 (2026-11-03, public throwaway repository `NavikkumarModi/agentvow-attest-test`, `gh` 2.98.0, `actions/attest-build-provenance@v2.4.0`)
+The throwaway used its own reusable `signer.yml` as the stand-in for `gate.yml`; the gate itself was not changed. Same-repository pull requests only.
+| Case | Result |
+|---|---|
+| 1. Honest receipt, caller pinned to the signer sha | Verifies with `--signer-workflow` and `--signer-digest`. Certificate: signer `signer.yml@<pinned sha>`, `buildSignerDigest` = the pinned sha, `sourceRepositoryRef` = `refs/pull/N/merge`, `sourceRepositoryDigest` = the **merge commit** (as predicted in section 3), github-hosted runner |
+| A. Forged receipt, no attestation step | Fails: no attestation found (HTTP 404) |
+| B. Forged receipt attested by another workflow file in the same repository | Fails `--signer-workflow` (error text only partly captured: "verifying with issuer sigstore.dev") |
+| C. Pull request edits the signer at the **same path** and calls it | **Passes with `--signer-workflow` alone (exit 0)**; fails with `--signer-digest` (got the merge commit, expected the pinned sha) |
+Conclusion: the signer path alone is not enough. A pull request can change the file at that path and the check still passes; **`--signer-digest` against an allowed list is required**, not optional. With it, the three forgeries fail and the honest receipt passes. The stop rule (a forgery that verifies) does not fire once the digest is enforced.
+Not yet tested: experiment 4 (fork pull request) and 5 (private repository); a forged receipt whose signer is a **fork repository** with the same path (not tested; `--signer-workflow` includes owner/repo so it should fail); the real `gate.yml`.
