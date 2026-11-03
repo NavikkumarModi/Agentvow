@@ -1,0 +1,105 @@
+# Agentvow review queue: a REUSABLE workflow that ranks a repository's open pull requests by what the gate found, as a job summary. One job, READ-ONLY, no credential beyond the workflow's own read token:
+#   it checks out nothing, runs no pull-request code, posts nothing; it reads the gate's receipts (artifacts named `agentvow-gate`) with `gh` and the policy from the DEFAULT branch.
+# Receipts come from workflow artifacts and are NOT authenticated (a pull request can edit its own workflow); a pull request without a receipt is listed as "no receipt", which is no information, not a clean result.
+# Call it from a schedule (or workflow_dispatch) workflow, pinned to a full commit sha:
+#
+#   on: { schedule: [{ cron: "0 7 * * 1-5" }], workflow_dispatch: {} }
+#   permissions: { contents: read, pull-requests: read, actions: read }
+#   jobs:
+#     queue:
+#       uses: NavikkumarModi/Agentvow/.github/workflows/queue.yml@<40-character commit sha>
+#       with: { fail-on: never }
+#
+# Needs Agentvow 0.5.1 or later (the `queue --github` option). Not yet run against a repository with open gated pull requests; see docs/GATE_WORKFLOW.md.
+name: agentvow-queue
+on:
+  workflow_call:
+    inputs:
+      agentvow-version:
+        description: "Agentvow version installed from PyPI (an exact version, digits and dots; 0.5.1 or later)"
+        type: string
+        default: "0.5.1"
+      policy-path:
+        description: "Policy file in the DEFAULT branch (never read from a pull request); the built-in default policy applies when it does not exist"
+        type: string
+        default: ".agentvow/policy.json"
+      limit:
+        description: "How many open pull requests to read (1 to 100)"
+        type: string
+        default: "30"
+      fail-on:
+        description: "never (default): report only; needs_person: fail when any pull request is stopped or needs a person"
+        type: string
+        default: "never"
+    outputs:
+      needs-person:
+        description: "true when the queue holds a pull request that is stopped or needs a person"
+        value: ${{ jobs.queue.outputs.needs-person }}
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+jobs:
+  queue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    outputs:
+      needs-person: ${{ steps.rank.outputs.needs-person }}
+    steps:
+      - name: Check the inputs
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          VERSION: ${{ inputs.agentvow-version }}
+          POLICY_PATH: ${{ inputs.policy-path }}
+          LIMIT: ${{ inputs.limit }}
+          FAIL_ON: ${{ inputs.fail-on }}
+        run: |
+          case "$EVENT" in schedule|workflow_dispatch) ;; *) echo "The queue is meant for schedule or workflow_dispatch (it is refused on '$EVENT')."; exit 1;; esac
+          case "$VERSION" in ''|*[!0-9.]*|.*|*.) echo "agentvow-version must be an exact version made of digits and dots."; exit 1;; esac
+          case "$POLICY_PATH" in ''|/*|*..*|*[!A-Za-z0-9_./-]*) echo "policy-path must be a plain relative path."; exit 1;; esac
+          case "$LIMIT" in ''|*[!0-9]*) echo "limit must be a whole number."; exit 1;; esac
+          [ "$LIMIT" -ge 1 ] && [ "$LIMIT" -le 100 ] || { echo "limit must be between 1 and 100."; exit 1; }
+          case "$FAIL_ON" in never|needs_person) ;; *) echo "fail-on must be never or needs_person."; exit 1;; esac
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with: { python-version: "3.12" }
+      - name: Install Agentvow (from PyPI, from the runner's temp directory)
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          VERSION: ${{ inputs.agentvow-version }}
+        run: |
+          python -I -m pip install --quiet "agentvow==$VERSION"
+          python -I -m agentvow --version
+      - name: Rank the open pull requests
+        id: rank
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          POLICY_PATH: ${{ inputs.policy-path }}
+          LIMIT: ${{ inputs.limit }}
+          FAIL_ON: ${{ inputs.fail-on }}
+        run: |
+          set +e
+          mkdir -p "$RUNNER_TEMP/queue"
+          POLICY=()
+          # the policy of the default branch; a missing file means the built-in default, any other read failure fails the job (never a weaker policy by accident)
+          code=$(gh api -H "Accept: application/vnd.github.raw" "repos/$REPO/contents/$POLICY_PATH?ref=$DEFAULT_BRANCH" -i 2>/dev/null | head -1 | awk '{print $2}')
+          if [ "$code" = "200" ]; then
+            gh api -H "Accept: application/vnd.github.raw" "repos/$REPO/contents/$POLICY_PATH?ref=$DEFAULT_BRANCH" > "$RUNNER_TEMP/queue/policy.json" || { echo "Could not read the policy."; exit 1; }
+            POLICY=(--policy "$RUNNER_TEMP/queue/policy.json")
+          elif [ "$code" != "404" ]; then
+            echo "Could not read the policy file (HTTP ${code:-none}); not falling back to a different policy."; exit 1
+          fi
+          python -I -m agentvow queue --github "$REPO" --limit "$LIMIT" "${POLICY[@]}" --markdown -o "$RUNNER_TEMP/queue/queue.md"
+          rc=$?
+          cat "$RUNNER_TEMP/queue/queue.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
+          if [ "$rc" = "0" ]; then echo "needs-person=false" >> "$GITHUB_OUTPUT"; elif [ "$rc" = "1" ]; then echo "needs-person=true" >> "$GITHUB_OUTPUT"; else echo "agentvow queue failed (exit $rc)."; exit 1; fi
+          if [ "$FAIL_ON" = "needs_person" ] && [ "$rc" = "1" ]; then exit 1; fi
+          exit 0
