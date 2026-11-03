@@ -98,6 +98,8 @@ jobs:
           TEST_COMMAND: ${{ inputs.test-command }}
           REPO_SLUG: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          AGENTVOW_GATE_TEST_COMMAND: ${{ inputs.test-command }}
+          AGENTVOW_GATE_TEST_TIMEOUT: ${{ inputs.test-timeout }}
         run: |
           set +e
           GATE="$RUNNER_TEMP/gate"; mkdir -p "$GATE"

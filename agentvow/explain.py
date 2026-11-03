@@ -11,6 +11,8 @@ HEADLINES = {
 }
 # rule -> (what it means, what to do). Written for a reviewer, not for an engineer who knows Agentvow's internals.
 RULES = {
+    "gate_inputs": ("The gate was configured by a workflow file the pull request can edit (its test command or Agentvow version), and this repository's policy does not trust that configuration unchecked.",
+                    "Open the workflow file in the pull request and check that the test command and the Agentvow version are the project's own, then a listed acknowledger acknowledges it as described below."),
     "contradicted": ("A claim made about this change is false: tests that passed before the change fail after it.",
                      "Fix the code, or correct the claim. This cannot be acknowledged away."),
     "unknown": ("A claim could not be confirmed or refuted. Typical causes: the number of passing tests did not match what was said, a dependency or a credential the tests need was missing in the replay, or the only failures were ones that also happen without the change.",

@@ -17,7 +17,9 @@ ACK = "agentvow-ack/1"
 OUTCOMES = ("allow", "needs_acknowledgement", "block")
 _RANK = {"allow": 0, "needs_acknowledgement": 1, "block": 2}
 DEFAULT_POLICY = {"schema": POLICY, "contradicted": "block", "unknown": "needs_acknowledgement", "supported": "allow", "no_claims": "needs_acknowledgement",
-                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "needs_acknowledgement", "partial_capture": "needs_acknowledgement", "harness_warning": "needs_acknowledgement", "description_mismatch": "needs_acknowledgement", "acknowledgers": []}
+                  "require_reproducibility": None, "min_changed_line_coverage": None, "unauthenticated_capture": "needs_acknowledgement", "partial_capture": "needs_acknowledgement", "harness_warning": "needs_acknowledgement", "description_mismatch": "needs_acknowledgement", "acknowledgers": [],
+                  # the gate's configuration is set by a workflow file the pull request can edit: None = not checked; a list = the only test commands that need no person; min_tool_version = the oldest Agentvow release whose receipts are trusted
+                  "allowed_test_commands": None, "min_tool_version": None, "require_gate_inputs": False}
 _POLICY_ENUMS = {"contradicted": ("block",), "unknown": OUTCOMES, "supported": OUTCOMES, "no_claims": OUTCOMES, "unauthenticated_capture": OUTCOMES, "partial_capture": OUTCOMES, "harness_warning": OUTCOMES, "description_mismatch": OUTCOMES, "require_reproducibility": (None, "both", "any")}
 _SUPPORTED = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED")
 
@@ -31,11 +33,25 @@ def sha(obj) -> str:
 
 
 _KNOWN_VERDICTS = ("SUPPORTED_BY_PRIOR_EVIDENCE", "NOT_CONTRADICTED", "UNKNOWN", "CONTRADICTED")
-MAX_CLAIMS, MAX_LIST = 200, 100
+MAX_CLAIMS, MAX_LIST, MAX_COMMAND = 200, 100, 200
 
 
-def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: int | None = None) -> dict:
-    """From the JSON that `agentvow check --json` prints. `repo` is `owner/name` as the caller (the CI runner) knows it."""
+def gate_inputs_from_env(env) -> dict | None:
+    """How the gate was configured, as the workflow passed it (AGENTVOW_GATE_TEST_COMMAND, AGENTVOW_GATE_TEST_TIMEOUT). None when the workflow does not say (an older workflow). Printable ASCII only, capped: it is configuration, not free text from the change."""
+    if "AGENTVOW_GATE_TEST_COMMAND" not in env:
+        return None
+    cmd = re.sub(r"[^\x20-\x7e]", "?", str(env.get("AGENTVOW_GATE_TEST_COMMAND", "")))[:MAX_COMMAND]
+    t = str(env.get("AGENTVOW_GATE_TEST_TIMEOUT", "")).strip()
+    return {"test_command": cmd, "test_timeout": int(t) if t.isdigit() and int(t) <= 10**6 else None}
+
+
+def _version(v) -> tuple | None:
+    m = re.fullmatch(r"(\d{1,4})\.(\d{1,4})\.(\d{1,4})", str(v or ""))
+    return tuple(int(x) for x in m.groups()) if m else None
+
+
+def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: int | None = None, gate_inputs: dict | None = None) -> dict:
+    """From the JSON that `agentvow check --json` prints. `repo` is `owner/name` as the caller (the CI runner) knows it. `gate_inputs` records how the gate was configured (see gate_inputs_from_env)."""
     claims = []
     for f in decision.get("findings", []):
         meta = f.get("meta") or {}
@@ -61,7 +77,8 @@ def build_receipt(decision: dict, repo: str, git_tree: str, base: str = "", pr: 
             "contexts": [{"name": str(c.get("name", ""))[:60], "result": str(c.get("result", ""))[:20], "passed": (c.get("counts") or {}).get("passed"), "failed": (c.get("counts") or {}).get("failed"),
                           "dropped_pins": len(c.get("dropped_pins") or [])} for c in pack.get("contexts", [])],
             "coverage": {"executed": cov.get("executed"), "executable": cov.get("executable")} if cov.get("available") else None,
-            "not_reproduced": [str(i.get("category", ""))[:80] for i in (pack.get("manifest") or {}).get("items", [])]}
+            "not_reproduced": [str(i.get("category", ""))[:80] for i in (pack.get("manifest") or {}).get("items", [])],
+            **({"gate_inputs": gate_inputs} if gate_inputs is not None else {})}
 
 
 
@@ -108,6 +125,10 @@ def validate_receipt(r) -> str | None:
             return f"{k} must be a short list of short strings"
     if not isinstance(r.get("reproducibility", ""), str) or len(r.get("reproducibility", "")) > 40:
         return "reproducibility must be a short string"
+    gi = r.get("gate_inputs")
+    if gi is not None:
+        if not isinstance(gi, dict) or set(gi) - {"test_command", "test_timeout"} or not isinstance(gi.get("test_command", ""), str) or len(gi.get("test_command", "")) > MAX_COMMAND or not (gi.get("test_timeout") is None or _count(gi.get("test_timeout"))):
+            return "gate_inputs must hold a short test_command and a whole-number test_timeout"
     if r.get("pr") is not None and not (isinstance(r["pr"], int) and not isinstance(r["pr"], bool) and r["pr"] > 0):
         return "pr must be a positive whole number or null"
     if len(canon(r)) > 60_000:
@@ -127,6 +148,14 @@ def validate_policy(p) -> str | None:
     m = p.get("min_changed_line_coverage")
     if m is not None and not (isinstance(m, (int, float)) and not isinstance(m, bool) and 0 <= m <= 1):
         return "min_changed_line_coverage must be a number between 0 and 1"
+    atc = p.get("allowed_test_commands")
+    if atc is not None and (not isinstance(atc, list) or len(atc) > 20 or not all(isinstance(x, str) and len(x) <= MAX_COMMAND for x in atc)):
+        return "allowed_test_commands must be null or a list of up to 20 short commands"
+    mv = p.get("min_tool_version")
+    if mv is not None and _version(mv) is None:
+        return "min_tool_version must be null or a version such as 0.5.2"
+    if not isinstance(p.get("require_gate_inputs", False), bool):
+        return "require_gate_inputs must be true or false"
     a = p.get("acknowledgers", [])
     if not isinstance(a, list) or not all(isinstance(x, str) and 0 < len(x) <= 80 for x in a):
         return "acknowledgers must be a list of user names"
@@ -196,6 +225,13 @@ def evaluate(receipt: dict, policy: dict | None = None, acks: list | None = None
         ok = (code == "both") if req == "both" else (code in ("both", "captured_only", "native_only", "single"))
         if not ok:
             add("require_reproducibility", "needs_acknowledgement", f"The policy asks for reproducibility '{req}', but the receipt says '{code or 'none'}'.")
+    gi, atc, floor = receipt.get("gate_inputs"), pol["allowed_test_commands"], pol["min_tool_version"]
+    if claims and gi is None and pol["require_gate_inputs"]:
+        add("gate_inputs", "needs_acknowledgement", "This receipt does not record how the gate was configured (an older workflow or version), and the policy asks for that. The workflow file that sets the test command can be edited by the pull request.")
+    if claims and gi is not None and atc is not None and gi.get("test_command", "") not in ([""] + atc):
+        add("gate_inputs", "needs_acknowledgement", f"The gate ran a test command set in the workflow file ({gi.get('test_command', '')[:80]!r}), which the policy does not list. The pull request can edit that file, so a person should check the command is the project's own.")
+    if claims and floor is not None and (_version(receipt.get("tool_version")) is None or _version(receipt.get("tool_version")) < _version(floor)):
+        add("gate_inputs", "needs_acknowledgement", f"The gate ran Agentvow {str(receipt.get('tool_version') or 'of an unknown version')[:20]}, older than the policy's floor {floor}. The pull request can choose the version in the workflow file.")
     eff = "allow"
     for r in reasons:
         o = r["outcome"] if not (r["outcome"] == "needs_acknowledgement" and r["acknowledged_by"]) else "allow"

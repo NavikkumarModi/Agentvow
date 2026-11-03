@@ -657,7 +657,7 @@ def main(argv=None) -> int:
         except (OSError, ValueError, reality.CollectorError) as e:
             print(f"agentvow receipt: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
             return 3
-        out = json.dumps(policy_mod.build_receipt(dec, a.repo_slug, tree, a.base, a.pr), indent=2) + "\n"
+        out = json.dumps(policy_mod.build_receipt(dec, a.repo_slug, tree, a.base, a.pr, policy_mod.gate_inputs_from_env(os.environ)), indent=2) + "\n"
         if a.output == "-":
             print(out, end="")
         else:

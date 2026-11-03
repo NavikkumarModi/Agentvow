@@ -70,3 +70,5 @@ Question: can a pull request get a **verified** receipt that says more than the 
 3. Allowed-list staleness: an old allowed commit with a known flaw keeps verifying until it is removed; the list is the user's to maintain.
 4. Scope: public repositories only; fork pull requests, private repositories, and a compromised signer repository are out of scope.
 Verdict: the feature does what it claims (forged artifacts fail) and no more. The input-binding gap in point 1 should be stated wherever "verified" is shown; building the mitigation is the next step if this is shipped.
+
+Follow-up (same day): the mitigation in point 1 was built as opt-in policy keys (`gate_inputs` in the receipt; `allowed_test_commands`, `min_tool_version`, `require_gate_inputs`). It only helps a project that sets them; the default policy still trusts any verified receipt's configuration. Not run on GitHub yet.
