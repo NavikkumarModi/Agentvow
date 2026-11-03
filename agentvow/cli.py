@@ -533,6 +533,9 @@ def main(argv=None) -> int:
     qu.add_argument("--receipts", default=None, help="directory of receipt JSON files (gate artifacts or the control plane's export)")
     qu.add_argument("--github", metavar="OWNER/NAME", default=None, help="read the gate's receipts for this repository's open pull requests with `gh` (read-only; receipts are not authenticated; pull requests without one are listed)")
     qu.add_argument("--limit", type=int, default=30, help="with --github: how many open pull requests to read (default 30, at most 100)")
+    qu.add_argument("--verify", choices=["off", "report", "require"], default="off", help="with --github: check each receipt's GitHub artifact attestation (needs `gh` and --signer-digest). report: show unverified receipts apart; require: an unverified receipt needs a person")
+    qu.add_argument("--signer-workflow", default=None, help="with --verify: the workflow that must have signed the receipt (default NavikkumarModi/Agentvow/.github/workflows/gate-attest.yml)")
+    qu.add_argument("--signer-digest", action="append", default=[], metavar="SHA", help="with --verify: an allowed commit of the signer workflow (40 hex characters; repeat for several). Required: the path alone does not stop a pull request that edits the signer")
     qu.add_argument("--acks", default=None, help="directory of acknowledgement JSON files")
     qu.add_argument("--policy", default=None)
     qu.add_argument("--markdown", action="store_true", help="write Markdown instead of plain text")
@@ -600,11 +603,15 @@ def main(argv=None) -> int:
         if bool(a.receipts) == bool(a.github):
             print("agentvow queue: give exactly one of --receipts and --github", file=sys.stderr)
             return 3
-        missing, note = [], ""
+        missing, note, auth = [], "", {}
+        if a.verify != "off" and not a.github:
+            print("agentvow queue: --verify needs --github", file=sys.stderr)
+            return 3
         try:
             if a.github:
                 from . import ghreceipts
-                rcpts, missing, note = ghreceipts.fetch(a.github, a.limit)
+                ver = {"signer": a.signer_workflow, "digests": a.signer_digest} if a.verify != "off" else None
+                rcpts, missing, note = ghreceipts.fetch(a.github, a.limit, verify=ver, auth=auth)
                 bad = 0
             else:
                 rcpts, bad = pr_mod.load(a.receipts)
@@ -613,7 +620,7 @@ def main(argv=None) -> int:
         except (OSError, ValueError, RuntimeError) as e:
             print(f"agentvow queue: {type(e).__name__}: {str(e)[:160]}", file=sys.stderr)
             return 3
-        items = queue_mod.build(rcpts, pol, acks)
+        items = queue_mod.build(rcpts, pol, acks, auth=auth, mode=a.verify)
         text = (queue_mod.render_markdown(items, missing=missing, note=note) if a.markdown else queue_mod.render_text(items, missing, note)) + (f"\n{bad} file(s) in the receipts directory were not valid receipts and were skipped.\n" if bad else "")
         if a.output == "-":
             print(text, end="")
