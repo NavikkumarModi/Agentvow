@@ -71,4 +71,10 @@ Question: can a pull request get a **verified** receipt that says more than the 
 4. Scope: public repositories only; fork pull requests, private repositories, and a compromised signer repository are out of scope.
 Verdict: the feature does what it claims (forged artifacts fail) and no more. The input-binding gap in point 1 should be stated wherever "verified" is shown; building the mitigation is the next step if this is shipped.
 
-Follow-up (same day): the mitigation in point 1 was built as opt-in policy keys (`gate_inputs` in the receipt; `allowed_test_commands`, `min_tool_version`, `require_gate_inputs`). It only helps a project that sets them; the default policy still trusts any verified receipt's configuration. Not run on GitHub yet.
+Follow-up (same day): the mitigation in point 1 was built as opt-in policy keys (`gate_inputs` in the receipt; `allowed_test_commands`, `min_tool_version`, `require_gate_inputs`). It only helps a project that sets them; the default policy still trusts any verified receipt's configuration. Run on GitHub in section 12.
+
+## 12. Released 0.5.2 run on GitHub (2026-11-04, public throwaway `agentvow-attest-test`, pull request #5)
+The pull request's caller was pinned to `gate-attest.yml` at `88f20b7` with `agentvow-version: "0.5.2"` (from PyPI) and an edited test command (`{py} -c "print('2 passed in 0.01s')"`). Replay, decide and attest all succeeded. `agentvow queue --github --verify` (0.5.2 from PyPI, signer commit on the allowed list):
+- Default policy, `--verify report`: the receipt is `[verified]` and needs a person only because `tests_pass` is UNKNOWN. The edited test command is not mentioned.
+- Policy with `allowed_test_commands`, `min_tool_version` and `require_gate_inputs` set, `--verify require`: still `[verified]`, and now also lists the reason that the gate ran a test command set in the workflow file which the policy does not list.
+Limits: this pull request was already UNKNOWN, so the new rule added a reason but did not change the outcome; one case, same-repository, public repository. Fork pull requests and private repositories remain untested.
