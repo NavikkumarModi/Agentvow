@@ -10,15 +10,15 @@
 #       uses: NavikkumarModi/Agentvow/.github/workflows/queue.yml@<40-character commit sha>
 #       with: { fail-on: never }
 #
-# Needs Agentvow 0.5.1 or later (the `queue --github` option). Run on GitHub Actions (2026-11-03) against a private test repository with one open gated pull request; see docs/GATE_WORKFLOW.md.
+# Needs Agentvow 0.5.1 or later (the `queue --github` option; 0.5.2 for `verify`). Run on GitHub Actions (2026-11-03) against a private test repository with one open gated pull request; see docs/GATE_WORKFLOW.md.
 name: agentvow-queue
 on:
   workflow_call:
     inputs:
       agentvow-version:
-        description: "Agentvow version installed from PyPI (an exact version, digits and dots; 0.5.1 or later)"
+        description: "Agentvow version installed from PyPI (an exact version, digits and dots; 0.5.1 or later; 0.5.2 for verify)"
         type: string
-        default: "0.5.1"
+        default: "0.5.2"
       policy-path:
         description: "Policy file in the DEFAULT branch (never read from a pull request); the built-in default policy applies when it does not exist"
         type: string
@@ -32,7 +32,7 @@ on:
         type: string
         default: "never"
       verify:
-        description: "off (default) | report | require: check each receipt's GitHub artifact attestation (needs the gate-attest.yml workflow, a public repository, and agentvow-version with --verify, i.e. later than 0.5.1). Unverified receipts are never ranked as no flag raised"
+        description: "off (default) | report | require: check each receipt's GitHub artifact attestation (needs the gate-attest.yml workflow, a public repository, and agentvow-version with --verify, i.e. 0.5.2 or later). Unverified receipts are never ranked as no flag raised"
         type: string
         default: "off"
       signer-digests:
