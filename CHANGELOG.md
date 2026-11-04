@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.2 (not yet published)
+## 0.5.2 (2026-11-04)
 Authenticated receipts for the review queue, and a record of how the gate was configured. Items marked "repository" are not in the wheel. Release notes: `docs/RELEASE_NOTES_0.5.2.md`.
 - **Correction to the 0.5.1 entry:** `queue --github` was described as tested against a fake `gh` only. Since then it has been run against 12 real gate receipts and, through `queue.yml`, on GitHub Actions in a private test repository. Its receipts were unauthenticated in 0.5.1; `--verify` (below) can check them.
 - **The receipt records how the gate was configured** (`gate_inputs`: test command and timeout, from the workflow; the existing `tool_version` stays), and the policy gains three opt-in keys: `allowed_test_commands`, `min_tool_version`, `require_gate_inputs`. Reason: a verified receipt proves the pinned gate produced the file, not that the pull request did not choose its test command or Agentvow version in the caller workflow it can edit. Off by default, no behaviour change until set. The four gate workflows pass the inputs to the receipt step (older Agentvow versions ignore them). 13 tests. `docs/GATE_WORKFLOW.md`, `docs/research/RECEIPT_AUTH_DESIGN.md` section 11.
