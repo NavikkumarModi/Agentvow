@@ -100,12 +100,15 @@ def adjudicate(regression_sets, test_sources, changed):
     return {"class": "not_confirmed" if seen else "cannot_decide", "why": "the stable failing tests import no changed file" if seen else "failing ids have no file part"}
 
 
+SUPPORTED_NAMES = ("SUPPORTED", "SUPPORTED_BY_PRIOR_EVIDENCE")  # the shipped decision logic names a fresh passing run SUPPORTED_BY_PRIOR_EVIDENCE
+
+
 def summarize(rows):
     """Apply the frozen decision rule to the results rows."""
     harness = [r for r in rows if r.get("stage") in HARNESS]
     ok = [r for r in rows if r.get("stage") not in HARNESS]
-    yielded = [r for r in ok if r.get("verdict") in ("SUPPORTED", "CONTRADICTED")]
-    faults = [f for r in ok if r.get("verdict") == "SUPPORTED" for f in r.get("faults", [])]
+    yielded = [r for r in ok if r.get("verdict") in SUPPORTED_NAMES + ("CONTRADICTED",)]
+    faults = [f for r in ok if r.get("verdict") in SUPPORTED_NAMES for f in r.get("faults", [])]
     detected = [f for f in faults if f["detected"]]
     adj = [r["adjudication"]["class"] for r in ok if r.get("adjudication")]
     conf, notc = adj.count("confirmed"), adj.count("not_confirmed")
@@ -257,7 +260,7 @@ def _one_repo(repo_name, prs):
                         srcs[tf] = (wh / tf).read_text(encoding="utf-8", errors="replace")
                 r["adjudication"] = adjudicate(sets, srcs, changed)
                 r["regression_counts"] = [len(s) for s in sets]
-            if r["verdict"] == "SUPPORTED":
+            if r["verdict"] in SUPPORTED_NAMES:
                 r["faults"] = plant_faults(rng, wh, repo, base, head, b, argv, env_h, r["claimed_counts"], (h["counts"] or {}).get("passed", 0))
         except Exception as e:  # report, never hide
             r.update(stage="error", note=f"{type(e).__name__}: {e}"[:200])

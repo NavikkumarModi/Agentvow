@@ -91,6 +91,11 @@ class Summary(unittest.TestCase):
         self.assertEqual((s["harness_failures"], s["evaluated"]), (1, 3))
         self.assertFalse(s["rule"]["yield_ok"]); self.assertFalse(s["rule"]["detection_ok"]); self.assertFalse(s["rule"]["keep_as_headline"])
 
+    def test_the_shipped_supported_name_counts_as_supported(self):
+        rows = [row("a/b", i, "SUPPORTED_BY_PRIOR_EVIDENCE", faults=[fault(True)]) for i in range(3)] + [row("c/d", 1, "UNKNOWN")]
+        s = rv.summarize(rows)
+        self.assertEqual((s["q1_yield"]["k"], s["q2_detection"]["n"]), (3, 3))
+
     def test_precision_is_undetermined_below_four_decided_results(self):
         rows = [row("a/b", i, "SUPPORTED", faults=[fault(True)]) for i in range(5)] + [row("c/d", 1, "CONTRADICTED", adj="confirmed")]
         s = rv.summarize(rows)
