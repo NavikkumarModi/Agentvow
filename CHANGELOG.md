@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- **Headline narrowed (documentation only):** a pre-registered study (`docs/research/REPLAY_VALUE_PREREG.md`, results `docs/research/REPLAY_VALUE_RESULTS.md`) found the zero-config replay reached SUPPORTED or CONTRADICTED for 4 of 60 no-CI agent pull requests (6.7%; threshold 40%) and stopped 0 of 4 planted faults (threshold 60%, too few to conclude); precision undetermined (2 decided results). By the pre-registered rule the README now presents the evidence record, UNKNOWN as an outcome and receipt authentication as the core, and the replay as an optional extra. Adds `scripts/replay_value_run.py` and 11 tests. No code behaviour changed.
+
 ## 0.5.2 (2026-11-04)
 Authenticated receipts for the review queue, and a record of how the gate was configured. Items marked "repository" are not in the wheel. Release notes: `docs/RELEASE_NOTES_0.5.2.md`.
 - **Correction to the 0.5.1 entry:** `queue --github` was described as tested against a fake `gh` only. Since then it has been run against 12 real gate receipts and, through `queue.yml`, on GitHub Actions in a private test repository. Its receipts were unauthenticated in 0.5.1; `--verify` (below) can check them.
