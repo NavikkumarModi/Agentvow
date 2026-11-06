@@ -214,7 +214,9 @@ def _one_repo(repo_name, prs):
         if rc:
             return [{**p, "stage": "clone_failed", "note": out[-150:]} for p in prs]
     venv, notes = dvr.setup_env(repo, key)
-    if venv is not None and any("too heavy" in n or "disk low" in n for n in notes):
+    if venv is not None and any("disk low" in n for n in notes):  # the disk floor, not the project: a harness failure (A1.4)
+        return [{**p, "stage": "harness_low_disk", "note": "; ".join(notes)[:200]} for p in prs]
+    if venv is not None and any("too heavy" in n for n in notes):
         return [{**p, "stage": "env_too_heavy", "note": "; ".join(notes)[:200]} for p in prs]
     if venv is None:
         return [{**p, "stage": "env_failed", "note": "; ".join(notes)} for p in prs]
