@@ -1,6 +1,7 @@
 # Changelog
 
-## Unreleased
+## 0.5.3 (2026-11-06)
+Documentation and metadata release: **no change to the code of the package or the extension since 0.5.2**. It refreshes the README that PyPI and the Marketplace show, with the narrowed headline below. Release notes: `docs/RELEASE_NOTES_0.5.3.md`.
 - **Headline narrowed (documentation only):** a pre-registered study (`docs/research/REPLAY_VALUE_PREREG.md`, results `docs/research/REPLAY_VALUE_RESULTS.md`) found the zero-config replay reached SUPPORTED or CONTRADICTED for 4 of 60 no-CI agent pull requests (6.7%; threshold 40%) and stopped 0 of 4 planted faults (threshold 60%, too few to conclude); precision undetermined (2 decided results). By the pre-registered rule the README now presents the evidence record, UNKNOWN as an outcome and receipt authentication as the core, and the replay as an optional extra. Adds `scripts/replay_value_run.py` and 11 tests. No code behaviour changed.
 
 ## 0.5.2 (2026-11-04)
